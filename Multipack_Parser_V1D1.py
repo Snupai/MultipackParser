@@ -21,7 +21,7 @@ import os
 # Konstanten #
 ##############
 
-VERSION = '1.1.0'
+VERSION = '1.1.0' # Version des Programmes - Änderungen an den Funktionen und/oder der Benutzung muss die Version angepasst werden
 
 # IP Address of the Robot - Set to localhost only for testing
 robot_ip = '192.168.0.1' # DO NOT CHANGE
