@@ -23,6 +23,8 @@ PATH_BILDER = f'{os.path.dirname(os.path.realpath(__file__))}/imgs/'
 if PATH_USB_STICK == '':
     PATH_USB_STICK = f'{os.path.dirname(os.path.dirname(os.path.realpath(__file__)))}/'
 
+#TODO: Change rest of code to use PySide6
+
 # Konstanten für Datenstruktur
 #List Index
 LI_PALETTE_DATA = 0
