@@ -1,13 +1,10 @@
-#alles was man für den programm brauch(PyQt, threading, etc..)
-
 import threading
 import time
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 from random import randint
-from PyQt5.QtWidgets import QApplication, QMainWindow
-from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QLabel
-from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtCore import QTimer
+from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QLabel
+from PySide6.QtGui import QMouseEvent
+from PySide6.QtCore import QTimer, Signal
 from xmlrpc.server import SimpleXMLRPCServer
 from pydub import AudioSegment
 from pydub.playback import play
@@ -17,24 +14,14 @@ import socket
 import sys
 import os
 
-##############
-# Konstanten #
-##############
-
-VERSION = '1.1.0' # Version des Programmes - Änderungen an den Funktionen und/oder der Benutzung muss die Version angepasst werden
-
-# IP Address of the Robot - Set to localhost only for testing
-robot_ip = '192.168.0.1' # DO NOT CHANGE
-
-
 # Konstanten
-#PATH_USB_STICK     = 'E:\'
-PATH_USB_STICK  = '' 
-PATH_BILDER = f'{os.path.dirname(os.path.realpath(__file__))}/imgs/' # Bekomme den Pfad zu diesem Skript und setze den Pfad auf den Ordner cwd/imgs/
+VERSION = '1.1.0'
+robot_ip = '192.168.0.1'
+PATH_USB_STICK = ''
+PATH_BILDER = f'{os.path.dirname(os.path.realpath(__file__))}/imgs/'
 
 if PATH_USB_STICK == '':
-    # Bekomme CWD und setze den Pfad auf den Überordner
-    PATH_USB_STICK = f'{os.path.dirname(os.path.dirname(os.path.realpath(__file__)))}/' 
+    PATH_USB_STICK = f'{os.path.dirname(os.path.dirname(os.path.realpath(__file__)))}/'
 
 # Konstanten für Datenstruktur
 #List Index
