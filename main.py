@@ -136,11 +136,11 @@ def main() -> None:
 
     if args.version:
         print(f"Multipack Parser Application Version: {VERSION}")
-    else:
-        app = QApplication(sys.argv)
-        window = MainWindow()
-        window.show()
-        sys.exit(app.exec())
+        return
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
 
 
 if __name__ == "__main__":
