@@ -3,10 +3,13 @@ from PySide6.QtCore import Qt, QEvent
 import sys
 import logging
 import subprocess
+import argparse
 from logging.handlers import RotatingFileHandler
 from ui_main_window import Ui_Form  # Import the generated main window class
 from ui_password_entry import Ui_Dialog  # Import the generated dialog class
 from typing import NoReturn
+
+VERSION = '0.0.1'
 
 # Setup logging
 log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -126,10 +129,19 @@ class MainWindow(QMainWindow):
 
 
 
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Multipack Parser Application")
+    parser.add_argument('--version', action='store_true', help='Show version information and exit')
+    args = parser.parse_args()
+
+    if args.version:
+        print(f"Multipack Parser Application Version: {VERSION}")
+    else:
+        app = QApplication(sys.argv)
+        window = MainWindow()
+        window.show()
+        sys.exit(app.exec())
 
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec())
+    main()
