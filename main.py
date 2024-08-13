@@ -4,6 +4,7 @@ import sys
 import logging
 import subprocess
 import argparse
+import hashlib
 from logging.handlers import RotatingFileHandler
 from ui_main_window import Ui_Form  # Import the generated main window class
 from ui_password_entry import Ui_Dialog  # Import the generated dialog class
@@ -36,7 +37,7 @@ class PasswordEntryDialog(QDialog):
         logger.info("PasswordEntryDialog opened")
 
     def accept(self) -> NoReturn:
-        entered_password = self.ui.lineEdit.text()
+        entered_password = hashlib.sha256(self.ui.lineEdit.text().encode()).hexdigest()
         if self.verify_password(entered_password):
             logger.debug("Password is correct")
             self.password_accepted = True
@@ -45,10 +46,10 @@ class PasswordEntryDialog(QDialog):
             logger.debug("Password is incorrect")
             QMessageBox.warning(self, "Error", "Incorrect password")
 
-    def verify_password(self, password: str) -> bool:
-        # Replace 'correct_password' with your actual password check logic
-        correct_password = "666666"
-        return password == correct_password
+    def verify_password(self, hashed_password: str) -> bool:
+        correct_password = "94edf28c6d6da38fd35d7ad53e485307f89fbeaf120485c8d17a43f323deee71"  # SHA256 hash of "password"
+        # compare the hash with the correct password
+        return hashed_password == correct_password
 
     def reject(self) -> NoReturn:
         self.password_accepted = False
