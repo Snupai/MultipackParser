@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'untitled.ui'
+## Form generated from reading UI file 'MainWindow.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.7.2
 ##
@@ -52,6 +52,7 @@ class Ui_Form(object):
         Form.setInputMethodHints(Qt.InputMethodHint.ImhNone)
         self.stackedWidget = QStackedWidget(Form)
         self.stackedWidget.setObjectName(u"stackedWidget")
+        self.stackedWidget.setEnabled(True)
         self.stackedWidget.setGeometry(QRect(0, 0, 1366, 389))
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -71,10 +72,12 @@ class Ui_Form(object):
         self.settings.setFlat(True)
         self.checkBox = QCheckBox(self.MainMenu)
         self.checkBox.setObjectName(u"checkBox")
-        self.checkBox.setGeometry(QRect(200, 270, 131, 20))
+        self.checkBox.setEnabled(False)
+        self.checkBox.setGeometry(QRect(270, 250, 131, 20))
         self.pushButton_3 = QPushButton(self.MainMenu)
         self.pushButton_3.setObjectName(u"pushButton_3")
-        self.pushButton_3.setGeometry(QRect(550, 270, 121, 24))
+        self.pushButton_3.setEnabled(False)
+        self.pushButton_3.setGeometry(QRect(620, 250, 121, 24))
         self.gridLayoutWidget = QWidget(self.MainMenu)
         self.gridLayoutWidget.setObjectName(u"gridLayoutWidget")
         self.gridLayoutWidget.setGeometry(QRect(270, 20, 691, 176))
@@ -83,6 +86,7 @@ class Ui_Form(object):
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.spinBox = QSpinBox(self.gridLayoutWidget)
         self.spinBox.setObjectName(u"spinBox")
+        self.spinBox.setEnabled(False)
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
@@ -100,6 +104,7 @@ class Ui_Form(object):
 
         self.EingabeStartlage_2 = QPlainTextEdit(self.gridLayoutWidget)
         self.EingabeStartlage_2.setObjectName(u"EingabeStartlage_2")
+        self.EingabeStartlage_2.setEnabled(False)
         self.EingabeStartlage_2.setMinimumSize(QSize(0, 39))
 
         self.gridLayout.addWidget(self.EingabeStartlage_2, 2, 1, 1, 1)
@@ -112,6 +117,7 @@ class Ui_Form(object):
 
         self.EingabeStartlage_3 = QPlainTextEdit(self.gridLayoutWidget)
         self.EingabeStartlage_3.setObjectName(u"EingabeStartlage_3")
+        self.EingabeStartlage_3.setEnabled(False)
         self.EingabeStartlage_3.setMinimumSize(QSize(0, 39))
 
         self.gridLayout.addWidget(self.EingabeStartlage_3, 3, 1, 1, 1)
@@ -147,7 +153,8 @@ class Ui_Form(object):
 
         self.pushButton_2 = QPushButton(self.MainMenu)
         self.pushButton_2.setObjectName(u"pushButton_2")
-        self.pushButton_2.setGeometry(QRect(350, 270, 171, 24))
+        self.pushButton_2.setEnabled(False)
+        self.pushButton_2.setGeometry(QRect(420, 250, 171, 24))
         self.stackedWidget.addWidget(self.MainMenu)
         self.RoboParameter = QWidget()
         self.RoboParameter.setObjectName(u"RoboParameter")
@@ -178,7 +185,7 @@ class Ui_Form(object):
 
         self.retranslateUi(Form)
 
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(0)
         self.settings.setDefault(False)
 
 
