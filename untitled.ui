@@ -135,6 +135,9 @@
    <set>Qt::InputMethodHint::ImhNone</set>
   </property>
   <widget class="QStackedWidget" name="stackedWidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -156,7 +159,7 @@
     <enum>QFrame::Shape::NoFrame</enum>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="MainMenu">
     <widget class="QPushButton" name="settings">
@@ -188,10 +191,13 @@
      </property>
     </widget>
     <widget class="QCheckBox" name="checkBox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
-       <x>200</x>
-       <y>270</y>
+       <x>270</x>
+       <y>250</y>
        <width>131</width>
        <height>20</height>
       </rect>
@@ -201,10 +207,13 @@
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_3">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
-       <x>550</x>
-       <y>270</y>
+       <x>620</x>
+       <y>250</y>
        <width>121</width>
        <height>24</height>
       </rect>
@@ -225,6 +234,9 @@
      <layout class="QGridLayout" name="gridLayout">
       <item row="1" column="1">
        <widget class="QSpinBox" name="spinBox">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -251,6 +263,9 @@
       </item>
       <item row="2" column="1">
        <widget class="QPlainTextEdit" name="EingabeStartlage_2">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -274,6 +289,9 @@
       </item>
       <item row="3" column="1">
        <widget class="QPlainTextEdit" name="EingabeStartlage_3">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -349,10 +367,13 @@
      </layout>
     </widget>
     <widget class="QPushButton" name="pushButton_2">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
-       <x>350</x>
-       <y>270</y>
+       <x>420</x>
+       <y>250</y>
        <width>171</width>
        <height>24</height>
       </rect>
