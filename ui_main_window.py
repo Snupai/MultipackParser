@@ -16,7 +16,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QGridLayout,
-    QLabel, QPlainTextEdit, QPushButton, QSizePolicy,
+    QLabel, QLineEdit, QPushButton, QSizePolicy,
     QSpacerItem, QSpinBox, QStackedWidget, QWidget)
 
 class Ui_Form(object):
@@ -80,68 +80,23 @@ class Ui_Form(object):
         self.pushButton_3.setGeometry(QRect(620, 250, 121, 24))
         self.gridLayoutWidget = QWidget(self.MainMenu)
         self.gridLayoutWidget.setObjectName(u"gridLayoutWidget")
-        self.gridLayoutWidget.setGeometry(QRect(270, 20, 691, 176))
+        self.gridLayoutWidget.setGeometry(QRect(280, 20, 691, 221))
         self.gridLayout = QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.spinBox = QSpinBox(self.gridLayoutWidget)
-        self.spinBox.setObjectName(u"spinBox")
-        self.spinBox.setEnabled(False)
+        self.EingabeStartlage = QSpinBox(self.gridLayoutWidget)
+        self.EingabeStartlage.setObjectName(u"EingabeStartlage")
+        self.EingabeStartlage.setEnabled(False)
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.spinBox.sizePolicy().hasHeightForWidth())
-        self.spinBox.setSizePolicy(sizePolicy1)
-        self.spinBox.setMinimumSize(QSize(0, 39))
+        sizePolicy1.setHeightForWidth(self.EingabeStartlage.sizePolicy().hasHeightForWidth())
+        self.EingabeStartlage.setSizePolicy(sizePolicy1)
+        self.EingabeStartlage.setMinimumSize(QSize(0, 39))
+        self.EingabeStartlage.setMaximumSize(QSize(16777215, 39))
+        self.EingabeStartlage.setValue(0)
 
-        self.gridLayout.addWidget(self.spinBox, 1, 1, 1, 1)
-
-        self.label_3 = QLabel(self.gridLayoutWidget)
-        self.label_3.setObjectName(u"label_3")
-        self.label_3.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-
-        self.gridLayout.addWidget(self.label_3, 2, 0, 1, 1)
-
-        self.EingabeStartlage_2 = QPlainTextEdit(self.gridLayoutWidget)
-        self.EingabeStartlage_2.setObjectName(u"EingabeStartlage_2")
-        self.EingabeStartlage_2.setEnabled(False)
-        self.EingabeStartlage_2.setMinimumSize(QSize(0, 39))
-
-        self.gridLayout.addWidget(self.EingabeStartlage_2, 2, 1, 1, 1)
-
-        self.label_4 = QLabel(self.gridLayoutWidget)
-        self.label_4.setObjectName(u"label_4")
-        self.label_4.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-
-        self.gridLayout.addWidget(self.label_4, 3, 0, 1, 1)
-
-        self.EingabeStartlage_3 = QPlainTextEdit(self.gridLayoutWidget)
-        self.EingabeStartlage_3.setObjectName(u"EingabeStartlage_3")
-        self.EingabeStartlage_3.setEnabled(False)
-        self.EingabeStartlage_3.setMinimumSize(QSize(0, 39))
-
-        self.gridLayout.addWidget(self.EingabeStartlage_3, 3, 1, 1, 1)
-
-        self.label = QLabel(self.gridLayoutWidget)
-        self.label.setObjectName(u"label")
-        self.label.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-
-        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
-
-        self.EingabePallettenplan = QPlainTextEdit(self.gridLayoutWidget)
-        self.EingabePallettenplan.setObjectName(u"EingabePallettenplan")
-        self.EingabePallettenplan.setMinimumSize(QSize(0, 39))
-        self.EingabePallettenplan.viewport().setProperty("cursor", QCursor(Qt.CursorShape.IBeamCursor))
-        self.EingabePallettenplan.setInputMethodHints(Qt.InputMethodHint.ImhNone)
-        self.EingabePallettenplan.setOverwriteMode(False)
-
-        self.gridLayout.addWidget(self.EingabePallettenplan, 0, 1, 1, 1)
-
-        self.label_2 = QLabel(self.gridLayoutWidget)
-        self.label_2.setObjectName(u"label_2")
-        self.label_2.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-
-        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.EingabeStartlage, 1, 2, 1, 1)
 
         self.LadePallettenplan = QPushButton(self.gridLayoutWidget)
         self.LadePallettenplan.setObjectName(u"LadePallettenplan")
@@ -149,7 +104,56 @@ class Ui_Form(object):
         self.LadePallettenplan.setSizePolicy(sizePolicy1)
         self.LadePallettenplan.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 
-        self.gridLayout.addWidget(self.LadePallettenplan, 0, 2, 1, 1)
+        self.gridLayout.addWidget(self.LadePallettenplan, 0, 3, 1, 1)
+
+        self.label_3 = QLabel(self.gridLayoutWidget)
+        self.label_3.setObjectName(u"label_3")
+        self.label_3.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+
+        self.gridLayout.addWidget(self.label_3, 2, 0, 1, 1)
+
+        self.label_4 = QLabel(self.gridLayoutWidget)
+        self.label_4.setObjectName(u"label_4")
+        self.label_4.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+
+        self.gridLayout.addWidget(self.label_4, 3, 0, 1, 1)
+
+        self.label = QLabel(self.gridLayoutWidget)
+        self.label.setObjectName(u"label")
+        self.label.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+
+        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
+
+        self.label_2 = QLabel(self.gridLayoutWidget)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+
+        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
+
+        self.EingabeKartonhoehe = QLineEdit(self.gridLayoutWidget)
+        self.EingabeKartonhoehe.setObjectName(u"EingabeKartonhoehe")
+        self.EingabeKartonhoehe.setEnabled(False)
+        self.EingabeKartonhoehe.setMinimumSize(QSize(0, 39))
+        self.EingabeKartonhoehe.setMaximumSize(QSize(16777215, 39))
+        self.EingabeKartonhoehe.setInputMethodHints(Qt.InputMethodHint.ImhDigitsOnly)
+        self.EingabeKartonhoehe.setClearButtonEnabled(False)
+
+        self.gridLayout.addWidget(self.EingabeKartonhoehe, 2, 2, 1, 1)
+
+        self.EingabeKartonGewicht = QLineEdit(self.gridLayoutWidget)
+        self.EingabeKartonGewicht.setObjectName(u"EingabeKartonGewicht")
+        self.EingabeKartonGewicht.setEnabled(False)
+        self.EingabeKartonGewicht.setMinimumSize(QSize(0, 39))
+        self.EingabeKartonGewicht.setInputMethodHints(Qt.InputMethodHint.ImhDigitsOnly|Qt.InputMethodHint.ImhFormattedNumbersOnly)
+
+        self.gridLayout.addWidget(self.EingabeKartonGewicht, 3, 2, 1, 1)
+
+        self.EingabePallettenplan = QLineEdit(self.gridLayoutWidget)
+        self.EingabePallettenplan.setObjectName(u"EingabePallettenplan")
+        self.EingabePallettenplan.setMinimumSize(QSize(0, 39))
+        self.EingabePallettenplan.setMaximumSize(QSize(16777215, 39))
+
+        self.gridLayout.addWidget(self.EingabePallettenplan, 0, 2, 1, 1)
 
         self.pushButton_2 = QPushButton(self.MainMenu)
         self.pushButton_2.setObjectName(u"pushButton_2")
@@ -197,15 +201,12 @@ class Ui_Form(object):
         self.settings.setText("")
         self.checkBox.setText(QCoreApplication.translate("Form", u"Einzelpaket", None))
         self.pushButton_3.setText(QCoreApplication.translate("Form", u"Daten Senden", None))
-        self.label_3.setText(QCoreApplication.translate("Form", u"<html><head/><body><p align=\"right\">Kartonh\u00f6he: </p></body></html>", None))
-        self.EingabeStartlage_2.setPlainText("")
-        self.label_4.setText(QCoreApplication.translate("Form", u"<html><head/><body><p align=\"right\">Gewicht: </p></body></html>", None))
-        self.EingabeStartlage_3.setPlainText("")
-        self.label.setText(QCoreApplication.translate("Form", u"<html><head/><body><p align=\"right\">Palletierplan: </p></body></html>", None))
-        self.EingabePallettenplan.setPlainText("")
-        self.EingabePallettenplan.setPlaceholderText(QCoreApplication.translate("Form", u"e.g. 699-00280", None))
-        self.label_2.setText(QCoreApplication.translate("Form", u"<html><head/><body><p align=\"right\">Startlage: </p></body></html>", None))
         self.LadePallettenplan.setText(QCoreApplication.translate("Form", u"Laden", None))
+        self.label_3.setText(QCoreApplication.translate("Form", u"<html><head/><body><p align=\"right\">Kartonh\u00f6he: </p></body></html>", None))
+        self.label_4.setText(QCoreApplication.translate("Form", u"<html><head/><body><p align=\"right\">Gewicht: </p></body></html>", None))
+        self.label.setText(QCoreApplication.translate("Form", u"<html><head/><body><p align=\"right\">Palletierplan: </p></body></html>", None))
+        self.label_2.setText(QCoreApplication.translate("Form", u"<html><head/><body><p align=\"right\">Startlage: </p></body></html>", None))
+        self.EingabePallettenplan.setPlaceholderText(QCoreApplication.translate("Form", u"z.B: 699-00120", None))
         self.pushButton_2.setText(QCoreApplication.translate("Form", u"Parameter Roboter", None))
         self.Button_OpenTerminal.setText(QCoreApplication.translate("Form", u"Open Terminal", None))
         self.Button_OpenExplorer.setText(QCoreApplication.translate("Form", u"Open Explorer", None))
