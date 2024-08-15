@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-#TODO: Implement all functions properly from the old code.
+#TODO: Implement all functions properly from the old code. Maybe finished idk
 #TODO: Implement option for UR10e or UR20 robot. If UR20 is selected robot will have 2 pallets. else only it is like the old code.
 #TODO: Implement seemless palletizing with 2 pallets for UR20 robot.
 
@@ -29,6 +29,13 @@ import subprocess
 import argparse
 import hashlib
 import os
+import time
+import threading
+import socket
+import xmlrpc.client
+from xmlrpc.server import SimpleXMLRPCServer
+from pydub import AudioSegment
+from pydub.playback import play
 from logging.handlers import RotatingFileHandler
 from ui_main_window import Ui_Form  # Import the generated main window class
 from ui_password_entry import Ui_Dialog  # Import the generated dialog class
@@ -152,9 +159,9 @@ class PasswordEntryDialog(QDialog):
     def open_password_dialog(self) -> None:
         dialog = PasswordEntryDialog()
         if dialog.exec() == QDialog.Accepted and dialog.password_accepted:
-            self.open_another_page()
+            self.open_settings_page()
 
-    def open_another_page(self) -> None:
+    def open_settings_page(self) -> None:
         # set page of the stacked widgets to index 2
         self.ui.stackedWidget.setCurrentIndex(2)
 
@@ -324,8 +331,8 @@ def UR_ReadDataFromUsbStick():
  
             return 0                
     except:
-        print("Error")
-        print(FILENAME)
+        logger.error("Error")
+        logger.error(FILENAME)
     return 1
  
  
@@ -383,26 +390,35 @@ def UR_StepBack():
 def UR_Paket_hoehe():
     global ui
     return int(ui.EingabeKartonhoehe.text())
+
 def UR_Startlage():
     global ui
     return ui.EingabeStartlage.value()
+
 def UR_MasseGeschaetzt():
     global ui
     return float(ui.EingabeKartonGewicht.text())
+
 def UR_PickOffsetX():
-    return ui.PickOffsetX()
+    global ui
+    return ui.EingabeVerschiebungX.value()
+
 def UR_PickOffsetY():
-    return ui.PickOffsetY()
+    global ui
+    return ui.EingabeVerschiebungY.value()
+
 def UR_scanner1and2niobild():
-    return ui.scannerio1()
+    return
 def UR_scanner1bild():
-    return ui.scanner1nio1()
+    return
 def UR_scanner2bild():
-    return ui.scanner2nio1()
+    return
 def UR_scanner1and2iobild():
-    return ui.scanner1und2nio1()
+    return
 def UR_Quergreifen():
-    return ui.Quergreifen()
+    global ui
+    logger.debug(f"{ui.checkBoxEinzelpaket.isChecked()=}")
+    return ui.checkBoxEinzelpaket.isChecked()
                  
 def Server_start():
     #server_stop_btn.configure(state="normal")
@@ -516,20 +532,30 @@ def Send_cmd_stop():
         print ('closing socket')
         sock.close()
 
-#################
-# Main function #
-#################
+################
+# UI functions #
+################
 
 
 def open_password_dialog() -> None:
     dialog = PasswordEntryDialog()
     if dialog.exec() == QDialog.Accepted and dialog.password_accepted:
-        open_another_page()
+        open_settings_page()
 
-def open_another_page() -> None:
+def open_settings_page() -> None:
     # set page of the stacked widgets to index 2
     global ui
     ui.stackedWidget.setCurrentIndex(2)
+
+def open_parameter_page() -> None:
+    # set page of the stacked widgets to index 1
+    global ui
+    ui.stackedWidget.setCurrentIndex(1)
+
+def open_main_page() -> None:
+    # set page of the stacked widgets to index 0
+    global ui
+    ui.stackedWidget.setCurrentIndex(0)
 
 def test() -> None:
     print(f"{UR_Paket_hoehe()=}")
@@ -548,18 +574,50 @@ def open_terminal() -> None:
     if sys.platform == "win32":
         subprocess.Popen(["start", "cmd.exe"], shell=True)
     elif sys.platform == "linux":
-        subprocess.Popen(["gnome-terminal", "--window"])
+        subprocess.Popen(["x-terminal-emulator", "--window"])
 
-def open_rob_file() -> None:
+def load() -> None:
     # get the value of the EingabePallettenplan text box and run UR_SET_FILENAME then check if the file exists and if it doesnt open a message box
     global ui
     Artikelnummer = ui.EingabePallettenplan.text()
-    filename = UR_SetFileName(Artikelnummer=Artikelnummer)
-    if os.path.exists(PATH_USB_STICK + filename):
-        pass
-    else:
-        print("File does not exist")
+    UR_SetFileName(Artikelnummer)
+    
+    errorReadDataFromUsbStick = UR_ReadDataFromUsbStick()
 
+    if errorReadDataFromUsbStick == 1:
+        logger.error("Error reading file for {Artikelnummer} no file found")
+        ui.LabelPalletenplanInfo.setText("Kein Plan gefunden")
+        ui.LabelPalletenplanInfo.setStyleSheet("color: red")
+    else:
+        ui.LabelPalletenplanInfo.setText("Plan erfolgreich geladen")
+        ui.LabelPalletenplanInfo.setStyleSheet("color: green")
+        ui.ButtonOpenParameterRoboter.setEnabled(True)
+        ui.ButtonDatenSenden.setEnabled(True)
+        ui.EingabeKartonGewicht.setEnabled(True)
+        ui.EingabeKartonhoehe.setEnabled(True)
+        ui.EingabeStartlage.setEnabled(True)
+        ui.checkBoxEinzelpaket.setEnabled(True)
+
+        Volumen = (g_PaketDim[0] * g_PaketDim[1] * g_PaketDim[2]) / 1E+9 # in m³
+        logger.debug(f"{Volumen=}")
+        Dichte = 1000 # Dichte von Wasser in kg/m³
+        logger.debug(f"{Dichte=}")
+        Ausnutzung = 0.4 # Empirsch ermittelter Faktor - nicht für Gasflaschen
+        logger.debug(f"{Ausnutzung=}")
+        Gew = round(Volumen * Dichte * Ausnutzung, 1) # Gewicht in kg
+        logger.debug(f"{Gew=}")
+        ui.EingabeKartonGewicht.setText(str(Gew))
+        ui.EingabeKartonhoehe.setText(str(g_PaketDim[2]))
+
+def send_data() -> None:
+    global ui
+    Server_thread()
+
+
+
+#################
+# Main function #
+#################
 
 class CustomDoubleValidator(QDoubleValidator):
     def validate(self, input, pos):
@@ -599,8 +657,24 @@ def main():
     float_validator.setDecimals(2)  # Set to desired number of decimals
     ui.EingabeKartonGewicht.setValidator(float_validator)
 
-    ui.settings.clicked.connect(open_password_dialog)
-    ui.LadePallettenplan.clicked.connect(open_rob_file)
+    #Page 1 Buttons
+    ui.ButtonSettings.clicked.connect(open_password_dialog)
+    ui.LadePallettenplan.clicked.connect(load)
+    ui.ButtonOpenParameterRoboter.clicked.connect(open_parameter_page)
+    ui.ButtonDatenSenden.clicked.connect(send_data)
+
+    #Page 2 Buttons
+    # Roboter Tab
+    ui.ButtonZurueck.clicked.connect(open_main_page)
+    ui.ButtonRoboterStart.clicked.connect(Send_cmd_play)
+    ui.ButtonRoboterPause.clicked.connect(Send_cmd_pause)
+    ui.ButtonRoboterStop.clicked.connect(Send_cmd_stop)
+    ui.ButtonStopRPCServer.clicked.connect(Server_stop)
+    # Aufnahme Tab
+    ui.ButtonZurueck_2.clicked.connect(open_main_page)
+    ui.ButtonDatenSenden_2.clicked.connect(send_data)
+
+    # Page 3 Buttons
     ui.Button_OpenExplorer.clicked.connect(open_explorer)
     ui.Button_OpenTerminal.clicked.connect(open_terminal)
 
@@ -628,7 +702,7 @@ def main():
     main_window.keyPressEvent = handle_key_press_event
     
     main_window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 if __name__ == "__main__":
     main()
