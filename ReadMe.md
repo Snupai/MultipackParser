@@ -5,7 +5,6 @@ MultipackParser is a tool designed to efficiently parse and manage multi-pack fi
 ## Features
 
 - Efficient multi-pack file parsing.
-- Easy-to-use API for developers.
 - Lightweight and performant.
 - Compatible with standard Raspberry Pi distributions.
 
