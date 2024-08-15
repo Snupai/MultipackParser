@@ -13,7 +13,7 @@ MultipackParser is a tool designed to efficiently parse and manage multi-pack fi
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/YourUsername/MultipackParser.git
+git clone https://github.com/Snupai/MultipackParser.git
 cd MultipackParser
 ```
 
