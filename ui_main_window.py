@@ -296,7 +296,7 @@ class Ui_Form(object):
         self.Settings.setObjectName(u"Settings")
         self.gridLayoutWidget_2 = QWidget(self.Settings)
         self.gridLayoutWidget_2.setObjectName(u"gridLayoutWidget_2")
-        self.gridLayoutWidget_2.setGeometry(QRect(20, 20, 1041, 341))
+        self.gridLayoutWidget_2.setGeometry(QRect(100, 20, 961, 341))
         self.gridLayout_2 = QGridLayout(self.gridLayoutWidget_2)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -316,13 +316,19 @@ class Ui_Form(object):
 
         self.gridLayout_2.addItem(self.horizontalSpacer, 0, 1, 1, 1)
 
+        self.ButtonZurueck_3 = QPushButton(self.Settings)
+        self.ButtonZurueck_3.setObjectName(u"ButtonZurueck_3")
+        self.ButtonZurueck_3.setGeometry(QRect(0, 150, 81, 81))
+        self.ButtonZurueck_3.setIcon(icon2)
+        self.ButtonZurueck_3.setIconSize(QSize(81, 81))
+        self.ButtonZurueck_3.setFlat(True)
         self.stackedWidget.addWidget(self.Settings)
 
         self.retranslateUi(Form)
 
-        self.stackedWidget.setCurrentIndex(1)
+        self.stackedWidget.setCurrentIndex(0)
         self.ButtonSettings.setDefault(False)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(Form)
@@ -367,5 +373,6 @@ class Ui_Form(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Aufnahme), QCoreApplication.translate("Form", u"Aufnahme", None))
         self.Button_OpenTerminal.setText(QCoreApplication.translate("Form", u"Open Terminal", None))
         self.Button_OpenExplorer.setText(QCoreApplication.translate("Form", u"Open Explorer", None))
+        self.ButtonZurueck_3.setText("")
     # retranslateUi
 

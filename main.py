@@ -134,80 +134,6 @@ class PasswordEntryDialog(QDialog):
         super().reject()
 
 
-# Define the main window class
-""" class MainWindow(QMainWindow):
-    def __init__(self) -> None:
-        super(MainWindow, self).__init__()
-        self.ui = Ui_Form()
-        self.ui.setupUi(self)
-        self.ui.stackedWidget.setCurrentIndex(0)
-        # Connect the button to open the dialog
-        self.ui.settings.clicked.connect(self.open_password_dialog)
-        self.ui.LadePallettenplan.clicked.connect(self.test)
-
-        # Page 2
-        self.ui.Button_OpenExplorer.clicked.connect(self.open_explorer)
-        self.ui.Button_OpenTerminal.clicked.connect(self.open_terminal)
-
-        # Install an event filter for key events
-        self.allow_close = False
-
-    ####################
-    # Page 0 functions #
-    ####################
-
-    def open_password_dialog(self) -> None:
-        dialog = PasswordEntryDialog()
-        if dialog.exec() == QDialog.Accepted and dialog.password_accepted:
-            self.open_settings_page()
-
-    def open_settings_page(self) -> None:
-        # set page of the stacked widgets to index 2
-        self.ui.stackedWidget.setCurrentIndex(2)
-
-    def test(self) -> None:
-        print(UR_Paket_hoehe())
-
-    ####################
-    # Page 1 functions #
-    ####################
-
-    # spceholder
-
-    ####################
-    # Page 2 functions #
-    ####################
-
-    def open_explorer(self) -> None:
-        logger.info("Opening explorer")
-        if sys.platform == "win32":
-            subprocess.Popen(["explorer.exe"])
-        elif sys.platform == "linux":
-            subprocess.Popen(["xdg-open", "."])
-
-    def open_terminal(self) -> None:
-        logger.info("Opening terminal")
-        if sys.platform == "win32":
-            subprocess.Popen(["start", "cmd.exe"], shell=True)
-        elif sys.platform == "linux":
-            subprocess.Popen(["gnome-terminal", "--window"])
-
-    ################
-    # Event filter #
-    ################
-
-    def closeEvent(self, event):
-        if self.allow_close:
-            event.accept()
-        else:
-            event.ignore()
-
-    def keyPressEvent(self, event):
-        # Check for the key combination Ctrl + Alt + Shift + C
-        if (event.modifiers() == (Qt.ControlModifier | Qt.AltModifier | Qt.ShiftModifier) and 
-            event.key() == Qt.Key_C):
-            self.allow_close = True
-            self.close() """
 
 ####################
 # Random functions #
@@ -219,7 +145,7 @@ def UR_SetFileName(Artikelnummer):
     global FILENAME
     
     FILENAME = (Artikelnummer + '.rob')
-    #print(FILENAME)    
+    logger.debug(f"{FILENAME=}")
     return FILENAME 
  
  
@@ -331,8 +257,7 @@ def UR_ReadDataFromUsbStick():
  
             return 0                
     except:
-        logger.error("Error")
-        logger.error(FILENAME)
+        logger.error(f"Error reading file {FILENAME}")
     return 1
  
  
@@ -383,30 +308,36 @@ def UR_CoG(Masse_Paket,Masse_Greifer,Anzahl_Pakete=1):
 def UR_StepBack():
     file = AudioSegment.from_file(file = PATH_BILDER + "stepback.mp3", format = "mp3")
     play(file)
-        
     return
 
 
 def UR_Paket_hoehe():
     global ui
-    return int(ui.EingabeKartonhoehe.text())
+    g_PaketDim[2] = int(ui.EingabeKartonhoehe.text())
+    return g_PaketDim[2]
 
 def UR_Startlage():
     global ui
-    return ui.EingabeStartlage.value()
+    g_Startlage = int(ui.EingabeStartlage.value())
+    return g_Startlage
 
 def UR_MasseGeschaetzt():
     global ui
-    return float(ui.EingabeKartonGewicht.text())
+    g_MassePaket = float(ui.EingabeKartonGewicht.text())
+    return g_MassePaket
 
 def UR_PickOffsetX():
     global ui
-    return ui.EingabeVerschiebungX.value()
+    g_Pick_Offset_X = int(ui.EingabeVerschiebungX.value())
+    return g_Pick_Offset_X
 
 def UR_PickOffsetY():
     global ui
-    return ui.EingabeVerschiebungY.value()
+    g_Pick_Offset_Y = int(ui.EingabeVerschiebungY.value())
+    return g_Pick_Offset_Y
 
+################################################################
+# idk mit den scnnern
 def UR_scanner1and2niobild():
     return
 def UR_scanner1bild():
@@ -415,6 +346,8 @@ def UR_scanner2bild():
     return
 def UR_scanner1and2iobild():
     return
+################################################################
+
 def UR_Quergreifen():
     global ui
     logger.debug(f"{ui.checkBoxEinzelpaket.isChecked()=}")
@@ -557,11 +490,6 @@ def open_main_page() -> None:
     global ui
     ui.stackedWidget.setCurrentIndex(0)
 
-def test() -> None:
-    print(f"{UR_Paket_hoehe()=}")
-    print(f"{UR_MasseGeschaetzt()=}")
-    print(f"{UR_Startlage()=}")
-
 def open_explorer() -> None:
     logger.info("Opening explorer")
     if sys.platform == "win32":
@@ -585,10 +513,11 @@ def load() -> None:
     errorReadDataFromUsbStick = UR_ReadDataFromUsbStick()
 
     if errorReadDataFromUsbStick == 1:
-        logger.error("Error reading file for {Artikelnummer} no file found")
+        logger.error(f"Error reading file for {Artikelnummer=} no file found")
         ui.LabelPalletenplanInfo.setText("Kein Plan gefunden")
         ui.LabelPalletenplanInfo.setStyleSheet("color: red")
     else:
+        logger.debug(f"File for {Artikelnummer=} found")
         ui.LabelPalletenplanInfo.setText("Plan erfolgreich geladen")
         ui.LabelPalletenplanInfo.setStyleSheet("color: green")
         ui.ButtonOpenParameterRoboter.setEnabled(True)
@@ -675,6 +604,7 @@ def main():
     ui.ButtonDatenSenden_2.clicked.connect(send_data)
 
     # Page 3 Buttons
+    ui.ButtonZurueck_3.clicked.connect(open_main_page)
     ui.Button_OpenExplorer.clicked.connect(open_explorer)
     ui.Button_OpenTerminal.clicked.connect(open_terminal)
 

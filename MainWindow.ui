@@ -165,7 +165,7 @@
     <enum>QFrame::Shape::NoFrame</enum>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="MainMenu">
     <widget class="QPushButton" name="ButtonSettings">
@@ -653,7 +653,7 @@
       <enum>QTabWidget::TabShape::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="Roboter">
       <attribute name="title">
@@ -1013,9 +1013,9 @@
     <widget class="QWidget" name="gridLayoutWidget_2">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>100</x>
        <y>20</y>
-       <width>1041</width>
+       <width>961</width>
        <height>341</height>
       </rect>
      </property>
@@ -1060,6 +1060,32 @@
        </spacer>
       </item>
      </layout>
+    </widget>
+    <widget class="QPushButton" name="ButtonZurueck_3">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>150</y>
+       <width>81</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="MainWindowResources.qrc">
+       <normaloff>:/Misc/imgs/zurueck.png</normaloff>:/Misc/imgs/zurueck.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>81</width>
+       <height>81</height>
+      </size>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
     </widget>
    </widget>
   </widget>
