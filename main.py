@@ -533,9 +533,9 @@ def load() -> None:
         logger.debug(f"{Dichte=}")
         Ausnutzung = 0.4 # Empirsch ermittelter Faktor - nicht für Gasflaschen
         logger.debug(f"{Ausnutzung=}")
-        Gew = round(Volumen * Dichte * Ausnutzung, 1) # Gewicht in kg
-        logger.debug(f"{Gew=}")
-        ui.EingabeKartonGewicht.setText(str(Gew))
+        Gewicht = round(Volumen * Dichte * Ausnutzung, 1) # Gewicht in kg
+        logger.debug(f"{Gewicht=}")
+        ui.EingabeKartonGewicht.setText(str(Gewicht))
         ui.EingabeKartonhoehe.setText(str(g_PaketDim[2]))
 
 def send_data() -> None:
