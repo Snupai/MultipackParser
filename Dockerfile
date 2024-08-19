@@ -31,11 +31,12 @@ RUN apt-get update && apt-get install -y \
     libxcb-cursor0 \
     libegl1 \
     ccache \
+    ffmpeg \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PySide6 and pyside6-deploy
-RUN pip install PySide6 Nuitka==2.3.2 ordered-set zstandard pydub
+RUN pip install PySide6 pydub Nuitka==2.3.2 ordered-set zstandard
 
 # Run pyside6-deploy to create the executable
 RUN yes | pyside6-deploy -c pysidedeploy.spec
