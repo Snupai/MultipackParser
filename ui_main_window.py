@@ -204,6 +204,7 @@ class Ui_Form(object):
         self.ButtonZurueck = QPushButton(self.Roboter)
         self.ButtonZurueck.setObjectName(u"ButtonZurueck")
         self.ButtonZurueck.setGeometry(QRect(0, 140, 81, 81))
+        self.ButtonZurueck.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         icon2 = QIcon()
         icon2.addFile(u":/Misc/imgs/zurueck.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.ButtonZurueck.setIcon(icon2)
@@ -223,6 +224,7 @@ class Ui_Form(object):
         self.ButtonRoboterStop.setSizePolicy(sizePolicy)
         self.ButtonRoboterStop.setMaximumSize(QSize(350, 16777215))
         self.ButtonRoboterStop.setFont(font1)
+        self.ButtonRoboterStop.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.ButtonRoboterStart = QPushButton(self.Roboter)
         self.ButtonRoboterStart.setObjectName(u"ButtonRoboterStart")
         self.ButtonRoboterStart.setGeometry(QRect(100, 70, 341, 71))
@@ -231,6 +233,7 @@ class Ui_Form(object):
         self.ButtonRoboterStart.setMinimumSize(QSize(300, 0))
         self.ButtonRoboterStart.setMaximumSize(QSize(350, 16777215))
         self.ButtonRoboterStart.setFont(font1)
+        self.ButtonRoboterStart.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.ButtonStopRPCServer = QPushButton(self.Roboter)
         self.ButtonStopRPCServer.setObjectName(u"ButtonStopRPCServer")
         self.ButtonStopRPCServer.setGeometry(QRect(700, 220, 341, 71))
@@ -238,6 +241,7 @@ class Ui_Form(object):
         self.ButtonStopRPCServer.setSizePolicy(sizePolicy)
         self.ButtonStopRPCServer.setMaximumSize(QSize(350, 16777215))
         self.ButtonStopRPCServer.setFont(font1)
+        self.ButtonStopRPCServer.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.ButtonRoboterPause = QPushButton(self.Roboter)
         self.ButtonRoboterPause.setObjectName(u"ButtonRoboterPause")
         self.ButtonRoboterPause.setGeometry(QRect(100, 220, 341, 71))
@@ -245,6 +249,7 @@ class Ui_Form(object):
         self.ButtonRoboterPause.setSizePolicy(sizePolicy)
         self.ButtonRoboterPause.setMaximumSize(QSize(350, 16777215))
         self.ButtonRoboterPause.setFont(font1)
+        self.ButtonRoboterPause.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.tabWidget.addTab(self.Roboter, "")
         self.ImageSzaidelLogoBig.raise_()
         self.ButtonZurueck.raise_()
@@ -257,6 +262,7 @@ class Ui_Form(object):
         self.ButtonZurueck_2 = QPushButton(self.Aufnahme)
         self.ButtonZurueck_2.setObjectName(u"ButtonZurueck_2")
         self.ButtonZurueck_2.setGeometry(QRect(0, 140, 81, 81))
+        self.ButtonZurueck_2.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.ButtonZurueck_2.setIcon(icon2)
         self.ButtonZurueck_2.setIconSize(QSize(81, 81))
         self.ButtonZurueck_2.setFlat(True)
@@ -303,12 +309,14 @@ class Ui_Form(object):
         self.Button_OpenTerminal = QPushButton(self.gridLayoutWidget_2)
         self.Button_OpenTerminal.setObjectName(u"Button_OpenTerminal")
         self.Button_OpenTerminal.setFont(font1)
+        self.Button_OpenTerminal.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 
         self.gridLayout_2.addWidget(self.Button_OpenTerminal, 1, 0, 1, 1)
 
         self.Button_OpenExplorer = QPushButton(self.gridLayoutWidget_2)
         self.Button_OpenExplorer.setObjectName(u"Button_OpenExplorer")
         self.Button_OpenExplorer.setFont(font1)
+        self.Button_OpenExplorer.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 
         self.gridLayout_2.addWidget(self.Button_OpenExplorer, 0, 0, 1, 1)
 
@@ -319,6 +327,7 @@ class Ui_Form(object):
         self.ButtonZurueck_3 = QPushButton(self.Settings)
         self.ButtonZurueck_3.setObjectName(u"ButtonZurueck_3")
         self.ButtonZurueck_3.setGeometry(QRect(0, 150, 81, 81))
+        self.ButtonZurueck_3.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.ButtonZurueck_3.setIcon(icon2)
         self.ButtonZurueck_3.setIconSize(QSize(81, 81))
         self.ButtonZurueck_3.setFlat(True)
@@ -328,7 +337,7 @@ class Ui_Form(object):
 
         self.stackedWidget.setCurrentIndex(0)
         self.ButtonSettings.setDefault(False)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(Form)
