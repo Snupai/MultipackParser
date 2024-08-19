@@ -20,7 +20,7 @@
 #TODO: Implement seemless palletizing with 2 pallets for UR20 robot.
 
 
-from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QWidget
+from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QWidget, QCompleter
 from PySide6.QtCore import Qt, QEvent
 from PySide6.QtGui import QIntValidator, QDoubleValidator
 import sys
@@ -517,6 +517,8 @@ def load() -> None:
         ui.LabelPalletenplanInfo.setText("Kein Plan gefunden")
         ui.LabelPalletenplanInfo.setStyleSheet("color: red")
     else:
+        # remove the editing focus from the text box
+        ui.EingabePallettenplan.clearFocus()
         logger.debug(f"File for {Artikelnummer=} found")
         ui.LabelPalletenplanInfo.setText("Plan erfolgreich geladen")
         ui.LabelPalletenplanInfo.setStyleSheet("color: green")
@@ -541,6 +543,13 @@ def load() -> None:
 def send_data() -> None:
     global ui
     Server_thread()
+
+def load_wordlist() -> list:
+    wordlist = []
+    for file in os.listdir(PATH_USB_STICK):
+        if file.endswith(".rob"):
+            wordlist.append(file[:-4])
+    return wordlist
 
 
 
@@ -576,6 +585,10 @@ def main():
     ui.setupUi(main_window)
     ui.stackedWidget.setCurrentIndex(0)
 
+    wordlist = load_wordlist()
+    completer = QCompleter(wordlist, main_window)
+    ui.EingabePallettenplan.setCompleter(completer)
+
     # Apply QIntValidator to restrict the input to only integers
     int_validator = QIntValidator()
     ui.EingabeKartonhoehe.setValidator(int_validator)
@@ -585,6 +598,9 @@ def main():
     float_validator.setNotation(QDoubleValidator.StandardNotation)
     float_validator.setDecimals(2)  # Set to desired number of decimals
     ui.EingabeKartonGewicht.setValidator(float_validator)
+
+    # if the user entered a Artikelnummer in the text box and presses enter it calls the load function
+    ui.EingabePallettenplan.returnPressed.connect(load)
 
     #Page 1 Buttons
     ui.ButtonSettings.clicked.connect(open_password_dialog)
@@ -626,6 +642,19 @@ def main():
             event.key() == Qt.Key_C):
             allow_close = True
             main_window.close()
+        elif (event.modifiers() == (Qt.ControlModifier | Qt.AltModifier) and 
+            event.key() == Qt.Key_N):
+            messageBox = QMessageBox()
+            messageBox.setWindowTitle("Multipack Parser")
+            messageBox.setTextFormat(Qt.TextFormat.RichText)
+            messageBox.setText('''
+            <div style="text-align: center;">
+            Yann-Luca Näher - \u00a9 2024<br>
+            <a href="https://github.com/Snupai">Github</a>
+            </div>''')
+            messageBox.setStandardButtons(QMessageBox.Ok)
+            messageBox.setDefaultButton(QMessageBox.Ok)
+            messageBox.exec()
         return True
 
     main_window.closeEvent = allow_close_event
