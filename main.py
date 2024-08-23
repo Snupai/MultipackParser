@@ -41,6 +41,9 @@ from ui_main_window import Ui_Form  # Import the generated main window class
 from ui_password_entry import Ui_Dialog  # Import the generated dialog class
 from typing import NoReturn
 
+os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
+
+
 VERSION = '0.0.1'
 
 # IP Address of the Robot - Set to localhost only for testing
@@ -48,12 +51,11 @@ robot_ip = '192.168.0.1' # DO NOT CHANGE
  
 # Konstanten
 #PATH_USB_STICK     = 'E:\'
-PATH_USB_STICK  = '' 
-PATH_BILDER = f'{os.path.dirname(os.path.realpath(__file__))}/imgs/' # Bekomme den Pfad zu diesem Skript und setze den Pfad auf den Ordner cwd/imgs/
+PATH_USB_STICK  = ''
  
 if PATH_USB_STICK == '':
     # Bekomme CWD und setze den Pfad auf den Überordner
-    PATH_USB_STICK = f'{os.path.dirname(os.path.dirname(os.path.realpath(__file__)))}/' 
+    PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' 
  
 # Konstanten für Datenstruktur
 #List Index
@@ -96,7 +98,7 @@ log_handler.setFormatter(log_formatter)
 console_handler = logging.StreamHandler(sys.stdout)
 console_handler.setFormatter(log_formatter)
 
-logging.basicConfig(level=logging.DEBUG, handlers=[log_handler, console_handler])
+logging.basicConfig(level=logging.INFO, handlers=[log_handler, console_handler])
 logger = logging.getLogger(__name__)
 
 # Define the password entry dialog class
@@ -483,6 +485,7 @@ def open_settings_page() -> None:
 def open_parameter_page() -> None:
     # set page of the stacked widgets to index 1
     global ui
+    ui.tabWidget.setCurrentIndex(0)
     ui.stackedWidget.setCurrentIndex(1)
 
 def open_main_page() -> None:
@@ -546,9 +549,12 @@ def send_data() -> None:
 
 def load_wordlist() -> list:
     wordlist = []
+    count = 0
     for file in os.listdir(PATH_USB_STICK):
         if file.endswith(".rob"):
             wordlist.append(file[:-4])
+            count = count + 1
+    logger.debug(f"{count=}")
     return wordlist
 
 
@@ -570,13 +576,31 @@ class CustomDoubleValidator(QDoubleValidator):
 
 # Main function to run the application
 def main():
+    global PATH_USB_STICK
     parser = argparse.ArgumentParser(description="Multipack Parser Application")
     parser.add_argument('--version', action='store_true', help='Show version information and exit')
+    parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose logging')
+    parser.add_argument('--rob-path', type=str, help='Path to the .rob files')
     args = parser.parse_args()
 
     if args.version:
         print(f"Multipack Parser Application Version: {VERSION}")
         return
+    if args.verbose:
+        # enable verbose logging
+        logger.setLevel(logging.DEBUG)
+    if args.rob_path:
+        # try to check if the path is valid
+        if os.path.exists(args.rob_path):
+            # set the path to the .rob files
+            PATH_USB_STICK = args.rob_path
+        else:
+            logger.error(f"Path {args.rob_path} does not exist")
+            return
+
+    logger.debug(f"{sys.argv=}")
+    logger.debug(f"{VERSION=}")
+    logger.debug(f"{PATH_USB_STICK=}")
 
     app = QApplication(sys.argv)
     main_window = QMainWindow()

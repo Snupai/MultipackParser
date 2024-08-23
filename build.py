@@ -8,7 +8,7 @@ import zipfile
 import webbrowser
 
 # Define architectures and image name
-architectures = ['linux/amd64', 'linux/arm64']
+architectures = ['linux/arm64']
 image_name = 'my_pyside_app'
 output_dir = './local_dist'
 

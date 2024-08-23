@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Use an official Python runtime as a parent image
-FROM python:3.11
+FROM arm64v8/python:3.11
 
 # Set the working directory in the container
 WORKDIR /app
@@ -38,8 +38,11 @@ RUN apt-get update && apt-get install -y \
 # Install PySide6 and pyside6-deploy
 RUN pip install PySide6 pydub Nuitka==2.3.2 ordered-set zstandard
 
-# Run pyside6-deploy to create the executable
-RUN yes | pyside6-deploy -c pysidedeploy.spec
+# Set environment variable for Qt Virtual Keyboard
+ENV QT_IM_MODULE=qtvirtualkeyboard
+
+# Run pyside6-deploy to create the executable with Qt Virtual Keyboard
+RUN yes | pyside6-deploy -c pysidedeploy.spec --extra-modules=QtVirtualKeyboard
 
 # Command to run the application
 CMD ["./main.bin"]
