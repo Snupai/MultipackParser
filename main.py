@@ -44,7 +44,7 @@ from typing import NoReturn
 os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
 
-VERSION = '0.0.1'
+VERSION = '1.5.0_beta'
 
 # IP Address of the Robot - Set to localhost only for testing
 robot_ip = '192.168.0.1' # DO NOT CHANGE
