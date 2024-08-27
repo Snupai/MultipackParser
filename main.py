@@ -41,7 +41,8 @@ from ui_main_window import Ui_Form  # Import the generated main window class
 from ui_password_entry import Ui_Dialog  # Import the generated dialog class
 from typing import NoReturn
 
-os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
+# BUG: QtVirtualKeyboard does not work on Linux 
+# os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
 
 VERSION = '1.5.0-alpha'
