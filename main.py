@@ -20,6 +20,10 @@
 #TODO: Implement seemless palletizing with 2 pallets for UR20 robot.
 
 
+# import the needed qml modules for the virtual keyboard to work
+from PySide6.QtQml import QQmlApplicationEngine
+from PySide6.QtQuick import QQuickView
+################################################################
 from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QWidget, QCompleter
 from PySide6.QtCore import Qt, QEvent
 from PySide6.QtGui import QIntValidator, QDoubleValidator
@@ -42,8 +46,7 @@ from ui_password_entry import Ui_Dialog  # Import the generated dialog class
 from typing import NoReturn
 
 # BUG: QtVirtualKeyboard does not work on Linux 
-# os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
-
+os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
 VERSION = '1.5.0-alpha'
 
@@ -342,12 +345,16 @@ def UR_PickOffsetY():
 ################################################################
 # idk mit den scnnern
 def UR_scanner1and2niobild():
+    # TODO: Implement show image function to show the scanner image 1and2niobild
     return
 def UR_scanner1bild():
+    # TODO: Implement show image function to show the scanner image 1niobild
     return
 def UR_scanner2bild():
+    # TODO: Implement show image function to show the scanner image 2niobild
     return
 def UR_scanner1and2iobild():
+    # TODO: Implement show image function to show the scanner image 1and2iobild
     return
 ################################################################
 
