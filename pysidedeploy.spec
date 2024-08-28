@@ -19,7 +19,7 @@ python_path =
 # python packages to install
 # ordered-set = increase compile time performance of nuitka packaging
 # zstandard = provides final executable size optimization
-packages = Nuitka==2.3.2, ordered-set, zstandard
+packages = Nuitka==2.3.2
 # buildozer = for deploying Android application
 android_packages = buildozer==1.5.0,cython==0.29.33
 
@@ -30,9 +30,9 @@ qml_files =
 # excluded qml plugin binaries
 excluded_qml_plugins = 
 # qt modules used. comma separated
-modules = Gui,Core,Widgets
+modules = Gui,Widgets,Core,Quick,VirtualKeyboard
 # qt plugins used by the application
-plugins = imageformats,platformthemes,platforminputcontexts,platforms/darwin,egldeviceintegrations,iconengines,generic,styles,accessiblebridge,xcbglintegrations,platforms,virtualkeyboard
+plugins = xcbglintegrations,platforminputcontexts/qtvirtualkeyboard,platforms,iconengines,accessiblebridge,styles,platformthemes,generic,egldeviceintegrations,imageformats
 
 [android]
 # path to pyside wheel
@@ -68,5 +68,5 @@ sdk_path =
 local_libs = 
 # architecture of deployed platform
 # possible values = ["aarch64", "armv7a", "i686", "x86_64"]
-arch = 
+arch = aarch64
 

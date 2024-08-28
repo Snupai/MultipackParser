@@ -35,6 +35,13 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Install necessary packages for virtual keyboard modules
+RUN apt-get update && apt-get install -y \
+    qml-module-qtquick-virtualkeyboard \
+    qml-module-qtquick-layouts \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install PySide6 and pyside6-deploy
 RUN pip install PySide6 pydub Nuitka==2.3.2 ordered-set zstandard
 

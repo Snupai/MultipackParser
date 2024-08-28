@@ -285,3 +285,6 @@ $RECYCLE.BIN/
 
 # Ignore the local_dist directory
 local_dist/
+
+#Ignore the .zip files
+*.zip
