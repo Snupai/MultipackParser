@@ -26,7 +26,7 @@ from PySide6.QtQuick import QQuickView
 ################################################################
 from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QWidget, QCompleter
 from PySide6.QtCore import Qt, QEvent
-from PySide6.QtGui import QIntValidator, QDoubleValidator
+from PySide6.QtGui import QIntValidator, QDoubleValidator, QPixmap
 import sys
 import logging
 import subprocess
@@ -44,6 +44,7 @@ from logging.handlers import RotatingFileHandler
 from ui_main_window import Ui_Form  # Import the generated main window class
 from ui_password_entry import Ui_Dialog  # Import the generated dialog class
 from typing import NoReturn
+import MainWindowResources_rc
 
 # BUG: QtVirtualKeyboard does not work on Linux 
 os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
@@ -345,16 +346,20 @@ def UR_PickOffsetY():
 ################################################################
 # idk mit den scnnern
 def UR_scanner1and2niobild():
-    # TODO: Implement show image function to show the scanner image 1and2niobild
+    global ui
+    ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner1&2nio.png'))
     return
 def UR_scanner1bild():
-    # TODO: Implement show image function to show the scanner image 1niobild
+    global ui
+    ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner1nio.png'))
     return
 def UR_scanner2bild():
-    # TODO: Implement show image function to show the scanner image 2niobild
+    global ui
+    ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner2nio.png'))
     return
 def UR_scanner1and2iobild():
-    # TODO: Implement show image function to show the scanner image 1and2iobild
+    global ui
+    ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scannerio.png'))
     return
 ################################################################
 
