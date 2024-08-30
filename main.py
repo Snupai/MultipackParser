@@ -15,7 +15,6 @@
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-#TODO: Implement all functions properly from the old code. Maybe finished idk
 #TODO: Implement option for UR10e or UR20 robot. If UR20 is selected robot will have 2 pallets. else only it is like the old code.
 #TODO: Implement seemless palletizing with 2 pallets for UR20 robot.
 
@@ -49,7 +48,7 @@ import MainWindowResources_rc
 # BUG: QtVirtualKeyboard does not work on Linux 
 os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
-VERSION = '1.5.0-alpha'
+VERSION = '1.5.1-alpha'
 
 # IP Address of the Robot - Set to localhost only for testing
 robot_ip = '192.168.0.1' # DO NOT CHANGE
