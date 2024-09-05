@@ -24,7 +24,7 @@ from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickView
 ################################################################
 from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QWidget, QCompleter
-from PySide6.QtCore import Qt, QEvent
+from PySide6.QtCore import Qt, QEvent, QFileSystemWatcher
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QPixmap
 import sys
 import logging
@@ -48,7 +48,7 @@ import MainWindowResources_rc
 # BUG: QtVirtualKeyboard does not work on Linux 
 os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
-VERSION = '1.5.1-alpha'
+VERSION = '1.5.2-alpha'
 
 # IP Address of the Robot - Set to localhost only for testing
 robot_ip = '192.168.0.1' # DO NOT CHANGE
@@ -621,9 +621,16 @@ def main():
     ui.setupUi(main_window)
     ui.stackedWidget.setCurrentIndex(0)
 
+    def update_wordlist():
+        new_wordlist = load_wordlist()
+        completer.model().setStringList(new_wordlist)
+
     wordlist = load_wordlist()
     completer = QCompleter(wordlist, main_window)
     ui.EingabePallettenplan.setCompleter(completer)
+
+    file_watcher = QFileSystemWatcher([PATH_USB_STICK], main_window)
+    file_watcher.directoryChanged.connect(update_wordlist)
 
     # Apply QIntValidator to restrict the input to only integers
     int_validator = QIntValidator()
