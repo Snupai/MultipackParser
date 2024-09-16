@@ -282,3 +282,9 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,linux,python,qt,venv
+
+# Ignore the local_dist directory
+local_dist/
+
+#Ignore the .zip files
+*.zip

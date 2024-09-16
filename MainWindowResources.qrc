@@ -1,0 +1,22 @@
+<RCC>
+  <qresource prefix="Icon">
+    <file>pallet.ico</file>
+  </qresource>
+  <qresource prefix="Szaidel Logo">
+    <file>imgs/logoszaidel-transparent-big.png</file>
+    <file>imgs/szaidel-transparent.png</file>
+  </qresource>
+  <qresource prefix="ScannerUR10e">
+    <file>imgs/scanner1&amp;2nio.png</file>
+    <file>imgs/scanner1nio.png</file>
+    <file>imgs/scanner2nio.png</file>
+    <file>imgs/scannerio.png</file>
+  </qresource>
+  <qresource prefix="Misc">
+    <file>imgs/load.png</file>
+    <file>imgs/zurueck.png</file>
+  </qresource>
+  <qresource prefix="Aufnahme">
+    <file>imgs/Aufnahmepos.png</file>
+  </qresource>
+</RCC>
