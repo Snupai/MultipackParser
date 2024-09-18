@@ -40,15 +40,14 @@ from xmlrpc.server import SimpleXMLRPCServer
 from pydub import AudioSegment
 from pydub.playback import play
 from logging.handlers import RotatingFileHandler
-from ui_main_window import Ui_Form  # Import the generated main window class
-from ui_password_entry import Ui_Dialog  # Import the generated dialog class
 from typing import NoReturn
-import MainWindowResources_rc
+
+from ui_files import *
 from utils import global_vars
 from utils import UR10_Server_functions as UR10
 
 # BUG: QtVirtualKeyboard does not work on Linux 
-os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
+#os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
 # global_vars.PATH_USB_STICK = 'E:\' # Pfad zu den .rob Dateien nur auskommentieren zum testen
  
