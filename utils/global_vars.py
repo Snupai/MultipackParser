@@ -1,5 +1,23 @@
 # Globals
 
+import logging
+from logging.handlers import RotatingFileHandler
+
+# Setup logging
+log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+log_handler = RotatingFileHandler('app.log', maxBytes=5*1024*1024, backupCount=2)
+log_handler.setFormatter(log_formatter)
+
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(log_formatter)
+
+logger = logging.getLogger('multipack_parser')  # Create a named logger
+logger.setLevel(logging.DEBUG)  # Set default logging level
+logger.addHandler(log_handler)
+logger.addHandler(console_handler)
+
+# Variables
+
 VERSION = '1.5.2-alpha'
 
 robot_ip = '192.168.0.1' # DO NOT CHANGE
@@ -23,7 +41,6 @@ g_MassePaket = None
 g_Pick_Offset_X = None
 g_Pick_Offset_Y = None
 ui = None
-logger = None
 
 # Konstanten für Datenstruktur
 #List Index
