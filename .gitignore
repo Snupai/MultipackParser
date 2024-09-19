@@ -288,3 +288,5 @@ local_dist/
 
 #Ignore the .zip files
 *.zip
+
+*.bin

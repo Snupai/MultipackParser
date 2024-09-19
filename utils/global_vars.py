@@ -12,11 +12,18 @@ console_handler = logging.StreamHandler()
 console_handler.setFormatter(log_formatter)
 
 logger = logging.getLogger('multipack_parser')  # Create a named logger
-logger.setLevel(logging.DEBUG)  # Set default logging level
+logger.setLevel(logging.INFO)  # Set default logging level
 logger.addHandler(log_handler)
 logger.addHandler(console_handler)
 
+#######################################
+# Settings
+
+settings = None
+
 # Variables
+
+settings_file = 'MultipackParser.conf'
 
 VERSION = '1.5.2-alpha'
 

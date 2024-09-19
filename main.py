@@ -38,9 +38,10 @@ import xmlrpc.client
 from xmlrpc.server import SimpleXMLRPCServer
 from pydub import AudioSegment
 from pydub.playback import play
+import logging
 
 from ui_files import Ui_Form, MainWindowResources_rc, PasswordEntryDialog
-from utils import global_vars
+from utils import global_vars, Settings
 from utils import UR10_Server_functions as UR10
 
 # BUG: QtVirtualKeyboard does not work on Linux 
@@ -256,7 +257,10 @@ def load_wordlist() -> list:
     logger.debug(f"Wordlist {count=}")
     return wordlist
 
-
+def init_settings():
+    global_vars.settings = Settings()
+    settings = global_vars.settings
+    logger.debug(f"Settings: {settings}")
 
 #################
 # Main function #
@@ -388,6 +392,8 @@ def main():
     main_window.closeEvent = allow_close_event
     main_window.keyPressEvent = handle_key_press_event
     
+    init_settings()
+
     main_window.show()
     sys.exit(app.exec())
 
