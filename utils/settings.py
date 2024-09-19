@@ -5,9 +5,11 @@ import tomli_w
 import os
 import subprocess
 import pickle
-
+import base64
 class Settings:
-    def __init__(self, settings_file='MultipackParser.conf'):
+    def __init__(self):
+        self.settings_file ='MultipackParser.conf'
+        print(f"Initializing settings with file: {self.settings_file}")  # Debug statement
         self.settings = {
                 "display": {
                     "width": 800,
@@ -28,16 +30,22 @@ class Settings:
                     "debug": False
                 },
                 "info": {
+                    "UR_Model": "N/A",
+                    "UR_Serial_Number": "N/A",
+                    "UR_Manufacturing_Date": "N/A",
+                    "UR_Software_Version": "N/A",
+                    "Pallettierer_Name": "N/A",
+                    "Pallettierer_Standort": "N/A",
                     "number_of_plans": 0,
                     "number_of_use_cycles": 0,
                     "last_restart": "Never"
                 }
         }
 
-        if not os.path.exists(settings_file):
-            self.save_settings(settings_file)
+        if not os.path.exists(self.settings_file):
+            self.save_settings()
         else: 
-            self.load_settings(settings_file)
+            self.load_settings()
     
     def getDisplayModel(self):
         try:
@@ -98,16 +106,28 @@ class Settings:
         except Exception as e:
             return 60  # Return a default refresh rate on error
 
-    def save_settings(self, settings_file='MultipackParser.conf'):
-        with open(settings_file, 'wb') as file:
-            file.write(pickle.dumps(self.settings))
-
-    def load_settings(self, settings_file='MultipackParser.conf'):
-        try:
-            with open(settings_file, 'rb') as file:
-                self.settings = pickle.loads(file.read())
-        except Exception as e:
-            raise RuntimeError(f"Failed to load settings from {settings_file}") from e
+    def save_settings(self):
+        print(f"Saving settings to {self.settings_file=}")  # Debug statement
+        if isinstance(self.settings_file, str) and self.settings_file.strip() != "":
+            encoded_settings = base64.b64encode(pickle.dumps(self.settings))
+            with open(self.settings_file, 'wb') as file:
+                file.write(encoded_settings)
+        else:
+            print("Invalid settings file path detected in save_settings()")  # Debug statement
+            raise ValueError("Invalid settings file path")
+            
+    def load_settings(self):
+        print(f"Loading settings from {self.settings_file}")  # Debug statement
+        if self.settings_file and isinstance(self.settings_file, str) and self.settings_file.strip() != "":
+            try:
+                with open(self.settings_file, 'rb') as file:
+                    encoded_settings = file.read()
+                    self.settings = pickle.loads(base64.b64decode(encoded_settings))
+            except Exception as e:
+                raise RuntimeError(f"Failed to load settings from {self.settings_file}") from e
+        else:
+            print("Invalid settings file path detected in load_settings()")  # Debug statement
+            raise ValueError("Invalid settings file path")
 
     def __str__(self):
         return str(self.settings)

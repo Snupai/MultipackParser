@@ -5,7 +5,7 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import hashlib 
-from utils import global_vars
+from utils import global_vars, Settings
 from . import Ui_Dialog
 from PySide6.QtWidgets import QDialog, QMessageBox
 
@@ -36,7 +36,8 @@ class PasswordEntryDialog(QDialog):
             QMessageBox.warning(self, "Error", "Incorrect password")
 
     def verify_password(self, hashed_password: str) -> bool:
-        correct_password = "94edf28c6d6da38fd35d7ad53e485307f89fbeaf120485c8d17a43f323deee71"  # SHA256 hash of "password"
+        s = Settings()
+        correct_password = hashlib.sha256(s.settings['admin']['password'].encode()).hexdigest()
         # compare the hash with the correct password
         return hashed_password == correct_password
 

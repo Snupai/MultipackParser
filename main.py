@@ -258,8 +258,8 @@ def load_wordlist() -> list:
     return wordlist
 
 def init_settings():
-    global_vars.settings = Settings()
-    settings = global_vars.settings
+    global settings
+    settings = Settings()
     logger.debug(f"Settings: {settings}")
 
 #################
@@ -309,7 +309,10 @@ def main():
     global_vars.ui = Ui_Form()
     global_vars.ui.setupUi(main_window)
     global_vars.ui.stackedWidget.setCurrentIndex(0)
-
+    global_vars.ui.tabWidget_2.setCurrentIndex(0)
+    
+    init_settings()
+    
     def update_wordlist():
         new_wordlist = load_wordlist()
         completer.model().setStringList(new_wordlist)
@@ -353,8 +356,21 @@ def main():
 
     # Page 3 Buttons
     global_vars.ui.ButtonZurueck_3.clicked.connect(open_main_page)
-    global_vars.ui.Button_OpenExplorer.clicked.connect(open_explorer)
-    global_vars.ui.Button_OpenTerminal.clicked.connect(open_terminal)
+    global_vars.ui.pushButtonSpeichern.clicked.connect(settings.save_settings)
+    # get the stae of the checkbox if it is changed and do settings.settings['audio']['sound'] = state
+    global_vars.ui.checkBox.stateChanged.connect(lambda state: settings.settings['audio'].__setitem__('sound', state == Qt.Checked))
+    global_vars.ui.checkBox.setChecked(settings.settings['audio']['sound'])
+    #
+    # TODO: implement the rest of the settings
+    global_vars.ui.ButtonZurueck_4.clicked.connect(open_main_page)
+    global_vars.ui.pushButtonSpeichern_2.clicked.connect(settings.save_settings)
+    global_vars.ui.passwordEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('password', text))
+    global_vars.ui.passwordEdit.setText(settings.settings['admin']['password'])
+    #
+    global_vars.ui.ButtonZurueck_5.clicked.connect(open_main_page)
+    global_vars.ui.pushButtonSpeichern_3.clicked.connect(settings.save_settings)
+    global_vars.ui.ButtonZurueck_6.clicked.connect(open_main_page)
+    global_vars.ui.pushButtonSpeichern_4.clicked.connect(settings.save_settings)
 
     global allow_close
     allow_close = False
@@ -391,8 +407,6 @@ def main():
 
     main_window.closeEvent = allow_close_event
     main_window.keyPressEvent = handle_key_press_event
-    
-    init_settings()
 
     main_window.show()
     sys.exit(app.exec())
