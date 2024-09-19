@@ -290,3 +290,4 @@ local_dist/
 *.zip
 
 *.bin
+MultipackParser.conf
