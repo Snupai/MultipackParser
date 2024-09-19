@@ -27,7 +27,6 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, Q
 from PySide6.QtCore import Qt, QEvent, QFileSystemWatcher
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QPixmap
 import sys
-import logging
 import subprocess
 import argparse
 import hashlib
@@ -39,10 +38,8 @@ import xmlrpc.client
 from xmlrpc.server import SimpleXMLRPCServer
 from pydub import AudioSegment
 from pydub.playback import play
-from logging.handlers import RotatingFileHandler
-from typing import NoReturn
 
-from ui_files import *
+from ui_files import Ui_Form, MainWindowResources_rc, PasswordEntryDialog
 from utils import global_vars
 from utils import UR10_Server_functions as UR10
 
@@ -56,52 +53,7 @@ if global_vars.PATH_USB_STICK == None:
     print(os.path.dirname(os.getcwd()))
     global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' 
 
-
-# Setup logging
-log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-log_handler = RotatingFileHandler('app.log', maxBytes=5*1024*1024, backupCount=2)
-log_handler.setFormatter(log_formatter)
-console_handler = logging.StreamHandler(sys.stdout)
-console_handler.setFormatter(log_formatter)
-
-logging.basicConfig(level=logging.INFO, handlers=[log_handler, console_handler])
-global_vars.logger = logging.getLogger(__name__)
-
-# Define the password entry dialog class
-class PasswordEntryDialog(QDialog):
-    password_accepted = False
-
-    def __init__(self) -> None:
-        super(PasswordEntryDialog, self).__init__()
-        self.ui = Ui_Dialog()
-        self.ui.setupUi(self)
-
-        self.ui.buttonBox.accepted.connect(self.accept)
-        self.ui.buttonBox.rejected.connect(self.reject)
-
-        global_vars.logger.info("PasswordEntryDialog opened")
-
-    def accept(self) -> NoReturn:
-        entered_password = hashlib.sha256(self.ui.lineEdit.text().encode()).hexdigest()
-        if self.verify_password(entered_password):
-            global_vars.logger.debug("Password is correct")
-            self.password_accepted = True
-            super().accept()
-        else:
-            global_vars.logger.debug("Password is incorrect")
-            QMessageBox.warning(self, "Error", "Incorrect password")
-
-    def verify_password(self, hashed_password: str) -> bool:
-        correct_password = "94edf28c6d6da38fd35d7ad53e485307f89fbeaf120485c8d17a43f323deee71"  # SHA256 hash of "password"
-        # compare the hash with the correct password
-        return hashed_password == correct_password
-
-    def reject(self) -> NoReturn:
-        self.password_accepted = False
-        global_vars.logger.debug("rejected")
-        super().reject()
-
-
+logger = global_vars.logger
 
 ####################
 # Random functions #
@@ -243,14 +195,14 @@ def open_main_page() -> None:
         global_vars.ui.stackedWidget.setCurrentIndex(0)
 
 def open_explorer() -> None:
-    global_vars.logger.info("Opening explorer")
+    logger.info("Opening explorer")
     if sys.platform == "win32":
         subprocess.Popen(["explorer.exe"])
     elif sys.platform == "linux":
         subprocess.Popen(["xdg-open", "."])
 
 def open_terminal() -> None:
-    global_vars.logger.info("Opening terminal")
+    logger.info("Opening terminal")
     if sys.platform == "win32":
         subprocess.Popen(["start", "cmd.exe"], shell=True)
     elif sys.platform == "linux":
@@ -264,13 +216,13 @@ def load() -> None:
     errorReadDataFromUsbStick = UR10.UR_ReadDataFromUsbStick()
 
     if errorReadDataFromUsbStick == 1:
-        global_vars.logger.error(f"Error reading file for {Artikelnummer=} no file found")
+        logger.error(f"Error reading file for {Artikelnummer=} no file found")
         global_vars.ui.LabelPalletenplanInfo.setText("Kein Plan gefunden")
         global_vars.ui.LabelPalletenplanInfo.setStyleSheet("color: red")
     else:
         # remove the editing focus from the text box
         global_vars.ui.EingabePallettenplan.clearFocus()
-        global_vars.logger.debug(f"File for {Artikelnummer=} found")
+        logger.debug(f"File for {Artikelnummer=} found")
         global_vars.ui.LabelPalletenplanInfo.setText("Plan erfolgreich geladen")
         global_vars.ui.LabelPalletenplanInfo.setStyleSheet("color: green")
         global_vars.ui.ButtonOpenParameterRoboter.setEnabled(True)
@@ -281,13 +233,13 @@ def load() -> None:
         global_vars.ui.checkBoxEinzelpaket.setEnabled(True)
 
         Volumen = (global_vars.g_PaketDim[0] * global_vars.g_PaketDim[1] * global_vars.g_PaketDim[2]) / 1E+9 # in m³
-        global_vars.logger.debug(f"{Volumen=}")
+        logger.debug(f"{Volumen=}")
         Dichte = 1000 # Dichte von Wasser in kg/m³
-        global_vars.logger.debug(f"{Dichte=}")
+        logger.debug(f"{Dichte=}")
         Ausnutzung = 0.4 # Empirsch ermittelter Faktor - nicht für Gasflaschen
-        global_vars.logger.debug(f"{Ausnutzung=}")
+        logger.debug(f"{Ausnutzung=}")
         Gewicht = round(Volumen * Dichte * Ausnutzung, 1) # Gewicht in kg
-        global_vars.logger.debug(f"{Gewicht=}")
+        logger.debug(f"{Gewicht=}")
         global_vars.ui.EingabeKartonGewicht.setText(str(Gewicht))
         global_vars.ui.EingabeKartonhoehe.setText(str(global_vars.g_PaketDim[2]))
 
@@ -301,7 +253,7 @@ def load_wordlist() -> list:
         if file.endswith(".rob"):
             wordlist.append(file[:-4])
             count = count + 1
-    global_vars.logger.debug(f"{count=}")
+    logger.debug(f"Wordlist {count=}")
     return wordlist
 
 
@@ -334,19 +286,19 @@ def main():
         return
     if args.verbose:
         # enable verbose logging
-        global_vars.logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.DEBUG)
     if args.rob_path:
         # try to check if the path is valid
         if os.path.exists(args.rob_path):
             # set the path to the .rob files
             global_vars.PATH_USB_STICK = args.rob_path
         else:
-            global_vars.logger.error(f"Path {args.rob_path} does not exist")
+            logger.error(f"Path {args.rob_path} does not exist")
             return
 
-    global_vars.logger.debug(f"{sys.argv=}")
-    global_vars.logger.debug(f"{global_vars.VERSION=}")
-    global_vars.logger.debug(f"{global_vars.PATH_USB_STICK=}")
+    logger.debug(f"{sys.argv=}")
+    logger.debug(f"{global_vars.VERSION=}")
+    logger.debug(f"{global_vars.PATH_USB_STICK=}")
 
     app = QApplication(sys.argv)
     main_window = QMainWindow()

@@ -4,11 +4,13 @@
 
 from . import global_vars
 
+logger = global_vars.logger
+
 #Dateiname abfragen
 def UR_SetFileName(Artikelnummer):
  
     global_vars.FILENAME = (Artikelnummer + '.rob')
-    global_vars.logger.debug(f"{global_vars.FILENAME=}")
+    logger.debug(f"{global_vars.FILENAME=}")
     return global_vars.FILENAME 
  
  
@@ -104,7 +106,7 @@ def UR_ReadDataFromUsbStick():
  
             return 0                
     except:
-        global_vars.logger.error(f"Error reading file {global_vars.FILENAME}")
+        logger.error(f"Error reading file {global_vars.FILENAME}")
     return 1
  
  
@@ -205,5 +207,5 @@ def UR_scanner1and2iobild():
 
 def UR_Quergreifen():
     #global_vars.ui
-    global_vars.logger.debug(f"{global_vars.ui.checkBoxEinzelpaket.isChecked()=}")
+    logger.debug(f"{global_vars.ui.checkBoxEinzelpaket.isChecked()=}")
     return global_vars.ui.checkBoxEinzelpaket.isChecked()
