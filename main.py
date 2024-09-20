@@ -23,7 +23,7 @@
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickView
 ################################################################
-from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QWidget, QCompleter
+from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QWidget, QCompleter, QLineEdit
 from PySide6.QtCore import Qt, QEvent, QFileSystemWatcher
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QPixmap
 import sys

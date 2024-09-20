@@ -26,7 +26,7 @@ class Ui_Dialog(object):
         self.lineEdit = QLineEdit(Dialog)
         self.lineEdit.setObjectName(u"lineEdit")
         self.lineEdit.setGeometry(QRect(30, 60, 113, 22))
-        self.lineEdit.setMaxLength(6)
+        self.lineEdit.setMaxLength(20)
         self.lineEdit.setEchoMode(QLineEdit.EchoMode.Password)
         self.buttonBox = QDialogButtonBox(Dialog)
         self.buttonBox.setObjectName(u"buttonBox")
