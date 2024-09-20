@@ -1083,28 +1083,107 @@
         </rect>
        </property>
        <layout class="QFormLayout" name="formLayout">
-        <item row="0" column="1">
-         <widget class="QCheckBox" name="checkBox">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_11">
           <property name="text">
-           <string>Sound an/aus</string>
+           <string>UR Model: </string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="lineEditURModel"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_12">
+          <property name="text">
+           <string>UR Serial #: </string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Orientation::Vertical</enum>
+         <widget class="QLineEdit" name="lineEditURSerialNo"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_13">
+          <property name="text">
+           <string>UR Manufacturing Date: </string>
           </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Policy::Fixed</enum>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="lineEditURManufacturingDate"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_14">
+          <property name="text">
+           <string>UR Software Ver.: </string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>5</height>
-           </size>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="lineEditURSoftwareVer"/>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_15">
+          <property name="text">
+           <string>Pallettierer Name: </string>
           </property>
-         </spacer>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="lineEditURName"/>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_16">
+          <property name="text">
+           <string>Pallettierer Standort: </string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QLineEdit" name="lineEditURStandort"/>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="label_17">
+          <property name="text">
+           <string>Number of Plans: </string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QLineEdit" name="lineEditNumberPlans">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="label_18">
+          <property name="text">
+           <string>Number of use cycles: </string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QLineEdit" name="lineEditNumberCycles">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="0">
+         <widget class="QLabel" name="label_19">
+          <property name="text">
+           <string>last restart: </string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QLineEdit" name="lineEditLastRestart">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -1117,7 +1196,60 @@
          <height>341</height>
         </rect>
        </property>
-       <layout class="QFormLayout" name="formLayout_2"/>
+       <layout class="QFormLayout" name="formLayout_2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_20">
+          <property name="text">
+           <string>Display Model: </string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="lineEditDisplayModel"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_21">
+          <property name="text">
+           <string>Refresh rate: </string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEditDisplayRefreshRate">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_22">
+          <property name="text">
+           <string>Display width: </string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="lineEditDisplayWidth">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_23">
+          <property name="text">
+           <string>Display height</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="lineEditDisplayHeight">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
       <widget class="QPushButton" name="pushButtonSpeichern">
        <property name="geometry">

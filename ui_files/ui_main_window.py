@@ -17,8 +17,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QFormLayout, QFrame,
     QLabel, QLineEdit, QPushButton, QSizePolicy,
-    QSpacerItem, QSpinBox, QStackedWidget, QTabWidget,
-    QWidget)
+    QSpinBox, QStackedWidget, QTabWidget, QWidget)
 from . import MainWindowResources_rc
 
 class Ui_Form(object):
@@ -318,14 +317,98 @@ class Ui_Form(object):
         self.formLayout = QFormLayout(self.formLayoutWidget)
         self.formLayout.setObjectName(u"formLayout")
         self.formLayout.setContentsMargins(0, 0, 0, 0)
-        self.checkBox = QCheckBox(self.formLayoutWidget)
-        self.checkBox.setObjectName(u"checkBox")
+        self.label_11 = QLabel(self.formLayoutWidget)
+        self.label_11.setObjectName(u"label_11")
 
-        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.checkBox)
+        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label_11)
 
-        self.verticalSpacer = QSpacerItem(40, 5, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        self.lineEditURModel = QLineEdit(self.formLayoutWidget)
+        self.lineEditURModel.setObjectName(u"lineEditURModel")
 
-        self.formLayout.setItem(1, QFormLayout.FieldRole, self.verticalSpacer)
+        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.lineEditURModel)
+
+        self.label_12 = QLabel(self.formLayoutWidget)
+        self.label_12.setObjectName(u"label_12")
+
+        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.label_12)
+
+        self.lineEditURSerialNo = QLineEdit(self.formLayoutWidget)
+        self.lineEditURSerialNo.setObjectName(u"lineEditURSerialNo")
+
+        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.lineEditURSerialNo)
+
+        self.label_13 = QLabel(self.formLayoutWidget)
+        self.label_13.setObjectName(u"label_13")
+
+        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.label_13)
+
+        self.lineEditURManufacturingDate = QLineEdit(self.formLayoutWidget)
+        self.lineEditURManufacturingDate.setObjectName(u"lineEditURManufacturingDate")
+
+        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.lineEditURManufacturingDate)
+
+        self.label_14 = QLabel(self.formLayoutWidget)
+        self.label_14.setObjectName(u"label_14")
+
+        self.formLayout.setWidget(3, QFormLayout.LabelRole, self.label_14)
+
+        self.lineEditURSoftwareVer = QLineEdit(self.formLayoutWidget)
+        self.lineEditURSoftwareVer.setObjectName(u"lineEditURSoftwareVer")
+
+        self.formLayout.setWidget(3, QFormLayout.FieldRole, self.lineEditURSoftwareVer)
+
+        self.label_15 = QLabel(self.formLayoutWidget)
+        self.label_15.setObjectName(u"label_15")
+
+        self.formLayout.setWidget(4, QFormLayout.LabelRole, self.label_15)
+
+        self.lineEditURName = QLineEdit(self.formLayoutWidget)
+        self.lineEditURName.setObjectName(u"lineEditURName")
+
+        self.formLayout.setWidget(4, QFormLayout.FieldRole, self.lineEditURName)
+
+        self.label_16 = QLabel(self.formLayoutWidget)
+        self.label_16.setObjectName(u"label_16")
+
+        self.formLayout.setWidget(5, QFormLayout.LabelRole, self.label_16)
+
+        self.lineEditURStandort = QLineEdit(self.formLayoutWidget)
+        self.lineEditURStandort.setObjectName(u"lineEditURStandort")
+
+        self.formLayout.setWidget(5, QFormLayout.FieldRole, self.lineEditURStandort)
+
+        self.label_17 = QLabel(self.formLayoutWidget)
+        self.label_17.setObjectName(u"label_17")
+
+        self.formLayout.setWidget(6, QFormLayout.LabelRole, self.label_17)
+
+        self.lineEditNumberPlans = QLineEdit(self.formLayoutWidget)
+        self.lineEditNumberPlans.setObjectName(u"lineEditNumberPlans")
+        self.lineEditNumberPlans.setEnabled(False)
+
+        self.formLayout.setWidget(6, QFormLayout.FieldRole, self.lineEditNumberPlans)
+
+        self.label_18 = QLabel(self.formLayoutWidget)
+        self.label_18.setObjectName(u"label_18")
+
+        self.formLayout.setWidget(7, QFormLayout.LabelRole, self.label_18)
+
+        self.lineEditNumberCycles = QLineEdit(self.formLayoutWidget)
+        self.lineEditNumberCycles.setObjectName(u"lineEditNumberCycles")
+        self.lineEditNumberCycles.setEnabled(False)
+
+        self.formLayout.setWidget(7, QFormLayout.FieldRole, self.lineEditNumberCycles)
+
+        self.label_19 = QLabel(self.formLayoutWidget)
+        self.label_19.setObjectName(u"label_19")
+
+        self.formLayout.setWidget(8, QFormLayout.LabelRole, self.label_19)
+
+        self.lineEditLastRestart = QLineEdit(self.formLayoutWidget)
+        self.lineEditLastRestart.setObjectName(u"lineEditLastRestart")
+        self.lineEditLastRestart.setEnabled(False)
+
+        self.formLayout.setWidget(8, QFormLayout.FieldRole, self.lineEditLastRestart)
 
         self.formLayoutWidget_2 = QWidget(self.PallettiererSpezifisch)
         self.formLayoutWidget_2.setObjectName(u"formLayoutWidget_2")
@@ -333,6 +416,49 @@ class Ui_Form(object):
         self.formLayout_2 = QFormLayout(self.formLayoutWidget_2)
         self.formLayout_2.setObjectName(u"formLayout_2")
         self.formLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.label_20 = QLabel(self.formLayoutWidget_2)
+        self.label_20.setObjectName(u"label_20")
+
+        self.formLayout_2.setWidget(0, QFormLayout.LabelRole, self.label_20)
+
+        self.lineEditDisplayModel = QLineEdit(self.formLayoutWidget_2)
+        self.lineEditDisplayModel.setObjectName(u"lineEditDisplayModel")
+
+        self.formLayout_2.setWidget(0, QFormLayout.FieldRole, self.lineEditDisplayModel)
+
+        self.label_21 = QLabel(self.formLayoutWidget_2)
+        self.label_21.setObjectName(u"label_21")
+
+        self.formLayout_2.setWidget(1, QFormLayout.LabelRole, self.label_21)
+
+        self.lineEditDisplayRefreshRate = QLineEdit(self.formLayoutWidget_2)
+        self.lineEditDisplayRefreshRate.setObjectName(u"lineEditDisplayRefreshRate")
+        self.lineEditDisplayRefreshRate.setEnabled(False)
+
+        self.formLayout_2.setWidget(1, QFormLayout.FieldRole, self.lineEditDisplayRefreshRate)
+
+        self.label_22 = QLabel(self.formLayoutWidget_2)
+        self.label_22.setObjectName(u"label_22")
+
+        self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.label_22)
+
+        self.lineEditDisplayWidth = QLineEdit(self.formLayoutWidget_2)
+        self.lineEditDisplayWidth.setObjectName(u"lineEditDisplayWidth")
+        self.lineEditDisplayWidth.setEnabled(False)
+
+        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.lineEditDisplayWidth)
+
+        self.label_23 = QLabel(self.formLayoutWidget_2)
+        self.label_23.setObjectName(u"label_23")
+
+        self.formLayout_2.setWidget(3, QFormLayout.LabelRole, self.label_23)
+
+        self.lineEditDisplayHeight = QLineEdit(self.formLayoutWidget_2)
+        self.lineEditDisplayHeight.setObjectName(u"lineEditDisplayHeight")
+        self.lineEditDisplayHeight.setEnabled(False)
+
+        self.formLayout_2.setWidget(3, QFormLayout.FieldRole, self.lineEditDisplayHeight)
+
         self.pushButtonSpeichern = QPushButton(self.PallettiererSpezifisch)
         self.pushButtonSpeichern.setObjectName(u"pushButtonSpeichern")
         self.pushButtonSpeichern.setGeometry(QRect(4, 15, 91, 24))
@@ -449,7 +575,19 @@ class Ui_Form(object):
         self.ButtonDatenSenden_2.setText(QCoreApplication.translate("Form", u"Daten senden", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Aufnahme), QCoreApplication.translate("Form", u"Aufnahme", None))
         self.ButtonZurueck_3.setText("")
-        self.checkBox.setText(QCoreApplication.translate("Form", u"Sound an/aus", None))
+        self.label_11.setText(QCoreApplication.translate("Form", u"UR Model: ", None))
+        self.label_12.setText(QCoreApplication.translate("Form", u"UR Serial #: ", None))
+        self.label_13.setText(QCoreApplication.translate("Form", u"UR Manufacturing Date: ", None))
+        self.label_14.setText(QCoreApplication.translate("Form", u"UR Software Ver.: ", None))
+        self.label_15.setText(QCoreApplication.translate("Form", u"Pallettierer Name: ", None))
+        self.label_16.setText(QCoreApplication.translate("Form", u"Pallettierer Standort: ", None))
+        self.label_17.setText(QCoreApplication.translate("Form", u"Number of Plans: ", None))
+        self.label_18.setText(QCoreApplication.translate("Form", u"Number of use cycles: ", None))
+        self.label_19.setText(QCoreApplication.translate("Form", u"last restart: ", None))
+        self.label_20.setText(QCoreApplication.translate("Form", u"Display Model: ", None))
+        self.label_21.setText(QCoreApplication.translate("Form", u"Refresh rate: ", None))
+        self.label_22.setText(QCoreApplication.translate("Form", u"Display width: ", None))
+        self.label_23.setText(QCoreApplication.translate("Form", u"Display height", None))
         self.pushButtonSpeichern.setText(QCoreApplication.translate("Form", u"Speichern", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.PallettiererSpezifisch), QCoreApplication.translate("Form", u"Info", None))
         self.ButtonZurueck_4.setText("")
