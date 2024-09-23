@@ -6,6 +6,8 @@ import os
 import subprocess
 import pickle
 import base64
+import copy
+
 class Settings:
     def __init__(self):
         self.settings_file ='MultipackParser.conf'
@@ -46,6 +48,7 @@ class Settings:
             self.save_settings()
         else: 
             self.load_settings()
+        self.saved_settings = copy.deepcopy(self.settings)
     
     def getDisplayModel(self):
         try:
@@ -112,7 +115,7 @@ class Settings:
             encoded_settings = base64.b64encode(pickle.dumps(self.settings))
             with open(self.settings_file, 'wb') as file:
                 file.write(encoded_settings)
-            self.saved_settings = self.settings
+            self.saved_settings = copy.deepcopy(self.settings)
         else:
             print("Invalid settings file path detected in save_settings()")  # Debug statement
             raise ValueError("Invalid settings file path")
@@ -140,6 +143,10 @@ class Settings:
            return False
         else:
             return True
+
+    def reset_unsaved_changes(self):
+        print(f"Resetting unsaved changes...")  # Debug statement
+        self.settings = copy.deepcopy(self.saved_settings)
 
 if __name__ == '__main__':
     print("Hell no you can't run this file directly!")

@@ -18,14 +18,6 @@
 #TODO: Implement option for UR10e or UR20 robot. If UR20 is selected robot will have 2 pallets. else only it is like the old code.
 #TODO: Implement seemless palletizing with 2 pallets for UR20 robot.
 
-
-# import the needed qml modules for the virtual keyboard to work
-from PySide6.QtQml import QQmlApplicationEngine
-from PySide6.QtQuick import QQuickView
-################################################################
-from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QWidget, QCompleter, QLineEdit
-from PySide6.QtCore import Qt, QEvent, QFileSystemWatcher
-from PySide6.QtGui import QIntValidator, QDoubleValidator, QPixmap
 import sys
 import subprocess
 import argparse
@@ -40,6 +32,14 @@ from pydub import AudioSegment
 from pydub.playback import play
 import logging
 from datetime import datetime
+
+# import the needed qml modules for the virtual keyboard to work
+from PySide6.QtQml import QQmlApplicationEngine
+from PySide6.QtQuick import QQuickView
+################################################################
+from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QWidget, QCompleter, QLineEdit, QFileDialog, QMessageBox
+from PySide6.QtCore import Qt, QEvent, QFileSystemWatcher, QUrl, QProcess
+from PySide6.QtGui import QIntValidator, QDoubleValidator, QPixmap
 
 from ui_files import Ui_Form, MainWindowResources_rc, PasswordEntryDialog
 from utils import global_vars, Settings
@@ -265,18 +265,122 @@ def init_settings():
     logger.debug(f"Settings: {settings}")
 
 def leave_settings_page():
-    # before leaving the settings page, check if the loaded settings are the same as the saved settings
+    # BUG: the first time this function is called it will say that the settings do not match the saved settings even though there were no changes
     try:
         settings.compare_loaded_settings_to_saved_settings()
     except ValueError as e:
         logger.error(f"Error: {e}")
-        QMessageBox.warning(global_vars.ui, "Error", "Error: Settings do not match saved settings.")
-        return
-    else:
-        logger.debug("Settings match saved settings.")
     
-    # if the settings match the saved settings then exit the settings page
+        # If settings do not match, ask whether to discard or save the new data
+        response = QMessageBox.question(main_window, "Verwerfen oder Speichern", "Möchten Sie die neuen Daten verwerfen oder speichern?",
+                                        QMessageBox.Discard | QMessageBox.Save, QMessageBox.Save)
+        
+        if response == QMessageBox.Save:
+            try:
+                settings.save_settings()
+                logger.debug("New settings saved.")
+            except Exception as e:
+                logger.error(f"Failed to save settings: {e}")
+                QMessageBox.critical(main_window, "Error", f"Failed to save settings: {e}")
+                return
+        elif response == QMessageBox.Discard:
+            settings.reset_unsaved_changes()
+            set_settings_line_edits()
+            logger.debug("All changes discarded.")
+    
+    # Navigate back to the main page
     open_main_page()
+
+def open_file():
+    # Open a file browser to select a file
+    file_path, _ = QFileDialog.getOpenFileName(parent=main_window, caption="Open File")
+    global_vars.ui.lineEditFilePath.setText(file_path)
+    logger.debug(f"File path: {global_vars.ui.lineEditFilePath.text()}")
+    
+    # Open the selected file and load its content into the text edit widget
+    try:
+        with open(file_path, 'r') as file:
+            file_content = file.read()
+        global_vars.ui.textEditFile.setPlainText(file_content)  # Use setPlainText for QTextEdit
+    except Exception as e:
+        logger.error(f"Failed to open file: {e}")
+        QMessageBox.critical(main_window, "Error", f"Failed to open file: {e}")
+
+def save_open_file():
+    # save the file to the selected file path but prompt the user before overwriting the file
+    file_path = global_vars.ui.lineEditFilePath.text()
+    if file_path:
+        if os.path.exists(file_path):
+            overwrite = QMessageBox.question(main_window, "Overwrite File?", f"The file {file_path} already exists. Do you want to overwrite it?", QMessageBox.Yes | QMessageBox.No)
+            if overwrite == QMessageBox.Yes:
+                with open(file_path, 'w') as file:
+                    file.write(global_vars.ui.textEditFile.toPlainText())
+            else:
+                logger.debug("File not saved.")
+                return
+        else:
+            with open(file_path, 'w') as file:
+                file.write(global_vars.ui.textEditFile.toPlainText())
+    else:
+        logger.debug("File not saved.")
+        QMessageBox.warning(main_window, "Error", "Please select a file to save.")
+
+def execute_command():
+    command = global_vars.ui.lineEditCommand.text().strip()
+
+    # Check if the command starts with ">"
+    if command.startswith("> "):
+        command = command[2:].strip()  # Remove the "> " prefix
+
+    if not command:
+        return
+
+    # Clear the console if the command is 'cls'
+    if command.lower() == 'cls':
+        global_vars.ui.textEditConsole.clear()
+        global_vars.ui.lineEditCommand.setText("> ")  # Reset lineEdit with the prefix
+        return
+
+    global_vars.ui.textEditConsole.append(f"$ {command}")
+    global_vars.ui.lineEditCommand.setText("> ")  # Reset lineEdit with the prefix
+
+    process = QProcess()
+    process.setProcessChannelMode(QProcess.MergedChannels)
+    process.readyReadStandardOutput.connect(handle_stdout)
+    process.readyReadStandardError.connect(handle_stderr)
+
+    if sys.platform == "win32":
+        command_list = f"chcp 65001 > nul && {command}"
+        process.start("cmd", ["/c", command_list])
+    else:
+        process.start(command)
+
+    global_vars.process = process
+
+def handle_stdout():
+    data = global_vars.process.readAllStandardOutput()
+    stdout = bytes(data).decode("utf-8", errors="replace")
+    global_vars.ui.textEditConsole.append(stdout)
+
+def handle_stderr():
+    data = global_vars.process.readAllStandardError()
+    stderr = bytes(data).decode("utf-8", errors="replace")
+    global_vars.ui.textEditConsole.append(stderr)
+
+def set_settings_line_edits():
+    global_vars.ui.lineEditDisplayHeight.setText(str(settings.settings['display']['specs']['height']))
+    global_vars.ui.lineEditDisplayWidth.setText(str(settings.settings['display']['specs']['width']))
+    global_vars.ui.lineEditDisplayRefreshRate.setText(str(settings.settings['display']['specs']['refresh_rate']))
+    global_vars.ui.lineEditDisplayModel.setText(settings.settings['display']['specs']['model'])
+    global_vars.ui.lineEditURModel.setText(settings.settings['info']['UR_Model'])
+    global_vars.ui.lineEditURSerialNo.setText(settings.settings['info']['UR_Serial_Number'])
+    global_vars.ui.lineEditURManufacturingDate.setText(settings.settings['info']['UR_Manufacturing_Date'])
+    global_vars.ui.lineEditURSoftwareVer.setText(settings.settings['info']['UR_Software_Version'])
+    global_vars.ui.lineEditURName.setText(settings.settings['info']['Pallettierer_Name'])
+    global_vars.ui.lineEditURStandort.setText(settings.settings['info']['Pallettierer_Standort'])
+    global_vars.ui.lineEditNumberPlans.setText(str(settings.settings['info']['number_of_plans']))
+    global_vars.ui.lineEditNumberCycles.setText(str(settings.settings['info']['number_of_use_cycles']))
+    global_vars.ui.lineEditLastRestart.setText(settings.settings['info']['last_restart'])
 
 #################
 # Main function #
@@ -295,6 +399,7 @@ class CustomDoubleValidator(QDoubleValidator):
 
 # Main function to run the application
 def main():
+    global main_window
     parser = argparse.ArgumentParser(description="Multipack Parser Application")
     parser.add_argument('--version', action='store_true', help='Show version information and exit')
     parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose logging')
@@ -326,7 +431,7 @@ def main():
     global_vars.ui.setupUi(main_window)
     global_vars.ui.stackedWidget.setCurrentIndex(0)
     global_vars.ui.tabWidget_2.setCurrentIndex(0)
-    
+
     init_settings()
     
     settings.settings['info']['last_restart'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -391,19 +496,7 @@ def main():
     global_vars.ui.lineEditNumberPlans.textChanged.connect(lambda text: settings.settings['info'].__setitem__('number_of_plans', int(text)))
     global_vars.ui.lineEditNumberCycles.textChanged.connect(lambda text: settings.settings['info'].__setitem__('number_of_use_cycles', int(text)))
     global_vars.ui.lineEditLastRestart.textChanged.connect(lambda text: settings.settings['info'].__setitem__('last_restart', text))
-    global_vars.ui.lineEditDisplayHeight.setText(str(settings.settings['display']['specs']['height']))
-    global_vars.ui.lineEditDisplayWidth.setText(str(settings.settings['display']['specs']['width']))
-    global_vars.ui.lineEditDisplayRefreshRate.setText(str(settings.settings['display']['specs']['refresh_rate']))
-    global_vars.ui.lineEditDisplayModel.setText(settings.settings['display']['specs']['model'])
-    global_vars.ui.lineEditURModel.setText(settings.settings['info']['UR_Model'])
-    global_vars.ui.lineEditURSerialNo.setText(settings.settings['info']['UR_Serial_Number'])
-    global_vars.ui.lineEditURManufacturingDate.setText(settings.settings['info']['UR_Manufacturing_Date'])
-    global_vars.ui.lineEditURSoftwareVer.setText(settings.settings['info']['UR_Software_Version'])
-    global_vars.ui.lineEditURName.setText(settings.settings['info']['Pallettierer_Name'])
-    global_vars.ui.lineEditURStandort.setText(settings.settings['info']['Pallettierer_Standort'])
-    global_vars.ui.lineEditNumberPlans.setText(str(settings.settings['info']['number_of_plans']))
-    global_vars.ui.lineEditNumberCycles.setText(str(settings.settings['info']['number_of_use_cycles']))
-    global_vars.ui.lineEditLastRestart.setText(settings.settings['info']['last_restart'])
+    set_settings_line_edits()
     #global_vars.ui.checkBox.stateChanged.connect(lambda state: settings.settings['audio'].__setitem__('sound', state == Qt.Checked))
     #global_vars.ui.checkBox.setChecked(settings.settings['audio']['sound'])
     #
@@ -418,21 +511,19 @@ def main():
         hashed_password = hashlib.sha256(salted_password).hexdigest()
         return salt.hex() + '$' + hashed_password
 
-    global_vars.ui.passwordEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('password', hash_password(text)))
-
-    def dehash_password(stored_password_hash):
-        salt, hashed_password = stored_password_hash.split('$')
-        salt = bytes.fromhex(salt)
-        # use the salt to dehash the password
-        dehashed_password = hashlib.sha256(salt + hashed_password.encode()).hexdigest()
-        return dehashed_password
-
-    global_vars.ui.passwordEdit.setText(dehash_password(settings.settings['admin']['password']))
+    global_vars.ui.passwordEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('password', hash_password(text)) if text else None)
     #
     global_vars.ui.ButtonZurueck_5.clicked.connect(leave_settings_page)
-    global_vars.ui.pushButtonSpeichern_3.clicked.connect(settings.save_settings)
+    global_vars.ui.pushButtonSpeichern_3.clicked.connect(save_open_file)
+    global_vars.ui.pushButtonOpenFile.clicked.connect(open_file)
+
     global_vars.ui.ButtonZurueck_6.clicked.connect(leave_settings_page)
     global_vars.ui.pushButtonSpeichern_4.clicked.connect(settings.save_settings)
+
+    global_vars.ui.ButtonZurueck_7.clicked.connect(leave_settings_page)
+    global_vars.ui.lineEditCommand.setText("> ")  # Set initial text
+    global_vars.ui.lineEditCommand.setPlaceholderText("command")  # Set placeholder text
+    global_vars.ui.lineEditCommand.returnPressed.connect(execute_command)
 
     global allow_close
     allow_close = False

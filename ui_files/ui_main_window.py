@@ -16,8 +16,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QFormLayout, QFrame,
-    QLabel, QLineEdit, QPushButton, QSizePolicy,
-    QSpinBox, QStackedWidget, QTabWidget, QWidget)
+    QHeaderView, QLabel, QLineEdit, QPushButton,
+    QSizePolicy, QSpinBox, QStackedWidget, QTabWidget,
+    QTextEdit, QTreeView, QWidget)
 from . import MainWindowResources_rc
 
 class Ui_Form(object):
@@ -480,9 +481,9 @@ class Ui_Form(object):
         self.formLayout_3.setContentsMargins(0, 0, 0, 0)
         self.passwordEdit = QLineEdit(self.formLayoutWidget_3)
         self.passwordEdit.setObjectName(u"passwordEdit")
-        self.passwordEdit.setInputMethodHints(Qt.InputMethodHint.ImhHiddenText|Qt.InputMethodHint.ImhNoAutoUppercase|Qt.InputMethodHint.ImhNoPredictiveText|Qt.InputMethodHint.ImhSensitiveData)
+        self.passwordEdit.setInputMethodHints(Qt.InputMethodHint.ImhNoAutoUppercase|Qt.InputMethodHint.ImhNoPredictiveText|Qt.InputMethodHint.ImhSensitiveData)
         self.passwordEdit.setMaxLength(8)
-        self.passwordEdit.setEchoMode(QLineEdit.EchoMode.Password)
+        self.passwordEdit.setEchoMode(QLineEdit.EchoMode.PasswordEchoOnEdit)
         self.passwordEdit.setClearButtonEnabled(True)
 
         self.formLayout_3.setWidget(0, QFormLayout.FieldRole, self.passwordEdit)
@@ -514,6 +515,15 @@ class Ui_Form(object):
         self.pushButtonSpeichern_3 = QPushButton(self.editorSettingsTab)
         self.pushButtonSpeichern_3.setObjectName(u"pushButtonSpeichern_3")
         self.pushButtonSpeichern_3.setGeometry(QRect(4, 15, 91, 24))
+        self.lineEditFilePath = QLineEdit(self.editorSettingsTab)
+        self.lineEditFilePath.setObjectName(u"lineEditFilePath")
+        self.lineEditFilePath.setGeometry(QRect(130, 9, 1041, 22))
+        self.pushButtonOpenFile = QPushButton(self.editorSettingsTab)
+        self.pushButtonOpenFile.setObjectName(u"pushButtonOpenFile")
+        self.pushButtonOpenFile.setGeometry(QRect(1176, 8, 75, 24))
+        self.textEditFile = QTextEdit(self.editorSettingsTab)
+        self.textEditFile.setObjectName(u"textEditFile")
+        self.textEditFile.setGeometry(QRect(130, 30, 1121, 331))
         self.tabWidget_2.addTab(self.editorSettingsTab, "")
         self.explorerSettingsTab = QWidget()
         self.explorerSettingsTab.setObjectName(u"explorerSettingsTab")
@@ -527,7 +537,26 @@ class Ui_Form(object):
         self.pushButtonSpeichern_4 = QPushButton(self.explorerSettingsTab)
         self.pushButtonSpeichern_4.setObjectName(u"pushButtonSpeichern_4")
         self.pushButtonSpeichern_4.setGeometry(QRect(4, 15, 91, 24))
+        self.treeView = QTreeView(self.explorerSettingsTab)
+        self.treeView.setObjectName(u"treeView")
+        self.treeView.setGeometry(QRect(110, 0, 1141, 361))
         self.tabWidget_2.addTab(self.explorerSettingsTab, "")
+        self.consoleSettingsTab = QWidget()
+        self.consoleSettingsTab.setObjectName(u"consoleSettingsTab")
+        self.textEditConsole = QTextEdit(self.consoleSettingsTab)
+        self.textEditConsole.setObjectName(u"textEditConsole")
+        self.textEditConsole.setGeometry(QRect(90, 0, 1151, 331))
+        self.ButtonZurueck_7 = QPushButton(self.consoleSettingsTab)
+        self.ButtonZurueck_7.setObjectName(u"ButtonZurueck_7")
+        self.ButtonZurueck_7.setGeometry(QRect(0, 130, 81, 81))
+        self.ButtonZurueck_7.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.ButtonZurueck_7.setIcon(icon2)
+        self.ButtonZurueck_7.setIconSize(QSize(81, 81))
+        self.ButtonZurueck_7.setFlat(True)
+        self.lineEditCommand = QLineEdit(self.consoleSettingsTab)
+        self.lineEditCommand.setObjectName(u"lineEditCommand")
+        self.lineEditCommand.setGeometry(QRect(90, 330, 1151, 22))
+        self.tabWidget_2.addTab(self.consoleSettingsTab, "")
         self.stackedWidget.addWidget(self.Settings)
 
         self.retranslateUi(Form)
@@ -535,7 +564,7 @@ class Ui_Form(object):
         self.stackedWidget.setCurrentIndex(2)
         self.ButtonSettings.setDefault(False)
         self.tabWidget.setCurrentIndex(1)
-        self.tabWidget_2.setCurrentIndex(1)
+        self.tabWidget_2.setCurrentIndex(4)
 
 
         QMetaObject.connectSlotsByName(Form)
@@ -595,15 +624,21 @@ class Ui_Form(object):
         self.pushButtonSpeichern.setText(QCoreApplication.translate("Form", u"Speichern", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.PallettiererSpezifisch), QCoreApplication.translate("Form", u"Info", None))
         self.ButtonZurueck_4.setText("")
-        self.passwordEdit.setInputMask("")
+        self.passwordEdit.setInputMask(QCoreApplication.translate("Form", u"XXXXXXXX", None))
         self.label_8.setText(QCoreApplication.translate("Form", u"Passwort: ", None))
         self.pushButtonSpeichern_2.setText(QCoreApplication.translate("Form", u"Speichern", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.adminSettingsTab), QCoreApplication.translate("Form", u"Admin", None))
         self.ButtonZurueck_5.setText("")
         self.pushButtonSpeichern_3.setText(QCoreApplication.translate("Form", u"Speichern", None))
+        self.pushButtonOpenFile.setText(QCoreApplication.translate("Form", u"Open", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.editorSettingsTab), QCoreApplication.translate("Form", u"Editor", None))
         self.ButtonZurueck_6.setText("")
         self.pushButtonSpeichern_4.setText(QCoreApplication.translate("Form", u"Speichern", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.explorerSettingsTab), QCoreApplication.translate("Form", u"Explorer", None))
+#if QT_CONFIG(accessibility)
+        self.consoleSettingsTab.setAccessibleName("")
+#endif // QT_CONFIG(accessibility)
+        self.ButtonZurueck_7.setText("")
+        self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.consoleSettingsTab), QCoreApplication.translate("Form", u"Console", None))
     # retranslateUi
 

@@ -16,6 +16,8 @@ logger.setLevel(logging.INFO)  # Set default logging level
 logger.addHandler(log_handler)
 logger.addHandler(console_handler)
 
+process = None
+
 #######################################
 # Settings
 
