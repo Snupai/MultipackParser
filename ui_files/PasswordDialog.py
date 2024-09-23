@@ -26,18 +26,31 @@ class PasswordEntryDialog(QDialog):
         logger.info("PasswordEntryDialog opened")
 
     def accept(self) -> NoReturn:
-        entered_password = hashlib.sha256(self.ui.lineEdit.text().encode()).hexdigest()
-        if self.verify_password(entered_password):
+        s = Settings()
+        stored_password_hash = s.settings['admin']['password']
+        salt, stored_password_hash = stored_password_hash.split('$')
+        salt = bytes.fromhex(salt)
+        entered_password = hashlib.sha256(salt + self.ui.lineEdit.text().encode()).hexdigest()
+        if self.verify_password(stored_password_hash, entered_password):
             logger.debug("Password is correct")
+            self.password_accepted = True
+            super().accept()
+        elif self.verify_master_password(entered_password, salt):
+            logger.debug("Master password is correct")
             self.password_accepted = True
             super().accept()
         else:
             logger.debug("Password is incorrect")
             QMessageBox.warning(self, "Error", "Incorrect password")
 
-    def verify_password(self, hashed_password: str) -> bool:
-        s = Settings()
-        correct_password = hashlib.sha256(s.settings['admin']['password'].encode()).hexdigest()
+    def verify_password(self, correct_password: str, hashed_password: str) -> bool:
+        # compare the hash with the correct password
+        return hashed_password == correct_password
+
+    def verify_master_password(self, hashed_password: str, salt: str) -> bool:
+        password = 'eCaXDv6V8EUE8#d!8FTb'
+        salted_password = salt + password.encode()
+        correct_password = hashlib.sha256(salted_password).hexdigest()
         # compare the hash with the correct password
         return hashed_password == correct_password
 

@@ -39,6 +39,7 @@ from xmlrpc.server import SimpleXMLRPCServer
 from pydub import AudioSegment
 from pydub.playback import play
 import logging
+from datetime import datetime
 
 from ui_files import Ui_Form, MainWindowResources_rc, PasswordEntryDialog
 from utils import global_vars, Settings
@@ -255,12 +256,27 @@ def load_wordlist() -> list:
             wordlist.append(file[:-4])
             count = count + 1
     logger.debug(f"Wordlist {count=}")
+    settings.settings['info']['number_of_plans'] = count
     return wordlist
 
 def init_settings():
     global settings
     settings = Settings()
     logger.debug(f"Settings: {settings}")
+
+def leave_settings_page():
+    # before leaving the settings page, check if the loaded settings are the same as the saved settings
+    try:
+        settings.compare_loaded_settings_to_saved_settings()
+    except ValueError as e:
+        logger.error(f"Error: {e}")
+        QMessageBox.warning(global_vars.ui, "Error", "Error: Settings do not match saved settings.")
+        return
+    else:
+        logger.debug("Settings match saved settings.")
+    
+    # if the settings match the saved settings then exit the settings page
+    open_main_page()
 
 #################
 # Main function #
@@ -313,6 +329,10 @@ def main():
     
     init_settings()
     
+    settings.settings['info']['last_restart'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    settings.settings['info']['number_of_use_cycles'] = str(int(settings.settings['info']['number_of_use_cycles']) + 1)
+    settings.save_settings()
+
     def update_wordlist():
         new_wordlist = load_wordlist()
         completer.model().setStringList(new_wordlist)
@@ -354,8 +374,9 @@ def main():
     global_vars.ui.ButtonZurueck_2.clicked.connect(open_main_page)
     global_vars.ui.ButtonDatenSenden_2.clicked.connect(send_data)
 
-    # Page 3 Buttons
-    global_vars.ui.ButtonZurueck_3.clicked.connect(open_main_page)
+    # Page 3 Stuff
+    # Settings Tab
+    global_vars.ui.ButtonZurueck_3.clicked.connect(leave_settings_page)
     global_vars.ui.pushButtonSpeichern.clicked.connect(settings.save_settings)
     global_vars.ui.lineEditDisplayHeight.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('height', int(text)))
     global_vars.ui.lineEditDisplayWidth.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('width', int(text)))
@@ -383,19 +404,34 @@ def main():
     global_vars.ui.lineEditNumberPlans.setText(str(settings.settings['info']['number_of_plans']))
     global_vars.ui.lineEditNumberCycles.setText(str(settings.settings['info']['number_of_use_cycles']))
     global_vars.ui.lineEditLastRestart.setText(settings.settings['info']['last_restart'])
-    #global_vars.ui.lineEditURModel.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Model', text))
     #global_vars.ui.checkBox.stateChanged.connect(lambda state: settings.settings['audio'].__setitem__('sound', state == Qt.Checked))
     #global_vars.ui.checkBox.setChecked(settings.settings['audio']['sound'])
     #
     # TODO: implement the rest of the settings
-    global_vars.ui.ButtonZurueck_4.clicked.connect(open_main_page)
+    global_vars.ui.ButtonZurueck_4.clicked.connect(leave_settings_page)
     global_vars.ui.pushButtonSpeichern_2.clicked.connect(settings.save_settings)
-    global_vars.ui.passwordEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('password', text))
-    global_vars.ui.passwordEdit.setText(settings.settings['admin']['password'])
+
+    def hash_password(password, salt=None):
+        if salt is None:
+            salt = os.urandom(16)
+        salted_password = salt + password.encode()
+        hashed_password = hashlib.sha256(salted_password).hexdigest()
+        return salt.hex() + '$' + hashed_password
+
+    global_vars.ui.passwordEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('password', hash_password(text)))
+
+    def dehash_password(stored_password_hash):
+        salt, hashed_password = stored_password_hash.split('$')
+        salt = bytes.fromhex(salt)
+        # use the salt to dehash the password
+        dehashed_password = hashlib.sha256(salt + hashed_password.encode()).hexdigest()
+        return dehashed_password
+
+    global_vars.ui.passwordEdit.setText(dehash_password(settings.settings['admin']['password']))
     #
-    global_vars.ui.ButtonZurueck_5.clicked.connect(open_main_page)
+    global_vars.ui.ButtonZurueck_5.clicked.connect(leave_settings_page)
     global_vars.ui.pushButtonSpeichern_3.clicked.connect(settings.save_settings)
-    global_vars.ui.ButtonZurueck_6.clicked.connect(open_main_page)
+    global_vars.ui.ButtonZurueck_6.clicked.connect(leave_settings_page)
     global_vars.ui.pushButtonSpeichern_4.clicked.connect(settings.save_settings)
 
     global allow_close

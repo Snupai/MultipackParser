@@ -1310,8 +1310,11 @@
        <layout class="QFormLayout" name="formLayout_3">
         <item row="0" column="1">
          <widget class="QLineEdit" name="passwordEdit">
+          <property name="inputMethodHints">
+           <set>Qt::InputMethodHint::ImhNoAutoUppercase|Qt::InputMethodHint::ImhNoPredictiveText|Qt::InputMethodHint::ImhSensitiveData</set>
+          </property>
           <property name="inputMask">
-           <string>XXXXXXXX</string>
+           <string/>
           </property>
           <property name="maxLength">
            <number>8</number>

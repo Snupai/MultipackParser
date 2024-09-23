@@ -480,8 +480,9 @@ class Ui_Form(object):
         self.formLayout_3.setContentsMargins(0, 0, 0, 0)
         self.passwordEdit = QLineEdit(self.formLayoutWidget_3)
         self.passwordEdit.setObjectName(u"passwordEdit")
+        self.passwordEdit.setInputMethodHints(Qt.InputMethodHint.ImhHiddenText|Qt.InputMethodHint.ImhNoAutoUppercase|Qt.InputMethodHint.ImhNoPredictiveText|Qt.InputMethodHint.ImhSensitiveData)
         self.passwordEdit.setMaxLength(8)
-        self.passwordEdit.setEchoMode(QLineEdit.EchoMode.PasswordEchoOnEdit)
+        self.passwordEdit.setEchoMode(QLineEdit.EchoMode.Password)
         self.passwordEdit.setClearButtonEnabled(True)
 
         self.formLayout_3.setWidget(0, QFormLayout.FieldRole, self.passwordEdit)
@@ -534,7 +535,7 @@ class Ui_Form(object):
         self.stackedWidget.setCurrentIndex(2)
         self.ButtonSettings.setDefault(False)
         self.tabWidget.setCurrentIndex(1)
-        self.tabWidget_2.setCurrentIndex(0)
+        self.tabWidget_2.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(Form)
@@ -594,7 +595,7 @@ class Ui_Form(object):
         self.pushButtonSpeichern.setText(QCoreApplication.translate("Form", u"Speichern", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.PallettiererSpezifisch), QCoreApplication.translate("Form", u"Info", None))
         self.ButtonZurueck_4.setText("")
-        self.passwordEdit.setInputMask(QCoreApplication.translate("Form", u"XXXXXXXX", None))
+        self.passwordEdit.setInputMask("")
         self.label_8.setText(QCoreApplication.translate("Form", u"Passwort: ", None))
         self.pushButtonSpeichern_2.setText(QCoreApplication.translate("Form", u"Speichern", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.adminSettingsTab), QCoreApplication.translate("Form", u"Admin", None))

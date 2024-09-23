@@ -26,7 +26,7 @@ class Settings:
                     "sound": True
                 },
                 "admin": {
-                    "password": "666666",
+                    "password": "fc2f8726bb317b17a3cb322672818d2d$580c515fc8852dfd6e36faaaf46581c412683135b87dc8750c89efad4a38b54f",
                     "debug": False
                 },
                 "info": {
@@ -41,7 +41,7 @@ class Settings:
                     "last_restart": "Never"
                 }
         }
-
+        self.saved_settings = None
         if not os.path.exists(self.settings_file):
             self.save_settings()
         else: 
@@ -112,6 +112,7 @@ class Settings:
             encoded_settings = base64.b64encode(pickle.dumps(self.settings))
             with open(self.settings_file, 'wb') as file:
                 file.write(encoded_settings)
+            self.saved_settings = self.settings
         else:
             print("Invalid settings file path detected in save_settings()")  # Debug statement
             raise ValueError("Invalid settings file path")
@@ -131,6 +132,14 @@ class Settings:
 
     def __str__(self):
         return str(self.settings)
+
+    def compare_loaded_settings_to_saved_settings(self):
+        print(f"Comparing loaded settings to saved settings...")  # Debug statement
+        if self.settings != self.saved_settings:
+           raise ValueError("Loaded settings do not match saved settings.")
+           return False
+        else:
+            return True
 
 if __name__ == '__main__':
     print("Hell no you can't run this file directly!")
