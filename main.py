@@ -45,6 +45,8 @@ from ui_files import Ui_Form, MainWindowResources_rc, PasswordEntryDialog
 from utils import global_vars, Settings
 from utils import UR10_Server_functions as UR10
 
+logger = global_vars.logger
+
 # BUG: QtVirtualKeyboard does not work on Linux 
 #os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
@@ -52,20 +54,25 @@ from utils import UR10_Server_functions as UR10
  
 if global_vars.PATH_USB_STICK == None:
     # Bekomme CWD und setze den Pfad auf den Überordner
-    print(os.path.dirname(os.getcwd()))
+    logger.debug(os.path.dirname(os.getcwd()))
     global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' 
-
-logger = global_vars.logger
 
 ####################
 # Random functions #
 ####################
                  
 def Server_start():
+    """
+    Start the XMLRPC server.
+
+    Returns:
+        0
+    """
+
     #server_stop_btn.configure(state="normal")
     global server
     server = SimpleXMLRPCServer(("", 8080), allow_none=True)
-    print ("Start Server")
+    logger.debug("Start Server")
     server.register_function(UR10.UR_SetFileName, "UR_SetFileName")
     server.register_function(UR10.UR_ReadDataFromUsbStick, "UR_ReadDataFromUsbStick")
     server.register_function(UR10.UR_Palette, "UR_Palette")
@@ -88,89 +95,104 @@ def Server_start():
     server.register_function(UR10.UR_scanner1bild, "UR_scanner1bild")
     server.register_function(UR10.UR_scanner2bild, "UR_scanner2bild")
     server.register_function(UR10.UR_scanner1and2iobild, "UR_scanner1and2iobild")
-    #print ("Oeffne serielle Schnittstelle")
+    #logger.debug("Oeffne serielle Schnittstelle")
     #ser = serial.Serial('/dev/ttyUSB0', 115200, timeout = 0.5)
-    #print ("Serielle Schnittstelle " + ser.name + " 115200Baud")
+    #logger.debug("Serielle Schnittstelle " + ser.name + " 115200Baud")
     #roboter_btn.configure(state="normal")
     server.serve_forever()
     
-    #print ("Server läuft")
+    #logger.debug("Server läuft")
     return 0
  
 def Server_stop():
+    """
+    Stop the XMLRPC server.
+    """
     server.shutdown()
  
 def Server_thread():
+    """
+    Start the XMLRPC server in a separate thread.
+    """
     xServerThread = threading.Thread(target=Server_start)
     xServerThread.start()
  
 def Send_cmd_play():
+    """
+    Send a command to the robot to start.
+    """
     try:
         # Create a TCP/IP socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
         # Connect the socket to the port where the server is listening
         server_address = (global_vars.robot_ip, 29999)
-        print ('connecting to %s port %s' %(server_address))
+        logger.debug('connecting to %s port %s' %(server_address))
         sock.connect(server_address)
         
         # Send data
         message = 'play\n'
-        print ('sending %s' %(message))
+        logger.debug('sending %s' %(message))
         sock.sendall(message.encode('utf-8'))
         
         # Print any response
         data = sock.recv(4096)
-        print ('received %s' %(data))
+        logger.debug('received %s' %(data))
         
     finally:
-        print ('closing socket')
+        logger.debug('closing socket')
         sock.close()
  
 def Send_cmd_pause():
+    """
+    Send a command to the robot to pause.
+    """
     try:
         # Create a TCP/IP socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
         # Connect the socket to the port where the server is listening
         server_address = (global_vars.robot_ip, 29999)
-        print ('connecting to %s port %s' %(server_address))
+        logger.debug('connecting to %s port %s' %(server_address))
         sock.connect(server_address)
         
         # Send data
         message = 'pause\n'
-        print ('sending %s' %(message))
+        logger.debug('sending %s' %(message))
         sock.sendall(message.encode('utf-8'))
         
         # Print any response
         data = sock.recv(4096)
-        print ('received %s' %(data))
+        logger.debug('received %s' %(data))
         
     finally:
-        print ('closing socket')
+        logger.debug('closing socket')
         sock.close()
  
 def Send_cmd_stop():
+    """
+    Send a command to the robot to stop.
+    """
     try:
         # Create a TCP/IP socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
         # Connect the socket to the port where the server is listening
         server_address = (global_vars.robot_ip, 29999)
-        print ('connecting to %s port %s' %(server_address))
+        logger.debug('connecting to %s port %s' %(server_address))
         sock.connect(server_address)
         
         # Send data
         message = 'stop\n'
-        print ('sending %s' %(message))
+        logger.debug('sending %s' %(message))
         sock.sendall(message.encode('utf-8'))
         
         # Print any response
         data = sock.recv(4096)
-        print ('received %s' %(data))
+        logger.debug('received %s' %(data))
         
     finally:
-        print ('closing socket')
+        logger.debug('closing socket')
         sock.close()
 
 ################
@@ -179,25 +201,40 @@ def Send_cmd_stop():
 
 
 def open_password_dialog() -> None:
+    """
+    Open the password dialog.
+    """
     dialog = PasswordEntryDialog()
     if dialog.exec() == QDialog.Accepted and dialog.password_accepted:
         open_settings_page()
 
 def open_settings_page() -> None:
+    """
+    Open the settings page.
+    """
     # set page of the stacked widgets to index 2
     settings.reset_unsaved_changes()
     global_vars.ui.stackedWidget.setCurrentIndex(2)
 
 def open_parameter_page() -> None:
+    """
+    Open the parameter page.
+    """
     # set page of the stacked widgets to index 1
     global_vars.ui.tabWidget.setCurrentIndex(0)
     global_vars.ui.stackedWidget.setCurrentIndex(1)
 
 def open_main_page() -> None:
+    """
+    Open the main page.
+    """
     # set page of the stacked widgets to index 0
-        global_vars.ui.stackedWidget.setCurrentIndex(0)
+    global_vars.ui.stackedWidget.setCurrentIndex(0)
 
 def open_explorer() -> None:
+    """
+    Open the explorer.
+    """
     logger.info("Opening explorer")
     if sys.platform == "win32":
         subprocess.Popen(["explorer.exe"])
@@ -205,6 +242,9 @@ def open_explorer() -> None:
         subprocess.Popen(["xdg-open", "."])
 
 def open_terminal() -> None:
+    """
+    Open the terminal.
+    """
     logger.info("Opening terminal")
     if sys.platform == "win32":
         subprocess.Popen(["start", "cmd.exe"], shell=True)
@@ -212,6 +252,11 @@ def open_terminal() -> None:
         subprocess.Popen(["x-terminal-emulator", "--window"])
 
 def load() -> None:
+    """
+    Load the selected file.
+
+    This function is called when the user clicks the "Lade Pallettenplan" button.
+    """
     # get the value of the EingabePallettenplan text box and run UR_SET_FILENAME then check if the file exists and if it doesnt open a message box
     Artikelnummer = global_vars.ui.EingabePallettenplan.text()
     UR10.UR_SetFileName(Artikelnummer)
@@ -247,9 +292,20 @@ def load() -> None:
         global_vars.ui.EingabeKartonhoehe.setText(str(global_vars.g_PaketDim[2]))
 
 def send_data() -> None:
-        Server_thread()
+    """
+    Send the data to the robot.
+
+    This function is called when the user clicks the "Daten Senden" button.
+    """
+    Server_thread()
 
 def load_wordlist() -> list:
+    """
+    Load the wordlist from the USB stick.
+
+    Returns:
+        A list of wordlist items.
+    """
     wordlist = []
     count = 0
     for file in os.listdir(global_vars.PATH_USB_STICK):
@@ -261,11 +317,21 @@ def load_wordlist() -> list:
     return wordlist
 
 def init_settings():
+    """
+    Initialize the settings.
+    
+    This function is called when the application starts.
+    """
     global settings
     settings = Settings()
     logger.debug(f"Settings: {settings}")
 
 def leave_settings_page():
+    """
+    Leave the settings page.
+    
+    This function is called when the user clicks the "Zurueck" button in the settings page.
+    """
     try:
         settings.compare_loaded_settings_to_saved_settings()
     except ValueError as e:
@@ -292,6 +358,11 @@ def leave_settings_page():
     open_main_page()
 
 def open_file():
+    """
+    Open a file.
+
+    This function is called when the user clicks the "Open" button in the editor settings tab.
+    """
     # Open a file browser to select a file
     file_path, _ = QFileDialog.getOpenFileName(parent=main_window, caption="Open File")
     global_vars.ui.lineEditFilePath.setText(file_path)
@@ -307,6 +378,11 @@ def open_file():
         QMessageBox.critical(main_window, "Error", f"Failed to open file: {e}")
 
 def save_open_file():
+    """
+    Save or open a file.
+
+    This function is called when the user clicks the "Speichern" button in the editor settings tab.
+    """
     # save the file to the selected file path but prompt the user before overwriting the file
     file_path = global_vars.ui.lineEditFilePath.text()
     if file_path:
@@ -326,6 +402,9 @@ def save_open_file():
         QMessageBox.warning(main_window, "Error", "Please select a file to save.")
 
 def execute_command():
+    """
+    Execute a command in the console.
+    """
     command = global_vars.ui.lineEditCommand.text().strip()
 
     # Check if the command starts with ">"
@@ -358,16 +437,27 @@ def execute_command():
     global_vars.process = process
 
 def handle_stdout():
+    """
+    Handle standard output.
+    """
     data = global_vars.process.readAllStandardOutput()
     stdout = bytes(data).decode("utf-8", errors="replace")
     global_vars.ui.textEditConsole.append(stdout)
 
 def handle_stderr():
+    """
+    Handle standard error output.
+    """
     data = global_vars.process.readAllStandardError()
     stderr = bytes(data).decode("utf-8", errors="replace")
     global_vars.ui.textEditConsole.append(stderr)
 
 def set_settings_line_edits():
+    """
+    Set the line edits in the settings page to the current settings.
+
+    This function is called when the settings page is opened or when the settings are changed.
+    """
     global_vars.ui.lineEditDisplayHeight.setText(str(settings.settings['display']['specs']['height']))
     global_vars.ui.lineEditDisplayWidth.setText(str(settings.settings['display']['specs']['width']))
     global_vars.ui.lineEditDisplayRefreshRate.setText(str(settings.settings['display']['specs']['refresh_rate']))
@@ -383,6 +473,11 @@ def set_settings_line_edits():
     global_vars.ui.lineEditLastRestart.setText(settings.settings['info']['last_restart'])
 
 def exit_app():
+    """
+    Exit the application.
+    
+    This function is called when the user clicks the "Exit Application" button.
+    """
     try:
         settings.compare_loaded_settings_to_saved_settings()
         sys.exit(0)
@@ -413,18 +508,46 @@ def exit_app():
 #################
 
 class CustomDoubleValidator(QDoubleValidator):
+    """
+    Custom double validator.
+
+    This class inherits from QDoubleValidator and overrides the validate method to allow
+    commas to be used as decimal separators.
+    """
     def validate(self, input, pos):
+        """
+        Validate the input.
+
+        Args:
+            input (str): The input to be validated.
+            pos (int): The position of the input in the text box.
+
+        Returns:
+            bool: True if the input is valid, False otherwise.
+        """
         if ',' in input:
             input = input.replace(',', '.')
         return super().validate(input, pos)
 
     def fixup(self, input):
+        """
+        Fixup the input.
+
+        Args:
+            input (str): The input to be fixed up.
+
+        Returns:
+            str: The fixed up input.
+        """
         if ',' in input:
             input = input.replace(',', '.')
         return input  # Directly return the modified input without further processing
 
 # Main function to run the application
 def main():
+    """
+    Main function to run the application.
+    """
     global main_window
     parser = argparse.ArgumentParser(description="Multipack Parser Application")
     parser.add_argument('--version', action='store_true', help='Show version information and exit')
@@ -465,6 +588,9 @@ def main():
     settings.save_settings()
 
     def update_wordlist():
+        """
+        Update the wordlist.
+        """
         new_wordlist = load_wordlist()
         completer.model().setStringList(new_wordlist)
 
@@ -531,6 +657,16 @@ def main():
     global_vars.ui.pushButtonSpeichern_2.clicked.connect(settings.save_settings)
 
     def hash_password(password, salt=None):
+        """
+        Hash a password.
+
+        Args:
+            password (str): The password to be hashed.
+            salt (str, optional): The salt to be used. Defaults to None.
+
+        Returns:
+            str: The hashed password.
+        """
         if salt is None:
             salt = os.urandom(16)
         salted_password = salt + password.encode()
@@ -557,6 +693,12 @@ def main():
     allow_close = False
 
     def allow_close_event(event):
+        """
+        Allow the window to close.
+
+        Args:
+            event (QEvent): The event object.
+        """
         global allow_close
         if allow_close:
             event.accept()
@@ -565,6 +707,15 @@ def main():
             event.ignore()
 
     def handle_key_press_event(event):
+        """
+        Handle key press events.
+
+        Args:
+            event (QEvent): The event object.
+
+        Returns:
+            bool: True if the event was handled, False otherwise.
+        """
         global allow_close
         # Check for the key combination Ctrl + Alt + Shift + C
         if (event.modifiers() == (Qt.ControlModifier | Qt.AltModifier | Qt.ShiftModifier) and 

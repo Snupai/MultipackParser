@@ -7,11 +7,17 @@ import subprocess
 import pickle
 import base64
 import copy
+from . import global_vars
+
+logger = global_vars.logger
 
 class Settings:
     def __init__(self):
-        self.settings_file ='MultipackParser.conf'
-        print(f"Initializing settings with file: {self.settings_file}")  # Debug statement
+        """
+        Initialize the settings.
+        """
+        self.settings_file = 'MultipackParser.conf'
+        logger.debug(f"Initializing settings with file: {self.settings_file}")  # Debug statement
         self.settings = {
                 "display": {
                     "width": 800,
@@ -51,6 +57,12 @@ class Settings:
         self.saved_settings = copy.deepcopy(self.settings)
     
     def getDisplayModel(self):
+        """
+        Get the display model.
+
+        Returns:
+            str: The display model.
+        """
         try:
             if os.name == 'nt':  # Windows
                 result = subprocess.run(['wmic', 'desktopmonitor', 'get', 'caption'], capture_output=True, text=True)
@@ -65,6 +77,12 @@ class Settings:
             return f"Error retrieving display model: {str(e)}"
 
     def getDisplayResolution(self):
+        """
+        Get the display resolution.
+
+        Returns:
+            tuple: The display resolution as a tuple of width and height.
+        """
         try:
             if os.name == 'nt':  # Windows
                 result = subprocess.run(['wmic', 'path', 'Win32_VideoController', 'get', 'VideoModeDescription'], capture_output=True, text=True)
@@ -91,6 +109,12 @@ class Settings:
             return (800, 600)  # Return a default resolution on error
 
     def getDisplayRefreshRate(self):
+        """
+        Get the display refresh rate.
+
+        Returns:
+            int: The display refresh rate.
+        """
         try:
             if os.name == 'nt':  # Windows
                 result = subprocess.run(['wmic', 'path', 'Win32_VideoController', 'get', 'CurrentRefreshRate'], capture_output=True, text=True)
@@ -110,18 +134,24 @@ class Settings:
             return 60  # Return a default refresh rate on error
 
     def save_settings(self):
-        print(f"Saving settings to {self.settings_file=}")  # Debug statement
+        """
+        Save the settings.
+        """
+        logger.debug(f"Saving settings to {self.settings_file=}")  # Debug statement
         if isinstance(self.settings_file, str) and self.settings_file.strip() != "":
             encoded_settings = base64.b64encode(pickle.dumps(self.settings))
             with open(self.settings_file, 'wb') as file:
                 file.write(encoded_settings)
             self.saved_settings = copy.deepcopy(self.settings)
         else:
-            print("Invalid settings file path detected in save_settings()")  # Debug statement
+            logger.debug("Invalid settings file path detected in save_settings()")  # Debug statement
             raise ValueError("Invalid settings file path")
             
     def load_settings(self):
-        print(f"Loading settings from {self.settings_file}")  # Debug statement
+        """
+        Load the settings.
+        """
+        logger.debug(f"Loading settings from {self.settings_file}")  # Debug statement
         if self.settings_file and isinstance(self.settings_file, str) and self.settings_file.strip() != "":
             try:
                 with open(self.settings_file, 'rb') as file:
@@ -130,14 +160,29 @@ class Settings:
             except Exception as e:
                 raise RuntimeError(f"Failed to load settings from {self.settings_file}") from e
         else:
-            print("Invalid settings file path detected in load_settings()")  # Debug statement
+            logger.debug("Invalid settings file path detected in load_settings()")  # Debug statement
             raise ValueError("Invalid settings file path")
 
     def __str__(self):
+        """
+        Convert the settings to a string.
+
+        Returns:
+            str: The settings as a string.
+        """
         return str(self.settings)
 
     def compare_loaded_settings_to_saved_settings(self):
-        print(f"Comparing loaded settings to saved settings...")  # Debug statement
+        """
+        Compare the loaded settings to the saved settings.
+
+        Raises:
+            ValueError: If the loaded settings do not match the saved settings.
+
+        Returns:
+            bool: True if the loaded settings match the saved settings, False otherwise.
+        """
+        logger.debug(f"Comparing loaded settings to saved settings...")  # Debug statement
         if self.settings != self.saved_settings:
            raise ValueError("Loaded settings do not match saved settings.")
            return False
@@ -145,7 +190,10 @@ class Settings:
             return True
 
     def reset_unsaved_changes(self):
-        print(f"Resetting unsaved changes...")  # Debug statement
+        """
+        Reset the unsaved changes.
+        """
+        logger.debug(f"Resetting unsaved changes...")  # Debug statement
         self.settings = copy.deepcopy(self.saved_settings)
 
 if __name__ == '__main__':
