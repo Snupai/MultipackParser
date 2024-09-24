@@ -382,6 +382,32 @@ def set_settings_line_edits():
     global_vars.ui.lineEditNumberCycles.setText(str(settings.settings['info']['number_of_use_cycles']))
     global_vars.ui.lineEditLastRestart.setText(settings.settings['info']['last_restart'])
 
+def exit_app():
+    try:
+        settings.compare_loaded_settings_to_saved_settings()
+        sys.exit(0)
+    except ValueError as e:
+        logger.error(f"Error: {e}")
+    
+        # If settings do not match, ask whether to discard or save the new data
+        response = QMessageBox.question(main_window, "Verwerfen oder Speichern", "Möchten Sie die neuen Daten verwerfen oder speichern?",
+                                        QMessageBox.Discard | QMessageBox.Save, QMessageBox.Save)
+        
+        if response == QMessageBox.Save:
+            try:
+                settings.save_settings()
+                logger.debug("New settings saved.")
+                # Exit the application
+                sys.exit(0)
+            except Exception as e:
+                logger.error(f"Failed to save settings: {e}")
+                QMessageBox.critical(main_window, "Error", f"Failed to save settings: {e}")
+                return
+        elif response == QMessageBox.Discard:
+            settings.reset_unsaved_changes()
+            set_settings_line_edits()
+            logger.debug("All changes discarded.")
+
 #################
 # Main function #
 #################
@@ -524,6 +550,8 @@ def main():
     global_vars.ui.lineEditCommand.setText("> ")  # Set initial text
     global_vars.ui.lineEditCommand.setPlaceholderText("command")  # Set placeholder text
     global_vars.ui.lineEditCommand.returnPressed.connect(execute_command)
+
+    global_vars.ui.pushButtonExitApp.clicked.connect(exit_app)
 
     global allow_close
     allow_close = False

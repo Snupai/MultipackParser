@@ -1038,7 +1038,7 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="PallettiererSpezifisch">
       <attribute name="title">
@@ -1197,6 +1197,9 @@
         </rect>
        </property>
        <layout class="QFormLayout" name="formLayout_2">
+        <property name="labelAlignment">
+         <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+        </property>
         <item row="0" column="0">
          <widget class="QLabel" name="label_20">
           <property name="text">
@@ -1262,6 +1265,19 @@
        </property>
        <property name="text">
         <string>Speichern</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButtonExitApp">
+       <property name="geometry">
+        <rect>
+         <x>880</x>
+         <y>230</y>
+         <width>171</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Exit Application</string>
        </property>
       </widget>
      </widget>
