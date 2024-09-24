@@ -185,7 +185,8 @@ def open_password_dialog() -> None:
 
 def open_settings_page() -> None:
     # set page of the stacked widgets to index 2
-        global_vars.ui.stackedWidget.setCurrentIndex(2)
+    settings.reset_unsaved_changes()
+    global_vars.ui.stackedWidget.setCurrentIndex(2)
 
 def open_parameter_page() -> None:
     # set page of the stacked widgets to index 1
@@ -265,7 +266,6 @@ def init_settings():
     logger.debug(f"Settings: {settings}")
 
 def leave_settings_page():
-    # BUG: the first time this function is called it will say that the settings do not match the saved settings even though there were no changes
     try:
         settings.compare_loaded_settings_to_saved_settings()
     except ValueError as e:
