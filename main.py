@@ -462,7 +462,7 @@ def set_settings_line_edits():
     """
     global_vars.ui.lineEditDisplayHeight.setText(str(settings.settings['display']['specs']['height']))
     global_vars.ui.lineEditDisplayWidth.setText(str(settings.settings['display']['specs']['width']))
-    global_vars.ui.lineEditDisplayRefreshRate.setText(str(settings.settings['display']['specs']['refresh_rate']))
+    global_vars.ui.lineEditDisplayRefreshRate.setText(str(int(float(settings.settings['display']['specs']['refresh_rate']))))
     global_vars.ui.lineEditDisplayModel.setText(settings.settings['display']['specs']['model'])
     global_vars.ui.lineEditURModel.setText(settings.settings['info']['UR_Model'])
     global_vars.ui.lineEditURSerialNo.setText(settings.settings['info']['UR_Serial_Number'])
