@@ -40,15 +40,16 @@ from PySide6.QtQuick import QQuickView
 from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QWidget, QCompleter, QLineEdit, QFileDialog, QMessageBox
 from PySide6.QtCore import Qt, QEvent, QFileSystemWatcher, QUrl, QProcess
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QPixmap
-
-from ui_files import Ui_Form, MainWindowResources_rc, PasswordEntryDialog
-from utils import global_vars, Settings
+from ui_files.ui_main_window import Ui_Form
+#from ui_files.PasswordDialog import PasswordEntryDialog
+from ui_files import MainWindowResources_rc
+from utils import global_vars
+from utils.settings import Settings
 from utils import UR10_Server_functions as UR10
 
 logger = global_vars.logger
 
-# BUG: QtVirtualKeyboard does not work on Linux 
-#os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
+os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
 # global_vars.PATH_USB_STICK = 'E:\' # Pfad zu den .rob Dateien nur auskommentieren zum testen
  
@@ -204,6 +205,7 @@ def open_password_dialog() -> None:
     """
     Open the password dialog.
     """
+    from ui_files.PasswordDialog import PasswordEntryDialog  # Import here instead of top
     dialog = PasswordEntryDialog()
     if dialog.exec() == QDialog.Accepted and dialog.password_accepted:
         open_settings_page()
