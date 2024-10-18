@@ -12,6 +12,23 @@ from . import global_vars
 logger = global_vars.logger
 
 class Settings:
+    """
+    This class handles the settings of the application.
+    """
+
+    settings_file = None
+    """
+    The path to the settings file.
+    """
+    settings = None
+    """
+    The settings.
+    """
+    saved_settings = None
+    """
+    The saved settings.
+    """
+
     def __init__(self):
         """
         Initialize the settings.

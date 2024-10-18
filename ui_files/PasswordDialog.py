@@ -13,9 +13,22 @@ logger = global_vars.logger
 
 # Define the password entry dialog class
 class PasswordEntryDialog(QDialog):
+    """
+    PasswordEntryDialog class.
+    """
     password_accepted = False
+    """
+    bool: Flag indicating whether the password was accepted.
+    """
+    ui = None
+    """
+    Ui_Dialog: The UI object for the dialog.
+    """
 
     def __init__(self) -> None:
+        """
+        Initialize the PasswordEntryDialog class.
+        """
         super(PasswordEntryDialog, self).__init__()
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
@@ -26,6 +39,11 @@ class PasswordEntryDialog(QDialog):
         logger.info("PasswordEntryDialog opened")
 
     def accept(self) -> NoReturn:
+        """
+        Accept the password.
+
+        This function is called when the user clicks the "OK" button.
+        """
         s = Settings()
         stored_password_hash = s.settings['admin']['password']
         salt, stored_password_hash = stored_password_hash.split('$')
@@ -44,10 +62,30 @@ class PasswordEntryDialog(QDialog):
             QMessageBox.warning(self, "Error", "Incorrect password")
 
     def verify_password(self, correct_password: str, hashed_password: str) -> bool:
+        """
+        Verify the password.
+
+        Args:
+            correct_password (str): The correct password.
+            hashed_password (str): The hashed password.
+
+        Returns:
+            bool: True if the password is correct, False otherwise.
+        """
         # compare the hash with the correct password
         return hashed_password == correct_password
 
     def verify_master_password(self, hashed_password: str, salt: str) -> bool:
+        """
+        Verify the master password.
+
+        Args:
+            hashed_password (str): The hashed password.
+            salt (str): The salt.
+
+        Returns:
+            bool: True if the password is correct, False otherwise.
+        """
         password = 'eCaXDv6V8EUE8#d!8FTb'
         salted_password = salt + password.encode()
         correct_password = hashlib.sha256(salted_password).hexdigest()
@@ -55,6 +93,9 @@ class PasswordEntryDialog(QDialog):
         return hashed_password == correct_password
 
     def reject(self) -> NoReturn:
+        """
+        Reject the password.
+        """
         self.password_accepted = False
         logger.debug("rejected")
         super().reject()
