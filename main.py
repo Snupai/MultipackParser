@@ -38,8 +38,8 @@ from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickView
 ################################################################
 from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QWidget, QCompleter, QLineEdit, QFileDialog, QMessageBox
-from PySide6.QtCore import Qt, QEvent, QFileSystemWatcher, QUrl, QProcess
-from PySide6.QtGui import QIntValidator, QDoubleValidator, QPixmap
+from PySide6.QtCore import Qt, QEvent, QFileSystemWatcher, QUrl, QProcess, QRegularExpression
+from PySide6.QtGui import QIntValidator, QDoubleValidator, QPixmap, QRegularExpressionValidator
 from ui_files.ui_main_window import Ui_Form
 #from ui_files.PasswordDialog import PasswordEntryDialog
 from ui_files import MainWindowResources_rc
@@ -207,6 +207,10 @@ def open_password_dialog() -> None:
     """
     from ui_files.PasswordDialog import PasswordEntryDialog  # Import here instead of top
     dialog = PasswordEntryDialog()
+    dialog.setModal(False)
+    dialog.show()
+    dialog.ui.lineEdit.setFocus()
+    
     if dialog.exec() == QDialog.Accepted and dialog.password_accepted:
         open_settings_page()
 
@@ -595,6 +599,11 @@ def main():
         """
         new_wordlist = load_wordlist()
         completer.model().setStringList(new_wordlist)
+
+    # Set the regular expression validator for EingabePallettenplan
+    regex = QRegularExpression(r"^[0-9\-_]*$")
+    validator = QRegularExpressionValidator(regex)
+    global_vars.ui.EingabePallettenplan.setValidator(validator)
 
     wordlist = load_wordlist()
     completer = QCompleter(wordlist, main_window)
