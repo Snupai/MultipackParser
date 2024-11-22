@@ -9,6 +9,22 @@ RUN apt-get update -y && apt-get install -y \
     libffi-dev \
     libssl-dev \
     wget \
+    libdbus-1-3 \
+    libxkbcommon0 \
+    libwayland-client0 \
+    libwayland-cursor0 \
+    libwayland-egl1 \
+    libxcb-keysyms1 \
+    libxcb-shape0 \
+    libxcb-xfixes0 \
+    libxcb-xkb1 \
+    libxcb-sync1 \
+    libxcb-randr0 \
+    libxcb-render-util0 \
+    libxcb-cursor0 \
+    libxcb-icccm4 \
+    libxcb-image0 \
+    libxcb-glx0 \
     && apt-get clean
 
 # Install PyInstaller and required Python packages
@@ -29,7 +45,7 @@ FROM arm64v8/python:3.12-slim
 
 WORKDIR /app
 
-# Copy the executable from the builder stage
+# Copy the executable to the app directory
 COPY --from=builder /app/dist/MultipackParser /app/dist/MultipackParser
 
 # Set entrypoint to the built executable
