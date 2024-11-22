@@ -8,6 +8,7 @@ import hashlib
 from utils import global_vars, Settings
 from . import Ui_Dialog
 from PySide6.QtWidgets import QDialog, QMessageBox
+from PySide6.QtCore import Qt
 
 logger = global_vars.logger
 
@@ -32,7 +33,8 @@ class PasswordEntryDialog(QDialog):
         super(PasswordEntryDialog, self).__init__()
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-
+        self.ui.lineEdit.setFocus()  # Ensure focus
+        self.ui.lineEdit.setFocusPolicy(Qt.StrongFocus)  # Ensure it can request focus
         self.ui.buttonBox.accepted.connect(self.accept)
         self.ui.buttonBox.rejected.connect(self.reject)
 

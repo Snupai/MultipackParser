@@ -26,9 +26,9 @@ class Ui_Form(object):
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.setWindowModality(Qt.WindowModality.NonModal)
-        Form.resize(1280, 390)
-        Form.setMinimumSize(QSize(1280, 390))
-        Form.setMaximumSize(QSize(1280, 390))
+        Form.resize(1280, 720)
+        Form.setMinimumSize(QSize(1280, 720))
+        Form.setMaximumSize(QSize(1280, 720))
         palette = QPalette()
         brush = QBrush(QColor(85, 85, 255, 255))
         brush.setStyle(Qt.SolidPattern)
@@ -127,6 +127,7 @@ class Ui_Form(object):
         self.EingabePallettenplan.setMinimumSize(QSize(0, 39))
         self.EingabePallettenplan.setMaximumSize(QSize(16777215, 39))
         self.EingabePallettenplan.setFont(font1)
+        self.EingabePallettenplan.setInputMethodHints(Qt.InputMethodHint.ImhPreferNumbers)
         self.label_4 = QLabel(self.MainMenu)
         self.label_4.setObjectName(u"label_4")
         self.label_4.setGeometry(QRect(80, 248, 241, 41))
@@ -485,7 +486,7 @@ class Ui_Form(object):
         self.formLayout_3.setContentsMargins(0, 0, 0, 0)
         self.passwordEdit = QLineEdit(self.formLayoutWidget_3)
         self.passwordEdit.setObjectName(u"passwordEdit")
-        self.passwordEdit.setInputMethodHints(Qt.InputMethodHint.ImhNoAutoUppercase|Qt.InputMethodHint.ImhNoPredictiveText|Qt.InputMethodHint.ImhSensitiveData)
+        self.passwordEdit.setInputMethodHints(Qt.InputMethodHint.ImhNoAutoUppercase|Qt.InputMethodHint.ImhNoPredictiveText|Qt.InputMethodHint.ImhPreferNumbers|Qt.InputMethodHint.ImhSensitiveData)
         self.passwordEdit.setMaxLength(8)
         self.passwordEdit.setEchoMode(QLineEdit.EchoMode.PasswordEchoOnEdit)
         self.passwordEdit.setClearButtonEnabled(True)
@@ -567,8 +568,8 @@ class Ui_Form(object):
 
         self.stackedWidget.setCurrentIndex(2)
         self.ButtonSettings.setDefault(False)
-        self.tabWidget.setCurrentIndex(1)
-        self.tabWidget_2.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget_2.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(Form)
