@@ -38,6 +38,9 @@ pyside6-uic MainWindow.ui -o ui_main_window.py
 
 This will generate the ui_main_window.py file in the current directory.
 
+> [!WARNING]
+> If this command is run you'll have to change the line from `import MainWindowResources_rc` to `from . import MainWindowResources_rc`!
+
 to convert the .qrc files to .py files, you can use the following command:
 
 ```bash
@@ -56,18 +59,6 @@ Finally, to build the application, you can use the following command:
 
 ```bash
 python build.py
-```
-
-To build the application without Docker, you can use the following command:
-
-> [!CAUTION]
-> This command will not build the application using Docker.
-> This command may alter the .spec file in the root directory of the project.
-> The resulting binary will **not** be placed in the local_dist directory.
-> The altered .spec file **shall not** be committed to the respository. 
-
-```bash
-pyside6-deploy -c pysidedeploy.spec --extra-modules=QtVirtualKeyboard
 ```
 
 ## License
