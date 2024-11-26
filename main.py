@@ -41,7 +41,6 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, Q
 from PySide6.QtCore import Qt, QEvent, QFileSystemWatcher, QUrl, QProcess, QRegularExpression
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QPixmap, QRegularExpressionValidator
 from ui_files.ui_main_window import Ui_Form
-#from ui_files.PasswordDialog import PasswordEntryDialog
 from ui_files import MainWindowResources_rc
 from utils import global_vars
 from utils.settings import Settings
@@ -62,7 +61,7 @@ if global_vars.PATH_USB_STICK == None:
 # Random functions #
 ####################
                  
-def Server_start():
+def server_start():
     """
     Start the XMLRPC server.
 
@@ -105,20 +104,20 @@ def Server_start():
     #logger.debug("Server läuft")
     return 0
  
-def Server_stop():
+def server_stop():
     """
     Stop the XMLRPC server.
     """
     server.shutdown()
  
-def Server_thread():
+def server_thread():
     """
     Start the XMLRPC server in a separate thread.
     """
-    xServerThread = threading.Thread(target=Server_start)
+    xServerThread = threading.Thread(target=server_start)
     xServerThread.start()
  
-def Send_cmd_play():
+def send_cmd_play():
     """
     Send a command to the robot to start.
     """
@@ -144,7 +143,7 @@ def Send_cmd_play():
         logger.debug('closing socket')
         sock.close()
  
-def Send_cmd_pause():
+def send_cmd_pause():
     """
     Send a command to the robot to pause.
     """
@@ -170,7 +169,7 @@ def Send_cmd_pause():
         logger.debug('closing socket')
         sock.close()
  
-def Send_cmd_stop():
+def send_cmd_stop():
     """
     Send a command to the robot to stop.
     """
@@ -303,7 +302,7 @@ def send_data() -> None:
 
     This function is called when the user clicks the "Daten Senden" button.
     """
-    Server_thread()
+    server_thread()
 
 def load_wordlist() -> list:
     """
@@ -399,7 +398,6 @@ def save_open_file():
                     file.write(global_vars.ui.textEditFile.toPlainText())
             else:
                 logger.debug("File not saved.")
-                return
         else:
             with open(file_path, 'w') as file:
                 file.write(global_vars.ui.textEditFile.toPlainText())
@@ -520,7 +518,7 @@ class CustomDoubleValidator(QDoubleValidator):
     This class inherits from QDoubleValidator and overrides the validate method to allow
     commas to be used as decimal separators.
     """
-    def validate(self, input, pos):
+    def validate(self, usr_input, pos):
         """
         Validate the input.
 
@@ -531,11 +529,11 @@ class CustomDoubleValidator(QDoubleValidator):
         Returns:
             bool: True if the input is valid, False otherwise.
         """
-        if ',' in input:
-            input = input.replace(',', '.')
-        return super().validate(input, pos)
+        if ',' in usr_input:
+            usr_input = usr_input.replace(',', '.')
+        return super().validate(usr_input, pos)
 
-    def fixup(self, input):
+    def fixup(self, usr_input):
         """
         Fixup the input.
 
@@ -545,9 +543,9 @@ class CustomDoubleValidator(QDoubleValidator):
         Returns:
             str: The fixed up input.
         """
-        if ',' in input:
-            input = input.replace(',', '.')
-        return input  # Directly return the modified input without further processing
+        if ',' in usr_input:
+            usr_input = usr_input.replace(',', '.')
+        return usr_input  # Directly return the modified input without further processing
 
 # Main function to run the application
 def main():
@@ -634,10 +632,10 @@ def main():
     #Page 2 Buttons
     # Roboter Tab
     global_vars.ui.ButtonZurueck.clicked.connect(open_main_page)
-    global_vars.ui.ButtonRoboterStart.clicked.connect(Send_cmd_play)
-    global_vars.ui.ButtonRoboterPause.clicked.connect(Send_cmd_pause)
-    global_vars.ui.ButtonRoboterStop.clicked.connect(Send_cmd_stop)
-    global_vars.ui.ButtonStopRPCServer.clicked.connect(Server_stop)
+    global_vars.ui.ButtonRoboterStart.clicked.connect(send_cmd_play)
+    global_vars.ui.ButtonRoboterPause.clicked.connect(send_cmd_pause)
+    global_vars.ui.ButtonRoboterStop.clicked.connect(send_cmd_stop)
+    global_vars.ui.ButtonStopRPCServer.clicked.connect(server_stop)
     # Aufnahme Tab
     global_vars.ui.ButtonZurueck_2.clicked.connect(open_main_page)
     global_vars.ui.ButtonDatenSenden_2.clicked.connect(send_data)
