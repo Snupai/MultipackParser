@@ -52,7 +52,8 @@ class Settings:
                 },
                 "admin": {
                     "password": "fc2f8726bb317b17a3cb322672818d2d$580c515fc8852dfd6e36faaaf46581c412683135b87dc8750c89efad4a38b54f",
-                    "debug": False
+                    "debug": False,
+                    "path": ".."
                 },
                 "info": {
                     "UR_Model": "N/A",

@@ -27,11 +27,11 @@ settings = None
 
 settings_file = 'MultipackParser.conf'
 
-VERSION = '1.5.2-alpha'
+VERSION = '1.5.2-beta'
 
 robot_ip = '192.168.0.1' # DO NOT CHANGE
 
-PATH_USB_STICK = None
+PATH_USB_STICK = '..'
 FILENAME = None
 g_PalettenDim = None
 g_PaketDim  = None

@@ -17,6 +17,7 @@
 
 #TODO: Implement option for UR10e or UR20 robot. If UR20 is selected robot will have 2 pallets. else only it is like the old code.
 #TODO: Implement seemless palletizing with 2 pallets for UR20 robot.
+#TODO: Implement option for selecting a path for the palletizing plans. use a folder dialog for selecting the path.
 
 import sys
 import subprocess
@@ -52,7 +53,7 @@ os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
 # global_vars.PATH_USB_STICK = 'E:\' # Pfad zu den .rob Dateien nur auskommentieren zum testen
  
-if global_vars.PATH_USB_STICK == None:
+if global_vars.PATH_USB_STICK == '..':
     # Bekomme CWD und setze den Pfad auf den Überordner
     logger.debug(os.path.dirname(os.getcwd()))
     global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' 
@@ -475,6 +476,7 @@ def set_settings_line_edits():
     global_vars.ui.lineEditNumberPlans.setText(str(settings.settings['info']['number_of_plans']))
     global_vars.ui.lineEditNumberCycles.setText(str(settings.settings['info']['number_of_use_cycles']))
     global_vars.ui.lineEditLastRestart.setText(settings.settings['info']['last_restart'])
+    global_vars.ui.pathEdit.setText(settings.settings['admin']['path'])
 
 def exit_app():
     """
@@ -657,6 +659,7 @@ def main():
     global_vars.ui.lineEditNumberPlans.textChanged.connect(lambda text: settings.settings['info'].__setitem__('number_of_plans', int(text)))
     global_vars.ui.lineEditNumberCycles.textChanged.connect(lambda text: settings.settings['info'].__setitem__('number_of_use_cycles', int(text)))
     global_vars.ui.lineEditLastRestart.textChanged.connect(lambda text: settings.settings['info'].__setitem__('last_restart', text))
+    global_vars.ui.pathEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('path', text))
     set_settings_line_edits()
     #global_vars.ui.checkBox.stateChanged.connect(lambda state: settings.settings['audio'].__setitem__('sound', state == Qt.Checked))
     #global_vars.ui.checkBox.setChecked(settings.settings['audio']['sound'])
