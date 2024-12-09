@@ -484,6 +484,11 @@ class Ui_Form(object):
         self.formLayout_3 = QFormLayout(self.formLayoutWidget_3)
         self.formLayout_3.setObjectName(u"formLayout_3")
         self.formLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.label_8 = QLabel(self.formLayoutWidget_3)
+        self.label_8.setObjectName(u"label_8")
+
+        self.formLayout_3.setWidget(0, QFormLayout.LabelRole, self.label_8)
+
         self.passwordEdit = QLineEdit(self.formLayoutWidget_3)
         self.passwordEdit.setObjectName(u"passwordEdit")
         self.passwordEdit.setInputMethodHints(Qt.InputMethodHint.ImhNoAutoUppercase|Qt.InputMethodHint.ImhNoPredictiveText|Qt.InputMethodHint.ImhPreferNumbers|Qt.InputMethodHint.ImhSensitiveData)
@@ -493,10 +498,15 @@ class Ui_Form(object):
 
         self.formLayout_3.setWidget(0, QFormLayout.FieldRole, self.passwordEdit)
 
-        self.label_8 = QLabel(self.formLayoutWidget_3)
-        self.label_8.setObjectName(u"label_8")
+        self.pathEdit = QLineEdit(self.formLayoutWidget_3)
+        self.pathEdit.setObjectName(u"pathEdit")
 
-        self.formLayout_3.setWidget(0, QFormLayout.LabelRole, self.label_8)
+        self.formLayout_3.setWidget(1, QFormLayout.FieldRole, self.pathEdit)
+
+        self.label_24 = QLabel(self.formLayoutWidget_3)
+        self.label_24.setObjectName(u"label_24")
+
+        self.formLayout_3.setWidget(1, QFormLayout.LabelRole, self.label_24)
 
         self.formLayoutWidget_4 = QWidget(self.adminSettingsTab)
         self.formLayoutWidget_4.setObjectName(u"formLayoutWidget_4")
@@ -630,8 +640,9 @@ class Ui_Form(object):
         self.pushButtonExitApp.setText(QCoreApplication.translate("Form", u"Exit Application", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.PallettiererSpezifisch), QCoreApplication.translate("Form", u"Info", None))
         self.ButtonZurueck_4.setText("")
-        self.passwordEdit.setInputMask(QCoreApplication.translate("Form", u"XXXXXXXX", None))
         self.label_8.setText(QCoreApplication.translate("Form", u"Passwort: ", None))
+        self.passwordEdit.setInputMask(QCoreApplication.translate("Form", u"XXXXXXXX", None))
+        self.label_24.setText(QCoreApplication.translate("Form", u"Pfad Palettenplaene", None))
         self.pushButtonSpeichern_2.setText(QCoreApplication.translate("Form", u"Speichern", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.adminSettingsTab), QCoreApplication.translate("Form", u"Admin", None))
         self.ButtonZurueck_5.setText("")
