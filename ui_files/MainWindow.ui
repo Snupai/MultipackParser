@@ -1041,7 +1041,7 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="PallettiererSpezifisch">
       <attribute name="title">
@@ -1270,12 +1270,25 @@
         <string>Speichern</string>
        </property>
       </widget>
+      <widget class="QPushButton" name="pushButtonSearchUpdate">
+       <property name="geometry">
+        <rect>
+         <x>1010</x>
+         <y>220</y>
+         <width>152</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Search Update</string>
+       </property>
+      </widget>
       <widget class="QPushButton" name="pushButtonExitApp">
        <property name="geometry">
         <rect>
-         <x>880</x>
-         <y>230</y>
-         <width>171</width>
+         <x>760</x>
+         <y>220</y>
+         <width>152</width>
          <height>81</height>
         </rect>
        </property>
