@@ -16,9 +16,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QFormLayout, QFrame,
-    QHeaderView, QLabel, QLineEdit, QPushButton,
-    QSizePolicy, QSpinBox, QStackedWidget, QTabWidget,
-    QTextEdit, QTreeView, QWidget)
+    QHBoxLayout, QHeaderView, QLabel, QLineEdit,
+    QPushButton, QSizePolicy, QSpinBox, QStackedWidget,
+    QTabWidget, QTextEdit, QToolButton, QTreeView,
+    QWidget)
 from . import MainWindowResources_rc
 
 class Ui_Form(object):
@@ -498,15 +499,27 @@ class Ui_Form(object):
 
         self.formLayout_3.setWidget(0, QFormLayout.FieldRole, self.passwordEdit)
 
-        self.pathEdit = QLineEdit(self.formLayoutWidget_3)
-        self.pathEdit.setObjectName(u"pathEdit")
-
-        self.formLayout_3.setWidget(1, QFormLayout.FieldRole, self.pathEdit)
-
         self.label_24 = QLabel(self.formLayoutWidget_3)
         self.label_24.setObjectName(u"label_24")
 
         self.formLayout_3.setWidget(1, QFormLayout.LabelRole, self.label_24)
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setSpacing(3)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.pathEdit = QLineEdit(self.formLayoutWidget_3)
+        self.pathEdit.setObjectName(u"pathEdit")
+
+        self.horizontalLayout.addWidget(self.pathEdit)
+
+        self.buttonSelectRobPath = QToolButton(self.formLayoutWidget_3)
+        self.buttonSelectRobPath.setObjectName(u"buttonSelectRobPath")
+        self.buttonSelectRobPath.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+
+        self.horizontalLayout.addWidget(self.buttonSelectRobPath)
+
+
+        self.formLayout_3.setLayout(1, QFormLayout.FieldRole, self.horizontalLayout)
 
         self.formLayoutWidget_4 = QWidget(self.adminSettingsTab)
         self.formLayoutWidget_4.setObjectName(u"formLayoutWidget_4")
@@ -643,6 +656,7 @@ class Ui_Form(object):
         self.label_8.setText(QCoreApplication.translate("Form", u"Passwort: ", None))
         self.passwordEdit.setInputMask(QCoreApplication.translate("Form", u"XXXXXXXX", None))
         self.label_24.setText(QCoreApplication.translate("Form", u"Pfad Palettenplaene", None))
+        self.buttonSelectRobPath.setText(QCoreApplication.translate("Form", u"...", None))
         self.pushButtonSpeichern_2.setText(QCoreApplication.translate("Form", u"Speichern", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.adminSettingsTab), QCoreApplication.translate("Form", u"Admin", None))
         self.ButtonZurueck_5.setText("")
