@@ -27,7 +27,7 @@ settings = None
 
 settings_file = 'MultipackParser.conf'
 
-VERSION = '1.5.3'
+VERSION = '1.5.5'
 
 robot_ip = '192.168.0.1' # DO NOT CHANGE
 
