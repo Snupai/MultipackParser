@@ -39,7 +39,7 @@ from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickView
 ################################################################
 from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QWidget, QCompleter, QLineEdit, QFileDialog, QMessageBox
-from PySide6.QtCore import Qt, QEvent, QFileSystemWatcher, QUrl, QProcess, QRegularExpression
+from PySide6.QtCore import Qt, QEvent, QFileSystemWatcher, QUrl, QProcess, QRegularExpression, QLocale
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QPixmap, QRegularExpressionValidator
 from ui_files.ui_main_window import Ui_Form
 from ui_files import MainWindowResources_rc
@@ -50,6 +50,7 @@ from utils import UR10_Server_functions as UR10
 logger = global_vars.logger
 
 os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
+os.environ["QT_VIRTUALKEYBOARD_LANGUAGE"] = "de_DE"  # Set virtual keyboard to German
 
 # global_vars.PATH_USB_STICK = 'E:\' # Pfad zu den .rob Dateien nur auskommentieren zum testen
  
@@ -207,11 +208,11 @@ def open_password_dialog() -> None:
     """
     from ui_files.PasswordDialog import PasswordEntryDialog  # Import here instead of top
     dialog = PasswordEntryDialog()
-    dialog.setModal(False)
+    dialog.setModal(True)  # Changed to modal
     dialog.show()
     dialog.ui.lineEdit.setFocus()
-    
-    if dialog.exec() == QDialog.Accepted and dialog.password_accepted:
+    response = dialog.exec()
+    if response == QDialog.Accepted and dialog.password_accepted:
         open_settings_page()
 
 def open_settings_page() -> None:
@@ -330,6 +331,7 @@ def init_settings():
     """
     global settings
     settings = Settings()
+    global_vars.PATH_USB_STICK = settings.settings['admin']['path']
     logger.debug(f"Settings: {settings}")
 
 def leave_settings_page():
@@ -346,7 +348,7 @@ def leave_settings_page():
         # If settings do not match, ask whether to discard or save the new data
         response = QMessageBox.question(main_window, "Verwerfen oder Speichern", "Möchten Sie die neuen Daten verwerfen oder speichern?",
                                         QMessageBox.Discard | QMessageBox.Save, QMessageBox.Save)
-        
+        main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink
         if response == QMessageBox.Save:
             try:
                 settings.save_settings()
@@ -382,6 +384,7 @@ def open_file():
     except Exception as e:
         logger.error(f"Failed to open file: {e}")
         QMessageBox.critical(main_window, "Error", f"Failed to open file: {e}")
+        main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink
 
 def save_open_file():
     """
@@ -394,6 +397,7 @@ def save_open_file():
     if file_path:
         if os.path.exists(file_path):
             overwrite = QMessageBox.question(main_window, "Overwrite File?", f"The file {file_path} already exists. Do you want to overwrite it?", QMessageBox.Yes | QMessageBox.No)
+            main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink
             if overwrite == QMessageBox.Yes:
                 with open(file_path, 'w') as file:
                     file.write(global_vars.ui.textEditFile.toPlainText())
@@ -433,11 +437,7 @@ def execute_command():
     process.readyReadStandardOutput.connect(handle_stdout)
     process.readyReadStandardError.connect(handle_stderr)
 
-    if sys.platform == "win32":
-        command_list = f"chcp 65001 > nul && {command}"
-        process.start("cmd", ["/c", command_list])
-    else:
-        process.start(command)
+    process.start(command)
 
     global_vars.process = process
 
@@ -493,7 +493,7 @@ def exit_app():
         # If settings do not match, ask whether to discard or save the new data
         response = QMessageBox.question(main_window, "Verwerfen oder Speichern", "Möchten Sie die neuen Daten verwerfen oder speichern?",
                                         QMessageBox.Discard | QMessageBox.Save, QMessageBox.Save)
-        
+        main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink
         if response == QMessageBox.Save:
             try:
                 settings.save_settings()
@@ -508,6 +508,49 @@ def exit_app():
             settings.reset_unsaved_changes()
             set_settings_line_edits()
             logger.debug("All changes discarded.")
+
+
+def set_wordlist():
+    """
+    Set the wordlist.
+    """
+    global completer  # Declare completer as global
+    wordlist = load_wordlist()
+    completer = QCompleter(wordlist, main_window)  # Now this will access the global variable
+    global_vars.ui.EingabePallettenplan.setCompleter(completer)
+
+    file_watcher = QFileSystemWatcher([global_vars.PATH_USB_STICK], main_window)
+    file_watcher.directoryChanged.connect(update_wordlist)
+
+def open_folder_dialog():
+    """
+    Open the folder dialog.
+    """
+    # show warning dialog if the user wants to set the path
+    # only if the user acknowledges the warning dialog and the risks then continue with choosing the folder else cancel asap
+    response = QMessageBox.warning(main_window, "Warnung! - Mögliche Risiken!", "<b>Möchten Sie den Pfad wirklich ändern?</b><br>Dies könnte zu Problemen führen, wenn bereits ein Palettenplan geladen ist und nach dem Setzen des Pfades nicht ein neuer geladen wird.", QMessageBox.Yes | QMessageBox.No)
+    main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink
+    if response == QMessageBox.Yes:
+        pass
+    else:
+        return
+    logger.debug(f"Opening folder dialog")
+    folder = QFileDialog.getExistingDirectory(parent=main_window, caption="Open Folder")
+    if folder:
+        if not folder.endswith('/') and not folder.endswith('\\'):
+            folder += '/'
+        logger.debug(f"{folder=}")
+        global_vars.ui.pathEdit.setText(folder)
+        global_vars.PATH_USB_STICK = folder
+        set_wordlist()  # Ensure this is defined before calling it
+
+def update_wordlist():
+    """
+    Update the wordlist.
+    """
+    new_wordlist = load_wordlist()
+    completer.model().setStringList(new_wordlist)  # This will now work with the global completer
+    set_wordlist()
 
 #################
 # Main function #
@@ -576,9 +619,7 @@ def main():
             logger.error(f"Path {args.rob_path} does not exist")
             return
 
-    logger.debug(f"{sys.argv=}")
-    logger.debug(f"{global_vars.VERSION=}")
-    logger.debug(f"{global_vars.PATH_USB_STICK=}")
+    QLocale.setDefault(QLocale(QLocale.German, QLocale.Germany)) # set locale to german for german keyboard layout
 
     app = QApplication(sys.argv)
     main_window = QMainWindow()
@@ -593,24 +634,16 @@ def main():
     settings.settings['info']['number_of_use_cycles'] = str(int(settings.settings['info']['number_of_use_cycles']) + 1)
     settings.save_settings()
 
-    def update_wordlist():
-        """
-        Update the wordlist.
-        """
-        new_wordlist = load_wordlist()
-        completer.model().setStringList(new_wordlist)
+    logger.debug(f"{sys.argv=}")
+    logger.debug(f"{global_vars.VERSION=}")
+    logger.debug(f"{global_vars.PATH_USB_STICK=}")
 
     # Set the regular expression validator for EingabePallettenplan
     regex = QRegularExpression(r"^[0-9\-_]*$")
     validator = QRegularExpressionValidator(regex)
     global_vars.ui.EingabePallettenplan.setValidator(validator)
 
-    wordlist = load_wordlist()
-    completer = QCompleter(wordlist, main_window)
-    global_vars.ui.EingabePallettenplan.setCompleter(completer)
-
-    file_watcher = QFileSystemWatcher([global_vars.PATH_USB_STICK], main_window)
-    file_watcher.directoryChanged.connect(update_wordlist)
+    set_wordlist()
 
     # Apply QIntValidator to restrict the input to only integers
     int_validator = QIntValidator()
@@ -660,6 +693,7 @@ def main():
     global_vars.ui.lineEditNumberCycles.textChanged.connect(lambda text: settings.settings['info'].__setitem__('number_of_use_cycles', int(text)))
     global_vars.ui.lineEditLastRestart.textChanged.connect(lambda text: settings.settings['info'].__setitem__('last_restart', text))
     global_vars.ui.pathEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('path', text))
+    global_vars.ui.buttonSelectRobPath.clicked.connect(open_folder_dialog)
     set_settings_line_edits()
     #global_vars.ui.checkBox.stateChanged.connect(lambda state: settings.settings['audio'].__setitem__('sound', state == Qt.Checked))
     #global_vars.ui.checkBox.setChecked(settings.settings['audio']['sound'])
@@ -747,6 +781,7 @@ def main():
             messageBox.setStandardButtons(QMessageBox.Ok)
             messageBox.setDefaultButton(QMessageBox.Ok)
             messageBox.exec()
+            main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink
         return True
 
     main_window.closeEvent = allow_close_event

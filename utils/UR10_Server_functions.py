@@ -40,6 +40,7 @@ def UR_ReadDataFromUsbStick():
     global_vars.g_paket_quer = 1
     global_vars.g_CenterOfGravity = [0,0,0]
     
+    logger.debug(f"Trying to read file {global_vars.PATH_USB_STICK + global_vars.FILENAME}")
     
     try:
         with open(global_vars.PATH_USB_STICK + global_vars.FILENAME) as file:
