@@ -53,7 +53,7 @@ class PasswordEntryDialog(QDialog):
 
         # Relaxed modality with manual disabling of parent window
         self.setWindowModality(Qt.WindowModal)
-        self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
         
         if parent_window:
             parent_window.setEnabled(False)
