@@ -51,7 +51,6 @@ from utils import UR10_Server_functions as UR10
 logger = global_vars.logger
 
 os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
-os.environ["QT_VIRTUALKEYBOARD_LANGUAGE"] = "de_DE"  # Set virtual keyboard to German
 
 # global_vars.PATH_USB_STICK = 'E:\' # Pfad zu den .rob Dateien nur auskommentieren zum testen
  
@@ -208,12 +207,12 @@ def open_password_dialog() -> None:
     Open the password dialog.
     """
     from ui_files.PasswordDialog import PasswordEntryDialog  # Import here instead of top
-    dialog = PasswordEntryDialog()
-    dialog.setModal(True)  # Changed to modal
+    dialog = PasswordEntryDialog(parent_window=main_window)
+    #dialog.setModal(False) #cant set to true because it will block the qtvirtualkeyboard
     dialog.show()
     dialog.ui.lineEdit.setFocus()
-    response = dialog.exec()
-    if response == QDialog.Accepted and dialog.password_accepted:
+    dialog.exec()
+    if dialog.password_accepted:
         open_settings_page()
 
 def open_settings_page() -> None:

@@ -9,6 +9,9 @@ from utils import global_vars, Settings
 from . import Ui_Dialog
 from PySide6.QtWidgets import QDialog, QMessageBox
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QGuiApplication  # Add this line
+
+os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
 logger = global_vars.logger
 
@@ -26,19 +29,43 @@ class PasswordEntryDialog(QDialog):
     Ui_Dialog: The UI object for the dialog.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, parent_window=None) -> None:
         """
         Initialize the PasswordEntryDialog class.
         """
         super(PasswordEntryDialog, self).__init__()
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.ui.lineEdit.setFocus()  # Ensure focus
-        self.ui.lineEdit.setFocusPolicy(Qt.StrongFocus)  # Ensure it can request focus
+
+        # Input and virtual keyboard compatibility
+        self.setAttribute(Qt.WA_InputMethodEnabled, True)
+        self.ui.lineEdit.setAttribute(Qt.WA_InputMethodEnabled, True)
+
+        # Focus management
+        self.ui.lineEdit.setFocusPolicy(Qt.StrongFocus)
+        self.ui.lineEdit.setFocus()
+
+        # Relaxed modality with manual disabling of parent window
+        self.setWindowModality(Qt.WindowModal)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
+        
+        if parent_window:
+            parent_window.setEnabled(False)
+            self.finished.connect(lambda: parent_window.setEnabled(True))
+            self.finished.connect(lambda: parent_window.setWindowFlags(parent_window.windowFlags() & ~Qt.WindowStaysOnBottomHint))
+            self.finished.connect(lambda: parent_window.show())
+            # Ensure dialog stays above parent window
+            parent_window.setWindowFlags(parent_window.windowFlags() | Qt.WindowStaysOnBottomHint)
+            parent_window.show()  # Ensure to re-show the parent window with the updated window flags
+
+        # Connect buttons
         self.ui.buttonBox.accepted.connect(self.accept)
         self.ui.buttonBox.rejected.connect(self.reject)
 
+        # Log and show virtual keyboard explicitly
         logger.info("PasswordEntryDialog opened")
+        QGuiApplication.inputMethod().show()
+
 
     def accept(self) -> NoReturn:
         """
