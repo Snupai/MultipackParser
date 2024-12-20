@@ -715,6 +715,7 @@ def main():
 
     app = QApplication(sys.argv)
     main_window = QMainWindow()
+    main_window.setWindowFlags(Qt.FramelessWindowHint) # remove the window border to prevent moving or minimizing the window
     global_vars.ui = Ui_Form()
     global_vars.ui.setupUi(main_window)
     global_vars.ui.stackedWidget.setCurrentIndex(0)
