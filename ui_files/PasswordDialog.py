@@ -36,6 +36,12 @@ class PasswordEntryDialog(QDialog):
         super(PasswordEntryDialog, self).__init__()
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+        
+        # Get the screen's available geometry
+        screen_geometry = QGuiApplication.primaryScreen().availableGeometry()
+        # Set the dialog's position to the center of the upper half of the screen
+        self.move(screen_geometry.x() + (screen_geometry.width() // 2) - (self.width() // 2), 
+                                        screen_geometry.y() + 20)  # 20 pixels from the top
 
         # Input and virtual keyboard compatibility
         self.setAttribute(Qt.WA_InputMethodEnabled, True)
