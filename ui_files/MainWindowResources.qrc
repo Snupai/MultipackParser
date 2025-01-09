@@ -2,6 +2,10 @@
   <qresource prefix="Icon">
     <file>pallet.ico</file>
   </qresource>
+  <qresource prefix="Sound">
+    <file>imgs/stepback.mp3</file>
+  </qresource>
+  <qresource prefix="ScannerUR20"/>
   <qresource prefix="Szaidel Logo">
     <file>imgs/logoszaidel-transparent-big.png</file>
     <file>imgs/szaidel-transparent.png</file>
