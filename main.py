@@ -46,7 +46,9 @@ from ui_files.ui_main_window import Ui_Form
 from ui_files import MainWindowResources_rc
 from utils import global_vars
 from utils.settings import Settings
+from utils import UR_Common_functions as UR
 from utils import UR10_Server_functions as UR10
+from utils import UR20_Server_functions as UR20
 
 logger = global_vars.logger
 
@@ -71,39 +73,65 @@ def server_start():
         0
     """
 
-    #server_stop_btn.configure(state="normal")
     global server
     server = SimpleXMLRPCServer(("", 8080), allow_none=True)
     logger.debug("Start Server")
-    server.register_function(UR10.UR_SetFileName, "UR_SetFileName")
-    server.register_function(UR10.UR_ReadDataFromUsbStick, "UR_ReadDataFromUsbStick")
-    server.register_function(UR10.UR_Palette, "UR_Palette")
-    server.register_function(UR10.UR_Karton, "UR_Karton")
-    server.register_function(UR10.UR_Lagen, "UR_Lagen")
-    server.register_function(UR10.UR_Zwischenlagen, "UR_Zwischenlagen")
-    server.register_function(UR10.UR_PaketPos, "UR_PaketPos")
-    server.register_function(UR10.UR_AnzLagen, "UR_AnzLagen")
-    server.register_function(UR10.UR_AnzPakete, "UR_AnzPakete") #Veraltet - nicht mehr verwenden
-    server.register_function(UR10.UR_PaketeZuordnung, "UR_PaketeZuordnung") #Picks pro Lage
-    server.register_function(UR10.UR_Paket_hoehe, "UR_Paket_hoehe") #Gemessene Pakethöhe
-    server.register_function(UR10.UR_Startlage, "UR_Startlage") #Startlage für Neustart
-    server.register_function(UR10.UR_Quergreifen, "UR_Quergreifen") #quer oder längs greifen
-    server.register_function(UR10.UR_CoG, "UR_CoG") #Rückgabe von y und z
-    server.register_function(UR10.UR_MasseGeschaetzt, "UR_MasseGeschaetzt") #Schätzen des Paketgewichts mit empirischem Faktor
-    server.register_function(UR10.UR_PickOffsetX, "UR_PickOffsetX")
-    server.register_function(UR10.UR_PickOffsetY, "UR_PickOffsetY")#Pick-Offset zur live Korrektur
-    server.register_function(UR10.UR_StepBack, "UR_StepBack") #Audiosignal für Laserscanner
-    server.register_function(UR10.UR_scanner1and2niobild, "UR_scanner1and2niobild")
-    server.register_function(UR10.UR_scanner1bild, "UR_scanner1bild")
-    server.register_function(UR10.UR_scanner2bild, "UR_scanner2bild")
-    server.register_function(UR10.UR_scanner1and2iobild, "UR_scanner1and2iobild")
-    #logger.debug("Oeffne serielle Schnittstelle")
-    #ser = serial.Serial('/dev/ttyUSB0', 115200, timeout = 0.5)
-    #logger.debug("Serielle Schnittstelle " + ser.name + " 115200Baud")
-    #roboter_btn.configure(state="normal")
-    server.serve_forever()
     
-    #logger.debug("Server läuft")
+    def set_robot_type(robot_type):
+        """
+        Set the robot type and register appropriate functions.
+        
+        Args:
+            robot_type (str): Either 'UR10' or 'UR20'
+            
+        Returns:
+            bool: True if robot type was set successfully
+        """
+        logger.debug(f"Setting robot type to: {robot_type}")
+        
+        if robot_type not in ['UR10', 'UR20']:
+            logger.error(f"Invalid robot type: {robot_type}")
+            return False
+            
+        # Register common functions for both robot types
+        server.register_function(UR.UR_SetFileName, "UR_SetFileName")
+        server.register_function(UR.UR_ReadDataFromUsbStick, "UR_ReadDataFromUsbStick")
+        server.register_function(UR.UR_Palette, "UR_Palette")
+        server.register_function(UR.UR_Karton, "UR_Karton")
+        server.register_function(UR.UR_Lagen, "UR_Lagen")
+        server.register_function(UR.UR_Zwischenlagen, "UR_Zwischenlagen")
+        server.register_function(UR.UR_PaketPos, "UR_PaketPos")
+        server.register_function(UR.UR_AnzLagen, "UR_AnzLagen")
+        server.register_function(UR.UR_PaketeZuordnung, "UR_PaketeZuordnung")
+        server.register_function(UR.UR_Paket_hoehe, "UR_Paket_hoehe")
+        server.register_function(UR.UR_Startlage, "UR_Startlage")
+        server.register_function(UR.UR_Quergreifen, "UR_Quergreifen")
+        server.register_function(UR.UR_CoG, "UR_CoG")
+        server.register_function(UR.UR_MasseGeschaetzt, "UR_MasseGeschaetzt")
+        server.register_function(UR.UR_PickOffsetX, "UR_PickOffsetX")
+        server.register_function(UR.UR_PickOffsetY, "UR_PickOffsetY")
+        server.register_function(UR.UR_StepBack, "UR_StepBack")
+        
+        
+        # Register robot type specific functions here if needed
+        if robot_type == 'UR10':
+            server.register_function(UR10.UR10_scanner1and2niobild, "UR_scanner1and2niobild")
+            server.register_function(UR10.UR10_scanner1bild, "UR_scanner1bild")
+            server.register_function(UR10.UR10_scanner2bild, "UR_scanner2bild")
+            server.register_function(UR10.UR10_scanner1and2iobild, "UR_scanner1and2iobild")
+        elif robot_type == 'UR20':
+            server.register_function(UR20.UR20_SetActivePallet, "UR_SetActivePallet")
+            server.register_function(UR20.UR20_GetActivePalletNumber, "UR_GetActivePalletNumber")
+            server.register_function(UR20.UR20_GetPalletStatus, "UR_GetPalletStatus")
+            server.register_function(UR20.UR20_scannerStatus, "UR_scannerStatus")
+            
+        logger.debug(f"Successfully registered functions for {robot_type}")
+        return True
+    
+    # Register the set_robot_type function
+    server.register_function(set_robot_type, "set_robot_type")
+    
+    server.serve_forever()
     return 0
  
 def server_stop():
@@ -266,9 +294,9 @@ def load() -> None:
     """
     # get the value of the EingabePallettenplan text box and run UR_SET_FILENAME then check if the file exists and if it doesnt open a message box
     Artikelnummer = global_vars.ui.EingabePallettenplan.text()
-    UR10.UR_SetFileName(Artikelnummer)
+    UR.UR_SetFileName(Artikelnummer)
     
-    errorReadDataFromUsbStick = UR10.UR_ReadDataFromUsbStick()
+    errorReadDataFromUsbStick = UR.UR_ReadDataFromUsbStick()
 
     if errorReadDataFromUsbStick == 1:
         logger.error(f"Error reading file for {Artikelnummer=} no file found")
