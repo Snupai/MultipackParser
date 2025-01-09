@@ -11,134 +11,21 @@ logger = global_vars.logger
 
 #Dateiname abfragen
 def UR_SetFileName(Artikelnummer):
-    """
-    Set the filename.
-
-    Args:
-        Artikelnummer (str): The article number.
-
-    Returns:
-        str: The filename.
-    """
-    global_vars.FILENAME = (Artikelnummer + '.rob')
-    logger.debug(f"{global_vars.FILENAME=}")
-    return global_vars.FILENAME 
+    """Set the filename."""
+    return global_vars.palletizer.set_filename(Artikelnummer)
  
  
 #daten vom usb stick hochladen und lesbar machen 
 def UR_ReadDataFromUsbStick():
-    """
-    Read data from the Path_USB_STICK.
-
-    This function reads the data from the Path_USB_STICK and stores it in global variables.
-
-    Returns:
-        int: 1 if the data was read successfully, 0 otherwise.
-    """
-    global_vars.g_Daten = []
-    global_vars.g_LageZuordnung = []
-    global_vars.g_PaketPos = []
-    global_vars.g_PaketeZuordnung = []
-    global_vars.g_Zwischenlagen = []
-    global_vars.g_paket_quer = 1
-    global_vars.g_CenterOfGravity = [0,0,0]
-    
-    logger.debug(f"Trying to read file {global_vars.PATH_USB_STICK + global_vars.FILENAME}")
-    
-    try:
-        with open(global_vars.PATH_USB_STICK + global_vars.FILENAME) as file:
-            
-            for line in file:
-                str = line.strip()
-                tmpList = line.split('\t')
-                
-                for i in range(len(tmpList)):
-                    tmpList[i] = int(tmpList[i])
-                    
-                global_vars.g_Daten.append(tmpList)
- 
- 
-            pl = global_vars.g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_LENGTH]
-            pw = global_vars.g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_WIDTH]
-            ph = global_vars.g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_HEIGHT]
-            global_vars.g_PalettenDim = [pl, pw, ph]
-            
-            #Kartondaten
-            pl = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_LENGTH]
-            pw = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_WIDTH]
-            ph = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_HEIGHT]
-            pr = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_GAP]
-            global_vars.g_PaketDim = [pl, pw, ph, pr]
-            
-            #Lagearten
-            global_vars.g_LageArten = global_vars.g_Daten[global_vars.LI_LAYERTYPES][0]
-            
-            #Lagenzuordnung
-            anzLagen = global_vars.g_Daten[global_vars.LI_NUMBER_OF_LAYERS][0]
-            global_vars.g_AnzLagen = anzLagen
- 
- 
-            index       = global_vars.LI_NUMBER_OF_LAYERS + 2
-            end_index   = index + anzLagen
- 
- 
-            while index < end_index:
-                
-                lagenart = global_vars.g_Daten[index][0]
-                zwischenlagen = global_vars.g_Daten[index][1]
- 
-                global_vars.g_LageZuordnung.append(lagenart)
-                global_vars.g_Zwischenlagen.append(zwischenlagen)
-            
-                index = index +1
-            
-            #Paketpositionen
-            ersteLage   = 4 + (anzLagen + 1)
-            index       = ersteLage
-            anzahlPaket = global_vars.g_Daten[index][0]
-            global_vars.g_AnzahlPakete = anzahlPaket #Achtung veraltet - Anzahl der Picks bei Multipick
-            index_paketZuordnung = index
-            
-            for i in range(global_vars.g_LageArten):
-                
-                anzahlPick = global_vars.g_Daten[index_paketZuordnung][0]
-                global_vars.g_PaketeZuordnung.append(anzahlPick)
-                index_paketZuordnung = index_paketZuordnung + anzahlPick + 1
-                
-            
-            for i in range(global_vars.g_LageArten):            
-                index = index + 1 #Überspringe die Zeile mit der Anzahl der Pakete
-                anzahlPaket = global_vars.g_PaketeZuordnung[i]
-                
-                for j in range(anzahlPaket):
-                    xp = global_vars.g_Daten[index][global_vars.LI_POSITION_XP]
-                    yp = global_vars.g_Daten[index][global_vars.LI_POSITION_YP]
-                    ap = global_vars.g_Daten[index][global_vars.LI_POSITION_AP]
-                    xd = global_vars.g_Daten[index][global_vars.LI_POSITION_XD]
-                    yd = global_vars.g_Daten[index][global_vars.LI_POSITION_YD]
-                    ad = global_vars.g_Daten[index][global_vars.LI_POSITION_AD]
-                    nop = global_vars.g_Daten[index][global_vars.LI_POSITION_NOP]
-                    xvec = global_vars.g_Daten[index][global_vars.LI_POSITION_XVEC]
-                    yvec = global_vars.g_Daten[index][global_vars.LI_POSITION_YVEC]
-                    packagePos = [xp, yp, ap, xd, yd, ad, nop, xvec, yvec]
-                    global_vars.g_PaketPos.append(packagePos)
-                    index = index + 1    
- 
-            return 0                
-    except:
-        logger.error(f"Error reading file {global_vars.FILENAME}")
-    return 1
+    """Read data from the USB stick."""
+    return global_vars.palletizer.read_data_from_usb()
  
  
 #funktion für den roboter 
 def UR_Palette():
-    """
-    Get the palette dimensions.
-
-    Returns:
-        list: The palette dimensions.
-    """
-    return global_vars.g_PalettenDim
+    """Get the palette dimensions."""
+    dims = global_vars.palletizer.pallet_dimensions
+    return [dims.length, dims.width, dims.height] if dims else None
  
 def UR_Karton():
     """

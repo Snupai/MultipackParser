@@ -1,55 +1,33 @@
-# Globals
+from .palletizer import Palletizer
 
-import logging
-from logging.handlers import RotatingFileHandler
+# Create global instance of Palletizer
+palletizer = Palletizer()
 
-# Setup logging
-log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-log_handler = RotatingFileHandler('app.log', maxBytes=5*1024*1024, backupCount=2)
-log_handler.setFormatter(log_formatter)
-
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(log_formatter)
-
-logger = logging.getLogger('multipack_parser')  # Create a named logger
-logger.setLevel(logging.INFO)  # Set default logging level
-logger.addHandler(log_handler)
-logger.addHandler(console_handler)
-
-process = None
-
-#######################################
-# Settings
-
+# For backwards compatibility (can be gradually removed)
+logger = palletizer.logger
 settings = None
-
-# Variables
-
-settings_file = 'MultipackParser.conf'
-
-VERSION = '1.5.6'
-
-robot_ip = '192.168.0.1' # DO NOT CHANGE
-
-PATH_USB_STICK = '..'
-FILENAME = None
-g_PalettenDim = None
-g_PaketDim  = None
-g_LageArten = None
-g_Daten = None
-g_LageZuordnung = None
-g_PaketPos = None
-g_AnzahlPakete = None
-g_AnzLagen = None
-g_PaketeZuordnung = None
-g_Zwischenlagen = None
-g_Startlage = None
-g_paket_quer = None
-g_CenterOfGravity = None
-g_MassePaket = None
-g_Pick_Offset_X = None
-g_Pick_Offset_Y = None
-ui = None
+process = None
+VERSION = palletizer.version
+robot_ip = palletizer.robot_ip
+PATH_USB_STICK = palletizer.path_usb_stick
+FILENAME = palletizer.filename
+g_PalettenDim = palletizer.pallet_dimensions
+g_PaketDim  = palletizer.package_dimensions
+g_LageArten = palletizer.layer_types
+g_Daten = palletizer.raw_data
+g_LageZuordnung = palletizer.layer_assignments
+g_PaketPos = palletizer.package_positions
+g_AnzahlPakete = palletizer.num_packages
+g_AnzLagen = palletizer.num_layers
+g_PaketeZuordnung = palletizer.package_assignments
+g_Zwischenlagen = palletizer.intermediate_layers
+g_Startlage = palletizer.start_layer
+g_paket_quer = palletizer.package_transverse
+g_CenterOfGravity = palletizer.center_of_gravity
+g_MassePaket = palletizer.package_mass
+g_Pick_Offset_X = palletizer.pick_offset_x
+g_Pick_Offset_Y = palletizer.pick_offset_y
+ui = palletizer.ui
 
 # Konstanten für Datenstruktur
 #List Index
