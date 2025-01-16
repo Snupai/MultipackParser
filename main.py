@@ -856,6 +856,9 @@ def main():
     global_vars.ui.pushButtonSearchUpdate.clicked.connect(check_for_updates)
     global_vars.ui.pushButtonExitApp.clicked.connect(exit_app)
 
+
+    # TODO: Remove this key combination once out of development
+    ###########################################################
     global allow_close
     allow_close = False
 
@@ -884,7 +887,6 @@ def main():
             bool: True if the event was handled, False otherwise.
         """
         global allow_close
-        # TODO: Remove this key combination once out of development
         if (event.modifiers() == (Qt.ControlModifier | Qt.AltModifier | Qt.ShiftModifier) and 
             event.key() == Qt.Key_C):
             allow_close = True
@@ -907,7 +909,7 @@ def main():
 
     main_window.closeEvent = allow_close_event
     main_window.keyPressEvent = handle_key_press_event
-
+    ###########################################################
     main_window.show()
     sys.exit(app.exec())
 
