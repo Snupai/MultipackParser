@@ -33,7 +33,9 @@ RUN pip install pyinstaller pyside6 pyinstaller-hooks-contrib pydub tomli_w
 
 # Set the working directory in the container
 WORKDIR /app
+
 # CUT HERE
+
 # Copy the entire project into the container
 COPY . .
 
