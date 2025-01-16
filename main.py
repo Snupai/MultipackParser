@@ -62,7 +62,7 @@ if global_vars.PATH_USB_STICK == '..':
     global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' 
 
 ####################
-# Random functions #
+# Server functions #
 ####################
                  
 def server_start():
