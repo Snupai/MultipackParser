@@ -26,10 +26,6 @@ jobs:
         run: |
           docker buildx build --platform linux/arm64 -t ${{ env.IMAGE_NAME }} --output type=docker .
 
-      - name: List files in Docker container
-        run: |
-          docker run --rm --platform linux/arm64 ${{ env.IMAGE_NAME }} ls -lR ${{ env.EXECUTABLE_DIR_IN_DOCKER }}
-
       - name: Create container and extract binary
         run: |
           container_id=$(docker create ${{ env.IMAGE_NAME }})
