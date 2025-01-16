@@ -1,6 +1,7 @@
 name: Build and Extract Binary
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - dev-more-class-files
