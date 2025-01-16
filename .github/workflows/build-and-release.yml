@@ -27,6 +27,13 @@ jobs:
           docker build --platform linux/arm64 -t multipackparser-arm64 .
           docker run --rm -v ${{ github.workspace }}:/app multipackparser-arm64 sh -c "cd /app && pyinstaller --name MultipackParser --onefile --windowed main.py"
 
+      - name: Verify binary exists
+        run: |
+          if [ ! -f dist/MultipackParser ]; then
+            echo "Binary not found!"
+            exit 1
+          fi
+
       - name: Upload binary to GitHub Actions
         uses: actions/upload-artifact@v4
         with:
