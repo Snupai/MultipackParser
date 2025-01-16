@@ -24,8 +24,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build --platform linux/arm64 -t multipackparser-arm64 .
-          docker run --rm -v ${{ github.workspace }}:/app multipackparser-arm64 sh -c "cd /app && pyinstaller --name MultipackParser --onefile --windowed main.py"
+          docker buildx create --use
+          docker buildx build --platform linux/arm64 -t multipackparser-arm64 .
 
       - name: Verify binary exists
         run: |
