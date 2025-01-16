@@ -229,7 +229,6 @@ def send_cmd_stop():
 # UI functions #
 ################
 
-
 def open_password_dialog() -> None:
     """
     Open the password dialog.
@@ -885,7 +884,7 @@ def main():
             bool: True if the event was handled, False otherwise.
         """
         global allow_close
-        # Check for the key combination Ctrl + Alt + Shift + C
+        # TODO: Remove this key combination once out of development
         if (event.modifiers() == (Qt.ControlModifier | Qt.AltModifier | Qt.ShiftModifier) and 
             event.key() == Qt.Key_C):
             allow_close = True
