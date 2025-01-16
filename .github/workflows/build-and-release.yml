@@ -29,7 +29,7 @@ jobs:
 
       - name: Verify binary exists
         run: |
-          if [ ! -f dist/MultipackParser ]; then
+          if [ ! -f /app/dist/MultipackParser ]; then
             echo "Binary not found!"
             exit 1
           fi
@@ -38,7 +38,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: MultipackParser
-          path: dist/MultipackParser
+          path: /app/dist/MultipackParser
 
       - name: Extract Tag and Release Name from VERSION
         id: extract
@@ -89,6 +89,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/MultipackParser
+          asset_path: /app/dist/MultipackParser
           asset_name: MultipackParser
           asset_content_type: application/octet-stream
