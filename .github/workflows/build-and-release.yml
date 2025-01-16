@@ -28,7 +28,7 @@ jobs:
           docker run --rm -v ${{ github.workspace }}:/app multipackparser-arm64 sh -c "cd /app && pyinstaller --name MultipackParser --onefile --windowed main.py"
 
       - name: Upload binary to GitHub Actions
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: MultipackParser
           path: dist/MultipackParser
