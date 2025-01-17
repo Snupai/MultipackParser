@@ -120,9 +120,9 @@ def server_start():
             server.register_function(UR10.UR10_scanner2bild, "UR_scanner2bild")
             server.register_function(UR10.UR10_scanner1and2iobild, "UR_scanner1and2iobild")
         elif robot_type == 'UR20':
-            server.register_function(UR20.UR20_SetActivePallet, "UR_SetActivePallet")
-            server.register_function(UR20.UR20_GetActivePalletNumber, "UR_GetActivePalletNumber")
-            server.register_function(UR20.UR20_GetPalletStatus, "UR_GetPalletStatus")
+            server.register_function(UR20.UR20_SetActivePalette, "UR_SetActivePalette")
+            server.register_function(UR20.UR20_GetActivePaletteNumber, "UR_GetActivePaletteNumber")
+            server.register_function(UR20.UR20_GetPaletteStatus, "UR_GetPaletteStatus")
             server.register_function(UR20.UR20_scannerStatus, "UR_scannerStatus")
             
         logger.debug(f"Successfully registered functions for {robot_type}")
@@ -289,9 +289,9 @@ def load() -> None:
     """
     Load the selected file.
 
-    This function is called when the user clicks the "Lade Pallettenplan" button.
+    This function is called when the user clicks the "Lade Palettenplan" button.
     """
-    # get the value of the EingabePallettenplan text box and run UR_SET_FILENAME then check if the file exists and if it doesnt open a message box
+    # get the value of the EingabePalettenplan text box and run UR_SET_FILENAME then check if the file exists and if it doesnt open a message box
     Artikelnummer = global_vars.ui.EingabePallettenplan.text()
     UR.UR_SetFileName(Artikelnummer)
     

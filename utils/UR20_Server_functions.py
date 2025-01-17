@@ -30,7 +30,7 @@ def UR20_scannerStatus(status: str):
 
 
 # change active pallet
-def UR20_SetActivePallet(pallet_number):
+def UR20_SetActivePalette(pallet_number):
     '''
     pallet_number: number of pallet
     
@@ -41,14 +41,14 @@ def UR20_SetActivePallet(pallet_number):
     return
 
 # get active pallet number
-def UR20_GetActivePalletNumber():
+def UR20_GetActivePaletteNumber():
     '''
     returns: current number of active pallet
     '''
     return
 
 # get pallet status
-def UR20_GetPalletStatus(pallet_number):
+def UR20_GetPaletteStatus(pallet_number):
     '''
     pallet_number: number of pallet
 
