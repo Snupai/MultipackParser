@@ -508,12 +508,15 @@ def set_settings_line_edits():
 
 def exit_app():
     """
-    Exit the application.
+    Restart the application.
     
     This function is called when the user clicks the "Exit Application" button.
+    It spawns a new process and exits the current one.
     """
     try:
         settings.compare_loaded_settings_to_saved_settings()
+        # Spawn new process and exit current one
+        QProcess.startDetached(sys.executable, [sys.argv[0]])
         sys.exit(0)
     except ValueError as e:
         logger.error(f"Error: {e}")
@@ -526,7 +529,8 @@ def exit_app():
             try:
                 settings.save_settings()
                 logger.debug("New settings saved.")
-                # Exit the application
+                # Spawn new process and exit current one
+                QProcess.startDetached(sys.executable, [sys.argv[0]])
                 sys.exit(0)
             except Exception as e:
                 logger.error(f"Failed to save settings: {e}")
@@ -585,6 +589,7 @@ def check_for_updates():
     Check for a file called MultipackParser under /media/ and /mnt/.
     If it exists, spawn an updater process to replace the current binary.
     """
+    # TODO: Add visual feedback to the user so that they know that the application is checking for updates
     search_paths = ["/media", "/mnt"]
     update_file_name = "MultipackParser"
     found_update_file = None
