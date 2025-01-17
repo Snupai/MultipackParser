@@ -11,6 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Set working directory
+        run: cd ${{ github.workspace }}
+      
       - name: Extract Tag and Release Name from VERSION
         id: extract
         run: |
