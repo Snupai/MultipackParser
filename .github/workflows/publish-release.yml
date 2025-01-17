@@ -17,14 +17,19 @@ jobs:
       - name: Set working directory
         run: cd ${{ github.workspace }}
       
-      - name: Extract Tag and Release Name from VERSION
-        id: extract
+      - name: Get version
         run: |
-          VERSION_LINE=$(grep -m 1 "VERSION=" utils/global_vars.py)
-          VERSION=$(echo $VERSION_LINE | cut -d '=' -f 2 | tr -d '[:space:]' | tr -d "'")
+          VERSION_LINE=$(grep -m 1 "VERSION = " utils/global_vars.py || echo "VERSION not found")
+          if [[ $VERSION_LINE == *"VERSION not found"* ]]; then
+            echo "Error: VERSION not found in global_vars.py"
+            exit 1
+          fi
+          VERSION=$(echo $VERSION_LINE | cut -d "'" -f 2)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag_name=v${VERSION}" >> $GITHUB_OUTPUT
           echo "release_name=Release v${VERSION}" >> $GITHUB_OUTPUT
+        shell: bash
+
 
       - name: Get latest tag
         id: get_latest_tag
