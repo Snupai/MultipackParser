@@ -16,45 +16,39 @@ jobs:
       
       - name: Set working directory
         run: cd ${{ github.workspace }}
-      
+
       - name: Get version
+        id: get_version
         run: |
-          echo "Searching for VERSION in global_vars.py"
           VERSION_LINE=$(grep -m 1 "VERSION = " utils/global_vars.py || echo "VERSION not found")
-          echo "Grep result: $VERSION_LINE"
           if [[ $VERSION_LINE == *"VERSION not found"* ]]; then
             echo "Error: VERSION not found in global_vars.py"
             exit 1
           fi
-          echo "Extracting version number"
           VERSION=$(echo $VERSION_LINE | cut -d "'" -f 2)
-          echo "Extracted version: $VERSION"
-          if [[ -z "$VERSION" ]]; then
-            echo "Error: Failed to extract version number"
-            exit 1
-          fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag_name=v${VERSION}" >> $GITHUB_OUTPUT
           echo "release_name=Release v${VERSION}" >> $GITHUB_OUTPUT
         shell: bash
-
-
+      
       - name: Fetch all tags
         run: git fetch --tags --force
-
+      
       - name: Get latest tag
         id: get_latest_tag
         run: |
           latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
           echo "latest_tag=$latest_tag" >> $GITHUB_OUTPUT
-
+      
       - name: Check if tag already exists
         id: check_tag
         run: |
-          if [ "${{ steps.extract.outputs.tag_name }}" == "${{ steps.get_latest_tag.outputs.latest_tag }}" ]; then
-            echo "Tag ${{ steps.extract.outputs.tag_name }} already exists. Stopping the workflow."
+          if [ "${{ steps.get_version.outputs.tag_name }}" == "${{ steps.get_latest_tag.outputs.latest_tag }}" ]; then
+            echo "Tag ${{ steps.get_version.outputs.tag_name }} already exists. Stopping the workflow."
             exit 1
           fi
+        shell: bash
+
 
       - name: Notify committer if tag exists
         if: always()
