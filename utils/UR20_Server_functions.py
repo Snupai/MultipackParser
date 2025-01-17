@@ -38,6 +38,7 @@ def UR20_SetActivePalette(pallet_number):
         1 if pallet was set
         0 if pallet was not set
     '''
+    # TODO: Set the active pallet to the given pallet number
     return
 
 # get active pallet number
@@ -45,6 +46,7 @@ def UR20_GetActivePaletteNumber():
     '''
     returns: current number of active pallet
     '''
+    # TODO: Check to see what pallet is currently active
     return
 
 # get pallet status
@@ -56,4 +58,5 @@ def UR20_GetPaletteStatus(pallet_number):
         1 if pallet is empty
         0 if pallet is full
     '''
+    # TODO: check if the given pallet number is valid and if the according pallet space is empty or not
     return
