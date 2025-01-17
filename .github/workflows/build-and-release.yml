@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - dev-more-class-files
+      - '*'
 
 env:
   IMAGE_NAME: multipackparser-builder
