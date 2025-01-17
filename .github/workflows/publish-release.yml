@@ -1,4 +1,4 @@
-name: Build and Extract Binary
+name: Release Binary
 
 on:
   workflow_dispatch:
@@ -40,7 +40,7 @@ jobs:
           if [ "${{ steps.extract.outputs.tag_name }}" == "${{ steps.get_latest_tag.outputs.latest_tag }}" ]; then
             echo "Notify the committer about the existing tag."
           fi
-          
+
       - name: Create GitHub Release
         id: create_release
         if: success()
