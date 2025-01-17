@@ -61,6 +61,7 @@ if global_vars.PATH_USB_STICK == '..':
     logger.debug(os.path.dirname(os.getcwd()))
     global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' 
 
+# TODO: Rename the Einzelpaket checkbox to Einzelpaket längs greifen.
 ####################
 # Server functions #
 ####################
