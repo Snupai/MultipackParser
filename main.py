@@ -506,18 +506,50 @@ def set_settings_line_edits():
     global_vars.ui.lineEditLastRestart.setText(settings.settings['info']['last_restart'])
     global_vars.ui.pathEdit.setText(settings.settings['admin']['path'])
 
-def exit_app():
+def restart_app():
     """
     Restart the application.
     
-    This function is called when the user clicks the "Exit Application" button.
+    This function is called when the user clicks the "Restart Application" button.
     It spawns a new process and exits the current one.
     """
+    def spawn_new_process():
+        """
+        Spawn a new process using a bash script.
+        
+        This helper function creates and executes a bash script to restart the application.
+        """
+        # Create temporary bash script
+        script_content = f"""#!/bin/bash
+cd {os.getcwd()}
+./MultipackParser &"""
+        
+        script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "restart_app.sh")
+        
+        try:
+            # Write script
+            with open(script_path, "w") as f:
+                f.write(script_content)
+            
+            # Make executable
+            os.chmod(script_path, 0o755)
+            
+            # Launch script in background
+            subprocess.Popen([script_path], shell=True)
+            
+        except Exception as e:
+            logger.error(f"Failed to create restart script: {e}")
+            raise
+        finally:
+            # Clean up script file
+            try:
+                os.remove(script_path)
+            except:
+                pass
+
+
     try:
         settings.compare_loaded_settings_to_saved_settings()
-        # Spawn new process and exit current one
-        QProcess.startDetached(sys.executable, [sys.argv[0]])
-        sys.exit(0)
     except ValueError as e:
         logger.error(f"Error: {e}")
     
@@ -530,7 +562,7 @@ def exit_app():
                 settings.save_settings()
                 logger.debug("New settings saved.")
                 # Spawn new process and exit current one
-                QProcess.startDetached(sys.executable, [sys.argv[0]])
+                spawn_new_process()
                 sys.exit(0)
             except Exception as e:
                 logger.error(f"Failed to save settings: {e}")
@@ -540,6 +572,10 @@ def exit_app():
             settings.reset_unsaved_changes()
             set_settings_line_edits()
             logger.debug("All changes discarded.")
+
+    # Spawn new process and exit current one
+    spawn_new_process()
+    sys.exit(0)
 
 
 def set_wordlist():
@@ -860,7 +896,7 @@ def main():
     global_vars.ui.lineEditCommand.returnPressed.connect(execute_command)
 
     global_vars.ui.pushButtonSearchUpdate.clicked.connect(check_for_updates)
-    global_vars.ui.pushButtonExitApp.clicked.connect(exit_app)
+    global_vars.ui.pushButtonExitApp.clicked.connect(restart_app)
 
 
     # TODO: Remove this key combination once out of development
