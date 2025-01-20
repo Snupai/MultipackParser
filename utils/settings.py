@@ -1,7 +1,5 @@
 # Description: This file contains the Settings class which is used to manage the settings of the application.
 
-import tomli
-import tomli_w
 import os
 import subprocess
 import pickle
