@@ -1,3 +1,4 @@
-PySide6
+PySide6>=6.7.2
 pydub
-tomli_w
+python-dotenv
+ffmpeg-python
