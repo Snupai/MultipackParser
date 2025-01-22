@@ -519,12 +519,13 @@ def restart_app():
         
         This helper function creates and executes a bash script to restart the application.
         """
+        current_dir = os.getcwd()
         # Create temporary bash script
         script_content = f"""#!/bin/bash
-cd {os.getcwd()}
-./MultipackParser &"""
+cd {current_dir}
+./MultipackParser"""
         
-        script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "restart_app.sh")
+        script_path = os.path.join(current_dir, "restart_app.sh")
         
         try:
             # Write script
@@ -535,7 +536,7 @@ cd {os.getcwd()}
             os.chmod(script_path, 0o755)
             
             # Launch script in background
-            subprocess.Popen([script_path], shell=True)
+            subprocess.Popen([script_path], shell=True, cwd=current_dir)
             
         except Exception as e:
             logger.error(f"Failed to create restart script: {e}")
@@ -688,6 +689,8 @@ sleep 5
 # Replace the current binary with the update file
 cp "{found_update_file}" "{current_binary}"
 chmod +x "{current_binary}"  # Ensure the binary is executable
+
+rm -rf "{os.getcwd()}/update"
 
 # Optionally reboot the system immediately
 reboot
