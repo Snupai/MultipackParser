@@ -480,7 +480,11 @@ def set_settings_line_edits():
     global_vars.ui.lineEditDisplayWidth.setText(str(settings.settings['display']['specs']['width']))
     global_vars.ui.lineEditDisplayRefreshRate.setText(str(int(float(settings.settings['display']['specs']['refresh_rate']))))
     global_vars.ui.lineEditDisplayModel.setText(settings.settings['display']['specs']['model'])
-    global_vars.ui.lineEditURModel.setText(settings.settings['info']['UR_Model'])
+    # Set the combo box value
+    current_model = settings.settings['info']['UR_Model']
+    index = global_vars.ui.comboBoxChooseURModel.findText(current_model)
+    if index >= 0:
+        global_vars.ui.comboBoxChooseURModel.setCurrentIndex(index)
     global_vars.ui.lineEditURSerialNo.setText(settings.settings['info']['UR_Serial_Number'])
     global_vars.ui.lineEditURManufacturingDate.setText(settings.settings['info']['UR_Manufacturing_Date'])
     global_vars.ui.lineEditURSoftwareVer.setText(settings.settings['info']['UR_Software_Version'])
@@ -833,7 +837,7 @@ def main():
     global_vars.ui.lineEditDisplayWidth.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('width', int(text)))
     global_vars.ui.lineEditDisplayRefreshRate.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('refresh_rate', int(text)))
     global_vars.ui.lineEditDisplayModel.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('model', text))
-    global_vars.ui.lineEditURModel.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Model', text))
+    global_vars.ui.comboBoxChooseURModel.currentTextChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Model', text))
     global_vars.ui.lineEditURSerialNo.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Serial_Number', text))
     global_vars.ui.lineEditURManufacturingDate.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Manufacturing_Date', text))
     global_vars.ui.lineEditURSoftwareVer.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Software_Version', text))

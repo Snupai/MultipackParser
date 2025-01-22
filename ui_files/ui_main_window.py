@@ -15,11 +15,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QFormLayout, QFrame,
-    QHBoxLayout, QHeaderView, QLabel, QLineEdit,
-    QPushButton, QSizePolicy, QSpinBox, QStackedWidget,
-    QTabWidget, QTextEdit, QToolButton, QTreeView,
-    QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFormLayout,
+    QFrame, QHBoxLayout, QHeaderView, QLabel,
+    QLineEdit, QPushButton, QSizePolicy, QSpinBox,
+    QStackedWidget, QTabWidget, QTextEdit, QToolButton,
+    QTreeView, QWidget)
 from . import MainWindowResources_rc
 
 class Ui_Form(object):
@@ -330,11 +330,6 @@ class Ui_Form(object):
 
         self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label_11)
 
-        self.lineEditURModel = QLineEdit(self.formLayoutWidget)
-        self.lineEditURModel.setObjectName(u"lineEditURModel")
-
-        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.lineEditURModel)
-
         self.label_12 = QLabel(self.formLayoutWidget)
         self.label_12.setObjectName(u"label_12")
 
@@ -417,6 +412,13 @@ class Ui_Form(object):
         self.lineEditLastRestart.setEnabled(False)
 
         self.formLayout.setWidget(8, QFormLayout.FieldRole, self.lineEditLastRestart)
+
+        self.comboBoxChooseURModel = QComboBox(self.formLayoutWidget)
+        self.comboBoxChooseURModel.addItem("")
+        self.comboBoxChooseURModel.addItem("")
+        self.comboBoxChooseURModel.setObjectName(u"comboBoxChooseURModel")
+
+        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.comboBoxChooseURModel)
 
         self.formLayoutWidget_2 = QWidget(self.PallettiererSpezifisch)
         self.formLayoutWidget_2.setObjectName(u"formLayoutWidget_2")
@@ -597,7 +599,7 @@ class Ui_Form(object):
 
         self.retranslateUi(Form)
 
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(2)
         self.ButtonSettings.setDefault(False)
         self.tabWidget.setCurrentIndex(0)
         self.tabWidget_2.setCurrentIndex(0)
@@ -653,6 +655,10 @@ class Ui_Form(object):
         self.label_17.setText(QCoreApplication.translate("Form", u"Number of Plans: ", None))
         self.label_18.setText(QCoreApplication.translate("Form", u"Number of use cycles: ", None))
         self.label_19.setText(QCoreApplication.translate("Form", u"last restart: ", None))
+        self.comboBoxChooseURModel.setItemText(0, QCoreApplication.translate("Form", u"UR10", None))
+        self.comboBoxChooseURModel.setItemText(1, QCoreApplication.translate("Form", u"UR20", None))
+
+        self.comboBoxChooseURModel.setCurrentText(QCoreApplication.translate("Form", u"UR10", None))
         self.label_20.setText(QCoreApplication.translate("Form", u"Display Model: ", None))
         self.label_21.setText(QCoreApplication.translate("Form", u"Refresh rate: ", None))
         self.label_22.setText(QCoreApplication.translate("Form", u"Display width: ", None))
