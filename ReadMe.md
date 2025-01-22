@@ -2,6 +2,9 @@
   <a href="https://github.com/Snupai/MultipackParser/actions/workflows/build.yml">
     <img alt="Build Binary" src="https://github.com/Snupai/MultipackParser/actions/workflows/build.yml/badge.svg?branch=dev-more-class-files" />
   </a>
+  <a href="https://github.com/Snupai/MultipackParser/releases/latest">
+    <img alt="GitHub release (with filter)" src="https://img.shields.io/github/v/release/Snupai/MultipackParser?label=Latest%20Stable%20Release">
+  </a>
   <a href="https://github.com/Snupai/MultipackParser/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-GPL--3.0-blue.svg">
   </a>
