@@ -98,6 +98,7 @@ def server_start():
     server.register_function(UR.UR_Zwischenlagen, "UR_Zwischenlagen")
     server.register_function(UR.UR_PaketPos, "UR_PaketPos")
     server.register_function(UR.UR_AnzLagen, "UR_AnzLagen")
+    server.register_function(UR.UR_AnzPakete, "UR_AnzPakete")
     server.register_function(UR.UR_PaketeZuordnung, "UR_PaketeZuordnung")
     server.register_function(UR.UR_Paket_hoehe, "UR_Paket_hoehe")
     server.register_function(UR.UR_Startlage, "UR_Startlage")
