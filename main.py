@@ -73,15 +73,21 @@ def server_start():
     Returns:
         0
     """
-
     global server
     server = SimpleXMLRPCServer(("", 8080), allow_none=True)
     logger.debug("Start Server")
 
-    robot_type = global_vars.settings['info']['UR_Model']
-    if robot_type not in ['UR10', 'UR20']:
-        # default to UR10
+    try:
+        robot_type = settings.settings['info']['UR_Model']  # Use the global settings object instead
+        logger.debug(f"Robot type: {robot_type}")
+        if robot_type not in ['UR10', 'UR20']:
+            # default to UR10
+            robot_type = 'UR10'
+            logger.warning(f"Invalid robot type {robot_type}, defaulting to UR10")
+    except (AttributeError, KeyError, TypeError) as e:
+        # If there's any error accessing the settings, default to UR10
         robot_type = 'UR10'
+        logger.error(f"Error accessing robot type from settings: {e}. Defaulting to UR10")
         
     # Register common functions for both robot types
     server.register_function(UR.UR_SetFileName, "UR_SetFileName")
@@ -125,13 +131,19 @@ def server_stop():
     Stop the XMLRPC server.
     """
     server.shutdown()
+    logger.debug("Server stopped")
+    global_vars.ui.ButtonDatenSenden.setEnabled(True)
+    global_vars.ui.ButtonDatenSenden_2.setEnabled(True)
  
 def server_thread():
     """
     Start the XMLRPC server in a separate thread.
     """
+    logger.debug("Starting server thread")
     xServerThread = threading.Thread(target=server_start)
     xServerThread.start()
+    global_vars.ui.ButtonDatenSenden.setEnabled(False)
+    global_vars.ui.ButtonDatenSenden_2.setEnabled(False)
  
 def send_cmd_play():
     """
@@ -317,6 +329,7 @@ def send_data() -> None:
 
     This function is called when the user clicks the "Daten Senden" button.
     """
+    logger.debug("Button Daten Senden clicked")
     server_thread()
 
 def load_wordlist() -> list:
@@ -771,6 +784,8 @@ def main():
         else:
             logger.error(f"Path {args.rob_path} does not exist")
             return
+        
+    logger.debug(f"MultipackParser Application Version: {global_vars.VERSION}")
 
     QLocale.setDefault(QLocale(QLocale.German, QLocale.Germany)) # set locale to german for german keyboard layout
 
