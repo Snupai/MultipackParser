@@ -31,6 +31,11 @@ VERSION = '1.5.7'
 
 robot_ip = '192.168.0.1' # DO NOT CHANGE
 
+# UR20 palette place
+UR20_active_palette = 0
+UR20_palette1_empty = False
+UR20_palette2_empty = False
+
 PATH_USB_STICK = '..'
 FILENAME = None
 g_PalettenDim = None
