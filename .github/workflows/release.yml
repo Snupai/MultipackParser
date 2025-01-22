@@ -9,6 +9,10 @@ on:
       - completed
     branches:
       - dev-more-class-files
+  push:
+    paths:
+      - 'utils/global_vars.py'
+
 
 env:
   EXECUTABLE_NAME: MultipackParser
@@ -52,6 +56,7 @@ jobs:
         shell: bash
       
       - name: Fetch all tags
+
         if: steps.check_version_change.outputs.should_continue == 'true'
         run: git fetch --tags --force
       
