@@ -1,0 +1,41 @@
+name: Build Binary
+permissions:
+  contents: read
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - '*'
+
+env:
+  IMAGE_NAME: multipackparser-builder
+  EXECUTABLE_NAME: MultipackParser
+  EXECUTABLE_DIR_IN_DOCKER: /app/dist
+  EXECUTABLE_PATH_IN_DOCKER: /app/dist/MultipackParser
+
+jobs:
+  build-binary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          docker buildx build --platform linux/arm64 -t ${{ env.IMAGE_NAME }} --output type=docker .
+
+      - name: Create container and extract binary
+        run: |
+          container_id=$(docker create ${{ env.IMAGE_NAME }})
+          mkdir -p ./output
+          docker cp $container_id:${{ env.EXECUTABLE_PATH_IN_DOCKER }} ./output/${{ env.EXECUTABLE_NAME }}
+          docker rm $container_id
+
+      - name: Upload binary to GitHub Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.EXECUTABLE_NAME }}
+          path: ./output/${{ env.EXECUTABLE_NAME }} 
