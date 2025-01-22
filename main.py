@@ -77,60 +77,45 @@ def server_start():
     global server
     server = SimpleXMLRPCServer(("", 8080), allow_none=True)
     logger.debug("Start Server")
+
+    robot_type = global_vars.settings['info']['UR_Model']
+    if robot_type not in ['UR10', 'UR20']:
+        # default to UR10
+        robot_type = 'UR10'
+        
+    # Register common functions for both robot types
+    server.register_function(UR.UR_SetFileName, "UR_SetFileName")
+    server.register_function(UR.UR_ReadDataFromUsbStick, "UR_ReadDataFromUsbStick")
+    server.register_function(UR.UR_Palette, "UR_Palette")
+    server.register_function(UR.UR_Karton, "UR_Karton")
+    server.register_function(UR.UR_Lagen, "UR_Lagen")
+    server.register_function(UR.UR_Zwischenlagen, "UR_Zwischenlagen")
+    server.register_function(UR.UR_PaketPos, "UR_PaketPos")
+    server.register_function(UR.UR_AnzLagen, "UR_AnzLagen")
+    server.register_function(UR.UR_PaketeZuordnung, "UR_PaketeZuordnung")
+    server.register_function(UR.UR_Paket_hoehe, "UR_Paket_hoehe")
+    server.register_function(UR.UR_Startlage, "UR_Startlage")
+    server.register_function(UR.UR_Quergreifen, "UR_Quergreifen")
+    server.register_function(UR.UR_CoG, "UR_CoG")
+    server.register_function(UR.UR_MasseGeschaetzt, "UR_MasseGeschaetzt")
+    server.register_function(UR.UR_PickOffsetX, "UR_PickOffsetX")
+    server.register_function(UR.UR_PickOffsetY, "UR_PickOffsetY")
+    server.register_function(UR.UR_StepBack, "UR_StepBack")
     
-    def set_robot_type(robot_type):
-        """
-        Set the robot type and register appropriate functions.
-        
-        Args:
-            robot_type (str): Either 'UR10' or 'UR20'
-            
-        Returns:
-            bool: True if robot type was set successfully
-        """
-        logger.debug(f"Setting robot type to: {robot_type}")
-        
-        if robot_type not in ['UR10', 'UR20']:
-            logger.error(f"Invalid robot type: {robot_type}")
-            return False
-            
-        # Register common functions for both robot types
-        server.register_function(UR.UR_SetFileName, "UR_SetFileName")
-        server.register_function(UR.UR_ReadDataFromUsbStick, "UR_ReadDataFromUsbStick")
-        server.register_function(UR.UR_Palette, "UR_Palette")
-        server.register_function(UR.UR_Karton, "UR_Karton")
-        server.register_function(UR.UR_Lagen, "UR_Lagen")
-        server.register_function(UR.UR_Zwischenlagen, "UR_Zwischenlagen")
-        server.register_function(UR.UR_PaketPos, "UR_PaketPos")
-        server.register_function(UR.UR_AnzLagen, "UR_AnzLagen")
-        server.register_function(UR.UR_PaketeZuordnung, "UR_PaketeZuordnung")
-        server.register_function(UR.UR_Paket_hoehe, "UR_Paket_hoehe")
-        server.register_function(UR.UR_Startlage, "UR_Startlage")
-        server.register_function(UR.UR_Quergreifen, "UR_Quergreifen")
-        server.register_function(UR.UR_CoG, "UR_CoG")
-        server.register_function(UR.UR_MasseGeschaetzt, "UR_MasseGeschaetzt")
-        server.register_function(UR.UR_PickOffsetX, "UR_PickOffsetX")
-        server.register_function(UR.UR_PickOffsetY, "UR_PickOffsetY")
-        server.register_function(UR.UR_StepBack, "UR_StepBack")
-        
-        
-        # Register robot type specific functions here if needed
-        if robot_type == 'UR10':
-            server.register_function(UR10.UR10_scanner1and2niobild, "UR_scanner1and2niobild")
-            server.register_function(UR10.UR10_scanner1bild, "UR_scanner1bild")
-            server.register_function(UR10.UR10_scanner2bild, "UR_scanner2bild")
-            server.register_function(UR10.UR10_scanner1and2iobild, "UR_scanner1and2iobild")
-        elif robot_type == 'UR20':
-            server.register_function(UR20.UR20_SetActivePalette, "UR_SetActivePalette")
-            server.register_function(UR20.UR20_GetActivePaletteNumber, "UR_GetActivePaletteNumber")
-            server.register_function(UR20.UR20_GetPaletteStatus, "UR_GetPaletteStatus")
-            server.register_function(UR20.UR20_scannerStatus, "UR_scannerStatus")
-            
-        logger.debug(f"Successfully registered functions for {robot_type}")
-        return True
     
-    # Register the set_robot_type function
-    server.register_function(set_robot_type, "set_robot_type")
+    # Register robot type specific functions here if needed
+    if robot_type == 'UR10':
+        server.register_function(UR10.UR10_scanner1and2niobild, "UR_scanner1and2niobild")
+        server.register_function(UR10.UR10_scanner1bild, "UR_scanner1bild")
+        server.register_function(UR10.UR10_scanner2bild, "UR_scanner2bild")
+        server.register_function(UR10.UR10_scanner1and2iobild, "UR_scanner1and2iobild")
+    elif robot_type == 'UR20':
+        server.register_function(UR20.UR20_SetActivePalette, "UR_SetActivePalette")
+        server.register_function(UR20.UR20_GetActivePaletteNumber, "UR_GetActivePaletteNumber")
+        server.register_function(UR20.UR20_GetPaletteStatus, "UR_GetPaletteStatus")
+        server.register_function(UR20.UR20_scannerStatus, "UR_scannerStatus")
+        
+    logger.debug(f"Successfully registered functions for {robot_type}")
     
     server.serve_forever()
     return 0
