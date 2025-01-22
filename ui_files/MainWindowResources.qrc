@@ -5,7 +5,16 @@
   <qresource prefix="Sound">
     <file>imgs/stepback.mp3</file>
   </qresource>
-  <qresource prefix="ScannerUR20"/>
+  <qresource prefix="ScannerUR20">
+    <file>imgs/UR20/scanner1&amp;2&amp;3io.png</file>
+    <file>imgs/UR20/scanner1&amp;2&amp;3nio.png</file>
+    <file>imgs/UR20/scanner1io.png</file>
+    <file>imgs/UR20/scanner1nio.png</file>
+    <file>imgs/UR20/scanner2io.png</file>
+    <file>imgs/UR20/scanner2nio.png</file>
+    <file>imgs/UR20/scanner3io.png</file>
+    <file>imgs/UR20/scanner3nio.png</file>
+  </qresource>
   <qresource prefix="Szaidel Logo">
     <file>imgs/logoszaidel-transparent-big.png</file>
     <file>imgs/szaidel-transparent.png</file>

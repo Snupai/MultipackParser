@@ -11,21 +11,21 @@ def UR20_scannerStatus(status: str):
 
     match status:
         case "True,True,True":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/scanner1&2&3io.png'))
+            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1&2&3io.png'))
         case "False,False,False":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/scanner1&2&3nio.png'))
+            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1&2&3nio.png'))
         case "True,False,False":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/scanner1io.png'))
+            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1io.png'))
         case "False,True,False":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/scanner2io.png'))
+            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner2io.png'))
         case "False,False,True":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/scanner3io.png'))
+            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner3io.png'))
         case "True,True,False":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/scanner3nio.png'))
+            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner3nio.png'))
         case "True,False,True":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/scanner2nio.png'))
+            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner2nio.png'))
         case "False,True,True":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/scanner1nio.png'))
+            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1nio.png'))
     return
 
 
