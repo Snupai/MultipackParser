@@ -25,6 +25,7 @@ RUN apt-get update -y && apt-get install -y \
     libxcb-icccm4 \
     libxcb-image0 \
     libxcb-glx0 \
+    portaudio19-dev \
     && apt-get clean
 
 # Install PyInstaller and required Python packages
