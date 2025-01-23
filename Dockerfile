@@ -25,12 +25,11 @@ RUN apt-get update -y && apt-get install -y \
     libxcb-icccm4 \
     libxcb-image0 \
     libxcb-glx0 \
-    portaudio19-dev \
     && apt-get clean
 
 # Install PyInstaller and required Python packages
 RUN pip install --upgrade pip
-RUN pip install pyinstaller pyside6 pyinstaller-hooks-contrib pyaudio tomli_w
+RUN pip install pyinstaller pyside6 pyinstaller-hooks-contrib tomli_w
 
 # Set the working directory in the container
 WORKDIR /app
