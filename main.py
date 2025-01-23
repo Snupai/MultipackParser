@@ -768,18 +768,6 @@ reboot
     logger.info("Updater process spawned. Exiting current application.")  # Log the process spawn
     exit_app()
 
-def toggle_volume():
-    """
-    Toggle the volume.
-    """
-    current_icon = global_vars.ui.pushButtonVolumeOnOff.icon()
-    print(current_icon.name())
-    if current_icon.name() == "audio-volume-high":
-        global_vars.ui.pushButtonVolumeOnOff.setIcon(QIcon.fromTheme("audio-volume-muted"))
-        kill_play_stepback_warning_thread()
-    else:
-        global_vars.ui.pushButtonVolumeOnOff.setIcon(QIcon.fromTheme("audio-volume-high"))
-
 def spawn_play_stepback_warning_thread():
     """
     Spawn a thread to play the stepback warning.
@@ -825,6 +813,16 @@ def play_stepback_warning():
         logger.error(f"Error in audio thread: {e}")
     finally:
         logger.debug("Audio thread stopping")
+
+def set_audio_volume(mute):
+    """Set system audio volume using amixer"""
+    try:
+        volume = '0%' if mute else '100%'
+        subprocess.run(['amixer', 'set', 'Master', volume], 
+                      stdout=subprocess.DEVNULL,
+                      stderr=subprocess.DEVNULL)
+    except Exception as e:
+        logger.error(f"Error setting volume: {e}")
 
 #################
 # Main function #
@@ -942,9 +940,10 @@ def main():
     global_vars.ui.LadePallettenplan.clicked.connect(load)
     global_vars.ui.ButtonOpenParameterRoboter.clicked.connect(open_parameter_page)
     global_vars.ui.ButtonDatenSenden.clicked.connect(send_data)
-    global_vars.ui.pushButtonVolumeOnOff.clicked.connect(toggle_volume)
     global_vars.ui.startaudio.clicked.connect(spawn_play_stepback_warning_thread)
     global_vars.ui.stopaudio.clicked.connect(kill_play_stepback_warning_thread)
+    # when global_vars.ui.pushButtonVolumeOnOff is clicked and changed to state checked then set the audio volume of the system to 0% if it is not checked then set it to 100%
+    global_vars.ui.pushButtonVolumeOnOff.clicked.connect(lambda: set_audio_volume(global_vars.ui.pushButtonVolumeOnOff.isChecked()))
 
     #Page 2 Buttons
     # Roboter Tab
