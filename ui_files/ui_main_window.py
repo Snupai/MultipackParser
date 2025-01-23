@@ -203,8 +203,11 @@ class Ui_Form(object):
         self.pushButtonVolumeOnOff.setGeometry(QRect(1221, -1, 60, 60))
         icon2 = QIcon()
         icon2.addFile(u":/Sound/imgs/volume-on.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon2.addFile(u":/Sound/imgs/volume-off.png", QSize(), QIcon.Mode.Normal, QIcon.State.On)
         self.pushButtonVolumeOnOff.setIcon(icon2)
         self.pushButtonVolumeOnOff.setIconSize(QSize(50, 50))
+        self.pushButtonVolumeOnOff.setCheckable(False)
+        self.pushButtonVolumeOnOff.setChecked(False)
         self.pushButtonVolumeOnOff.setFlat(True)
         self.startaudio = QPushButton(self.MainMenu)
         self.startaudio.setObjectName(u"startaudio")
@@ -662,6 +665,7 @@ class Ui_Form(object):
 
         self.stackedWidget.setCurrentIndex(0)
         self.ButtonSettings.setDefault(False)
+        self.pushButtonVolumeOnOff.setDefault(False)
         self.tabWidget.setCurrentIndex(0)
         self.tabWidget_2.setCurrentIndex(0)
 
