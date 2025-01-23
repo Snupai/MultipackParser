@@ -165,7 +165,7 @@
     <enum>QFrame::Shape::NoFrame</enum>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="MainMenu">
     <widget class="QPushButton" name="ButtonSettings">
@@ -296,10 +296,10 @@
     <widget class="QLabel" name="LabelPalletenplanInfo">
      <property name="geometry">
       <rect>
-       <x>320</x>
-       <y>20</y>
-       <width>471</width>
-       <height>31</height>
+       <x>10</x>
+       <y>0</y>
+       <width>1261</width>
+       <height>51</height>
       </rect>
      </property>
      <property name="font">
@@ -314,7 +314,7 @@
       <string>Kein Pallettenplan geladen</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignHCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="label_9">
@@ -669,7 +669,7 @@
       <enum>QTabWidget::TabShape::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="Roboter">
       <attribute name="title">
@@ -733,6 +733,9 @@
        </property>
       </widget>
       <widget class="QPushButton" name="ButtonRoboterStop">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>830</x>
@@ -767,6 +770,9 @@
        </property>
       </widget>
       <widget class="QPushButton" name="ButtonRoboterStart">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>140</x>
@@ -807,6 +813,9 @@
        </property>
       </widget>
       <widget class="QPushButton" name="ButtonStopRPCServer">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>830</x>
@@ -841,6 +850,9 @@
        </property>
       </widget>
       <widget class="QPushButton" name="ButtonRoboterPause">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>140</x>
