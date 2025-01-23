@@ -820,28 +820,28 @@ def play_stepback_warning():
         # Initialize PyAudio
         p = pyaudio.PyAudio()
         
-        # Open stream with correct parameters
+        # Calculate buffer size to prevent underruns
+        # Use a larger buffer size (2048 or 4096 samples)
+        chunk_size = 4096
+        
+        # Open stream with correct parameters and larger buffer
         stream = p.open(format=p.get_format_from_width(sample_width),
                        channels=channels,
                        rate=framerate,
-                       output=True)
+                       output=True,
+                       frames_per_buffer=chunk_size,
+                       stream_callback=None)
+        
+        # Pre-load the entire audio file
+        audio_data = wave_file.readframes(wave_file.getnframes())
         
         # Play in loop
         while audio_thread_running:
             try:
-                # Reset file pointer to start
-                wave_file.rewind()
-                
-                # Read data in chunks
-                chunk_size = 1024
-                data = wave_file.readframes(chunk_size)
-                
-                while data and audio_thread_running:
-                    stream.write(data)
-                    data = wave_file.readframes(chunk_size)
-                
+                # Write the entire audio data at once
+                stream.write(audio_data)
                 logger.debug("Stepback warning played")
-                time.sleep(0.5)  # Small delay between loops
+                time.sleep(0.1)  # Small delay between loops
                 
             except Exception as e:
                 logger.error(f"Error during playback: {e}")
