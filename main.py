@@ -111,7 +111,6 @@ def server_start():
     server.register_function(UR.UR_MasseGeschaetzt, "UR_MasseGeschaetzt")
     server.register_function(UR.UR_PickOffsetX, "UR_PickOffsetX")
     server.register_function(UR.UR_PickOffsetY, "UR_PickOffsetY")
-    server.register_function(UR.UR_StepBack, "UR_StepBack")
     
     
     # Register robot type specific functions here if needed
