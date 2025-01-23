@@ -36,6 +36,9 @@ UR20_active_palette = 0
 UR20_palette1_empty = False
 UR20_palette2_empty = False
 
+# Audio
+audio_muted = False
+
 PATH_USB_STICK = '..'
 FILENAME = None
 g_PalettenDim = None
