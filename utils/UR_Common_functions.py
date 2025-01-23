@@ -245,17 +245,6 @@ def UR_CoG(Masse_Paket,Masse_Greifer,Anzahl_Pakete=1):
     global_vars.g_CenterOfGravity[0] = y
     global_vars.g_CenterOfGravity[1] = z
     return global_vars.g_CenterOfGravity
- 
-    
-#die funktion für den audio file zu spielen
-def UR_StepBack():
-    """
-    Play the stepback sound.
-    """
-    file = AudioSegment.from_file(file=u':/Sound/imgs/stepback.mp3', format="mp3")
-    play(file)
-    return
-
 
 def UR_Paket_hoehe():
     """
