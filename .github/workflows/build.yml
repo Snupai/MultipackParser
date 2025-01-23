@@ -4,8 +4,8 @@ permissions:
 on:
   workflow_dispatch:
   push:
-    branches:
-      - '*'
+    paths:
+      - '**.py'
 
 env:
   IMAGE_NAME: multipackparser-builder
@@ -39,3 +39,4 @@ jobs:
         with:
           name: ${{ env.EXECUTABLE_NAME }}
           path: ./output/${{ env.EXECUTABLE_NAME }} 
+          

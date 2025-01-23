@@ -1,55 +1,54 @@
-# syntax=docker/dockerfile:1
+# Dockerfile for building a Linux ARM64 executable
 
-# Use an official Python runtime as a parent image
-FROM arm64v8/python:3.11
+# Stage 1: Build the executable
+FROM arm64v8/python:3.12 AS builder
+
+# Install required dependencies
+RUN apt-get update -y && apt-get install -y \
+    build-essential \
+    libffi-dev \
+    libssl-dev \
+    wget \
+    libdbus-1-3 \
+    libxkbcommon0 \
+    libwayland-client0 \
+    libwayland-cursor0 \
+    libwayland-egl1 \
+    libxcb-keysyms1 \
+    libxcb-shape0 \
+    libxcb-xfixes0 \
+    libxcb-xkb1 \
+    libxcb-sync1 \
+    libxcb-randr0 \
+    libxcb-render-util0 \
+    libxcb-cursor0 \
+    libxcb-icccm4 \
+    libxcb-image0 \
+    libxcb-glx0 \
+    && apt-get clean
+
+# Install PyInstaller and required Python packages
+RUN pip install --upgrade pip
+RUN pip install pyinstaller pyside6 pyinstaller-hooks-contrib pydub tomli_w
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# CUT HERE
 
-# Install necessary system dependencies for running a PySide6 application
-RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
-    libxkbcommon-x11-0 \
-    libxcb-icccm4 \
-    libxcb-image0 \
-    libxcb-keysyms1 \
-    libxcb-randr0 \
-    libxcb-render-util0 \
-    libxcb-render0 \
-    libxcb-shape0 \
-    libxcb-sync1 \
-    libxcb-xfixes0 \
-    libxcb-xinerama0 \
-    libxcb-xkb1 \
-    libxcb1 \
-    libxrender1 \
-    libxi6 \
-    libdbus-1-3 \
-    libxcb-cursor0 \
-    libegl1 \
-    ccache \
-    ffmpeg \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# Copy the entire project into the container
+COPY . .
 
-# Install necessary packages for virtual keyboard modules
-RUN apt-get update && apt-get install -y \
-    qml-module-qtquick-virtualkeyboard \
-    qml-module-qtquick-layouts \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# Run PyInstaller to create the executable
+RUN pyinstaller --name MultipackParser --onefile --windowed --icon=path_to_your_icon.ico main.py
 
-# Install PySide6 and pyside6-deploy
-RUN pip install PySide6 pydub Nuitka==2.3.2 ordered-set zstandard
+# Stage 2: Copy the executable to a minimal base image
+FROM arm64v8/python:3.12-slim
 
-# Set environment variable for Qt Virtual Keyboard
-ENV QT_IM_MODULE=qtvirtualkeyboard
+WORKDIR /app
 
-# Run pyside6-deploy to create the executable with Qt Virtual Keyboard
-RUN yes | pyside6-deploy -c pysidedeploy.spec --extra-modules=QtVirtualKeyboard
+# Copy the executable to the app directory
+COPY --from=builder /app/dist/MultipackParser /app/dist/MultipackParser
 
-# Command to run the application
-CMD ["./main.bin"]
+# Set entrypoint to the built executable
+ENTRYPOINT ["/app/dist/MultipackParser/MultipackParser"]
