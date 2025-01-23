@@ -771,6 +771,7 @@ def play_stepback_warning():
 
 def set_audio_volume(mute):
     """Set system audio volume using amixer"""
+    logger.debug(f"Setting audio volume to {mute}")
     try:
         volume = '0%' if mute else '100%'
         subprocess.run(['amixer', 'set', 'Master', volume], 
