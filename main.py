@@ -661,6 +661,14 @@ def open_folder_dialog():
         global_vars.PATH_USB_STICK = folder
         set_wordlist()  # Ensure this is defined before calling it
 
+def open_file_dialog():
+    """
+    Open the file dialog.
+    """
+    file_path = QFileDialog.getOpenFileName(main_window, "Open Audio File", "", "Audio Files (*.wav)")
+    if file_path:
+        global_vars.ui.audioPathEdit.setText(file_path[0])
+
 def update_wordlist():
     """
     Update the wordlist.
@@ -802,15 +810,8 @@ def play_stepback_warning():
     """
     global audio_thread_running
     try:
-        # Get audio from resources
-        audio = QResource(":/Sound/imgs/output.wav")
-        if not audio.isValid():
-            logger.error("Failed to load audio resource")
-            return
-            
-        # Convert memoryview to bytes and create a wave reader
-        audio_bytes = bytes(audio.data())
-        wave_file = wave.open(io.BytesIO(audio_bytes), 'rb')
+        # Open the WAV file directly
+        wave_file = wave.open(settings.settings['admin']['alarm_sound_file'], 'rb')
         
         # Get WAV file parameters
         channels = wave_file.getnchannels()
@@ -1009,6 +1010,8 @@ def main():
     global_vars.ui.lineEditLastRestart.textChanged.connect(lambda text: settings.settings['info'].__setitem__('last_restart', text))
     global_vars.ui.pathEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('path', text))
     global_vars.ui.buttonSelectRobPath.clicked.connect(open_folder_dialog)
+    global_vars.ui.audioPathEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('alarm_sound_file', text))
+    global_vars.ui.buttonSelectAudioFilePath.clicked.connect(open_file_dialog)
     set_settings_line_edits()
     #global_vars.ui.checkBox.stateChanged.connect(lambda state: settings.settings['audio'].__setitem__('sound', state == Qt.Checked))
     #global_vars.ui.checkBox.setChecked(settings.settings['audio']['sound'])
