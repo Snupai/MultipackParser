@@ -28,21 +28,17 @@ import shutil
 import time
 import threading
 import socket
-import xmlrpc.client
 from xmlrpc.server import SimpleXMLRPCServer
 import logging
 from datetime import datetime
-import pyaudio
-import wave
-import io
 
 # import the needed qml modules for the virtual keyboard to work
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickView
 ################################################################
-from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QWidget, QCompleter, QLineEdit, QFileDialog, QMessageBox
-from PySide6.QtCore import Qt, QEvent, QFileSystemWatcher, QUrl, QProcess, QRegularExpression, QLocale, QFile, QResource
-from PySide6.QtGui import QIntValidator, QDoubleValidator, QPixmap, QRegularExpressionValidator, QIcon
+from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QCompleter, QFileDialog, QMessageBox
+from PySide6.QtCore import Qt, QFileSystemWatcher, QProcess, QRegularExpression, QLocale
+from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QIcon
 from ui_files.ui_main_window import Ui_Form
 from ui_files import MainWindowResources_rc
 from utils import global_vars
