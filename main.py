@@ -133,8 +133,7 @@ def server_stop():
     """
     server.shutdown()
     logger.debug("Server stopped")
-    global_vars.ui.ButtonDatenSenden.setEnabled(True)
-    global_vars.ui.ButtonDatenSenden_2.setEnabled(True)
+    datensenden_manipulation(True, "Server starten", "")
  
 def server_thread():
     """
@@ -143,9 +142,18 @@ def server_thread():
     logger.debug("Starting server thread")
     xServerThread = threading.Thread(target=server_start)
     xServerThread.start()
-    global_vars.ui.ButtonDatenSenden.setEnabled(False)
-    global_vars.ui.ButtonDatenSenden_2.setEnabled(False)
+    datensenden_manipulation(False, "Server läuft", "green")
  
+def datensenden_manipulation(visibility: bool, display_text: str, display_colour: str):
+    """
+    Manipulate the visibility of the "Daten Senden" button and the display text.
+    """
+    buttons = [global_vars.ui.ButtonDatenSenden, global_vars.ui.ButtonDatenSenden_2]
+    for button in buttons:
+        button.setStyleSheet(f"color: {display_colour}")
+        button.setEnabled(visibility)
+        button.setText(display_text)
+
 def send_cmd_play():
     """
     Send a command to the robot to start.
@@ -565,9 +573,6 @@ cd {current_dir}
             try:
                 settings.save_settings()
                 logger.debug("New settings saved.")
-                # Spawn new process and exit current one
-                spawn_new_process()
-                sys.exit(0)
             except Exception as e:
                 logger.error(f"Failed to save settings: {e}")
                 QMessageBox.critical(main_window, "Error", f"Failed to save settings: {e}")
@@ -579,8 +584,42 @@ cd {current_dir}
 
     # Spawn new process and exit current one
     spawn_new_process()
-    sys.exit(0)
+    exit_app()
 
+def save_and_exit_app():
+    """
+    Safely exit the application.
+    """
+    try:
+        settings.compare_loaded_settings_to_saved_settings()
+    except ValueError as e:
+        logger.error(f"Error: {e}")
+    
+        # If settings do not match, ask whether to discard or save the new data
+        response = QMessageBox.question(main_window, "Verwerfen oder Speichern", "Möchten Sie die neuen Daten verwerfen oder speichern?",
+                                        QMessageBox.Discard | QMessageBox.Save, QMessageBox.Save)
+        main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink
+        if response == QMessageBox.Save:
+            try:
+                settings.save_settings()
+                logger.debug("New settings saved.")
+            except Exception as e:
+                logger.error(f"Failed to save settings: {e}")
+                QMessageBox.critical(main_window, "Error", f"Failed to save settings: {e}")
+                return
+        elif response == QMessageBox.Discard:
+            settings.reset_unsaved_changes()
+            set_settings_line_edits()
+            logger.debug("All changes discarded.")
+    exit_app()
+
+def exit_app():
+    """
+    Exit the application.
+    """
+    if 'server' in globals():
+        server_stop()
+    sys.exit(0)
 
 def set_wordlist():
     """
@@ -717,7 +756,7 @@ reboot
     )
 
     logger.info("Updater process spawned. Exiting current application.")  # Log the process spawn
-    sys.exit(0)  # Terminate the current process
+    exit_app()
 
 #################
 # Main function #
@@ -940,7 +979,7 @@ def main():
         if (event.modifiers() == (Qt.ControlModifier | Qt.AltModifier | Qt.ShiftModifier) and 
             event.key() == Qt.Key_C):
             allow_close = True
-            main_window.close()
+            exit_app()
         elif (event.modifiers() == (Qt.ControlModifier | Qt.AltModifier) and 
             event.key() == Qt.Key_N):
             messageBox = QMessageBox()

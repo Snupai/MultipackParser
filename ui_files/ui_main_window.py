@@ -99,7 +99,7 @@ class Ui_Form(object):
         self.ButtonOpenParameterRoboter.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.label_7 = QLabel(self.MainMenu)
         self.label_7.setObjectName(u"label_7")
-        self.label_7.setGeometry(QRect(940, 90, 250, 250))
+        self.label_7.setGeometry(QRect(940, 90, 271, 271))
         self.label_7.setPixmap(QPixmap(u":/Szaidel Logo/imgs/szaidel-transparent.png"))
         self.label_7.setScaledContents(True)
         self.LabelPalletenplanInfo = QLabel(self.MainMenu)
@@ -599,9 +599,9 @@ class Ui_Form(object):
 
         self.retranslateUi(Form)
 
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(1)
         self.ButtonSettings.setDefault(False)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         self.tabWidget_2.setCurrentIndex(0)
 
 
