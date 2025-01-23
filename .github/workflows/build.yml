@@ -39,3 +39,4 @@ jobs:
         with:
           name: ${{ env.EXECUTABLE_NAME }}
           path: ./output/${{ env.EXECUTABLE_NAME }} 
+          
