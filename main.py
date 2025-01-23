@@ -521,6 +521,7 @@ def set_settings_line_edits():
     global_vars.ui.lineEditNumberCycles.setText(str(settings.settings['info']['number_of_use_cycles']))
     global_vars.ui.lineEditLastRestart.setText(settings.settings['info']['last_restart'])
     global_vars.ui.pathEdit.setText(settings.settings['admin']['path'])
+    global_vars.ui.audioPathEdit.setText(settings.settings['admin']['alarm_sound_file'])
 
 def restart_app():
     """
