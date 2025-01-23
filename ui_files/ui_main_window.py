@@ -548,6 +548,28 @@ class Ui_Form(object):
 
         self.formLayout_3.setLayout(1, QFormLayout.FieldRole, self.horizontalLayout)
 
+        self.label_25 = QLabel(self.formLayoutWidget_3)
+        self.label_25.setObjectName(u"label_25")
+
+        self.formLayout_3.setWidget(2, QFormLayout.LabelRole, self.label_25)
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setSpacing(3)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.audioPathEdit = QLineEdit(self.formLayoutWidget_3)
+        self.audioPathEdit.setObjectName(u"audioPathEdit")
+
+        self.horizontalLayout_2.addWidget(self.audioPathEdit)
+
+        self.buttonSelectAudioFilePath = QToolButton(self.formLayoutWidget_3)
+        self.buttonSelectAudioFilePath.setObjectName(u"buttonSelectAudioFilePath")
+        self.buttonSelectAudioFilePath.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+
+        self.horizontalLayout_2.addWidget(self.buttonSelectAudioFilePath)
+
+
+        self.formLayout_3.setLayout(2, QFormLayout.FieldRole, self.horizontalLayout_2)
+
         self.formLayoutWidget_4 = QWidget(self.adminSettingsTab)
         self.formLayoutWidget_4.setObjectName(u"formLayoutWidget_4")
         self.formLayoutWidget_4.setGeometry(QRect(690, 10, 551, 341))
@@ -693,6 +715,8 @@ class Ui_Form(object):
         self.passwordEdit.setInputMask(QCoreApplication.translate("Form", u"XXXXXXXX", None))
         self.label_24.setText(QCoreApplication.translate("Form", u"Pfad Palettenplaene", None))
         self.buttonSelectRobPath.setText(QCoreApplication.translate("Form", u"...", None))
+        self.label_25.setText(QCoreApplication.translate("Form", u"Pfad Audio file", None))
+        self.buttonSelectAudioFilePath.setText(QCoreApplication.translate("Form", u"...", None))
         self.pushButtonSpeichern_2.setText(QCoreApplication.translate("Form", u"Speichern", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.adminSettingsTab), QCoreApplication.translate("Form", u"Admin", None))
         self.ButtonZurueck_5.setText("")

@@ -1484,6 +1484,33 @@ Application</string>
           </item>
          </layout>
         </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_25">
+          <property name="text">
+           <string>Pfad Audio file</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="spacing">
+           <number>3</number>
+          </property>
+          <item>
+           <widget class="QLineEdit" name="audioPathEdit"/>
+          </item>
+          <item>
+           <widget class="QToolButton" name="buttonSelectAudioFilePath">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="formLayoutWidget_4">
