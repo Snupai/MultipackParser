@@ -30,18 +30,19 @@ import threading
 import socket
 import xmlrpc.client
 from xmlrpc.server import SimpleXMLRPCServer
-from pydub import AudioSegment
-from pydub.playback import play
 import logging
 from datetime import datetime
+import pyaudio
+import wave
+import io
 
 # import the needed qml modules for the virtual keyboard to work
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickView
 ################################################################
 from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QWidget, QCompleter, QLineEdit, QFileDialog, QMessageBox
-from PySide6.QtCore import Qt, QEvent, QFileSystemWatcher, QUrl, QProcess, QRegularExpression, QLocale
-from PySide6.QtGui import QIntValidator, QDoubleValidator, QPixmap, QRegularExpressionValidator
+from PySide6.QtCore import Qt, QEvent, QFileSystemWatcher, QUrl, QProcess, QRegularExpression, QLocale, QFile, QResource
+from PySide6.QtGui import QIntValidator, QDoubleValidator, QPixmap, QRegularExpressionValidator, QIcon
 from ui_files.ui_main_window import Ui_Form
 from ui_files import MainWindowResources_rc
 from utils import global_vars
@@ -51,6 +52,9 @@ from utils import UR10_Server_functions as UR10
 from utils import UR20_Server_functions as UR20
 
 logger = global_vars.logger
+
+audio_thread = None
+audio_thread_running = False
 
 os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
@@ -760,6 +764,101 @@ reboot
     logger.info("Updater process spawned. Exiting current application.")  # Log the process spawn
     exit_app()
 
+def toggle_volume():
+    """
+    Toggle the volume.
+    """
+    current_icon = global_vars.ui.pushButtonVolumeOnOff.icon()
+    print(current_icon.name())
+    if current_icon.name() == "audio-volume-high":
+        global_vars.ui.pushButtonVolumeOnOff.setIcon(QIcon.fromTheme("audio-volume-muted"))
+        kill_play_stepback_warning_thread()
+    else:
+        global_vars.ui.pushButtonVolumeOnOff.setIcon(QIcon.fromTheme("audio-volume-high"))
+
+def spawn_play_stepback_warning_thread():
+    """
+    Spawn a thread to play the stepback warning.
+    """
+    global audio_thread, audio_thread_running
+    if audio_thread is None:
+        audio_thread_running = True
+        audio_thread = threading.Thread(target=play_stepback_warning)
+        audio_thread.daemon = True
+        audio_thread.start()
+
+def kill_play_stepback_warning_thread():
+    """
+    Kill the thread playing the stepback warning.
+    """
+    global audio_thread, audio_thread_running
+    audio_thread_running = False
+    if audio_thread:
+        audio_thread = None
+
+def play_stepback_warning():
+    """
+    Play the stepback warning in a loop.
+    """
+    global audio_thread_running
+    try:
+        # Get audio from resources
+        audio = QResource(":/Sound/imgs/output.wav")
+        if not audio.isValid():
+            logger.error("Failed to load audio resource")
+            return
+            
+        # Convert memoryview to bytes and create a wave reader
+        audio_bytes = bytes(audio.data())
+        wave_file = wave.open(io.BytesIO(audio_bytes), 'rb')
+        
+        # Get WAV file parameters
+        channels = wave_file.getnchannels()
+        sample_width = wave_file.getsampwidth()
+        framerate = wave_file.getframerate()
+        
+        # Initialize PyAudio
+        p = pyaudio.PyAudio()
+        
+        # Open stream with correct parameters
+        stream = p.open(format=p.get_format_from_width(sample_width),
+                       channels=channels,
+                       rate=framerate,
+                       output=True)
+        
+        # Play in loop
+        while audio_thread_running:
+            try:
+                # Reset file pointer to start
+                wave_file.rewind()
+                
+                # Read data in chunks
+                chunk_size = 1024
+                data = wave_file.readframes(chunk_size)
+                
+                while data and audio_thread_running:
+                    stream.write(data)
+                    data = wave_file.readframes(chunk_size)
+                
+                logger.debug("Stepback warning played")
+                time.sleep(0.1)  # Small delay between loops
+                
+            except Exception as e:
+                logger.error(f"Error during playback: {e}")
+                break
+                
+    except Exception as e:
+        logger.error(f"Error initializing audio: {e}")
+    finally:
+        try:
+            stream.stop_stream()
+            stream.close()
+            p.terminate()
+            wave_file.close()
+        except Exception as e:
+            logger.error(f"Error cleaning up audio: {e}")
+        logger.debug("Audio thread stopping")
+
 #################
 # Main function #
 #################
@@ -839,8 +938,10 @@ def main():
     global_vars.ui.stackedWidget.setCurrentIndex(0)
     global_vars.ui.tabWidget_2.setCurrentIndex(0)
 
+    # init settings
     init_settings()
     
+    # set last restart and number of use cycles
     settings.settings['info']['last_restart'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     settings.settings['info']['number_of_use_cycles'] = str(int(settings.settings['info']['number_of_use_cycles']) + 1)
     settings.save_settings()
@@ -874,6 +975,9 @@ def main():
     global_vars.ui.LadePallettenplan.clicked.connect(load)
     global_vars.ui.ButtonOpenParameterRoboter.clicked.connect(open_parameter_page)
     global_vars.ui.ButtonDatenSenden.clicked.connect(send_data)
+    global_vars.ui.pushButtonVolumeOnOff.clicked.connect(toggle_volume)
+    global_vars.ui.startaudio.clicked.connect(spawn_play_stepback_warning_thread)
+    global_vars.ui.stopaudio.clicked.connect(kill_play_stepback_warning_thread)
 
     #Page 2 Buttons
     # Roboter Tab
