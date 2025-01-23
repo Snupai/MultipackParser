@@ -521,72 +521,27 @@ def set_settings_line_edits():
 
 def restart_app():
     """
-    Restart the application.
-    
-    This function is called when the user clicks the "Restart Application" button.
-    It spawns a new process and exits the current one.
+    Restart the system.
     """
-    def spawn_new_process():
-        """
-        Spawn a new process using a bash script.
-        
-        This helper function creates and executes a bash script to restart the application.
-        """
-        current_dir = os.getcwd()
-        # Create temporary bash script
-        script_content = f"""#!/bin/bash
-cd {current_dir}
-./MultipackParser"""
-        
-        script_path = os.path.join(current_dir, "restart_app.sh")
-        
-        try:
-            # Write script
-            with open(script_path, "w") as f:
-                f.write(script_content)
-            
-            # Make executable
-            os.chmod(script_path, 0o755)
-            
-            # Launch script in background
-            subprocess.Popen([script_path], shell=True, cwd=current_dir)
-            
-        except Exception as e:
-            logger.error(f"Failed to create restart script: {e}")
-            raise
-        finally:
-            # Clean up script file
-            try:
-                os.remove(script_path)
-            except:
-                pass
-
-
     try:
         settings.compare_loaded_settings_to_saved_settings()
     except ValueError as e:
         logger.error(f"Error: {e}")
-    
-        # If settings do not match, ask whether to discard or save the new data
-        response = QMessageBox.question(main_window, "Verwerfen oder Speichern", "Möchten Sie die neuen Daten verwerfen oder speichern?",
-                                        QMessageBox.Discard | QMessageBox.Save, QMessageBox.Save)
-        main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink
+        response = QMessageBox.question(main_window, "Verwerfen oder Speichern", 
+                                      "Möchten Sie die neuen Daten verwerfen oder speichern?",
+                                      QMessageBox.Discard | QMessageBox.Save, 
+                                      QMessageBox.Save)
         if response == QMessageBox.Save:
             try:
                 settings.save_settings()
-                logger.debug("New settings saved.")
             except Exception as e:
                 logger.error(f"Failed to save settings: {e}")
-                QMessageBox.critical(main_window, "Error", f"Failed to save settings: {e}")
                 return
-        elif response == QMessageBox.Discard:
-            settings.reset_unsaved_changes()
-            set_settings_line_edits()
-            logger.debug("All changes discarded.")
-
-    # Spawn new process and exit current one
-    spawn_new_process()
-    exit_app()
+    
+    logger.info("Rebooting system...")
+    if 'server' in globals():
+        server_stop()
+    subprocess.run(['sudo', 'reboot'], check=True)
 
 def save_and_exit_app():
     """
