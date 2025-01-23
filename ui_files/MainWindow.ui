@@ -699,6 +699,27 @@
       <string>stop</string>
      </property>
     </widget>
+    <zorder>checkBoxEinzelpaket</zorder>
+    <zorder>ButtonDatenSenden</zorder>
+    <zorder>ButtonOpenParameterRoboter</zorder>
+    <zorder>label_7</zorder>
+    <zorder>LabelPalletenplanInfo</zorder>
+    <zorder>label_9</zorder>
+    <zorder>label_10</zorder>
+    <zorder>EingabePallettenplan</zorder>
+    <zorder>label_4</zorder>
+    <zorder>label</zorder>
+    <zorder>LadePallettenplan</zorder>
+    <zorder>label_2</zorder>
+    <zorder>EingabeStartlage</zorder>
+    <zorder>label_3</zorder>
+    <zorder>EingabeKartonGewicht</zorder>
+    <zorder>EingabeKartonhoehe</zorder>
+    <zorder>line</zorder>
+    <zorder>startaudio</zorder>
+    <zorder>stopaudio</zorder>
+    <zorder>ButtonSettings</zorder>
+    <zorder>pushButtonVolumeOnOff</zorder>
    </widget>
    <widget class="QWidget" name="RoboParameter">
     <widget class="QTabWidget" name="tabWidget">

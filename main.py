@@ -842,7 +842,7 @@ def play_stepback_warning():
                     data = wave_file.readframes(chunk_size)
                 
                 logger.debug("Stepback warning played")
-                time.sleep(0.1)  # Small delay between loops
+                time.sleep(0.5)  # Small delay between loops
                 
             except Exception as e:
                 logger.error(f"Error during playback: {e}")
