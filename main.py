@@ -131,6 +131,7 @@ def server_stop():
     """
     Stop the XMLRPC server.
     """
+    global_vars.ui.ButtonStopRPCServer.setEnabled(False)
     server.shutdown()
     logger.debug("Server stopped")
     datensenden_manipulation(True, "Server starten", "")
@@ -142,6 +143,7 @@ def server_thread():
     logger.debug("Starting server thread")
     xServerThread = threading.Thread(target=server_start)
     xServerThread.start()
+    global_vars.ui.ButtonStopRPCServer.setEnabled(True)
     datensenden_manipulation(False, "Server läuft", "green")
  
 def datensenden_manipulation(visibility: bool, display_text: str, display_colour: str):
