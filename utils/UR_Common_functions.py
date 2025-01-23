@@ -3,9 +3,6 @@
 # This file will be imported into main.py to clean up the code
 
 from . import global_vars
-from pydub import AudioSegment
-from pydub.playback import play
-from PySide6.QtGui import QPixmap
 
 logger = global_vars.logger
 
