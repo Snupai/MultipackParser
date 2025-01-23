@@ -805,58 +805,28 @@ def kill_play_stepback_warning_thread():
 
 def play_stepback_warning():
     """
-    Play the stepback warning in a loop.
+    Play the stepback warning in a loop using aplay.
     """
     global audio_thread_running
+    
     try:
-        # Open the WAV file directly
-        wave_file = wave.open(settings.settings['admin']['alarm_sound_file'], 'rb')
-        
-        # Get WAV file parameters
-        channels = wave_file.getnchannels()
-        sample_width = wave_file.getsampwidth()
-        framerate = wave_file.getframerate()
-        
-        # Initialize PyAudio
-        p = pyaudio.PyAudio()
-        
-        # Calculate buffer size to prevent underruns
-        # Use a larger buffer size (2048 or 4096 samples)
-        chunk_size = 4096
-        
-        # Open stream with correct parameters and larger buffer
-        stream = p.open(format=p.get_format_from_width(sample_width),
-                       channels=channels,
-                       rate=framerate,
-                       output=True,
-                       frames_per_buffer=chunk_size,
-                       stream_callback=None)
-        
-        # Pre-load the entire audio file
-        audio_data = wave_file.readframes(wave_file.getnframes())
-        
-        # Play in loop
         while audio_thread_running:
             try:
-                # Write the entire audio data at once
-                stream.write(audio_data)
+                # Use aplay to play the audio file
+                subprocess.run(['aplay', settings.settings['admin']['alarm_sound_file']], 
+                            check=True,
+                            stdout=subprocess.DEVNULL,
+                            stderr=subprocess.DEVNULL)
                 logger.debug("Stepback warning played")
                 time.sleep(0.1)  # Small delay between loops
                 
-            except Exception as e:
+            except subprocess.CalledProcessError as e:
                 logger.error(f"Error during playback: {e}")
                 break
                 
     except Exception as e:
-        logger.error(f"Error initializing audio: {e}")
+        logger.error(f"Error in audio thread: {e}")
     finally:
-        try:
-            stream.stop_stream()
-            stream.close()
-            p.terminate()
-            wave_file.close()
-        except Exception as e:
-            logger.error(f"Error cleaning up audio: {e}")
         logger.debug("Audio thread stopping")
 
 #################
