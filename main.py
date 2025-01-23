@@ -769,14 +769,29 @@ def play_stepback_warning():
     finally:
         logger.debug("Audio thread stopping")
 
-def set_audio_volume(mute):
+def set_audio_volume():
     """Set system audio volume using amixer"""
-    logger.debug(f"Setting audio volume to {mute}")
+    if not global_vars.audio_muted:
+        volume = '0%'
+        icon_name = ":/Sound/imgs/volume-off.png"
+    else:
+        volume = '100%'
+        icon_name = ":/Sound/imgs/volume-on.png"
+    logger.debug(f"Setting audio volume to {volume}")
     try:
-        volume = '0%' if mute else '100%'
-        subprocess.run(['amixer', 'set', 'Master', volume], 
-                      stdout=subprocess.DEVNULL,
-                      stderr=subprocess.DEVNULL)
+        # Try PulseAudio first, then fallback to default ALSA
+        try:
+            subprocess.run(['amixer', '-D', 'pulse', 'set', 'Master', volume], 
+                         stdout=subprocess.DEVNULL,
+                         stderr=subprocess.DEVNULL,
+                         check=True)
+        except:
+            subprocess.run(['amixer', 'set', 'Master', volume], 
+                         stdout=subprocess.DEVNULL,
+                         stderr=subprocess.DEVNULL,
+                         check=True)
+        global_vars.ui.pushButtonVolumeOnOff.setIcon(QIcon(icon_name))
+        global_vars.audio_muted = not global_vars.audio_muted
     except Exception as e:
         logger.error(f"Error setting volume: {e}")
 
@@ -899,7 +914,7 @@ def main():
     global_vars.ui.startaudio.clicked.connect(spawn_play_stepback_warning_thread)
     global_vars.ui.stopaudio.clicked.connect(kill_play_stepback_warning_thread)
     # when global_vars.ui.pushButtonVolumeOnOff is clicked and changed to state checked then set the audio volume of the system to 0% if it is not checked then set it to 100%
-    global_vars.ui.pushButtonVolumeOnOff.clicked.connect(lambda: set_audio_volume(global_vars.ui.pushButtonVolumeOnOff.isChecked()))
+    global_vars.ui.pushButtonVolumeOnOff.clicked.connect(set_audio_volume)
 
     #Page 2 Buttons
     # Roboter Tab
