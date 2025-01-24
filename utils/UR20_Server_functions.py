@@ -2,12 +2,18 @@
 
 from PySide6.QtGui import QPixmap
 from . import global_vars
+import time
+from main import update_status_label
 
 # the scanner image stuff for 3 scanners
 def UR20_scannerStatus(status: str):
     """
     Set the scanner status.
     """
+
+    if not status == "True,True,True" and global_vars.timestamp_scanner_fault is None:
+        global_vars.timestamp_scanner_fault = time.time()
+        update_status_label("Bitte Arbeitsbereich räumen.", "red", True)
 
     match status:
         case "True,True,True":
