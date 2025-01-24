@@ -39,6 +39,10 @@ UR20_palette2_empty = False
 # Audio
 audio_muted = False
 
+timestamp_scanner_fault = None
+
+##########################
+
 PATH_USB_STICK = '..'
 FILENAME = None
 g_PalettenDim = None
