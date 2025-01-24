@@ -239,15 +239,28 @@ def send_cmd_stop():
 ################
 
 def update_status_label(text: str, color: str, blink: bool = False, second_color: str = None):
-    global_vars.ui.LabelPalletenplanInfo.setText(text)
-    global_vars.ui.LabelPalletenplanInfo.setStyleSheet(f"color: {color}")
-    blinking_label = BlinkingLabel(text, color, global_vars.ui.LabelPalletenplanInfo.geometry(), parent=main_window, second_color=second_color, font=global_vars.ui.LabelPalletenplanInfo.font(), alignment=global_vars.ui.LabelPalletenplanInfo.alignment())
+    """Update the status label with the given text and color"""
+    # Create blinking label if it doesn't exist
+    if not hasattr(global_vars, 'blinking_label'):
+        global_vars.blinking_label = BlinkingLabel(
+            text, 
+            color, 
+            global_vars.ui.LabelPalletenplanInfo.geometry(), 
+            parent=global_vars.ui.stackedWidget.widget(0),
+            second_color=second_color,
+            font=global_vars.ui.LabelPalletenplanInfo.font(),
+            alignment=global_vars.ui.LabelPalletenplanInfo.alignment()
+        )
+        global_vars.ui.LabelPalletenplanInfo.hide()  # Hide the original label
+    
+    # Update the blinking label
+    global_vars.blinking_label.update_text(text)
+    global_vars.blinking_label.update_color(color, second_color)
+    
     if blink:
-        blinking_label.show()
-        global_vars.ui.LabelPalletenplanInfo.hide()
+        global_vars.blinking_label.start_blinking()
     else:
-        blinking_label.hide()
-        global_vars.ui.LabelPalletenplanInfo.show()
+        global_vars.blinking_label.stop_blinking()
 
     
 
