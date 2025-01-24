@@ -292,20 +292,40 @@ def open_explorer() -> None:
     Open the explorer.
     """
     logger.info("Opening explorer")
-    if sys.platform == "win32":
-        subprocess.Popen(["explorer.exe"])
-    elif sys.platform == "linux":
-        subprocess.Popen(["xdg-open", "."])
+    try:
+        if sys.platform == "win32":
+            subprocess.Popen(["explorer.exe"])
+        elif sys.platform == "linux":
+            # Try different file managers in order of preference
+            file_managers = ["nautilus", "dolphin", "thunar", "pcmanfm"]
+            for fm in file_managers:
+                try:
+                    subprocess.Popen([fm, "."])
+                    break
+                except FileNotFoundError:
+                    continue
+    except Exception as e:
+        logger.error(f"Failed to open file explorer: {e}")
 
 def open_terminal() -> None:
     """
     Open the terminal.
     """
     logger.info("Opening terminal")
-    if sys.platform == "win32":
-        subprocess.Popen(["start", "cmd.exe"], shell=True)
-    elif sys.platform == "linux":
-        subprocess.Popen(["x-terminal-emulator", "--window"])
+    try:
+        if sys.platform == "win32":
+            subprocess.Popen(["start", "cmd.exe"], shell=True)
+        elif sys.platform == "linux":
+            # Try different terminals in order of preference
+            terminals = ["gnome-terminal", "konsole", "xfce4-terminal", "xterm"]
+            for term in terminals:
+                try:
+                    subprocess.Popen([term])
+                    break
+                except FileNotFoundError:
+                    continue
+    except Exception as e:
+        logger.error(f"Failed to open terminal: {e}")
 
 def load() -> None:
     """
@@ -471,8 +491,8 @@ def execute_command():
     if not command:
         return
 
-    # Clear the console if the command is 'cls'
-    if command.lower() == 'cls':
+    # Clear the console if the command is 'cls' or 'clear'
+    if command.lower() in ['cls', 'clear']:
         global_vars.ui.textEditConsole.clear()
         global_vars.ui.lineEditCommand.setText("> ")  # Reset lineEdit with the prefix
         return
@@ -485,7 +505,11 @@ def execute_command():
     process.readyReadStandardOutput.connect(handle_stdout)
     process.readyReadStandardError.connect(handle_stderr)
 
-    process.start(command)
+    # On Linux, use sh to execute commands
+    if sys.platform == "linux":
+        process.start("sh", ["-c", command])
+    else:
+        process.start(command)
 
     global_vars.process = process
 
