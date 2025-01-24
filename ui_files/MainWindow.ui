@@ -296,9 +296,9 @@
     <widget class="QLabel" name="LabelPalletenplanInfo">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>60</x>
        <y>0</y>
-       <width>1261</width>
+       <width>1161</width>
        <height>51</height>
       </rect>
      </property>

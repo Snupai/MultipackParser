@@ -104,7 +104,7 @@ class Ui_Form(object):
         self.label_7.setScaledContents(True)
         self.LabelPalletenplanInfo = QLabel(self.MainMenu)
         self.LabelPalletenplanInfo.setObjectName(u"LabelPalletenplanInfo")
-        self.LabelPalletenplanInfo.setGeometry(QRect(10, 0, 1261, 51))
+        self.LabelPalletenplanInfo.setGeometry(QRect(60, 0, 1161, 51))
         font2 = QFont()
         font2.setFamilies([u"RobotoMono Nerd Font"])
         font2.setPointSize(18)
