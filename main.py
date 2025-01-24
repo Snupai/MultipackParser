@@ -46,6 +46,7 @@ from utils.settings import Settings
 from utils import UR_Common_functions as UR
 from utils import UR10_Server_functions as UR10
 from utils import UR20_Server_functions as UR20
+from ui_files.BlinkingLabel import BlinkingLabel
 
 logger = global_vars.logger
 
@@ -237,6 +238,19 @@ def send_cmd_stop():
 # UI functions #
 ################
 
+def update_status_label(text: str, color: str, blink: bool = False, second_color: str = None):
+    global_vars.ui.LabelPalletenplanInfo.setText(text)
+    global_vars.ui.LabelPalletenplanInfo.setStyleSheet(f"color: {color}")
+    blinking_label = BlinkingLabel(text, color, global_vars.ui.LabelPalletenplanInfo.geometry(), parent=main_window, second_color=second_color, font=global_vars.ui.LabelPalletenplanInfo.font(), alignment=global_vars.ui.LabelPalletenplanInfo.alignment())
+    if blink:
+        blinking_label.show()
+        global_vars.ui.LabelPalletenplanInfo.hide()
+    else:
+        blinking_label.hide()
+        global_vars.ui.LabelPalletenplanInfo.show()
+
+    
+
 def open_password_dialog() -> None:
     """
     Open the password dialog.
@@ -307,14 +321,12 @@ def load() -> None:
 
     if errorReadDataFromUsbStick == 1:
         logger.error(f"Error reading file for {Artikelnummer=} no file found")
-        global_vars.ui.LabelPalletenplanInfo.setText("Kein Plan gefunden")
-        global_vars.ui.LabelPalletenplanInfo.setStyleSheet("color: red")
+        update_status_label("Kein Plan gefunden", "red")
     else:
         # remove the editing focus from the text box
         global_vars.ui.EingabePallettenplan.clearFocus()
         logger.debug(f"File for {Artikelnummer=} found")
-        global_vars.ui.LabelPalletenplanInfo.setText("Plan erfolgreich geladen")
-        global_vars.ui.LabelPalletenplanInfo.setStyleSheet("color: green")
+        update_status_label("Plan erfolgreich geladen", "green")
         global_vars.ui.ButtonOpenParameterRoboter.setEnabled(True)
         global_vars.ui.ButtonDatenSenden.setEnabled(True)
         global_vars.ui.EingabeKartonGewicht.setEnabled(True)
@@ -794,6 +806,20 @@ def set_audio_volume():
         global_vars.audio_muted = not global_vars.audio_muted
     except Exception as e:
         logger.error(f"Error setting volume: {e}")
+
+def delay_warning_sound():
+    """
+    This should be called in a thread at the start of the application. and never get stopped.
+    Delays the warning sound start by 40 seconds.
+    The sound starts if global_vars.timestamp_scanner_fault is not None and 40 seconds or older than current time.
+    """
+    while True:
+        if global_vars.timestamp_scanner_fault and (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds() >= 40:
+            if not audio_thread_running:
+                spawn_play_stepback_warning_thread()
+        if global_vars.timestamp_scanner_fault is None:
+            kill_play_stepback_warning_thread()
+        time.sleep(5)
 
 #################
 # Main function #
