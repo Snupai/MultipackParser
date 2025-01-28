@@ -17,7 +17,6 @@
 
 #TODO: Implement option for UR10e or UR20 robot. If UR20 is selected robot will have 2 pallets. else only it is like the old code.
 #TODO: Implement seemless palletizing with 2 pallets for UR20 robot.
-#TODO: Implement option for selecting a path for the palletizing plans. use a folder dialog for selecting the path.
 
 import sys
 import subprocess
@@ -62,7 +61,6 @@ if global_vars.PATH_USB_STICK == '..':
     logger.debug(os.path.dirname(os.getcwd()))
     global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' 
 
-# TODO: Rename the Einzelpaket checkbox to Einzelpaket längs greifen.
 ####################
 # Server functions #
 ####################
