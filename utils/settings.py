@@ -5,74 +5,60 @@ import subprocess
 import pickle
 import base64
 import copy
+from PySide6.QtCore import QSettings
 from . import global_vars
 
 logger = global_vars.logger
 
 class Settings:
     """
-    This class handles the settings of the application.
-    """
-
-    settings_file = None
-    """
-    The path to the settings file.
-    """
-    settings = None
-    """
-    The settings.
-    """
-    saved_settings = None
-    """
-    The saved settings.
+    This class handles the settings of the application using QSettings.
     """
 
     def __init__(self):
-        """
-        Initialize the settings.
-        """
-        self.settings_file = 'MultipackParser.conf'
-        logger.debug(f"Initializing settings with file: {self.settings_file}")  # Debug statement
-        self.settings = {
-                "display": {
-                    "width": 800,
-                    "height": 600,
-                    "fullscreen": False,
-                    "specs": {
-                        "model": self.getDisplayModel(),
-                        "width": self.getDisplayResolution()[0],
-                        "height": self.getDisplayResolution()[1],
-                        "refresh_rate": self.getDisplayRefreshRate()
-                    }
-                },
-                "audio": {
-                    "sound": True
-                },
-                "admin": {
-                    "password": "fc2f8726bb317b17a3cb322672818d2d$580c515fc8852dfd6e36faaaf46581c412683135b87dc8750c89efad4a38b54f",
-                    "debug": False,
-                    "path": "..",
-                    "alarm_sound_file": "Sound/output.wav"
-                },
-                "info": {
-                    "UR_Model": "N/A",
-                    "UR_Serial_Number": "N/A",
-                    "UR_Manufacturing_Date": "N/A",
-                    "UR_Software_Version": "N/A",
-                    "Pallettierer_Name": "N/A",
-                    "Pallettierer_Standort": "N/A",
-                    "number_of_plans": 0,
-                    "number_of_use_cycles": 0,
-                    "last_restart": "Never"
+        """Initialize the settings with QSettings"""
+        # Create QSettings instance with organization and application name
+        self.qsettings = QSettings("Multipack", "MultipackParser")
+        
+        # Define default settings
+        self.default_settings = {
+            "display": {
+                "width": 800,
+                "height": 600,
+                "fullscreen": False,
+                "specs": {
+                    "model": self.getDisplayModel(),
+                    "width": self.getDisplayResolution()[0],
+                    "height": self.getDisplayResolution()[1],
+                    "refresh_rate": self.getDisplayRefreshRate()
                 }
+            },
+            "audio": {
+                "sound": True
+            },
+            "admin": {
+                "password": "fc2f8726bb317b17a3cb322672818d2d$580c515fc8852dfd6e36faaaf46581c412683135b87dc8750c89efad4a38b54f",
+                "debug": False,
+                "path": "..",
+                "alarm_sound_file": "Sound/output.wav"
+            },
+            "info": {
+                "UR_Model": "N/A",
+                "UR_Serial_Number": "N/A", 
+                "UR_Manufacturing_Date": "N/A",
+                "UR_Software_Version": "N/A",
+                "Pallettierer_Name": "N/A",
+                "Pallettierer_Standort": "N/A",
+                "number_of_plans": 0,
+                "number_of_use_cycles": 0,
+                "last_restart": "Never"
+            }
         }
-        self.saved_settings = None
-        if not os.path.exists(self.settings_file):
-            self.save_settings()
-        else: 
-            self.load_settings()
-        self.saved_settings = copy.deepcopy(self.settings)
-    
+        
+        # Initialize settings if they don't exist
+        self.settings = {}
+        self.load_settings()
+
     def getDisplayModel(self):
         """
         Get the display model.
@@ -151,67 +137,67 @@ class Settings:
             return 60  # Return a default refresh rate on error
 
     def save_settings(self):
-        """
-        Save the settings.
-        """
-        logger.debug(f"Saving settings to {self.settings_file=}")  # Debug statement
-        if isinstance(self.settings_file, str) and self.settings_file.strip() != "":
-            encoded_settings = base64.b64encode(pickle.dumps(self.settings))
-            with open(self.settings_file, 'wb') as file:
-                file.write(encoded_settings)
-            self.saved_settings = copy.deepcopy(self.settings)
-        else:
-            logger.debug("Invalid settings file path detected in save_settings()")  # Debug statement
-            raise ValueError("Invalid settings file path")
-            
+        """Save settings using QSettings"""
+        logger.debug("Saving settings")
+        for group, values in self.settings.items():
+            self.qsettings.beginGroup(group)
+            for key, value in values.items():
+                if isinstance(value, dict):
+                    self.qsettings.beginGroup(key)
+                    for subkey, subvalue in value.items():
+                        self.qsettings.setValue(subkey, subvalue)
+                    self.qsettings.endGroup()
+                else:
+                    self.qsettings.setValue(key, value)
+            self.qsettings.endGroup()
+        self.qsettings.sync()
+
     def load_settings(self):
-        """
-        Load the settings.
-        """
-        logger.debug(f"Loading settings from {self.settings_file}")  # Debug statement
-        if self.settings_file and isinstance(self.settings_file, str) and self.settings_file.strip() != "":
-            try:
-                with open(self.settings_file, 'rb') as file:
-                    encoded_settings = file.read()
-                    self.settings = pickle.loads(base64.b64decode(encoded_settings))
-            except Exception as e:
-                raise RuntimeError(f"Failed to load settings from {self.settings_file}") from e
-        else:
-            logger.debug("Invalid settings file path detected in load_settings()")  # Debug statement
-            raise ValueError("Invalid settings file path")
-
-    def __str__(self):
-        """
-        Convert the settings to a string.
-
-        Returns:
-            str: The settings as a string.
-        """
-        return str(self.settings)
-
-    def compare_loaded_settings_to_saved_settings(self):
-        """
-        Compare the loaded settings to the saved settings.
-
-        Raises:
-            ValueError: If the loaded settings do not match the saved settings.
-
-        Returns:
-            bool: True if the loaded settings match the saved settings, False otherwise.
-        """
-        logger.debug(f"Comparing loaded settings to saved settings...")  # Debug statement
-        if self.settings != self.saved_settings:
-           raise ValueError("Loaded settings do not match saved settings.")
-           return False
-        else:
-            return True
+        """Load settings from QSettings, using defaults if not found"""
+        logger.debug("Loading settings")
+        for group, values in self.default_settings.items():
+            self.settings[group] = {}
+            self.qsettings.beginGroup(group)
+            for key, value in values.items():
+                if isinstance(value, dict):
+                    self.settings[group][key] = {}
+                    self.qsettings.beginGroup(key)
+                    for subkey, subvalue in value.items():
+                        self.settings[group][key][subkey] = self.qsettings.value(subkey, subvalue)
+                    self.qsettings.endGroup()
+                else:
+                    self.settings[group][key] = self.qsettings.value(key, value)
+            self.qsettings.endGroup()
 
     def reset_unsaved_changes(self):
-        """
-        Reset the unsaved changes.
-        """
-        logger.debug(f"Resetting unsaved changes...")  # Debug statement
-        self.settings = copy.deepcopy(self.saved_settings)
+        """Reload settings from storage"""
+        logger.debug("Resetting unsaved changes")
+        self.load_settings()
+
+    def compare_loaded_settings_to_saved_settings(self):
+        """Compare current settings with those stored in QSettings"""
+        stored_settings = {}
+        for group, values in self.default_settings.items():
+            stored_settings[group] = {}
+            self.qsettings.beginGroup(group)
+            for key, value in values.items():
+                if isinstance(value, dict):
+                    stored_settings[group][key] = {}
+                    self.qsettings.beginGroup(key)
+                    for subkey, subvalue in value.items():
+                        stored_settings[group][key][subkey] = self.qsettings.value(subkey, subvalue)
+                    self.qsettings.endGroup()
+                else:
+                    stored_settings[group][key] = self.qsettings.value(key, value)
+            self.qsettings.endGroup()
+        
+        if stored_settings != self.settings:
+            raise ValueError("Loaded settings do not match saved settings")
+        return True
+
+    def __str__(self):
+        """String representation of settings"""
+        return str(self.settings)
 
 if __name__ == '__main__':
     print("Hell no you can't run this file directly!")

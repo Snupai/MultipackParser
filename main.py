@@ -405,15 +405,11 @@ def load_wordlist() -> list:
     return wordlist
 
 def init_settings():
-    """
-    Initialize the settings.
-    
-    This function is called when the application starts.
-    """
+    """Initialize the settings"""
     global settings
     settings = Settings()
     global_vars.PATH_USB_STICK = settings.settings['admin']['path']
-    logger.debug(f"Settings: {settings}")
+    logger.debug(f"Settings initialized: {settings}")
 
 def leave_settings_page():
     """
