@@ -121,7 +121,7 @@ def UR_ReadDataFromUsbStick():
                     yvec = global_vars.g_Daten[index][global_vars.LI_POSITION_YVEC]
                     packagePos = [xp, yp, ap, xd, yd, ad, nop, xvec, yvec]
                     global_vars.g_PaketPos.append(packagePos)
-                    index = index + 1    
+                    index = index + 1
  
             return 0                
     except:
@@ -179,15 +179,36 @@ def UR_Zwischenlagen():
  
 def UR_PaketPos(Nummer):
     """
-    Get the package position.
+    Get the package position, with coordinate transformation for palette 2.
 
     Args:
         Nummer (int): The package number.
 
     Returns:
-        list: The package position.
+        list: The package position [px, py, pr, x, y, r, n, dx, dy], transformed if needed
     """
-    return global_vars.g_PaketPos[Nummer]
+    pos = global_vars.g_PaketPos[Nummer]
+    
+    if global_vars.UR20_active_palette == 2:
+        # For palette 2, transform coordinates using:
+        # (px, py, pr, x, y, r, n, dx, dy) -> (px, py, pr, y, max_x-x, (r+180)mod360, n, dy*-1, dx*-1)
+        max_x = global_vars.g_PalettenDim[0]  # Palette length
+        
+        px, py, pr = pos[0], pos[1], pos[2]
+        x, y, r = pos[3], pos[4], pos[5]
+        n = pos[6]
+        dx, dy = pos[7], pos[8]
+        
+        # Apply transformation
+        new_x = y
+        new_y = max_x - x
+        new_r = (r + 180) % 360
+        new_dx = dy * -1
+        new_dy = dx * -1
+        
+        return [px, py, pr, new_x, new_y, new_r, n, new_dx, new_dy]
+    
+    return pos
  
 def UR_AnzLagen():
     """
