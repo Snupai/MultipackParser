@@ -180,10 +180,34 @@ class Settings:
                     self.settings[group][key] = {}
                     self.qsettings.beginGroup(key)
                     for subkey, subvalue in value.items():
-                        self.settings[group][key][subkey] = self.qsettings.value(subkey, subvalue)
+                        # Get the value and ensure correct type
+                        loaded_value = self.qsettings.value(subkey, subvalue)
+                        if isinstance(subvalue, bool):
+                            # Convert string 'true'/'false' to bool
+                            if isinstance(loaded_value, str):
+                                loaded_value = loaded_value.lower() == 'true'
+                            else:
+                                loaded_value = bool(loaded_value)
+                        elif isinstance(subvalue, int):
+                            loaded_value = int(loaded_value)
+                        elif isinstance(subvalue, float):
+                            loaded_value = float(loaded_value)
+                        self.settings[group][key][subkey] = loaded_value
                     self.qsettings.endGroup()
                 else:
-                    self.settings[group][key] = self.qsettings.value(key, value)
+                    # Get the value and ensure correct type
+                    loaded_value = self.qsettings.value(key, value)
+                    if isinstance(value, bool):
+                        # Convert string 'true'/'false' to bool
+                        if isinstance(loaded_value, str):
+                            loaded_value = loaded_value.lower() == 'true'
+                        else:
+                            loaded_value = bool(loaded_value)
+                    elif isinstance(value, int):
+                        loaded_value = int(loaded_value)
+                    elif isinstance(value, float):
+                        loaded_value = float(loaded_value)
+                    self.settings[group][key] = loaded_value
             self.qsettings.endGroup()
         self._update_debug_globals()  # Update globals after loading settings
 
