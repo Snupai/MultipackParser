@@ -1054,7 +1054,7 @@ def main():
     global_vars.ui.pushButtonExitApp.clicked.connect(restart_app)
 
 
-    # TODO: Remove this key combination once out of development
+    # TODO: Remove this closing key combination once out of development
     ###########################################################
     global allow_close
     allow_close = False
