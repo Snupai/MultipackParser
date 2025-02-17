@@ -1,0 +1,2549 @@
+[
+    {
+        "label": "QLabel",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QDialog",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMessageBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QApplication",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QCheckBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QComboBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QFormLayout",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QFrame",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QHBoxLayout",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QHeaderView",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLabel",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLineEdit",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QPushButton",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QSizePolicy",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QSpinBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QStackedWidget",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QTabWidget",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QTextEdit",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QToolButton",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QTreeView",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QWidget",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QAbstractButton",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QApplication",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QDialog",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QDialogButtonBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLineEdit",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QSizePolicy",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QWidget",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QApplication",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMainWindow",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMessageBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QCompleter",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QFileDialog",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMessageBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QTimer",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QRect",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QCoreApplication",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QDate",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QDateTime",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QLocale",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QMetaObject",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QObject",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QPoint",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QRect",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QSize",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QTime",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QUrl",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QCoreApplication",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QDate",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QDateTime",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QLocale",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QMetaObject",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QObject",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QPoint",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QRect",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QSize",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QTime",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QUrl",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QSettings",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QFileSystemWatcher",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QProcess",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QRegularExpression",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QLocale",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QFont",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QGuiApplication",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QBrush",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QColor",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QConicalGradient",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QCursor",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QFont",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QFontDatabase",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QGradient",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QIcon",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QImage",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QKeySequence",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QLinearGradient",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPainter",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPalette",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPixmap",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QRadialGradient",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QTransform",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QBrush",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QColor",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QConicalGradient",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QCursor",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QFont",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QFontDatabase",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QGradient",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QIcon",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QImage",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QKeySequence",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QLinearGradient",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPainter",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPalette",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPixmap",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QRadialGradient",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QTransform",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPixmap",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPixmap",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QIntValidator",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QDoubleValidator",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QRegularExpressionValidator",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QIcon",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QtCore",
+        "importPath": "PySide6",
+        "description": "PySide6",
+        "isExtraImport": true,
+        "detail": "PySide6",
+        "documentation": {}
+    },
+    {
+        "label": "NoReturn",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "hashlib",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "hashlib",
+        "description": "hashlib",
+        "detail": "hashlib",
+        "documentation": {}
+    },
+    {
+        "label": "global_vars",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "Settings",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "global_vars",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Common_functions",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "UR10_Server_functions",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_Server_functions",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "logging",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "logging",
+        "description": "logging",
+        "detail": "logging",
+        "documentation": {}
+    },
+    {
+        "label": "RotatingFileHandler",
+        "importPath": "logging.handlers",
+        "description": "logging.handlers",
+        "isExtraImport": true,
+        "detail": "logging.handlers",
+        "documentation": {}
+    },
+    {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
+        "documentation": {}
+    },
+    {
+        "label": "pickle",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pickle",
+        "description": "pickle",
+        "detail": "pickle",
+        "documentation": {}
+    },
+    {
+        "label": "base64",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "base64",
+        "description": "base64",
+        "detail": "base64",
+        "documentation": {}
+    },
+    {
+        "label": "copy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "copy",
+        "description": "copy",
+        "detail": "copy",
+        "documentation": {}
+    },
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "main",
+        "description": "main",
+        "isExtraImport": true,
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "pathlib",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "argparse",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "argparse",
+        "description": "argparse",
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "shutil",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "shutil",
+        "description": "shutil",
+        "detail": "shutil",
+        "documentation": {}
+    },
+    {
+        "label": "threading",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "threading",
+        "description": "threading",
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "socket",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "socket",
+        "description": "socket",
+        "detail": "socket",
+        "documentation": {}
+    },
+    {
+        "label": "SimpleXMLRPCServer",
+        "importPath": "xmlrpc.server",
+        "description": "xmlrpc.server",
+        "isExtraImport": true,
+        "detail": "xmlrpc.server",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "QQmlApplicationEngine",
+        "importPath": "PySide6.QtQml",
+        "description": "PySide6.QtQml",
+        "isExtraImport": true,
+        "detail": "PySide6.QtQml",
+        "documentation": {}
+    },
+    {
+        "label": "QQuickView",
+        "importPath": "PySide6.QtQuick",
+        "description": "PySide6.QtQuick",
+        "isExtraImport": true,
+        "detail": "PySide6.QtQuick",
+        "documentation": {}
+    },
+    {
+        "label": "Ui_Form",
+        "importPath": "ui_files.ui_main_window",
+        "description": "ui_files.ui_main_window",
+        "isExtraImport": true,
+        "detail": "ui_files.ui_main_window",
+        "documentation": {}
+    },
+    {
+        "label": "MainWindowResources_rc",
+        "importPath": "ui_files",
+        "description": "ui_files",
+        "isExtraImport": true,
+        "detail": "ui_files",
+        "documentation": {}
+    },
+    {
+        "label": "Settings",
+        "importPath": "utils.settings",
+        "description": "utils.settings",
+        "isExtraImport": true,
+        "detail": "utils.settings",
+        "documentation": {}
+    },
+    {
+        "label": "BlinkingLabel",
+        "importPath": "ui_files.BlinkingLabel",
+        "description": "ui_files.BlinkingLabel",
+        "isExtraImport": true,
+        "detail": "ui_files.BlinkingLabel",
+        "documentation": {}
+    },
+    {
+        "label": "BlinkingLabel",
+        "kind": 6,
+        "importPath": "ui_files.BlinkingLabel",
+        "description": "ui_files.BlinkingLabel",
+        "peekOfCode": "class BlinkingLabel(QLabel):\n    def __init__(self, text, color:str, geometry:QRect, parent=None, second_color:str=None, font:QFont=None, alignment:Qt.AlignmentFlag=None):\n        super().__init__(text, parent)\n        self.setGeometry(geometry)\n        self.setStyleSheet(f\"color: {color};\")\n        self.base_color = color\n        self.second_color = second_color\n        self.is_blinking = False\n        self.timer = None\n        if font:",
+        "detail": "ui_files.BlinkingLabel",
+        "documentation": {}
+    },
+    {
+        "label": "qInitResources",
+        "kind": 2,
+        "importPath": "ui_files.MainWindowResources_rc",
+        "description": "ui_files.MainWindowResources_rc",
+        "peekOfCode": "def qInitResources():\n    QtCore.qRegisterResourceData(0x03, qt_resource_struct, qt_resource_name, qt_resource_data)\ndef qCleanupResources():\n    QtCore.qUnregisterResourceData(0x03, qt_resource_struct, qt_resource_name, qt_resource_data)\nqInitResources()",
+        "detail": "ui_files.MainWindowResources_rc",
+        "documentation": {}
+    },
+    {
+        "label": "qCleanupResources",
+        "kind": 2,
+        "importPath": "ui_files.MainWindowResources_rc",
+        "description": "ui_files.MainWindowResources_rc",
+        "peekOfCode": "def qCleanupResources():\n    QtCore.qUnregisterResourceData(0x03, qt_resource_struct, qt_resource_name, qt_resource_data)\nqInitResources()",
+        "detail": "ui_files.MainWindowResources_rc",
+        "documentation": {}
+    },
+    {
+        "label": "qt_resource_data",
+        "kind": 5,
+        "importPath": "ui_files.MainWindowResources_rc",
+        "description": "ui_files.MainWindowResources_rc",
+        "peekOfCode": "qt_resource_data = b\"\\\n\\x00\\x00\\x91J\\\n\\x89\\\nPNG\\x0d\\x0a\\x1a\\x0a\\x00\\x00\\x00\\x0dIHDR\\x00\\\n\\x00\\x00\\xfa\\x00\\x00\\x00\\xfa\\x08\\x06\\x00\\x00\\x00\\x88\\xecZ=\\\n\\x00\\x00\\x00\\x04gAMA\\x00\\x00\\xb1\\x8f\\x0b\\xfca\\x05\\\n\\x00\\x00\\x00 cHRM\\x00\\x00z&\\x00\\x00\\x80\\x84\\\n\\x00\\x00\\xfa\\x00\\x00\\x00\\x80\\xe8\\x00\\x00u0\\x00\\x00\\xea`\\\n\\x00\\x00:\\x98\\x00\\x00\\x17p\\x9c\\xbaQ<\\x00\\x00\\x00\\x06\\\nbKGD\\x00\\xff\\x00\\xff\\x00\\xff\\xa0\\xbd\\xa7\\x93\\x00\\x00\\",
+        "detail": "ui_files.MainWindowResources_rc",
+        "documentation": {}
+    },
+    {
+        "label": "qt_resource_name",
+        "kind": 5,
+        "importPath": "ui_files.MainWindowResources_rc",
+        "description": "ui_files.MainWindowResources_rc",
+        "peekOfCode": "qt_resource_name = b\"\\\n\\x00\\x05\\\n\\x00ZlD\\\n\\x00S\\\n\\x00o\\x00u\\x00n\\x00d\\\n\\x00\\x0c\\\n\\x07I^\\xe5\\\n\\x00S\\\n\\x00c\\x00a\\x00n\\x00n\\x00e\\x00r\\x00U\\x00R\\x001\\x000\\x00e\\\n\\x00\\x04\\",
+        "detail": "ui_files.MainWindowResources_rc",
+        "documentation": {}
+    },
+    {
+        "label": "qt_resource_struct",
+        "kind": 5,
+        "importPath": "ui_files.MainWindowResources_rc",
+        "description": "ui_files.MainWindowResources_rc",
+        "peekOfCode": "qt_resource_struct = b\"\\\n\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x07\\x00\\x00\\x00\\x01\\\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\\n\\x00\\x00\\x00R\\x00\\x02\\x00\\x00\\x00\\x01\\x00\\x00\\x00\\x22\\\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\\n\\x00\\x00\\x00.\\x00\\x02\\x00\\x00\\x00\\x01\\x00\\x00\\x00\\x1f\\\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\\n\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x01\\x00\\x00\\x00\\x1c\\\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\\n\\x00\\x00\\x00|\\x00\\x02\\x00\\x00\\x00\\x01\\x00\\x00\\x00\\x19\\",
+        "detail": "ui_files.MainWindowResources_rc",
+        "documentation": {}
+    },
+    {
+        "label": "PasswordEntryDialog",
+        "kind": 6,
+        "importPath": "ui_files.PasswordDialog",
+        "description": "ui_files.PasswordDialog",
+        "peekOfCode": "class PasswordEntryDialog(QDialog):\n    \"\"\"\n    PasswordEntryDialog class.\n    \"\"\"\n    password_accepted = False\n    \"\"\"\n    bool: Flag indicating whether the password was accepted.\n    \"\"\"\n    ui = None\n    \"\"\"",
+        "detail": "ui_files.PasswordDialog",
+        "documentation": {}
+    },
+    {
+        "label": "os.environ[\"QT_IM_MODULE\"]",
+        "kind": 5,
+        "importPath": "ui_files.PasswordDialog",
+        "description": "ui_files.PasswordDialog",
+        "peekOfCode": "os.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\nlogger = global_vars.logger\n# Define the password entry dialog class\nclass PasswordEntryDialog(QDialog):\n    \"\"\"\n    PasswordEntryDialog class.\n    \"\"\"\n    password_accepted = False\n    \"\"\"\n    bool: Flag indicating whether the password was accepted.",
+        "detail": "ui_files.PasswordDialog",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "ui_files.PasswordDialog",
+        "description": "ui_files.PasswordDialog",
+        "peekOfCode": "logger = global_vars.logger\n# Define the password entry dialog class\nclass PasswordEntryDialog(QDialog):\n    \"\"\"\n    PasswordEntryDialog class.\n    \"\"\"\n    password_accepted = False\n    \"\"\"\n    bool: Flag indicating whether the password was accepted.\n    \"\"\"",
+        "detail": "ui_files.PasswordDialog",
+        "documentation": {}
+    },
+    {
+        "label": "Ui_Form",
+        "kind": 6,
+        "importPath": "ui_files.ui_main_window",
+        "description": "ui_files.ui_main_window",
+        "peekOfCode": "class Ui_Form(object):\n    def setupUi(self, Form):\n        if not Form.objectName():\n            Form.setObjectName(u\"Form\")\n        Form.setWindowModality(Qt.WindowModality.NonModal)\n        Form.resize(1280, 720)\n        Form.setMinimumSize(QSize(1280, 720))\n        Form.setMaximumSize(QSize(1280, 720))\n        palette = QPalette()\n        brush = QBrush(QColor(85, 85, 255, 255))",
+        "detail": "ui_files.ui_main_window",
+        "documentation": {}
+    },
+    {
+        "label": "Ui_Dialog",
+        "kind": 6,
+        "importPath": "ui_files.ui_password_entry",
+        "description": "ui_files.ui_password_entry",
+        "peekOfCode": "class Ui_Dialog(object):\n    def setupUi(self, Dialog):\n        if not Dialog.objectName():\n            Dialog.setObjectName(u\"Dialog\")\n        Dialog.resize(385, 136)\n        self.lineEdit = QLineEdit(Dialog)\n        self.lineEdit.setObjectName(u\"lineEdit\")\n        self.lineEdit.setGeometry(QRect(30, 60, 113, 22))\n        self.lineEdit.setInputMethodHints(Qt.InputMethodHint.ImhHiddenText|Qt.InputMethodHint.ImhNoAutoUppercase|Qt.InputMethodHint.ImhNoPredictiveText|Qt.InputMethodHint.ImhPreferNumbers|Qt.InputMethodHint.ImhSensitiveData)\n        self.lineEdit.setMaxLength(20)",
+        "detail": "ui_files.ui_password_entry",
+        "documentation": {}
+    },
+    {
+        "label": "log_formatter",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')\nlog_handler = RotatingFileHandler('app.log', maxBytes=5*1024*1024, backupCount=2)\nlog_handler.setFormatter(log_formatter)\nconsole_handler = logging.StreamHandler()\nconsole_handler.setFormatter(log_formatter)\nlogger = logging.getLogger('multipack_parser')  # Create a named logger\nlogger.setLevel(logging.INFO)  # Set default logging level\nlogger.addHandler(log_handler)\nlogger.addHandler(console_handler)\nprocess = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "log_handler",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "log_handler = RotatingFileHandler('app.log', maxBytes=5*1024*1024, backupCount=2)\nlog_handler.setFormatter(log_formatter)\nconsole_handler = logging.StreamHandler()\nconsole_handler.setFormatter(log_formatter)\nlogger = logging.getLogger('multipack_parser')  # Create a named logger\nlogger.setLevel(logging.INFO)  # Set default logging level\nlogger.addHandler(log_handler)\nlogger.addHandler(console_handler)\nprocess = None\n#######################################",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "console_handler",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "console_handler = logging.StreamHandler()\nconsole_handler.setFormatter(log_formatter)\nlogger = logging.getLogger('multipack_parser')  # Create a named logger\nlogger.setLevel(logging.INFO)  # Set default logging level\nlogger.addHandler(log_handler)\nlogger.addHandler(console_handler)\nprocess = None\n#######################################\n# Settings\nsettings = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "logger = logging.getLogger('multipack_parser')  # Create a named logger\nlogger.setLevel(logging.INFO)  # Set default logging level\nlogger.addHandler(log_handler)\nlogger.addHandler(console_handler)\nprocess = None\n#######################################\n# Settings\nsettings = None\n# Variables\nsettings_file = 'MultipackParser.conf'",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "process",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "process = None\n#######################################\n# Settings\nsettings = None\n# Variables\nsettings_file = 'MultipackParser.conf'\nVERSION = '1.5.7'\nrobot_ip = '192.168.0.1' # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette = 0",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "settings = None\n# Variables\nsettings_file = 'MultipackParser.conf'\nVERSION = '1.5.7'\nrobot_ip = '192.168.0.1' # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette = 0\nUR20_palette1_empty = False\nUR20_palette2_empty = False\n# Audio",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "settings_file",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "settings_file = 'MultipackParser.conf'\nVERSION = '1.5.7'\nrobot_ip = '192.168.0.1' # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette = 0\nUR20_palette1_empty = False\nUR20_palette2_empty = False\n# Audio\naudio_muted = False\ntimestamp_scanner_fault = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "VERSION",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "VERSION = '1.5.7'\nrobot_ip = '192.168.0.1' # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette = 0\nUR20_palette1_empty = False\nUR20_palette2_empty = False\n# Audio\naudio_muted = False\ntimestamp_scanner_fault = None\n##########################",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "robot_ip",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "robot_ip = '192.168.0.1' # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette = 0\nUR20_palette1_empty = False\nUR20_palette2_empty = False\n# Audio\naudio_muted = False\ntimestamp_scanner_fault = None\n##########################\nPATH_USB_STICK = '..'",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_active_palette",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "UR20_active_palette = 0\nUR20_palette1_empty = False\nUR20_palette2_empty = False\n# Audio\naudio_muted = False\ntimestamp_scanner_fault = None\n##########################\nPATH_USB_STICK = '..'\nFILENAME = None\ng_PalettenDim = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_palette1_empty",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "UR20_palette1_empty = False\nUR20_palette2_empty = False\n# Audio\naudio_muted = False\ntimestamp_scanner_fault = None\n##########################\nPATH_USB_STICK = '..'\nFILENAME = None\ng_PalettenDim = None\ng_PaketDim  = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_palette2_empty",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "UR20_palette2_empty = False\n# Audio\naudio_muted = False\ntimestamp_scanner_fault = None\n##########################\nPATH_USB_STICK = '..'\nFILENAME = None\ng_PalettenDim = None\ng_PaketDim  = None\ng_LageArten = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "audio_muted",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "audio_muted = False\ntimestamp_scanner_fault = None\n##########################\nPATH_USB_STICK = '..'\nFILENAME = None\ng_PalettenDim = None\ng_PaketDim  = None\ng_LageArten = None\ng_Daten = None\ng_LageZuordnung = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "timestamp_scanner_fault",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "timestamp_scanner_fault = None\n##########################\nPATH_USB_STICK = '..'\nFILENAME = None\ng_PalettenDim = None\ng_PaketDim  = None\ng_LageArten = None\ng_Daten = None\ng_LageZuordnung = None\ng_PaketPos = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "PATH_USB_STICK",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "PATH_USB_STICK = '..'\nFILENAME = None\ng_PalettenDim = None\ng_PaketDim  = None\ng_LageArten = None\ng_Daten = None\ng_LageZuordnung = None\ng_PaketPos = None\ng_AnzahlPakete = None\ng_AnzLagen = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "FILENAME",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "FILENAME = None\ng_PalettenDim = None\ng_PaketDim  = None\ng_LageArten = None\ng_Daten = None\ng_LageZuordnung = None\ng_PaketPos = None\ng_AnzahlPakete = None\ng_AnzLagen = None\ng_PaketeZuordnung = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "g_PalettenDim",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "g_PalettenDim = None\ng_PaketDim  = None\ng_LageArten = None\ng_Daten = None\ng_LageZuordnung = None\ng_PaketPos = None\ng_AnzahlPakete = None\ng_AnzLagen = None\ng_PaketeZuordnung = None\ng_Zwischenlagen = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "g_LageArten",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "g_LageArten = None\ng_Daten = None\ng_LageZuordnung = None\ng_PaketPos = None\ng_AnzahlPakete = None\ng_AnzLagen = None\ng_PaketeZuordnung = None\ng_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "g_Daten",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "g_Daten = None\ng_LageZuordnung = None\ng_PaketPos = None\ng_AnzahlPakete = None\ng_AnzLagen = None\ng_PaketeZuordnung = None\ng_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "g_LageZuordnung",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "g_LageZuordnung = None\ng_PaketPos = None\ng_AnzahlPakete = None\ng_AnzLagen = None\ng_PaketeZuordnung = None\ng_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "g_PaketPos",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "g_PaketPos = None\ng_AnzahlPakete = None\ng_AnzLagen = None\ng_PaketeZuordnung = None\ng_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "g_AnzahlPakete",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "g_AnzahlPakete = None\ng_AnzLagen = None\ng_PaketeZuordnung = None\ng_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "g_AnzLagen",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "g_AnzLagen = None\ng_PaketeZuordnung = None\ng_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "g_PaketeZuordnung",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "g_PaketeZuordnung = None\ng_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "g_Zwischenlagen",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "g_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur\n#List Index",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "g_Startlage",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "g_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur\n#List Index\nLI_PALETTE_DATA = 0",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "g_paket_quer",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "g_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur\n#List Index\nLI_PALETTE_DATA = 0\nLI_PACKAGE_DATA = 1",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "g_CenterOfGravity",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "g_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur\n#List Index\nLI_PALETTE_DATA = 0\nLI_PACKAGE_DATA = 1\nLI_LAYERTYPES = 2",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "g_MassePaket",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "g_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur\n#List Index\nLI_PALETTE_DATA = 0\nLI_PACKAGE_DATA = 1\nLI_LAYERTYPES = 2\nLI_NUMBER_OF_LAYERS = 3",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "g_Pick_Offset_X",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "g_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur\n#List Index\nLI_PALETTE_DATA = 0\nLI_PACKAGE_DATA = 1\nLI_LAYERTYPES = 2\nLI_NUMBER_OF_LAYERS = 3\n#Palette Values",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "g_Pick_Offset_Y",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "g_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur\n#List Index\nLI_PALETTE_DATA = 0\nLI_PACKAGE_DATA = 1\nLI_LAYERTYPES = 2\nLI_NUMBER_OF_LAYERS = 3\n#Palette Values\nLI_PALETTE_DATA_LENGTH = 0",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "ui",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "ui = None\n# Konstanten für Datenstruktur\n#List Index\nLI_PALETTE_DATA = 0\nLI_PACKAGE_DATA = 1\nLI_LAYERTYPES = 2\nLI_NUMBER_OF_LAYERS = 3\n#Palette Values\nLI_PALETTE_DATA_LENGTH = 0\nLI_PALETTE_DATA_WIDTH = 1",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_PALETTE_DATA",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_PALETTE_DATA = 0\nLI_PACKAGE_DATA = 1\nLI_LAYERTYPES = 2\nLI_NUMBER_OF_LAYERS = 3\n#Palette Values\nLI_PALETTE_DATA_LENGTH = 0\nLI_PALETTE_DATA_WIDTH = 1\nLI_PALETTE_DATA_HEIGHT = 2\n#Package Values\nLI_PACKAGE_DATA_LENGTH = 0",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_PACKAGE_DATA",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_PACKAGE_DATA = 1\nLI_LAYERTYPES = 2\nLI_NUMBER_OF_LAYERS = 3\n#Palette Values\nLI_PALETTE_DATA_LENGTH = 0\nLI_PALETTE_DATA_WIDTH = 1\nLI_PALETTE_DATA_HEIGHT = 2\n#Package Values\nLI_PACKAGE_DATA_LENGTH = 0\nLI_PACKAGE_DATA_WIDTH = 1",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_LAYERTYPES",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_LAYERTYPES = 2\nLI_NUMBER_OF_LAYERS = 3\n#Palette Values\nLI_PALETTE_DATA_LENGTH = 0\nLI_PALETTE_DATA_WIDTH = 1\nLI_PALETTE_DATA_HEIGHT = 2\n#Package Values\nLI_PACKAGE_DATA_LENGTH = 0\nLI_PACKAGE_DATA_WIDTH = 1\nLI_PACKAGE_DATA_HEIGHT = 2",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_NUMBER_OF_LAYERS",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_NUMBER_OF_LAYERS = 3\n#Palette Values\nLI_PALETTE_DATA_LENGTH = 0\nLI_PALETTE_DATA_WIDTH = 1\nLI_PALETTE_DATA_HEIGHT = 2\n#Package Values\nLI_PACKAGE_DATA_LENGTH = 0\nLI_PACKAGE_DATA_WIDTH = 1\nLI_PACKAGE_DATA_HEIGHT = 2\nLI_PACKAGE_DATA_GAP = 3",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_PALETTE_DATA_LENGTH",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_PALETTE_DATA_LENGTH = 0\nLI_PALETTE_DATA_WIDTH = 1\nLI_PALETTE_DATA_HEIGHT = 2\n#Package Values\nLI_PACKAGE_DATA_LENGTH = 0\nLI_PACKAGE_DATA_WIDTH = 1\nLI_PACKAGE_DATA_HEIGHT = 2\nLI_PACKAGE_DATA_GAP = 3\n#Position Values\nLI_POSITION_XP = 0",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_PALETTE_DATA_WIDTH",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_PALETTE_DATA_WIDTH = 1\nLI_PALETTE_DATA_HEIGHT = 2\n#Package Values\nLI_PACKAGE_DATA_LENGTH = 0\nLI_PACKAGE_DATA_WIDTH = 1\nLI_PACKAGE_DATA_HEIGHT = 2\nLI_PACKAGE_DATA_GAP = 3\n#Position Values\nLI_POSITION_XP = 0\nLI_POSITION_YP = 1",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_PALETTE_DATA_HEIGHT",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_PALETTE_DATA_HEIGHT = 2\n#Package Values\nLI_PACKAGE_DATA_LENGTH = 0\nLI_PACKAGE_DATA_WIDTH = 1\nLI_PACKAGE_DATA_HEIGHT = 2\nLI_PACKAGE_DATA_GAP = 3\n#Position Values\nLI_POSITION_XP = 0\nLI_POSITION_YP = 1\nLI_POSITION_AP = 2",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_PACKAGE_DATA_LENGTH",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_PACKAGE_DATA_LENGTH = 0\nLI_PACKAGE_DATA_WIDTH = 1\nLI_PACKAGE_DATA_HEIGHT = 2\nLI_PACKAGE_DATA_GAP = 3\n#Position Values\nLI_POSITION_XP = 0\nLI_POSITION_YP = 1\nLI_POSITION_AP = 2\nLI_POSITION_XD = 3\nLI_POSITION_YD = 4",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_PACKAGE_DATA_WIDTH",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_PACKAGE_DATA_WIDTH = 1\nLI_PACKAGE_DATA_HEIGHT = 2\nLI_PACKAGE_DATA_GAP = 3\n#Position Values\nLI_POSITION_XP = 0\nLI_POSITION_YP = 1\nLI_POSITION_AP = 2\nLI_POSITION_XD = 3\nLI_POSITION_YD = 4\nLI_POSITION_AD = 5",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_PACKAGE_DATA_HEIGHT",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_PACKAGE_DATA_HEIGHT = 2\nLI_PACKAGE_DATA_GAP = 3\n#Position Values\nLI_POSITION_XP = 0\nLI_POSITION_YP = 1\nLI_POSITION_AP = 2\nLI_POSITION_XD = 3\nLI_POSITION_YD = 4\nLI_POSITION_AD = 5\nLI_POSITION_NOP = 6",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_PACKAGE_DATA_GAP",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_PACKAGE_DATA_GAP = 3\n#Position Values\nLI_POSITION_XP = 0\nLI_POSITION_YP = 1\nLI_POSITION_AP = 2\nLI_POSITION_XD = 3\nLI_POSITION_YD = 4\nLI_POSITION_AD = 5\nLI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_POSITION_XP",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_POSITION_XP = 0\nLI_POSITION_YP = 1\nLI_POSITION_AP = 2\nLI_POSITION_XD = 3\nLI_POSITION_YD = 4\nLI_POSITION_AD = 5\nLI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_POSITION_YP",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_POSITION_YP = 1\nLI_POSITION_AP = 2\nLI_POSITION_XD = 3\nLI_POSITION_YD = 4\nLI_POSITION_AD = 5\nLI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_POSITION_AP",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_POSITION_AP = 2\nLI_POSITION_XD = 3\nLI_POSITION_YD = 4\nLI_POSITION_AD = 5\nLI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_POSITION_XD",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_POSITION_XD = 3\nLI_POSITION_YD = 4\nLI_POSITION_AD = 5\nLI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_POSITION_YD",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_POSITION_YD = 4\nLI_POSITION_AD = 5\nLI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_POSITION_AD",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_POSITION_AD = 5\nLI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_POSITION_NOP",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_POSITION_XVEC",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "LI_POSITION_YVEC",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "LI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "NOE_PALETTE_VALUES",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "NOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "NOE_PACKAGE_VALUES",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "NOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "NOE_LAYERTYPES_VALUES",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "NOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "NOE_NUMBER_OF_LAYERS",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "NOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "NOE_PACKAGE_PER_LAYER",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "NOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "NOE_PACKAGE_POSITION_INFO",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "NOE_PACKAGE_POSITION_INFO = 9",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "Settings",
+        "kind": 6,
+        "importPath": "utils.settings",
+        "description": "utils.settings",
+        "peekOfCode": "class Settings:\n    \"\"\"\n    This class handles the settings of the application using QSettings.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the settings with QSettings\"\"\"\n        # Create QSettings instance with organization and application name\n        self.qsettings = QSettings(\"Multipack\", \"MultipackParser\")\n        # Define default settings\n        self.default_settings = {",
+        "detail": "utils.settings",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.settings",
+        "description": "utils.settings",
+        "peekOfCode": "logger = global_vars.logger\nclass Settings:\n    \"\"\"\n    This class handles the settings of the application using QSettings.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the settings with QSettings\"\"\"\n        # Create QSettings instance with organization and application name\n        self.qsettings = QSettings(\"Multipack\", \"MultipackParser\")\n        # Define default settings",
+        "detail": "utils.settings",
+        "documentation": {}
+    },
+    {
+        "label": "UR10_scanner1and2niobild",
+        "kind": 2,
+        "importPath": "utils.UR10_Server_functions",
+        "description": "utils.UR10_Server_functions",
+        "peekOfCode": "def UR10_scanner1and2niobild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"\n    global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner1&2nio.png'))\n    return\ndef UR10_scanner1bild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"",
+        "detail": "utils.UR10_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR10_scanner1bild",
+        "kind": 2,
+        "importPath": "utils.UR10_Server_functions",
+        "description": "utils.UR10_Server_functions",
+        "peekOfCode": "def UR10_scanner1bild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"\n    global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner1nio.png'))\n    return\ndef UR10_scanner2bild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"",
+        "detail": "utils.UR10_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR10_scanner2bild",
+        "kind": 2,
+        "importPath": "utils.UR10_Server_functions",
+        "description": "utils.UR10_Server_functions",
+        "peekOfCode": "def UR10_scanner2bild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"\n    global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner2nio.png'))\n    return\ndef UR10_scanner1and2iobild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"",
+        "detail": "utils.UR10_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR10_scanner1and2iobild",
+        "kind": 2,
+        "importPath": "utils.UR10_Server_functions",
+        "description": "utils.UR10_Server_functions",
+        "peekOfCode": "def UR10_scanner1and2iobild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"\n    global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scannerio.png'))\n    return",
+        "detail": "utils.UR10_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_scannerStatus",
+        "kind": 2,
+        "importPath": "utils.UR20_Server_functions",
+        "description": "utils.UR20_Server_functions",
+        "peekOfCode": "def UR20_scannerStatus(status: str):\n    \"\"\"\n    Set the scanner status.\n    \"\"\"\n    if not status == \"True,True,True\" and global_vars.timestamp_scanner_fault is None:\n        global_vars.timestamp_scanner_fault = time.time()\n        update_status_label(\"Bitte Arbeitsbereich räumen.\", \"red\", True)\n    match status:\n        case \"True,True,True\":\n            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1&2&3io.png'))",
+        "detail": "utils.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_SetActivePalette",
+        "kind": 2,
+        "importPath": "utils.UR20_Server_functions",
+        "description": "utils.UR20_Server_functions",
+        "peekOfCode": "def UR20_SetActivePalette(pallet_number):\n    '''\n    pallet_number: number of pallet\n    returns: \n        1 if pallet was set\n        0 if pallet was not set\n    '''\n    # TODO: Set the active pallet to the given pallet number\n    # Check if requested pallet is empty before setting it\n    if pallet_number == 1 and not global_vars.UR20_palette1_empty:",
+        "detail": "utils.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_GetActivePaletteNumber",
+        "kind": 2,
+        "importPath": "utils.UR20_Server_functions",
+        "description": "utils.UR20_Server_functions",
+        "peekOfCode": "def UR20_GetActivePaletteNumber():\n    '''\n    returns: \n        current number of active pallet\n        where 1 is the first pallet and 2 is the second pallet and 0 is no pallet\n    '''\n    # TODO: Check to see what pallet is currently active\n    return global_vars.UR20_active_palette\n# get pallet status\ndef UR20_GetPaletteStatus(pallet_number):",
+        "detail": "utils.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_GetPaletteStatus",
+        "kind": 2,
+        "importPath": "utils.UR20_Server_functions",
+        "description": "utils.UR20_Server_functions",
+        "peekOfCode": "def UR20_GetPaletteStatus(pallet_number):\n    '''\n    pallet_number: number of pallet\n    returns: \n        1 if pallet is empty\n        0 if pallet is full\n        -1 if pallet number is invalid\n    '''\n    # TODO: check if the given pallet number is valid and if the according pallet space is empty or not\n    match pallet_number:",
+        "detail": "utils.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_SetFileName",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_SetFileName(Artikelnummer):\n    \"\"\"\n    Set the filename.\n    Args:\n        Artikelnummer (str): The article number.\n    Returns:\n        str: The filename.\n    \"\"\"\n    global_vars.FILENAME = (Artikelnummer + '.rob')\n    logger.debug(f\"{global_vars.FILENAME=}\")",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_ReadDataFromUsbStick",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_ReadDataFromUsbStick():\n    \"\"\"\n    Read data from the Path_USB_STICK.\n    This function reads the data from the Path_USB_STICK and stores it in global variables.\n    Returns:\n        int: 1 if the data was read successfully, 0 otherwise.\n    \"\"\"\n    global_vars.g_Daten = []\n    global_vars.g_LageZuordnung = []\n    global_vars.g_PaketPos = []",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "Check_Einzelpaket_längs_greifen",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def Check_Einzelpaket_längs_greifen(package_length: float):\n    \"\"\"\n    Check if it would be better to use the Einzelpaket längs greifen.\n    Pre-sets the Einzelpaket längs greifen checkbox.\n    \"\"\"\n    if package_length >= 265:\n        global_vars.ui.checkBoxEinzelpaket.setChecked(True)\n    else:\n        global_vars.ui.checkBoxEinzelpaket.setChecked(False)\n#funktion für den roboter ",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Palette",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_Palette():\n    \"\"\"\n    Get the palette dimensions.\n    Returns:\n        list: The palette dimensions.\n    \"\"\"\n    return global_vars.g_PalettenDim\ndef UR_Karton():\n    \"\"\"\n    Get the carton dimensions.",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Karton",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_Karton():\n    \"\"\"\n    Get the carton dimensions.\n    Returns:\n        list: The carton dimensions.\n    \"\"\"\n    return global_vars.g_PaketDim\ndef UR_Lagen():\n    \"\"\"\n    Get the layer types.",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Lagen",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_Lagen():\n    \"\"\"\n    Get the layer types.\n    Returns:\n        list: The layer types.\n    \"\"\"\n    return global_vars.g_LageZuordnung\ndef UR_Zwischenlagen():\n    \"\"\"\n    Get the number of use cycles.",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Zwischenlagen",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_Zwischenlagen():\n    \"\"\"\n    Get the number of use cycles.\n    Returns:\n        list: The number of use cycles.\n    \"\"\"\n    return global_vars.g_Zwischenlagen\ndef UR_PaketPos(Nummer):\n    \"\"\"\n    Get the package position, with coordinate transformation for palette 2.",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_PaketPos",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_PaketPos(Nummer):\n    \"\"\"\n    Get the package position, with coordinate transformation for palette 2.\n    Args:\n        Nummer (int): The package number.\n    Returns:\n        list: The package position [px, py, pr, x, y, r, n, dx, dy], transformed if needed\n    \"\"\"\n    pos = global_vars.g_PaketPos[Nummer]\n    if global_vars.UR20_active_palette == 2:",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_AnzLagen",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_AnzLagen():\n    \"\"\"\n    Get the number of layers.\n    Returns:\n        int: The number of layers.\n    \"\"\"\n    return global_vars.g_AnzLagen\ndef UR_AnzPakete():\n    \"\"\"\n    Get the number of packages.",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_AnzPakete",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_AnzPakete():\n    \"\"\"\n    Get the number of packages.\n    Returns:\n        int: The number of packages.\n    \"\"\"\n    return global_vars.g_AnzahlPakete\ndef UR_PaketeZuordnung():\n    \"\"\"\n    Get the package order.",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_PaketeZuordnung",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_PaketeZuordnung():\n    \"\"\"\n    Get the package order.\n    Returns:\n        list: The package order.\n    \"\"\"\n    return global_vars.g_PaketeZuordnung\n#den \"center of gravity\" messen\ndef UR_CoG(Masse_Paket,Masse_Greifer,Anzahl_Pakete=1):\n    \"\"\"",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_CoG",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_CoG(Masse_Paket,Masse_Greifer,Anzahl_Pakete=1):\n    \"\"\"\n    Calculate the center of gravity.\n    Args:\n        Masse_Paket (float): The mass of the package.\n        Masse_Greifer (float): The mass of the carton.\n        Anzahl_Pakete (int, optional): The number of packages. Defaults to 1.\n    Returns:\n        list: The center of gravity.\n    \"\"\"",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Paket_hoehe",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_Paket_hoehe():\n    \"\"\"\n    Set the package height.\n    Returns:\n        int: The package height.\n    \"\"\"\n    global_vars.g_PaketDim[2] = int(global_vars.ui.EingabeKartonhoehe.text())\n    return global_vars.g_PaketDim[2]\ndef UR_Startlage():\n    \"\"\"",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Startlage",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_Startlage():\n    \"\"\"\n    Set the start layer.\n    Returns:\n        int: The start layer.\n    \"\"\"\n    global_vars.g_Startlage = int(global_vars.ui.EingabeStartlage.value())\n    return global_vars.g_Startlage\ndef UR_MasseGeschaetzt():\n    \"\"\"",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_MasseGeschaetzt",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_MasseGeschaetzt():\n    \"\"\"\n    Set the mass of the carton.\n    Returns:\n        float: The mass of the carton.\n    \"\"\" \n    global_vars.g_MassePaket = float(global_vars.ui.EingabeKartonGewicht.text())\n    return global_vars.g_MassePaket\ndef UR_PickOffsetX():\n    \"\"\"",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_PickOffsetX",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_PickOffsetX():\n    \"\"\"\n    Set the pick offset in x direction.\n    Returns:\n        int: The pick offset in x direction.\n    \"\"\"\n    #global_vars.ui\n    global_vars.g_Pick_Offset_X = int(global_vars.ui.EingabeVerschiebungX.value())\n    return global_vars.g_Pick_Offset_X\ndef UR_PickOffsetY():",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_PickOffsetY",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_PickOffsetY():\n    \"\"\"\n    Set the pick offset in y direction.\n    Returns:\n        int: The pick offset in y direction.\n    \"\"\"\n    #global_vars.ui\n    global_vars.g_Pick_Offset_Y = int(global_vars.ui.EingabeVerschiebungY.value())\n    return global_vars.g_Pick_Offset_Y\ndef UR_Quergreifen():",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Quergreifen",
+        "kind": 2,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "def UR_Quergreifen():\n    \"\"\"\n    Query the robot.\n    Returns:\n        bool: True if the robot is queried, False otherwise.\n    \"\"\"\n    #global_vars.ui\n    logger.debug(f\"{global_vars.ui.checkBoxEinzelpaket.isChecked()=}\")\n    return global_vars.ui.checkBoxEinzelpaket.isChecked()",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.UR_Common_functions",
+        "description": "utils.UR_Common_functions",
+        "peekOfCode": "logger = global_vars.logger\n#Dateiname abfragen\ndef UR_SetFileName(Artikelnummer):\n    \"\"\"\n    Set the filename.\n    Args:\n        Artikelnummer (str): The article number.\n    Returns:\n        str: The filename.\n    \"\"\"",
+        "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "run_command",
+        "kind": 2,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "def run_command(command, check=True):\n    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)\n    stdout, stderr = process.communicate()\n    if check and process.returncode != 0:\n        raise Exception(f\"Command failed with error code {process.returncode}:\\n{stderr.decode('utf-8')}\")\n    else:\n        return stdout.decode('utf-8')\ndef build_docker_image():\n    build_command = f\"docker buildx build --platform linux/arm64 -t {IMAGE_NAME} --output type=docker -f {DOCKERFILE_PATH} {PROJECT_DIR}\"\n    print(\"Building Docker image...\")",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "build_docker_image",
+        "kind": 2,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "def build_docker_image():\n    build_command = f\"docker buildx build --platform linux/arm64 -t {IMAGE_NAME} --output type=docker -f {DOCKERFILE_PATH} {PROJECT_DIR}\"\n    print(\"Building Docker image...\")\n    run_command(build_command)\n    print(\"Docker image built successfully.\")\ndef create_container():\n    create_command = f\"docker create {IMAGE_NAME}\"\n    container_id = run_command(create_command).strip()\n    print(f\"Container created with ID: {container_id}\")\n    return container_id",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "create_container",
+        "kind": 2,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "def create_container():\n    create_command = f\"docker create {IMAGE_NAME}\"\n    container_id = run_command(create_command).strip()\n    print(f\"Container created with ID: {container_id}\")\n    return container_id\ndef list_files_in_container():\n    list_command = f\"docker run --rm --platform linux/arm64 {IMAGE_NAME} ls -lR {EXECUTABLE_DIR_IN_DOCKER}\"\n    files_list = run_command(list_command, check=False)\n    print(f\"Files in Docker container {EXECUTABLE_DIR_IN_DOCKER}:\")\n    print(files_list)",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "list_files_in_container",
+        "kind": 2,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "def list_files_in_container():\n    list_command = f\"docker run --rm --platform linux/arm64 {IMAGE_NAME} ls -lR {EXECUTABLE_DIR_IN_DOCKER}\"\n    files_list = run_command(list_command, check=False)\n    print(f\"Files in Docker container {EXECUTABLE_DIR_IN_DOCKER}:\")\n    print(files_list)\ndef copy_executable(container_id):\n    if not os.path.exists(OUTPUT_DIR_ON_HOST):\n        os.makedirs(OUTPUT_DIR_ON_HOST)\n    # List files in the expected directory to debug the error\n    list_files_in_container()",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "copy_executable",
+        "kind": 2,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "def copy_executable(container_id):\n    if not os.path.exists(OUTPUT_DIR_ON_HOST):\n        os.makedirs(OUTPUT_DIR_ON_HOST)\n    # List files in the expected directory to debug the error\n    list_files_in_container()\n    copy_command = f\"docker cp {container_id}:{EXECUTABLE_PATH_IN_DOCKER} {OUTPUT_PATH_ON_HOST}\"\n    print(\"Copying executable from container to host...\")\n    run_command(copy_command)\n    print(f\"Executable copied to: {OUTPUT_PATH_ON_HOST}\")\ndef remove_container(container_id):",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "remove_container",
+        "kind": 2,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "def remove_container(container_id):\n    remove_command = f\"docker rm {container_id}\"\n    print(f\"Removing container {container_id}...\")\n    run_command(remove_command)\n    print(f\"Container {container_id} removed.\")\ndef main():\n    container_id = None  # Initialize container_id to None\n    try:\n        build_docker_image()\n        container_id = create_container()  # Ensure container_id is assigned correctly",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "def main():\n    container_id = None  # Initialize container_id to None\n    try:\n        build_docker_image()\n        container_id = create_container()  # Ensure container_id is assigned correctly\n        copy_executable(container_id)\n    except Exception as e:\n        print(f\"An error occurred: {e}\")\n    finally:\n        if container_id:",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "PROJECT_DIR",
+        "kind": 5,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "PROJECT_DIR = pathlib.Path(__file__).parent.resolve()\nDOCKERFILE_PATH = PROJECT_DIR / \"Dockerfile\"\nIMAGE_NAME = \"multipackparser-builder\"\nEXECUTABLE_NAME_IN_DOCKER = \"MultipackParser\"\nEXECUTABLE_DIR_IN_DOCKER  = \"/app/dist\"\nEXECUTABLE_PATH_IN_DOCKER = f\"{EXECUTABLE_DIR_IN_DOCKER}/{EXECUTABLE_NAME_IN_DOCKER}\"\nOUTPUT_DIR_ON_HOST = PROJECT_DIR / \"output\"\nOUTPUT_PATH_ON_HOST = OUTPUT_DIR_ON_HOST / EXECUTABLE_NAME_IN_DOCKER\ndef run_command(command, check=True):\n    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "DOCKERFILE_PATH",
+        "kind": 5,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "DOCKERFILE_PATH = PROJECT_DIR / \"Dockerfile\"\nIMAGE_NAME = \"multipackparser-builder\"\nEXECUTABLE_NAME_IN_DOCKER = \"MultipackParser\"\nEXECUTABLE_DIR_IN_DOCKER  = \"/app/dist\"\nEXECUTABLE_PATH_IN_DOCKER = f\"{EXECUTABLE_DIR_IN_DOCKER}/{EXECUTABLE_NAME_IN_DOCKER}\"\nOUTPUT_DIR_ON_HOST = PROJECT_DIR / \"output\"\nOUTPUT_PATH_ON_HOST = OUTPUT_DIR_ON_HOST / EXECUTABLE_NAME_IN_DOCKER\ndef run_command(command, check=True):\n    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)\n    stdout, stderr = process.communicate()",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "IMAGE_NAME",
+        "kind": 5,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "IMAGE_NAME = \"multipackparser-builder\"\nEXECUTABLE_NAME_IN_DOCKER = \"MultipackParser\"\nEXECUTABLE_DIR_IN_DOCKER  = \"/app/dist\"\nEXECUTABLE_PATH_IN_DOCKER = f\"{EXECUTABLE_DIR_IN_DOCKER}/{EXECUTABLE_NAME_IN_DOCKER}\"\nOUTPUT_DIR_ON_HOST = PROJECT_DIR / \"output\"\nOUTPUT_PATH_ON_HOST = OUTPUT_DIR_ON_HOST / EXECUTABLE_NAME_IN_DOCKER\ndef run_command(command, check=True):\n    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)\n    stdout, stderr = process.communicate()\n    if check and process.returncode != 0:",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "EXECUTABLE_NAME_IN_DOCKER",
+        "kind": 5,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "EXECUTABLE_NAME_IN_DOCKER = \"MultipackParser\"\nEXECUTABLE_DIR_IN_DOCKER  = \"/app/dist\"\nEXECUTABLE_PATH_IN_DOCKER = f\"{EXECUTABLE_DIR_IN_DOCKER}/{EXECUTABLE_NAME_IN_DOCKER}\"\nOUTPUT_DIR_ON_HOST = PROJECT_DIR / \"output\"\nOUTPUT_PATH_ON_HOST = OUTPUT_DIR_ON_HOST / EXECUTABLE_NAME_IN_DOCKER\ndef run_command(command, check=True):\n    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)\n    stdout, stderr = process.communicate()\n    if check and process.returncode != 0:\n        raise Exception(f\"Command failed with error code {process.returncode}:\\n{stderr.decode('utf-8')}\")",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "EXECUTABLE_PATH_IN_DOCKER",
+        "kind": 5,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "EXECUTABLE_PATH_IN_DOCKER = f\"{EXECUTABLE_DIR_IN_DOCKER}/{EXECUTABLE_NAME_IN_DOCKER}\"\nOUTPUT_DIR_ON_HOST = PROJECT_DIR / \"output\"\nOUTPUT_PATH_ON_HOST = OUTPUT_DIR_ON_HOST / EXECUTABLE_NAME_IN_DOCKER\ndef run_command(command, check=True):\n    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)\n    stdout, stderr = process.communicate()\n    if check and process.returncode != 0:\n        raise Exception(f\"Command failed with error code {process.returncode}:\\n{stderr.decode('utf-8')}\")\n    else:\n        return stdout.decode('utf-8')",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "OUTPUT_DIR_ON_HOST",
+        "kind": 5,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "OUTPUT_DIR_ON_HOST = PROJECT_DIR / \"output\"\nOUTPUT_PATH_ON_HOST = OUTPUT_DIR_ON_HOST / EXECUTABLE_NAME_IN_DOCKER\ndef run_command(command, check=True):\n    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)\n    stdout, stderr = process.communicate()\n    if check and process.returncode != 0:\n        raise Exception(f\"Command failed with error code {process.returncode}:\\n{stderr.decode('utf-8')}\")\n    else:\n        return stdout.decode('utf-8')\ndef build_docker_image():",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "OUTPUT_PATH_ON_HOST",
+        "kind": 5,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "OUTPUT_PATH_ON_HOST = OUTPUT_DIR_ON_HOST / EXECUTABLE_NAME_IN_DOCKER\ndef run_command(command, check=True):\n    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)\n    stdout, stderr = process.communicate()\n    if check and process.returncode != 0:\n        raise Exception(f\"Command failed with error code {process.returncode}:\\n{stderr.decode('utf-8')}\")\n    else:\n        return stdout.decode('utf-8')\ndef build_docker_image():\n    build_command = f\"docker buildx build --platform linux/arm64 -t {IMAGE_NAME} --output type=docker -f {DOCKERFILE_PATH} {PROJECT_DIR}\"",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "CustomDoubleValidator",
+        "kind": 6,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "class CustomDoubleValidator(QDoubleValidator):\n    \"\"\"\n    Custom double validator.\n    This class inherits from QDoubleValidator and overrides the validate method to allow\n    commas to be used as decimal separators.\n    \"\"\"\n    def validate(self, usr_input, pos):\n        \"\"\"\n        Validate the input.\n        Args:",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "server_start",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def server_start():\n    \"\"\"\n    Start the XMLRPC server.\n    Returns:\n        0\n    \"\"\"\n    global server\n    server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)\n    logger.debug(\"Start Server\")\n    try:",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "server_stop",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def server_stop():\n    \"\"\"\n    Stop the XMLRPC server.\n    \"\"\"\n    global_vars.ui.ButtonStopRPCServer.setEnabled(False)\n    server.shutdown()\n    logger.debug(\"Server stopped\")\n    datensenden_manipulation(True, \"Server starten\", \"\")\ndef server_thread():\n    \"\"\"",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "server_thread",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def server_thread():\n    \"\"\"\n    Start the XMLRPC server in a separate thread.\n    \"\"\"\n    logger.debug(\"Starting server thread\")\n    xServerThread = threading.Thread(target=server_start)\n    xServerThread.start()\n    global_vars.ui.ButtonStopRPCServer.setEnabled(True)\n    datensenden_manipulation(False, \"Server läuft\", \"green\")\ndef datensenden_manipulation(visibility: bool, display_text: str, display_colour: str):",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "datensenden_manipulation",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def datensenden_manipulation(visibility: bool, display_text: str, display_colour: str):\n    \"\"\"\n    Manipulate the visibility of the \"Daten Senden\" button and the display text.\n    \"\"\"\n    buttons = [global_vars.ui.ButtonDatenSenden, global_vars.ui.ButtonDatenSenden_2]\n    for button in buttons:\n        button.setStyleSheet(f\"color: {display_colour}\")\n        button.setEnabled(visibility)\n        button.setText(display_text)\ndef send_cmd_play():",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "send_cmd_play",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def send_cmd_play():\n    \"\"\"\n    Send a command to the robot to start.\n    \"\"\"\n    try:\n        # Create a TCP/IP socket\n        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "send_cmd_pause",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def send_cmd_pause():\n    \"\"\"\n    Send a command to the robot to pause.\n    \"\"\"\n    try:\n        # Create a TCP/IP socket\n        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "send_cmd_stop",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def send_cmd_stop():\n    \"\"\"\n    Send a command to the robot to stop.\n    \"\"\"\n    try:\n        # Create a TCP/IP socket\n        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def update_status_label(text: str, color: str, blink: bool = False, second_color: str = None):\n    \"\"\"Update the status label with the given text and color\"\"\"\n    # Create blinking label if it doesn't exist\n    if not hasattr(global_vars, 'blinking_label'):\n        global_vars.blinking_label = BlinkingLabel(\n            text, \n            color, \n            global_vars.ui.LabelPalletenplanInfo.geometry(), \n            parent=global_vars.ui.stackedWidget.widget(0),\n            second_color=second_color,",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "open_password_dialog",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def open_password_dialog() -> None:\n    \"\"\"\n    Open the password dialog.\n    \"\"\"\n    from ui_files.PasswordDialog import PasswordEntryDialog  # Import here instead of top\n    dialog = PasswordEntryDialog(parent_window=main_window)\n    #dialog.setModal(False) #cant set to true because it will block the qtvirtualkeyboard\n    dialog.show()\n    dialog.ui.lineEdit.setFocus()\n    dialog.exec()",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "open_settings_page",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def open_settings_page() -> None:\n    \"\"\"\n    Open the settings page.\n    \"\"\"\n    # set page of the stacked widgets to index 2\n    settings.reset_unsaved_changes()\n    global_vars.ui.stackedWidget.setCurrentIndex(2)\ndef open_parameter_page() -> None:\n    \"\"\"\n    Open the parameter page.",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "open_parameter_page",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def open_parameter_page() -> None:\n    \"\"\"\n    Open the parameter page.\n    \"\"\"\n    # set page of the stacked widgets to index 1\n    global_vars.ui.tabWidget.setCurrentIndex(0)\n    global_vars.ui.stackedWidget.setCurrentIndex(1)\ndef open_main_page() -> None:\n    \"\"\"\n    Open the main page.",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "open_main_page",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def open_main_page() -> None:\n    \"\"\"\n    Open the main page.\n    \"\"\"\n    # set page of the stacked widgets to index 0\n    global_vars.ui.stackedWidget.setCurrentIndex(0)\ndef open_explorer() -> None:\n    \"\"\"\n    Open the explorer.\n    \"\"\"",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "open_explorer",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def open_explorer() -> None:\n    \"\"\"\n    Open the explorer.\n    \"\"\"\n    logger.info(\"Opening explorer\")\n    try:\n        if sys.platform == \"win32\":\n            subprocess.Popen([\"explorer.exe\"])\n        elif sys.platform == \"linux\":\n            # Try different file managers in order of preference",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "open_terminal",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def open_terminal() -> None:\n    \"\"\"\n    Open the terminal.\n    \"\"\"\n    logger.info(\"Opening terminal\")\n    try:\n        if sys.platform == \"win32\":\n            subprocess.Popen([\"start\", \"cmd.exe\"], shell=True)\n        elif sys.platform == \"linux\":\n            # Try different terminals in order of preference",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "load",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def load() -> None:\n    \"\"\"\n    Load the selected file.\n    This function is called when the user clicks the \"Lade Palettenplan\" button.\n    \"\"\"\n    # get the value of the EingabePalettenplan text box and run UR_SET_FILENAME then check if the file exists and if it doesnt open a message box\n    Artikelnummer = global_vars.ui.EingabePallettenplan.text()\n    UR.UR_SetFileName(Artikelnummer)\n    errorReadDataFromUsbStick = UR.UR_ReadDataFromUsbStick()\n    if errorReadDataFromUsbStick == 1:",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "send_data",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def send_data() -> None:\n    \"\"\"\n    Send the data to the robot.\n    This function is called when the user clicks the \"Daten Senden\" button.\n    \"\"\"\n    logger.debug(\"Button Daten Senden clicked\")\n    server_thread()\ndef load_wordlist() -> list:\n    \"\"\"\n    Load the wordlist from the USB stick.",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "load_wordlist",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def load_wordlist() -> list:\n    \"\"\"\n    Load the wordlist from the USB stick.\n    Returns:\n        A list of wordlist items.\n    \"\"\"\n    wordlist = []\n    count = 0\n    for file in os.listdir(global_vars.PATH_USB_STICK):\n        if file.endswith(\".rob\"):",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "init_settings",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def init_settings():\n    \"\"\"Initialize the settings\"\"\"\n    global settings\n    settings = Settings()\n    global_vars.PATH_USB_STICK = settings.settings['admin']['path']\n    logger.debug(f\"Settings initialized: {settings}\")\ndef leave_settings_page():\n    \"\"\"\n    Leave the settings page.\n    This function is called when the user clicks the \"Zurueck\" button in the settings page.",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "leave_settings_page",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def leave_settings_page():\n    \"\"\"\n    Leave the settings page.\n    This function is called when the user clicks the \"Zurueck\" button in the settings page.\n    \"\"\"\n    try:\n        settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        # If settings do not match, ask whether to discard or save the new data",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "open_file",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def open_file():\n    \"\"\"\n    Open a file.\n    This function is called when the user clicks the \"Open\" button in the editor settings tab.\n    \"\"\"\n    # Open a file browser to select a file\n    file_path, _ = QFileDialog.getOpenFileName(parent=main_window, caption=\"Open File\")\n    global_vars.ui.lineEditFilePath.setText(file_path)\n    logger.debug(f\"File path: {global_vars.ui.lineEditFilePath.text()}\")\n    # Open the selected file and load its content into the text edit widget",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "save_open_file",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def save_open_file():\n    \"\"\"\n    Save or open a file.\n    This function is called when the user clicks the \"Speichern\" button in the editor settings tab.\n    \"\"\"\n    # save the file to the selected file path but prompt the user before overwriting the file\n    file_path = global_vars.ui.lineEditFilePath.text()\n    if file_path:\n        if os.path.exists(file_path):\n            overwrite = QMessageBox.question(main_window, \"Overwrite File?\", f\"The file {file_path} already exists. Do you want to overwrite it?\", QMessageBox.Yes | QMessageBox.No)",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "execute_command",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def execute_command():\n    \"\"\"\n    Execute a command in the console.\n    \"\"\"\n    command = global_vars.ui.lineEditCommand.text().strip()\n    # Check if the command starts with \">\"\n    if command.startswith(\"> \"):\n        command = command[2:].strip()  # Remove the \"> \" prefix\n    if not command:\n        return",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "handle_stdout",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def handle_stdout():\n    \"\"\"\n    Handle standard output.\n    \"\"\"\n    data = global_vars.process.readAllStandardOutput()\n    stdout = bytes(data).decode(\"utf-8\", errors=\"replace\")\n    global_vars.ui.textEditConsole.append(stdout)\ndef handle_stderr():\n    \"\"\"\n    Handle standard error output.",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "handle_stderr",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def handle_stderr():\n    \"\"\"\n    Handle standard error output.\n    \"\"\"\n    data = global_vars.process.readAllStandardError()\n    stderr = bytes(data).decode(\"utf-8\", errors=\"replace\")\n    global_vars.ui.textEditConsole.append(stderr)\ndef set_settings_line_edits():\n    \"\"\"\n    Set the line edits in the settings page to the current settings.",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "set_settings_line_edits",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def set_settings_line_edits():\n    \"\"\"\n    Set the line edits in the settings page to the current settings.\n    This function is called when the settings page is opened or when the settings are changed.\n    \"\"\"\n    global_vars.ui.lineEditDisplayHeight.setText(str(settings.settings['display']['specs']['height']))\n    global_vars.ui.lineEditDisplayWidth.setText(str(settings.settings['display']['specs']['width']))\n    global_vars.ui.lineEditDisplayRefreshRate.setText(str(int(float(settings.settings['display']['specs']['refresh_rate']))))\n    global_vars.ui.lineEditDisplayModel.setText(settings.settings['display']['specs']['model'])\n    # Set the combo box value",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "restart_app",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def restart_app():\n    \"\"\"\n    Restart the system.\n    \"\"\"\n    try:\n        settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        response = QMessageBox.question(main_window, \"Verwerfen oder Speichern\", \n                                      \"Möchten Sie die neuen Daten verwerfen oder speichern?\",",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "save_and_exit_app",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def save_and_exit_app():\n    \"\"\"\n    Safely exit the application.\n    \"\"\"\n    try:\n        settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        # If settings do not match, ask whether to discard or save the new data\n        response = QMessageBox.question(main_window, \"Verwerfen oder Speichern\", \"Möchten Sie die neuen Daten verwerfen oder speichern?\",",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "exit_app",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def exit_app():\n    \"\"\"\n    Exit the application.\n    \"\"\"\n    if 'server' in globals():\n        server_stop()\n    sys.exit(0)\ndef set_wordlist():\n    \"\"\"\n    Set the wordlist.",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "set_wordlist",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def set_wordlist():\n    \"\"\"\n    Set the wordlist.\n    \"\"\"\n    global completer  # Declare completer as global\n    wordlist = load_wordlist()\n    completer = QCompleter(wordlist, main_window)  # Now this will access the global variable\n    global_vars.ui.EingabePallettenplan.setCompleter(completer)\n    file_watcher = QFileSystemWatcher([global_vars.PATH_USB_STICK], main_window)\n    file_watcher.directoryChanged.connect(update_wordlist)",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "open_folder_dialog",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def open_folder_dialog():\n    \"\"\"\n    Open the folder dialog.\n    \"\"\"\n    # show warning dialog if the user wants to set the path\n    # only if the user acknowledges the warning dialog and the risks then continue with choosing the folder else cancel asap\n    response = QMessageBox.warning(main_window, \"Warnung! - Mögliche Risiken!\", \"<b>Möchten Sie den Pfad wirklich ändern?</b><br>Dies könnte zu Problemen führen, wenn bereits ein Palettenplan geladen ist und nach dem Setzen des Pfades nicht ein neuer geladen wird.\", QMessageBox.Yes | QMessageBox.No)\n    main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink\n    if response == QMessageBox.Yes:\n        pass",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "open_file_dialog",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def open_file_dialog():\n    \"\"\"\n    Open the file dialog.\n    \"\"\"\n    file_path = QFileDialog.getOpenFileName(main_window, \"Open Audio File\", \"\", \"Audio Files (*.wav)\")\n    if file_path:\n        global_vars.ui.audioPathEdit.setText(file_path[0])\ndef update_wordlist():\n    \"\"\"\n    Update the wordlist.",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "update_wordlist",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def update_wordlist():\n    \"\"\"\n    Update the wordlist.\n    \"\"\"\n    new_wordlist = load_wordlist()\n    completer.model().setStringList(new_wordlist)  # This will now work with the global completer\n    set_wordlist()\ndef check_for_updates():\n    \"\"\"\n    Check for a file called MultipackParser under /media/ and /mnt/.",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "check_for_updates",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def check_for_updates():\n    \"\"\"\n    Check for a file called MultipackParser under /media/ and /mnt/.\n    If it exists, spawn an updater process to replace the current binary.\n    \"\"\"\n    # TODO: Add visual feedback to the user so that they know that the application is checking for updates\n    search_paths = [\"/media\", \"/mnt\"]\n    update_file_name = \"MultipackParser\"\n    found_update_file = None\n    # Traverse /media and /mnt to find the update file",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "spawn_play_stepback_warning_thread",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def spawn_play_stepback_warning_thread():\n    \"\"\"\n    Spawn a thread to play the stepback warning.\n    \"\"\"\n    global audio_thread, audio_thread_running\n    if audio_thread is None:\n        audio_thread_running = True\n        audio_thread = threading.Thread(target=play_stepback_warning)\n        audio_thread.daemon = True\n        audio_thread.start()",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "kill_play_stepback_warning_thread",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def kill_play_stepback_warning_thread():\n    \"\"\"\n    Kill the thread playing the stepback warning.\n    \"\"\"\n    global audio_thread, audio_thread_running\n    audio_thread_running = False\n    if audio_thread:\n        audio_thread = None\ndef play_stepback_warning():\n    \"\"\"",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "play_stepback_warning",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def play_stepback_warning():\n    \"\"\"\n    Play the stepback warning in a loop using aplay.\n    \"\"\"\n    global audio_thread_running\n    try:\n        while audio_thread_running:\n            try:\n                # Use aplay to play the audio file\n                subprocess.run(['aplay', settings.settings['admin']['alarm_sound_file']], ",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "set_audio_volume",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def set_audio_volume():\n    \"\"\"Set system audio volume using amixer\"\"\"\n    if not global_vars.audio_muted:\n        volume = '0%'\n        icon_name = \":/Sound/imgs/volume-off.png\"\n    else:\n        volume = '100%'\n        icon_name = \":/Sound/imgs/volume-on.png\"\n    logger.debug(f\"Setting audio volume to {volume}\")\n    try:",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "delay_warning_sound",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def delay_warning_sound():\n    \"\"\"\n    This should be called in a thread at the start of the application. and never get stopped.\n    Delays the warning sound start by 40 seconds.\n    The sound starts if global_vars.timestamp_scanner_fault is not None and 40 seconds or older than current time.\n    \"\"\"\n    while True:\n        if global_vars.timestamp_scanner_fault and (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds() >= 40:\n            if not audio_thread_running:\n                spawn_play_stepback_warning_thread()",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def main():\n    \"\"\"\n    Main function to run the application.\n    \"\"\"\n    global main_window\n    parser = argparse.ArgumentParser(description=\"Multipack Parser Application\")\n    parser.add_argument('--version', action='store_true', help='Show version information and exit')\n    parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose logging')\n    parser.add_argument('--rob-path', type=str, help='Path to the .rob files')\n    args = parser.parse_args()",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "__license__",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "__license__ = '''\n    Multipack Parser Application - to parse the data from the Multipack Robot to an UR Robot\n    Copyright (C) 2024  Yann-Luca Näher\n    This program is free software: you can redistribute it and/or modify\n    it under the terms of the GNU General Public License as published by\n    the Free Software Foundation, either version 3 of the License, or\n    (at your option) any later version.\n    This program is distributed in the hope that it will be useful,\n    but WITHOUT ANY WARRANTY; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "logger = global_vars.logger\naudio_thread = None\naudio_thread_running = False\nos.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\n# global_vars.PATH_USB_STICK = 'E:\\' # Pfad zu den .rob Dateien nur auskommentieren zum testen\nif global_vars.PATH_USB_STICK == '..':\n    # Bekomme CWD und setze den Pfad auf den Überordner\n    logger.debug(os.path.dirname(os.getcwd()))\n    global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' \n####################",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "audio_thread",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "audio_thread = None\naudio_thread_running = False\nos.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\n# global_vars.PATH_USB_STICK = 'E:\\' # Pfad zu den .rob Dateien nur auskommentieren zum testen\nif global_vars.PATH_USB_STICK == '..':\n    # Bekomme CWD und setze den Pfad auf den Überordner\n    logger.debug(os.path.dirname(os.getcwd()))\n    global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' \n####################\n# Server functions #",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "audio_thread_running",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "audio_thread_running = False\nos.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\n# global_vars.PATH_USB_STICK = 'E:\\' # Pfad zu den .rob Dateien nur auskommentieren zum testen\nif global_vars.PATH_USB_STICK == '..':\n    # Bekomme CWD und setze den Pfad auf den Überordner\n    logger.debug(os.path.dirname(os.getcwd()))\n    global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' \n####################\n# Server functions #\n####################",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "os.environ[\"QT_IM_MODULE\"]",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "os.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\n# global_vars.PATH_USB_STICK = 'E:\\' # Pfad zu den .rob Dateien nur auskommentieren zum testen\nif global_vars.PATH_USB_STICK == '..':\n    # Bekomme CWD und setze den Pfad auf den Überordner\n    logger.debug(os.path.dirname(os.getcwd()))\n    global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' \n####################\n# Server functions #\n####################\ndef server_start():",
+        "detail": "main",
+        "documentation": {}
+    }
+]
