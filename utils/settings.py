@@ -189,9 +189,9 @@ class Settings:
                             else:
                                 loaded_value = bool(loaded_value)
                         elif isinstance(subvalue, int):
-                            loaded_value = int(loaded_value)
+                            loaded_value = int(str(loaded_value))  # Convert to str first
                         elif isinstance(subvalue, float):
-                            loaded_value = float(loaded_value)
+                            loaded_value = float(str(loaded_value))  # Convert to str first
                         self.settings[group][key][subkey] = loaded_value
                     self.qsettings.endGroup()
                 else:
@@ -204,9 +204,9 @@ class Settings:
                         else:
                             loaded_value = bool(loaded_value)
                     elif isinstance(value, int):
-                        loaded_value = int(loaded_value)
+                        loaded_value = int(str(loaded_value))  # Convert to str first
                     elif isinstance(value, float):
-                        loaded_value = float(loaded_value)
+                        loaded_value = float(str(loaded_value))  # Convert to str first
                     self.settings[group][key] = loaded_value
             self.qsettings.endGroup()
         self._update_debug_globals()  # Update globals after loading settings

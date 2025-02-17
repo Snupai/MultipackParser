@@ -2,12 +2,13 @@
 # This file will contain all the functions that are used to communicate with the UR10 robot
 # This file will be imported into main.py to clean up the code
 
+from typing import Literal, List
 from . import global_vars
 
 logger = global_vars.logger
 
 #Dateiname abfragen
-def UR_SetFileName(Artikelnummer):
+def UR_SetFileName(Artikelnummer) -> str:
     """
     Set the filename.
 
@@ -23,7 +24,7 @@ def UR_SetFileName(Artikelnummer):
  
  
 #daten vom usb stick hochladen und lesbar machen 
-def UR_ReadDataFromUsbStick():
+def UR_ReadDataFromUsbStick() -> Literal[0] | Literal[1]:
     """
     Read data from the Path_USB_STICK.
 
@@ -40,18 +41,17 @@ def UR_ReadDataFromUsbStick():
     global_vars.g_paket_quer = 1
     global_vars.g_CenterOfGravity = [0,0,0]
     
-    logger.debug(f"Trying to read file {global_vars.PATH_USB_STICK + global_vars.FILENAME}")
+    if global_vars.FILENAME is None:
+        logger.error("No filename set")
+        return 0
+        
+    file_path = global_vars.PATH_USB_STICK + global_vars.FILENAME
+    logger.debug(f"Trying to read file {file_path}")
     
     try:
-        with open(global_vars.PATH_USB_STICK + global_vars.FILENAME) as file:
-            
+        with open(file_path) as file:
             for line in file:
-                str = line.strip()
-                tmpList = line.split('\t')
-                
-                for i in range(len(tmpList)):
-                    tmpList[i] = int(tmpList[i])
-                    
+                tmpList = [int(x) for x in line.strip().split('\t')]
                 global_vars.g_Daten.append(tmpList)
  
  
@@ -128,20 +128,17 @@ def UR_ReadDataFromUsbStick():
         logger.error(f"Error reading file {global_vars.FILENAME}")
     return 1
 
-def Check_Einzelpaket_längs_greifen(package_length: float):
-    """
-    Check if it would be better to use the Einzelpaket längs greifen.
-
-    Pre-sets the Einzelpaket längs greifen checkbox.
-    """
-    if package_length >= 265:
-        global_vars.ui.checkBoxEinzelpaket.setChecked(True)
-    else:
-        global_vars.ui.checkBoxEinzelpaket.setChecked(False)
+def Check_Einzelpaket_längs_greifen(package_length: int) -> None:
+    """Check if package should be gripped lengthwise."""
+    if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:
+        if package_length >= 265:
+            global_vars.ui.checkBoxEinzelpaket.setChecked(True)
+        else:
+            global_vars.ui.checkBoxEinzelpaket.setChecked(False)
  
  
 #funktion für den roboter 
-def UR_Palette():
+def UR_Palette() -> List[int] | None:
     """
     Get the palette dimensions.
 
@@ -187,6 +184,10 @@ def UR_PaketPos(Nummer):
     Returns:
         list: The package position [px, py, pr, x, y, r, n, dx, dy], transformed if needed
     """
+    if global_vars.g_PaketPos is None:
+        logger.error("Package positions not initialized")
+        return None
+        
     pos = global_vars.g_PaketPos[Nummer]
     
     if global_vars.UR20_active_palette == 2:
@@ -238,7 +239,7 @@ def UR_PaketeZuordnung():
  
  
 #den "center of gravity" messen
-def UR_CoG(Masse_Paket,Masse_Greifer,Anzahl_Pakete=1):
+def UR_CoG(Masse_Paket, Masse_Greifer, Anzahl_Pakete=1) -> None | List[float]:
     """
     Calculate the center of gravity.
 
@@ -250,8 +251,16 @@ def UR_CoG(Masse_Paket,Masse_Greifer,Anzahl_Pakete=1):
     Returns:
         list: The center of gravity.
     """
-    if(Anzahl_Pakete == 0):
-        Masse_Paket=0
+    if global_vars.g_PaketDim is None:
+        logger.error("Package dimensions not initialized")
+        return None
+        
+    # Initialize g_CenterOfGravity if None
+    if global_vars.g_CenterOfGravity is None:
+        global_vars.g_CenterOfGravity = [0.0, 0.0, 0.0]
+        
+    if Anzahl_Pakete == 0:
+        Masse_Paket = 0
     #Berechnung Y
     Karton_Y = global_vars.g_PaketDim[0]
     y = (1/(Masse_Greifer + Masse_Paket))*((-0.045*Masse_Greifer)+(-0.045*Masse_Paket))
@@ -263,66 +272,53 @@ def UR_CoG(Masse_Paket,Masse_Greifer,Anzahl_Pakete=1):
     global_vars.g_CenterOfGravity[1] = z
     return global_vars.g_CenterOfGravity
 
-def UR_Paket_hoehe():
+def UR_Paket_hoehe() -> int:
     """
     Set the package height.
 
     Returns:
         int: The package height.
     """
-    global_vars.g_PaketDim[2] = int(global_vars.ui.EingabeKartonhoehe.text())
-    return global_vars.g_PaketDim[2]
+    if global_vars.g_PaketDim is None:
+        logger.error("Package dimensions not initialized")
+        return 0
+        
+    if global_vars.ui and global_vars.ui.EingabeKartonhoehe:
+        global_vars.g_PaketDim[2] = int(global_vars.ui.EingabeKartonhoehe.text())
+        return global_vars.g_PaketDim[2]
+    return 0
 
-def UR_Startlage():
-    """
-    Set the start layer.
+def UR_Startlage() -> int:
+    """Set the start layer."""
+    if global_vars.ui and global_vars.ui.EingabeStartlage:
+        global_vars.g_Startlage = int(global_vars.ui.EingabeStartlage.value())
+        return global_vars.g_Startlage
+    return 0
 
-    Returns:
-        int: The start layer.
-    """
-    global_vars.g_Startlage = int(global_vars.ui.EingabeStartlage.value())
-    return global_vars.g_Startlage
+def UR_MasseGeschaetzt() -> float:
+    """Set the mass of the carton."""
+    if global_vars.ui and global_vars.ui.EingabeKartonGewicht:
+        global_vars.g_MassePaket = float(global_vars.ui.EingabeKartonGewicht.text())
+        return global_vars.g_MassePaket
+    return 0.0
 
-def UR_MasseGeschaetzt():
-    """
-    Set the mass of the carton.
+def UR_PickOffsetX() -> int:
+    """Set the pick offset in x direction."""
+    if global_vars.ui and global_vars.ui.EingabeVerschiebungX:
+        global_vars.g_Pick_Offset_X = int(global_vars.ui.EingabeVerschiebungX.value())
+        return global_vars.g_Pick_Offset_X
+    return 0
 
-    Returns:
-        float: The mass of the carton.
-    """ 
-    global_vars.g_MassePaket = float(global_vars.ui.EingabeKartonGewicht.text())
-    return global_vars.g_MassePaket
+def UR_PickOffsetY() -> int:
+    """Set the pick offset in y direction."""
+    if global_vars.ui and global_vars.ui.EingabeVerschiebungY:
+        global_vars.g_Pick_Offset_Y = int(global_vars.ui.EingabeVerschiebungY.value())
+        return global_vars.g_Pick_Offset_Y
+    return 0
 
-def UR_PickOffsetX():
-    """
-    Set the pick offset in x direction.
-
-    Returns:
-        int: The pick offset in x direction.
-    """
-    #global_vars.ui
-    global_vars.g_Pick_Offset_X = int(global_vars.ui.EingabeVerschiebungX.value())
-    return global_vars.g_Pick_Offset_X
-
-def UR_PickOffsetY():
-    """
-    Set the pick offset in y direction.
-
-    Returns:
-        int: The pick offset in y direction.
-    """
-    #global_vars.ui
-    global_vars.g_Pick_Offset_Y = int(global_vars.ui.EingabeVerschiebungY.value())
-    return global_vars.g_Pick_Offset_Y
-
-
-def UR_Quergreifen():
-    """
-    Query the robot.
-
-    Returns:
-        bool: True if the robot is queried, False otherwise.
-    """
-    #global_vars.ui
-    logger.debug(f"{global_vars.ui.checkBoxEinzelpaket.isChecked()=}")
-    return global_vars.ui.checkBoxEinzelpaket.isChecked()
+def UR_Quergreifen() -> bool:
+    """Query the robot."""
+    if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:
+        logger.debug(f"{global_vars.ui.checkBoxEinzelpaket.isChecked()=}")
+        return global_vars.ui.checkBoxEinzelpaket.isChecked()
+    return False

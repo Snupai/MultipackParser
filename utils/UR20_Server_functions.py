@@ -4,9 +4,10 @@ from PySide6.QtGui import QPixmap
 from . import global_vars
 import time
 from main import update_status_label
+from typing import Literal
 
 # the scanner image stuff for 3 scanners
-def UR20_scannerStatus(status: str):
+def UR20_scannerStatus(status: str) -> int:
     """
     Set the scanner status.
     """
@@ -15,28 +16,29 @@ def UR20_scannerStatus(status: str):
         global_vars.timestamp_scanner_fault = time.time()
         update_status_label("Bitte Arbeitsbereich räumen.", "red", True)
 
-    match status:
-        case "True,True,True":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1&2&3io.png'))
-        case "False,False,False":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1&2&3nio.png'))
-        case "True,False,False":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1io.png'))
-        case "False,True,False":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner2io.png'))
-        case "False,False,True":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner3io.png'))
-        case "True,True,False":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner3nio.png'))
-        case "True,False,True":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner2nio.png'))
-        case "False,True,True":
-            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1nio.png'))
-    return
+    if global_vars.ui and global_vars.ui.label_7:
+        match status:
+            case "True,True,True":
+                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1&2&3io.png'))
+            case "False,False,False":
+                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1&2&3nio.png'))
+            case "True,False,False":
+                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1io.png'))
+            case "False,True,False":
+                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner2io.png'))
+            case "False,False,True":
+                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner3io.png'))
+            case "True,True,False":
+                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner3nio.png'))
+            case "True,False,True":
+                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner2nio.png'))
+            case "False,True,True":
+                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1nio.png'))
+    return 0
 
 
 # change active pallet
-def UR20_SetActivePalette(pallet_number):
+def UR20_SetActivePalette(pallet_number) -> Literal[0] | Literal[1]:
     '''
     pallet_number: number of pallet
     
@@ -56,7 +58,7 @@ def UR20_SetActivePalette(pallet_number):
     return 1
 
 # get active pallet number
-def UR20_GetActivePaletteNumber():
+def UR20_GetActivePaletteNumber() -> int:
     '''
     returns: 
         current number of active pallet
@@ -66,7 +68,7 @@ def UR20_GetActivePaletteNumber():
     return global_vars.UR20_active_palette
 
 # get pallet status
-def UR20_GetPaletteStatus(pallet_number):
+def UR20_GetPaletteStatus(pallet_number) -> Literal[1] | Literal[0] | Literal[-1]:
     '''
     pallet_number: number of pallet
 
