@@ -544,6 +544,14 @@
         "documentation": {}
     },
     {
+        "label": "QStringListModel",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
         "label": "QFont",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
@@ -864,11 +872,11 @@
         "documentation": {}
     },
     {
-        "label": "QtCore",
-        "importPath": "PySide6",
-        "description": "PySide6",
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
         "isExtraImport": true,
-        "detail": "PySide6",
+        "detail": "typing",
         "documentation": {}
     },
     {
@@ -877,6 +885,78 @@
         "description": "typing",
         "isExtraImport": true,
         "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Union",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "TYPE_CHECKING",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Literal",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Literal",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Literal",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "QtCore",
+        "importPath": "PySide6",
+        "description": "PySide6",
+        "isExtraImport": true,
+        "detail": "PySide6",
         "documentation": {}
     },
     {
@@ -969,6 +1049,31 @@
         "description": "logging.handlers",
         "isExtraImport": true,
         "detail": "logging.handlers",
+        "documentation": {}
+    },
+    {
+        "label": "multiprocessing",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "multiprocessing",
+        "description": "multiprocessing",
+        "detail": "multiprocessing",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
         "documentation": {}
     },
     {
@@ -1078,11 +1183,11 @@
         "documentation": {}
     },
     {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
+        "label": "Enum",
+        "importPath": "enum",
+        "description": "enum",
         "isExtraImport": true,
-        "detail": "datetime",
+        "detail": "enum",
         "documentation": {}
     },
     {
@@ -1138,7 +1243,7 @@
         "kind": 6,
         "importPath": "ui_files.BlinkingLabel",
         "description": "ui_files.BlinkingLabel",
-        "peekOfCode": "class BlinkingLabel(QLabel):\n    def __init__(self, text, color:str, geometry:QRect, parent=None, second_color:str=None, font:QFont=None, alignment:Qt.AlignmentFlag=None):\n        super().__init__(text, parent)\n        self.setGeometry(geometry)\n        self.setStyleSheet(f\"color: {color};\")\n        self.base_color = color\n        self.second_color = second_color\n        self.is_blinking = False\n        self.timer = None\n        if font:",
+        "peekOfCode": "class BlinkingLabel(QLabel):\n    def __init__(self, text: str, color: str, geometry: QRect, parent=None, \n                 second_color: Optional[str] = None, \n                 font: Optional[QFont] = None,\n                 alignment: Optional[Qt.AlignmentFlag] = None) -> None:\n        super().__init__(text, parent)\n        self.setGeometry(geometry)\n        self.setStyleSheet(f\"color: {color};\")\n        self.base_color = color\n        self.second_color: str | None = second_color if second_color is not None else None  # Use base color if no second color",
         "detail": "ui_files.BlinkingLabel",
         "documentation": {}
     },
@@ -1233,528 +1338,6 @@
         "documentation": {}
     },
     {
-        "label": "log_formatter",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')\nlog_handler = RotatingFileHandler('app.log', maxBytes=5*1024*1024, backupCount=2)\nlog_handler.setFormatter(log_formatter)\nconsole_handler = logging.StreamHandler()\nconsole_handler.setFormatter(log_formatter)\nlogger = logging.getLogger('multipack_parser')  # Create a named logger\nlogger.setLevel(logging.INFO)  # Set default logging level\nlogger.addHandler(log_handler)\nlogger.addHandler(console_handler)\nprocess = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "log_handler",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "log_handler = RotatingFileHandler('app.log', maxBytes=5*1024*1024, backupCount=2)\nlog_handler.setFormatter(log_formatter)\nconsole_handler = logging.StreamHandler()\nconsole_handler.setFormatter(log_formatter)\nlogger = logging.getLogger('multipack_parser')  # Create a named logger\nlogger.setLevel(logging.INFO)  # Set default logging level\nlogger.addHandler(log_handler)\nlogger.addHandler(console_handler)\nprocess = None\n#######################################",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "console_handler",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "console_handler = logging.StreamHandler()\nconsole_handler.setFormatter(log_formatter)\nlogger = logging.getLogger('multipack_parser')  # Create a named logger\nlogger.setLevel(logging.INFO)  # Set default logging level\nlogger.addHandler(log_handler)\nlogger.addHandler(console_handler)\nprocess = None\n#######################################\n# Settings\nsettings = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "logger = logging.getLogger('multipack_parser')  # Create a named logger\nlogger.setLevel(logging.INFO)  # Set default logging level\nlogger.addHandler(log_handler)\nlogger.addHandler(console_handler)\nprocess = None\n#######################################\n# Settings\nsettings = None\n# Variables\nsettings_file = 'MultipackParser.conf'",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "process",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "process = None\n#######################################\n# Settings\nsettings = None\n# Variables\nsettings_file = 'MultipackParser.conf'\nVERSION = '1.5.7'\nrobot_ip = '192.168.0.1' # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette = 0",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "settings",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "settings = None\n# Variables\nsettings_file = 'MultipackParser.conf'\nVERSION = '1.5.7'\nrobot_ip = '192.168.0.1' # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette = 0\nUR20_palette1_empty = False\nUR20_palette2_empty = False\n# Audio",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "settings_file",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "settings_file = 'MultipackParser.conf'\nVERSION = '1.5.7'\nrobot_ip = '192.168.0.1' # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette = 0\nUR20_palette1_empty = False\nUR20_palette2_empty = False\n# Audio\naudio_muted = False\ntimestamp_scanner_fault = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "VERSION",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "VERSION = '1.5.7'\nrobot_ip = '192.168.0.1' # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette = 0\nUR20_palette1_empty = False\nUR20_palette2_empty = False\n# Audio\naudio_muted = False\ntimestamp_scanner_fault = None\n##########################",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "robot_ip",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "robot_ip = '192.168.0.1' # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette = 0\nUR20_palette1_empty = False\nUR20_palette2_empty = False\n# Audio\naudio_muted = False\ntimestamp_scanner_fault = None\n##########################\nPATH_USB_STICK = '..'",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "UR20_active_palette",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "UR20_active_palette = 0\nUR20_palette1_empty = False\nUR20_palette2_empty = False\n# Audio\naudio_muted = False\ntimestamp_scanner_fault = None\n##########################\nPATH_USB_STICK = '..'\nFILENAME = None\ng_PalettenDim = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "UR20_palette1_empty",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "UR20_palette1_empty = False\nUR20_palette2_empty = False\n# Audio\naudio_muted = False\ntimestamp_scanner_fault = None\n##########################\nPATH_USB_STICK = '..'\nFILENAME = None\ng_PalettenDim = None\ng_PaketDim  = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "UR20_palette2_empty",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "UR20_palette2_empty = False\n# Audio\naudio_muted = False\ntimestamp_scanner_fault = None\n##########################\nPATH_USB_STICK = '..'\nFILENAME = None\ng_PalettenDim = None\ng_PaketDim  = None\ng_LageArten = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "audio_muted",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "audio_muted = False\ntimestamp_scanner_fault = None\n##########################\nPATH_USB_STICK = '..'\nFILENAME = None\ng_PalettenDim = None\ng_PaketDim  = None\ng_LageArten = None\ng_Daten = None\ng_LageZuordnung = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "timestamp_scanner_fault",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "timestamp_scanner_fault = None\n##########################\nPATH_USB_STICK = '..'\nFILENAME = None\ng_PalettenDim = None\ng_PaketDim  = None\ng_LageArten = None\ng_Daten = None\ng_LageZuordnung = None\ng_PaketPos = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "PATH_USB_STICK",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "PATH_USB_STICK = '..'\nFILENAME = None\ng_PalettenDim = None\ng_PaketDim  = None\ng_LageArten = None\ng_Daten = None\ng_LageZuordnung = None\ng_PaketPos = None\ng_AnzahlPakete = None\ng_AnzLagen = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "FILENAME",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "FILENAME = None\ng_PalettenDim = None\ng_PaketDim  = None\ng_LageArten = None\ng_Daten = None\ng_LageZuordnung = None\ng_PaketPos = None\ng_AnzahlPakete = None\ng_AnzLagen = None\ng_PaketeZuordnung = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "g_PalettenDim",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "g_PalettenDim = None\ng_PaketDim  = None\ng_LageArten = None\ng_Daten = None\ng_LageZuordnung = None\ng_PaketPos = None\ng_AnzahlPakete = None\ng_AnzLagen = None\ng_PaketeZuordnung = None\ng_Zwischenlagen = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "g_LageArten",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "g_LageArten = None\ng_Daten = None\ng_LageZuordnung = None\ng_PaketPos = None\ng_AnzahlPakete = None\ng_AnzLagen = None\ng_PaketeZuordnung = None\ng_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "g_Daten",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "g_Daten = None\ng_LageZuordnung = None\ng_PaketPos = None\ng_AnzahlPakete = None\ng_AnzLagen = None\ng_PaketeZuordnung = None\ng_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "g_LageZuordnung",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "g_LageZuordnung = None\ng_PaketPos = None\ng_AnzahlPakete = None\ng_AnzLagen = None\ng_PaketeZuordnung = None\ng_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "g_PaketPos",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "g_PaketPos = None\ng_AnzahlPakete = None\ng_AnzLagen = None\ng_PaketeZuordnung = None\ng_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "g_AnzahlPakete",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "g_AnzahlPakete = None\ng_AnzLagen = None\ng_PaketeZuordnung = None\ng_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "g_AnzLagen",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "g_AnzLagen = None\ng_PaketeZuordnung = None\ng_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "g_PaketeZuordnung",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "g_PaketeZuordnung = None\ng_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "g_Zwischenlagen",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "g_Zwischenlagen = None\ng_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur\n#List Index",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "g_Startlage",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "g_Startlage = None\ng_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur\n#List Index\nLI_PALETTE_DATA = 0",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "g_paket_quer",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "g_paket_quer = None\ng_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur\n#List Index\nLI_PALETTE_DATA = 0\nLI_PACKAGE_DATA = 1",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "g_CenterOfGravity",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "g_CenterOfGravity = None\ng_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur\n#List Index\nLI_PALETTE_DATA = 0\nLI_PACKAGE_DATA = 1\nLI_LAYERTYPES = 2",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "g_MassePaket",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "g_MassePaket = None\ng_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur\n#List Index\nLI_PALETTE_DATA = 0\nLI_PACKAGE_DATA = 1\nLI_LAYERTYPES = 2\nLI_NUMBER_OF_LAYERS = 3",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "g_Pick_Offset_X",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "g_Pick_Offset_X = None\ng_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur\n#List Index\nLI_PALETTE_DATA = 0\nLI_PACKAGE_DATA = 1\nLI_LAYERTYPES = 2\nLI_NUMBER_OF_LAYERS = 3\n#Palette Values",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "g_Pick_Offset_Y",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "g_Pick_Offset_Y = None\nui = None\n# Konstanten für Datenstruktur\n#List Index\nLI_PALETTE_DATA = 0\nLI_PACKAGE_DATA = 1\nLI_LAYERTYPES = 2\nLI_NUMBER_OF_LAYERS = 3\n#Palette Values\nLI_PALETTE_DATA_LENGTH = 0",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "ui",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "ui = None\n# Konstanten für Datenstruktur\n#List Index\nLI_PALETTE_DATA = 0\nLI_PACKAGE_DATA = 1\nLI_LAYERTYPES = 2\nLI_NUMBER_OF_LAYERS = 3\n#Palette Values\nLI_PALETTE_DATA_LENGTH = 0\nLI_PALETTE_DATA_WIDTH = 1",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_PALETTE_DATA",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_PALETTE_DATA = 0\nLI_PACKAGE_DATA = 1\nLI_LAYERTYPES = 2\nLI_NUMBER_OF_LAYERS = 3\n#Palette Values\nLI_PALETTE_DATA_LENGTH = 0\nLI_PALETTE_DATA_WIDTH = 1\nLI_PALETTE_DATA_HEIGHT = 2\n#Package Values\nLI_PACKAGE_DATA_LENGTH = 0",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_PACKAGE_DATA",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_PACKAGE_DATA = 1\nLI_LAYERTYPES = 2\nLI_NUMBER_OF_LAYERS = 3\n#Palette Values\nLI_PALETTE_DATA_LENGTH = 0\nLI_PALETTE_DATA_WIDTH = 1\nLI_PALETTE_DATA_HEIGHT = 2\n#Package Values\nLI_PACKAGE_DATA_LENGTH = 0\nLI_PACKAGE_DATA_WIDTH = 1",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_LAYERTYPES",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_LAYERTYPES = 2\nLI_NUMBER_OF_LAYERS = 3\n#Palette Values\nLI_PALETTE_DATA_LENGTH = 0\nLI_PALETTE_DATA_WIDTH = 1\nLI_PALETTE_DATA_HEIGHT = 2\n#Package Values\nLI_PACKAGE_DATA_LENGTH = 0\nLI_PACKAGE_DATA_WIDTH = 1\nLI_PACKAGE_DATA_HEIGHT = 2",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_NUMBER_OF_LAYERS",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_NUMBER_OF_LAYERS = 3\n#Palette Values\nLI_PALETTE_DATA_LENGTH = 0\nLI_PALETTE_DATA_WIDTH = 1\nLI_PALETTE_DATA_HEIGHT = 2\n#Package Values\nLI_PACKAGE_DATA_LENGTH = 0\nLI_PACKAGE_DATA_WIDTH = 1\nLI_PACKAGE_DATA_HEIGHT = 2\nLI_PACKAGE_DATA_GAP = 3",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_PALETTE_DATA_LENGTH",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_PALETTE_DATA_LENGTH = 0\nLI_PALETTE_DATA_WIDTH = 1\nLI_PALETTE_DATA_HEIGHT = 2\n#Package Values\nLI_PACKAGE_DATA_LENGTH = 0\nLI_PACKAGE_DATA_WIDTH = 1\nLI_PACKAGE_DATA_HEIGHT = 2\nLI_PACKAGE_DATA_GAP = 3\n#Position Values\nLI_POSITION_XP = 0",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_PALETTE_DATA_WIDTH",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_PALETTE_DATA_WIDTH = 1\nLI_PALETTE_DATA_HEIGHT = 2\n#Package Values\nLI_PACKAGE_DATA_LENGTH = 0\nLI_PACKAGE_DATA_WIDTH = 1\nLI_PACKAGE_DATA_HEIGHT = 2\nLI_PACKAGE_DATA_GAP = 3\n#Position Values\nLI_POSITION_XP = 0\nLI_POSITION_YP = 1",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_PALETTE_DATA_HEIGHT",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_PALETTE_DATA_HEIGHT = 2\n#Package Values\nLI_PACKAGE_DATA_LENGTH = 0\nLI_PACKAGE_DATA_WIDTH = 1\nLI_PACKAGE_DATA_HEIGHT = 2\nLI_PACKAGE_DATA_GAP = 3\n#Position Values\nLI_POSITION_XP = 0\nLI_POSITION_YP = 1\nLI_POSITION_AP = 2",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_PACKAGE_DATA_LENGTH",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_PACKAGE_DATA_LENGTH = 0\nLI_PACKAGE_DATA_WIDTH = 1\nLI_PACKAGE_DATA_HEIGHT = 2\nLI_PACKAGE_DATA_GAP = 3\n#Position Values\nLI_POSITION_XP = 0\nLI_POSITION_YP = 1\nLI_POSITION_AP = 2\nLI_POSITION_XD = 3\nLI_POSITION_YD = 4",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_PACKAGE_DATA_WIDTH",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_PACKAGE_DATA_WIDTH = 1\nLI_PACKAGE_DATA_HEIGHT = 2\nLI_PACKAGE_DATA_GAP = 3\n#Position Values\nLI_POSITION_XP = 0\nLI_POSITION_YP = 1\nLI_POSITION_AP = 2\nLI_POSITION_XD = 3\nLI_POSITION_YD = 4\nLI_POSITION_AD = 5",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_PACKAGE_DATA_HEIGHT",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_PACKAGE_DATA_HEIGHT = 2\nLI_PACKAGE_DATA_GAP = 3\n#Position Values\nLI_POSITION_XP = 0\nLI_POSITION_YP = 1\nLI_POSITION_AP = 2\nLI_POSITION_XD = 3\nLI_POSITION_YD = 4\nLI_POSITION_AD = 5\nLI_POSITION_NOP = 6",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_PACKAGE_DATA_GAP",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_PACKAGE_DATA_GAP = 3\n#Position Values\nLI_POSITION_XP = 0\nLI_POSITION_YP = 1\nLI_POSITION_AP = 2\nLI_POSITION_XD = 3\nLI_POSITION_YD = 4\nLI_POSITION_AD = 5\nLI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_POSITION_XP",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_POSITION_XP = 0\nLI_POSITION_YP = 1\nLI_POSITION_AP = 2\nLI_POSITION_XD = 3\nLI_POSITION_YD = 4\nLI_POSITION_AD = 5\nLI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_POSITION_YP",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_POSITION_YP = 1\nLI_POSITION_AP = 2\nLI_POSITION_XD = 3\nLI_POSITION_YD = 4\nLI_POSITION_AD = 5\nLI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_POSITION_AP",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_POSITION_AP = 2\nLI_POSITION_XD = 3\nLI_POSITION_YD = 4\nLI_POSITION_AD = 5\nLI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_POSITION_XD",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_POSITION_XD = 3\nLI_POSITION_YD = 4\nLI_POSITION_AD = 5\nLI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_POSITION_YD",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_POSITION_YD = 4\nLI_POSITION_AD = 5\nLI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_POSITION_AD",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_POSITION_AD = 5\nLI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_POSITION_NOP",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_POSITION_NOP = 6\nLI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_POSITION_XVEC",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_POSITION_XVEC = 7\nLI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "LI_POSITION_YVEC",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "LI_POSITION_YVEC = 8\n#Number of Entries\nNOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "NOE_PALETTE_VALUES",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "NOE_PALETTE_VALUES = 3\nNOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "NOE_PACKAGE_VALUES",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "NOE_PACKAGE_VALUES = 4\nNOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "NOE_LAYERTYPES_VALUES",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "NOE_LAYERTYPES_VALUES = 1\nNOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "NOE_NUMBER_OF_LAYERS",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "NOE_NUMBER_OF_LAYERS = 1\nNOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "NOE_PACKAGE_PER_LAYER",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "NOE_PACKAGE_PER_LAYER = 1\nNOE_PACKAGE_POSITION_INFO = 9",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "NOE_PACKAGE_POSITION_INFO",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "NOE_PACKAGE_POSITION_INFO = 9",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
         "label": "Settings",
         "kind": 6,
         "importPath": "utils.settings",
@@ -1777,7 +1360,7 @@
         "kind": 2,
         "importPath": "utils.UR10_Server_functions",
         "description": "utils.UR10_Server_functions",
-        "peekOfCode": "def UR10_scanner1and2niobild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"\n    global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner1&2nio.png'))\n    return\ndef UR10_scanner1bild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"",
+        "peekOfCode": "def UR10_scanner1and2niobild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.label_7:\n        global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner1&2nio.png'))\n    return\ndef UR10_scanner1bild():\n    \"\"\"\n    Set the scanner image.",
         "detail": "utils.UR10_Server_functions",
         "documentation": {}
     },
@@ -1786,7 +1369,7 @@
         "kind": 2,
         "importPath": "utils.UR10_Server_functions",
         "description": "utils.UR10_Server_functions",
-        "peekOfCode": "def UR10_scanner1bild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"\n    global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner1nio.png'))\n    return\ndef UR10_scanner2bild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"",
+        "peekOfCode": "def UR10_scanner1bild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.label_7:\n        global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner1nio.png'))\n    return\ndef UR10_scanner2bild():\n    \"\"\"\n    Set the scanner image.",
         "detail": "utils.UR10_Server_functions",
         "documentation": {}
     },
@@ -1795,7 +1378,7 @@
         "kind": 2,
         "importPath": "utils.UR10_Server_functions",
         "description": "utils.UR10_Server_functions",
-        "peekOfCode": "def UR10_scanner2bild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"\n    global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner2nio.png'))\n    return\ndef UR10_scanner1and2iobild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"",
+        "peekOfCode": "def UR10_scanner2bild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.label_7:\n        global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner2nio.png'))\n    return\ndef UR10_scanner1and2iobild():\n    \"\"\"\n    Set the scanner image.",
         "detail": "utils.UR10_Server_functions",
         "documentation": {}
     },
@@ -1804,7 +1387,7 @@
         "kind": 2,
         "importPath": "utils.UR10_Server_functions",
         "description": "utils.UR10_Server_functions",
-        "peekOfCode": "def UR10_scanner1and2iobild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"\n    global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scannerio.png'))\n    return",
+        "peekOfCode": "def UR10_scanner1and2iobild():\n    \"\"\"\n    Set the scanner image.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.label_7:\n        global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scannerio.png'))\n    return",
         "detail": "utils.UR10_Server_functions",
         "documentation": {}
     },
@@ -1813,7 +1396,7 @@
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_scannerStatus(status: str):\n    \"\"\"\n    Set the scanner status.\n    \"\"\"\n    if not status == \"True,True,True\" and global_vars.timestamp_scanner_fault is None:\n        global_vars.timestamp_scanner_fault = time.time()\n        update_status_label(\"Bitte Arbeitsbereich räumen.\", \"red\", True)\n    match status:\n        case \"True,True,True\":\n            global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1&2&3io.png'))",
+        "peekOfCode": "def UR20_scannerStatus(status: str) -> int:\n    \"\"\"\n    Set the scanner status.\n    \"\"\"\n    if not status == \"True,True,True\" and global_vars.timestamp_scanner_fault is None:\n        global_vars.timestamp_scanner_fault = time.time()\n        update_status_label(\"Bitte Arbeitsbereich räumen.\", \"red\", True)\n    if global_vars.ui and global_vars.ui.label_7:\n        match status:\n            case \"True,True,True\":",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -1822,7 +1405,7 @@
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_SetActivePalette(pallet_number):\n    '''\n    pallet_number: number of pallet\n    returns: \n        1 if pallet was set\n        0 if pallet was not set\n    '''\n    # TODO: Set the active pallet to the given pallet number\n    # Check if requested pallet is empty before setting it\n    if pallet_number == 1 and not global_vars.UR20_palette1_empty:",
+        "peekOfCode": "def UR20_SetActivePalette(pallet_number) -> Literal[0] | Literal[1]:\n    '''\n    pallet_number: number of pallet\n    returns: \n        1 if pallet was set\n        0 if pallet was not set\n    '''\n    # TODO: Set the active pallet to the given pallet number\n    # Check if requested pallet is empty before setting it\n    if pallet_number == 1 and not global_vars.UR20_palette1_empty:",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -1831,7 +1414,7 @@
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_GetActivePaletteNumber():\n    '''\n    returns: \n        current number of active pallet\n        where 1 is the first pallet and 2 is the second pallet and 0 is no pallet\n    '''\n    # TODO: Check to see what pallet is currently active\n    return global_vars.UR20_active_palette\n# get pallet status\ndef UR20_GetPaletteStatus(pallet_number):",
+        "peekOfCode": "def UR20_GetActivePaletteNumber() -> int:\n    '''\n    returns: \n        current number of active pallet\n        where 1 is the first pallet and 2 is the second pallet and 0 is no pallet\n    '''\n    # TODO: Check to see what pallet is currently active\n    return global_vars.UR20_active_palette\n# get pallet status\ndef UR20_GetPaletteStatus(pallet_number) -> Literal[1] | Literal[0] | Literal[-1]:",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -1840,7 +1423,7 @@
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_GetPaletteStatus(pallet_number):\n    '''\n    pallet_number: number of pallet\n    returns: \n        1 if pallet is empty\n        0 if pallet is full\n        -1 if pallet number is invalid\n    '''\n    # TODO: check if the given pallet number is valid and if the according pallet space is empty or not\n    match pallet_number:",
+        "peekOfCode": "def UR20_GetPaletteStatus(pallet_number) -> Literal[1] | Literal[0] | Literal[-1]:\n    '''\n    pallet_number: number of pallet\n    returns: \n        1 if pallet is empty\n        0 if pallet is full\n        -1 if pallet number is invalid\n    '''\n    # TODO: check if the given pallet number is valid and if the according pallet space is empty or not\n    match pallet_number:",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -1849,7 +1432,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_SetFileName(Artikelnummer):\n    \"\"\"\n    Set the filename.\n    Args:\n        Artikelnummer (str): The article number.\n    Returns:\n        str: The filename.\n    \"\"\"\n    global_vars.FILENAME = (Artikelnummer + '.rob')\n    logger.debug(f\"{global_vars.FILENAME=}\")",
+        "peekOfCode": "def UR_SetFileName(Artikelnummer) -> str:\n    \"\"\"\n    Set the filename.\n    Args:\n        Artikelnummer (str): The article number.\n    Returns:\n        str: The filename.\n    \"\"\"\n    global_vars.FILENAME = (Artikelnummer + '.rob')\n    logger.debug(f\"{global_vars.FILENAME=}\")",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -1858,7 +1441,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_ReadDataFromUsbStick():\n    \"\"\"\n    Read data from the Path_USB_STICK.\n    This function reads the data from the Path_USB_STICK and stores it in global variables.\n    Returns:\n        int: 1 if the data was read successfully, 0 otherwise.\n    \"\"\"\n    global_vars.g_Daten = []\n    global_vars.g_LageZuordnung = []\n    global_vars.g_PaketPos = []",
+        "peekOfCode": "def UR_ReadDataFromUsbStick() -> Literal[0] | Literal[1]:\n    \"\"\"\n    Read data from the Path_USB_STICK.\n    This function reads the data from the Path_USB_STICK and stores it in global variables.\n    Returns:\n        int: 1 if the data was read successfully, 0 otherwise.\n    \"\"\"\n    global_vars.g_Daten = []\n    global_vars.g_LageZuordnung = []\n    global_vars.g_PaketPos = []",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -1867,7 +1450,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def Check_Einzelpaket_längs_greifen(package_length: float):\n    \"\"\"\n    Check if it would be better to use the Einzelpaket längs greifen.\n    Pre-sets the Einzelpaket längs greifen checkbox.\n    \"\"\"\n    if package_length >= 265:\n        global_vars.ui.checkBoxEinzelpaket.setChecked(True)\n    else:\n        global_vars.ui.checkBoxEinzelpaket.setChecked(False)\n#funktion für den roboter ",
+        "peekOfCode": "def Check_Einzelpaket_längs_greifen(package_length: int) -> None:\n    \"\"\"Check if package should be gripped lengthwise.\"\"\"\n    if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:\n        if package_length >= 265:\n            global_vars.ui.checkBoxEinzelpaket.setChecked(True)\n        else:\n            global_vars.ui.checkBoxEinzelpaket.setChecked(False)\n#funktion für den roboter \ndef UR_Palette() -> List[int] | None:\n    \"\"\"",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -1876,7 +1459,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_Palette():\n    \"\"\"\n    Get the palette dimensions.\n    Returns:\n        list: The palette dimensions.\n    \"\"\"\n    return global_vars.g_PalettenDim\ndef UR_Karton():\n    \"\"\"\n    Get the carton dimensions.",
+        "peekOfCode": "def UR_Palette() -> List[int] | None:\n    \"\"\"\n    Get the palette dimensions.\n    Returns:\n        list: The palette dimensions.\n    \"\"\"\n    return global_vars.g_PalettenDim\ndef UR_Karton():\n    \"\"\"\n    Get the carton dimensions.",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -1912,7 +1495,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_PaketPos(Nummer):\n    \"\"\"\n    Get the package position, with coordinate transformation for palette 2.\n    Args:\n        Nummer (int): The package number.\n    Returns:\n        list: The package position [px, py, pr, x, y, r, n, dx, dy], transformed if needed\n    \"\"\"\n    pos = global_vars.g_PaketPos[Nummer]\n    if global_vars.UR20_active_palette == 2:",
+        "peekOfCode": "def UR_PaketPos(Nummer):\n    \"\"\"\n    Get the package position, with coordinate transformation for palette 2.\n    Args:\n        Nummer (int): The package number.\n    Returns:\n        list: The package position [px, py, pr, x, y, r, n, dx, dy], transformed if needed\n    \"\"\"\n    if global_vars.g_PaketPos is None:\n        logger.error(\"Package positions not initialized\")",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -1939,7 +1522,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_PaketeZuordnung():\n    \"\"\"\n    Get the package order.\n    Returns:\n        list: The package order.\n    \"\"\"\n    return global_vars.g_PaketeZuordnung\n#den \"center of gravity\" messen\ndef UR_CoG(Masse_Paket,Masse_Greifer,Anzahl_Pakete=1):\n    \"\"\"",
+        "peekOfCode": "def UR_PaketeZuordnung():\n    \"\"\"\n    Get the package order.\n    Returns:\n        list: The package order.\n    \"\"\"\n    return global_vars.g_PaketeZuordnung\n#den \"center of gravity\" messen\ndef UR_CoG(Masse_Paket, Masse_Greifer, Anzahl_Pakete=1) -> None | List[float]:\n    \"\"\"",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -1948,7 +1531,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_CoG(Masse_Paket,Masse_Greifer,Anzahl_Pakete=1):\n    \"\"\"\n    Calculate the center of gravity.\n    Args:\n        Masse_Paket (float): The mass of the package.\n        Masse_Greifer (float): The mass of the carton.\n        Anzahl_Pakete (int, optional): The number of packages. Defaults to 1.\n    Returns:\n        list: The center of gravity.\n    \"\"\"",
+        "peekOfCode": "def UR_CoG(Masse_Paket, Masse_Greifer, Anzahl_Pakete=1) -> None | List[float]:\n    \"\"\"\n    Calculate the center of gravity.\n    Args:\n        Masse_Paket (float): The mass of the package.\n        Masse_Greifer (float): The mass of the carton.\n        Anzahl_Pakete (int, optional): The number of packages. Defaults to 1.\n    Returns:\n        list: The center of gravity.\n    \"\"\"",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -1957,7 +1540,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_Paket_hoehe():\n    \"\"\"\n    Set the package height.\n    Returns:\n        int: The package height.\n    \"\"\"\n    global_vars.g_PaketDim[2] = int(global_vars.ui.EingabeKartonhoehe.text())\n    return global_vars.g_PaketDim[2]\ndef UR_Startlage():\n    \"\"\"",
+        "peekOfCode": "def UR_Paket_hoehe() -> int:\n    \"\"\"\n    Set the package height.\n    Returns:\n        int: The package height.\n    \"\"\"\n    if global_vars.g_PaketDim is None:\n        logger.error(\"Package dimensions not initialized\")\n        return 0\n    if global_vars.ui and global_vars.ui.EingabeKartonhoehe:",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -1966,7 +1549,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_Startlage():\n    \"\"\"\n    Set the start layer.\n    Returns:\n        int: The start layer.\n    \"\"\"\n    global_vars.g_Startlage = int(global_vars.ui.EingabeStartlage.value())\n    return global_vars.g_Startlage\ndef UR_MasseGeschaetzt():\n    \"\"\"",
+        "peekOfCode": "def UR_Startlage() -> int:\n    \"\"\"Set the start layer.\"\"\"\n    if global_vars.ui and global_vars.ui.EingabeStartlage:\n        global_vars.g_Startlage = int(global_vars.ui.EingabeStartlage.value())\n        return global_vars.g_Startlage\n    return 0\ndef UR_MasseGeschaetzt() -> float:\n    \"\"\"Set the mass of the carton.\"\"\"\n    if global_vars.ui and global_vars.ui.EingabeKartonGewicht:\n        global_vars.g_MassePaket = float(global_vars.ui.EingabeKartonGewicht.text())",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -1975,7 +1558,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_MasseGeschaetzt():\n    \"\"\"\n    Set the mass of the carton.\n    Returns:\n        float: The mass of the carton.\n    \"\"\" \n    global_vars.g_MassePaket = float(global_vars.ui.EingabeKartonGewicht.text())\n    return global_vars.g_MassePaket\ndef UR_PickOffsetX():\n    \"\"\"",
+        "peekOfCode": "def UR_MasseGeschaetzt() -> float:\n    \"\"\"Set the mass of the carton.\"\"\"\n    if global_vars.ui and global_vars.ui.EingabeKartonGewicht:\n        global_vars.g_MassePaket = float(global_vars.ui.EingabeKartonGewicht.text())\n        return global_vars.g_MassePaket\n    return 0.0\ndef UR_PickOffsetX() -> int:\n    \"\"\"Set the pick offset in x direction.\"\"\"\n    if global_vars.ui and global_vars.ui.EingabeVerschiebungX:\n        global_vars.g_Pick_Offset_X = int(global_vars.ui.EingabeVerschiebungX.value())",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -1984,7 +1567,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_PickOffsetX():\n    \"\"\"\n    Set the pick offset in x direction.\n    Returns:\n        int: The pick offset in x direction.\n    \"\"\"\n    #global_vars.ui\n    global_vars.g_Pick_Offset_X = int(global_vars.ui.EingabeVerschiebungX.value())\n    return global_vars.g_Pick_Offset_X\ndef UR_PickOffsetY():",
+        "peekOfCode": "def UR_PickOffsetX() -> int:\n    \"\"\"Set the pick offset in x direction.\"\"\"\n    if global_vars.ui and global_vars.ui.EingabeVerschiebungX:\n        global_vars.g_Pick_Offset_X = int(global_vars.ui.EingabeVerschiebungX.value())\n        return global_vars.g_Pick_Offset_X\n    return 0\ndef UR_PickOffsetY() -> int:\n    \"\"\"Set the pick offset in y direction.\"\"\"\n    if global_vars.ui and global_vars.ui.EingabeVerschiebungY:\n        global_vars.g_Pick_Offset_Y = int(global_vars.ui.EingabeVerschiebungY.value())",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -1993,7 +1576,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_PickOffsetY():\n    \"\"\"\n    Set the pick offset in y direction.\n    Returns:\n        int: The pick offset in y direction.\n    \"\"\"\n    #global_vars.ui\n    global_vars.g_Pick_Offset_Y = int(global_vars.ui.EingabeVerschiebungY.value())\n    return global_vars.g_Pick_Offset_Y\ndef UR_Quergreifen():",
+        "peekOfCode": "def UR_PickOffsetY() -> int:\n    \"\"\"Set the pick offset in y direction.\"\"\"\n    if global_vars.ui and global_vars.ui.EingabeVerschiebungY:\n        global_vars.g_Pick_Offset_Y = int(global_vars.ui.EingabeVerschiebungY.value())\n        return global_vars.g_Pick_Offset_Y\n    return 0\ndef UR_Quergreifen() -> bool:\n    \"\"\"Query the robot.\"\"\"\n    if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:\n        logger.debug(f\"{global_vars.ui.checkBoxEinzelpaket.isChecked()=}\")",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -2002,7 +1585,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_Quergreifen():\n    \"\"\"\n    Query the robot.\n    Returns:\n        bool: True if the robot is queried, False otherwise.\n    \"\"\"\n    #global_vars.ui\n    logger.debug(f\"{global_vars.ui.checkBoxEinzelpaket.isChecked()=}\")\n    return global_vars.ui.checkBoxEinzelpaket.isChecked()",
+        "peekOfCode": "def UR_Quergreifen() -> bool:\n    \"\"\"Query the robot.\"\"\"\n    if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:\n        logger.debug(f\"{global_vars.ui.checkBoxEinzelpaket.isChecked()=}\")\n        return global_vars.ui.checkBoxEinzelpaket.isChecked()\n    return False",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -2011,7 +1594,7 @@
         "kind": 5,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "logger = global_vars.logger\n#Dateiname abfragen\ndef UR_SetFileName(Artikelnummer):\n    \"\"\"\n    Set the filename.\n    Args:\n        Artikelnummer (str): The article number.\n    Returns:\n        str: The filename.\n    \"\"\"",
+        "peekOfCode": "logger = global_vars.logger\n#Dateiname abfragen\ndef UR_SetFileName(Artikelnummer) -> str:\n    \"\"\"\n    Set the filename.\n    Args:\n        Artikelnummer (str): The article number.\n    Returns:\n        str: The filename.\n    \"\"\"",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -2142,11 +1725,20 @@
         "documentation": {}
     },
     {
+        "label": "Page",
+        "kind": 6,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "class Page(Enum):\n    MAIN_PAGE = 0\n    PARAMETER_PAGE = 1\n    SETTINGS_PAGE = 2\ndef open_password_dialog() -> None:\n    \"\"\"\n    Open the password dialog.\n    \"\"\"\n    from ui_files.PasswordDialog import PasswordEntryDialog\n    dialog = PasswordEntryDialog(parent_window=main_window)",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
         "label": "CustomDoubleValidator",
         "kind": 6,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "class CustomDoubleValidator(QDoubleValidator):\n    \"\"\"\n    Custom double validator.\n    This class inherits from QDoubleValidator and overrides the validate method to allow\n    commas to be used as decimal separators.\n    \"\"\"\n    def validate(self, usr_input, pos):\n        \"\"\"\n        Validate the input.\n        Args:",
+        "peekOfCode": "class CustomDoubleValidator(QDoubleValidator):\n    \"\"\"Custom double validator that allows commas to be used as decimal separators.\"\"\"\n    def validate(self, arg__1: str, arg__2: int) -> object:\n        \"\"\"Validate the input.\"\"\"\n        return super().validate(arg__1.replace(',', '.'), arg__2)\n    def fixup(self, input: str) -> str:\n        \"\"\"Fixup the input.\"\"\"\n        return input.replace(',', '.')\n# Main function to run the application\ndef main():",
         "detail": "main",
         "documentation": {}
     },
@@ -2155,7 +1747,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def server_start():\n    \"\"\"\n    Start the XMLRPC server.\n    Returns:\n        0\n    \"\"\"\n    global server\n    server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)\n    logger.debug(\"Start Server\")\n    try:",
+        "peekOfCode": "def server_start() -> Literal[0]:\n    \"\"\"\n    Start the XMLRPC server.\n    Returns:\n        0\n    \"\"\"\n    global server\n    server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)\n    logger.debug(\"Start Server\")\n    try:",
         "detail": "main",
         "documentation": {}
     },
@@ -2164,7 +1756,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def server_stop():\n    \"\"\"\n    Stop the XMLRPC server.\n    \"\"\"\n    global_vars.ui.ButtonStopRPCServer.setEnabled(False)\n    server.shutdown()\n    logger.debug(\"Server stopped\")\n    datensenden_manipulation(True, \"Server starten\", \"\")\ndef server_thread():\n    \"\"\"",
+        "peekOfCode": "def server_stop() -> None:\n    \"\"\"\n    Stop the XMLRPC server.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n        global_vars.ui.ButtonStopRPCServer.setEnabled(False)\n    server.shutdown()\n    logger.debug(\"Server stopped\")\n    datensenden_manipulation(True, \"Server starten\", \"\")\ndef server_thread() -> None:",
         "detail": "main",
         "documentation": {}
     },
@@ -2173,7 +1765,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def server_thread():\n    \"\"\"\n    Start the XMLRPC server in a separate thread.\n    \"\"\"\n    logger.debug(\"Starting server thread\")\n    xServerThread = threading.Thread(target=server_start)\n    xServerThread.start()\n    global_vars.ui.ButtonStopRPCServer.setEnabled(True)\n    datensenden_manipulation(False, \"Server läuft\", \"green\")\ndef datensenden_manipulation(visibility: bool, display_text: str, display_colour: str):",
+        "peekOfCode": "def server_thread() -> None:\n    \"\"\"\n    Start the XMLRPC server in a separate thread.\n    \"\"\"\n    logger.debug(\"Starting server thread\")\n    xServerThread = threading.Thread(target=server_start)\n    xServerThread.start()\n    if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n        global_vars.ui.ButtonStopRPCServer.setEnabled(True)\n    datensenden_manipulation(False, \"Server läuft\", \"green\")",
         "detail": "main",
         "documentation": {}
     },
@@ -2182,7 +1774,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def datensenden_manipulation(visibility: bool, display_text: str, display_colour: str):\n    \"\"\"\n    Manipulate the visibility of the \"Daten Senden\" button and the display text.\n    \"\"\"\n    buttons = [global_vars.ui.ButtonDatenSenden, global_vars.ui.ButtonDatenSenden_2]\n    for button in buttons:\n        button.setStyleSheet(f\"color: {display_colour}\")\n        button.setEnabled(visibility)\n        button.setText(display_text)\ndef send_cmd_play():",
+        "peekOfCode": "def datensenden_manipulation(visibility: bool, display_text: str, display_colour: str) -> None:\n    \"\"\"Manipulate the visibility of the \"Daten Senden\" button and the display text.\"\"\"\n    if global_vars.ui:\n        buttons = []\n        if hasattr(global_vars.ui, 'ButtonDatenSenden'):\n            buttons.append(global_vars.ui.ButtonDatenSenden)\n        if hasattr(global_vars.ui, 'ButtonDatenSenden_2'):\n            buttons.append(global_vars.ui.ButtonDatenSenden_2)\n        for button in buttons:\n            button.setStyleSheet(f\"color: {display_colour}\")",
         "detail": "main",
         "documentation": {}
     },
@@ -2191,7 +1783,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def send_cmd_play():\n    \"\"\"\n    Send a command to the robot to start.\n    \"\"\"\n    try:\n        # Create a TCP/IP socket\n        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))",
+        "peekOfCode": "def send_cmd_play() -> None:\n    \"\"\"\n    Send a command to the robot to start.\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))\n        sock.connect(server_address)",
         "detail": "main",
         "documentation": {}
     },
@@ -2200,7 +1792,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def send_cmd_pause():\n    \"\"\"\n    Send a command to the robot to pause.\n    \"\"\"\n    try:\n        # Create a TCP/IP socket\n        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))",
+        "peekOfCode": "def send_cmd_pause() -> None:\n    \"\"\"\n    Send a command to the robot to pause.\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))\n        sock.connect(server_address)",
         "detail": "main",
         "documentation": {}
     },
@@ -2209,7 +1801,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def send_cmd_stop():\n    \"\"\"\n    Send a command to the robot to stop.\n    \"\"\"\n    try:\n        # Create a TCP/IP socket\n        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))",
+        "peekOfCode": "def send_cmd_stop() -> None:\n    \"\"\"\n    Send a command to the robot to stop.\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))\n        sock.connect(server_address)",
         "detail": "main",
         "documentation": {}
     },
@@ -2218,7 +1810,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def update_status_label(text: str, color: str, blink: bool = False, second_color: str = None):\n    \"\"\"Update the status label with the given text and color\"\"\"\n    # Create blinking label if it doesn't exist\n    if not hasattr(global_vars, 'blinking_label'):\n        global_vars.blinking_label = BlinkingLabel(\n            text, \n            color, \n            global_vars.ui.LabelPalletenplanInfo.geometry(), \n            parent=global_vars.ui.stackedWidget.widget(0),\n            second_color=second_color,",
+        "peekOfCode": "def update_status_label(text: str, color: str, blink: bool = False, second_color: str | None = None) -> None:\n    \"\"\"Update the status label with the given text and color\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    if not hasattr(global_vars.ui, 'LabelPalletenplanInfo'):\n        logger.error(\"Label not found in UI\")\n        return\n    global_vars.blinking_label = BlinkingLabel(\n        text, ",
         "detail": "main",
         "documentation": {}
     },
@@ -2227,34 +1819,16 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def open_password_dialog() -> None:\n    \"\"\"\n    Open the password dialog.\n    \"\"\"\n    from ui_files.PasswordDialog import PasswordEntryDialog  # Import here instead of top\n    dialog = PasswordEntryDialog(parent_window=main_window)\n    #dialog.setModal(False) #cant set to true because it will block the qtvirtualkeyboard\n    dialog.show()\n    dialog.ui.lineEdit.setFocus()\n    dialog.exec()",
+        "peekOfCode": "def open_password_dialog() -> None:\n    \"\"\"\n    Open the password dialog.\n    \"\"\"\n    from ui_files.PasswordDialog import PasswordEntryDialog\n    dialog = PasswordEntryDialog(parent_window=main_window)\n    if hasattr(dialog, 'ui') and dialog.ui is not None:\n        dialog.show()\n        dialog.ui.lineEdit.setFocus()\n        dialog.exec()",
         "detail": "main",
         "documentation": {}
     },
     {
-        "label": "open_settings_page",
+        "label": "open_page",
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def open_settings_page() -> None:\n    \"\"\"\n    Open the settings page.\n    \"\"\"\n    # set page of the stacked widgets to index 2\n    settings.reset_unsaved_changes()\n    global_vars.ui.stackedWidget.setCurrentIndex(2)\ndef open_parameter_page() -> None:\n    \"\"\"\n    Open the parameter page.",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "open_parameter_page",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def open_parameter_page() -> None:\n    \"\"\"\n    Open the parameter page.\n    \"\"\"\n    # set page of the stacked widgets to index 1\n    global_vars.ui.tabWidget.setCurrentIndex(0)\n    global_vars.ui.stackedWidget.setCurrentIndex(1)\ndef open_main_page() -> None:\n    \"\"\"\n    Open the main page.",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "open_main_page",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def open_main_page() -> None:\n    \"\"\"\n    Open the main page.\n    \"\"\"\n    # set page of the stacked widgets to index 0\n    global_vars.ui.stackedWidget.setCurrentIndex(0)\ndef open_explorer() -> None:\n    \"\"\"\n    Open the explorer.\n    \"\"\"",
+        "peekOfCode": "def open_page(page: Page) -> None:\n    \"\"\"\n    Open the specified page.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.stackedWidget:\n        if page == Page.SETTINGS_PAGE:\n            settings.reset_unsaved_changes()\n        global_vars.ui.tabWidget.setCurrentIndex(0)            \n        global_vars.ui.stackedWidget.setCurrentIndex(page.value)\ndef open_explorer() -> None:",
         "detail": "main",
         "documentation": {}
     },
@@ -2281,7 +1855,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def load() -> None:\n    \"\"\"\n    Load the selected file.\n    This function is called when the user clicks the \"Lade Palettenplan\" button.\n    \"\"\"\n    # get the value of the EingabePalettenplan text box and run UR_SET_FILENAME then check if the file exists and if it doesnt open a message box\n    Artikelnummer = global_vars.ui.EingabePallettenplan.text()\n    UR.UR_SetFileName(Artikelnummer)\n    errorReadDataFromUsbStick = UR.UR_ReadDataFromUsbStick()\n    if errorReadDataFromUsbStick == 1:",
+        "peekOfCode": "def load() -> None:\n    \"\"\"Load the pallet plan from file.\"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):\n        logger.error(\"UI not initialized\")\n        return\n    Artikelnummer = global_vars.ui.EingabePallettenplan.text()\n    UR.UR_SetFileName(Artikelnummer)\n    errorReadDataFromUsbStick = UR.UR_ReadDataFromUsbStick()\n    if errorReadDataFromUsbStick:\n        logger.error(f\"Error reading file for {Artikelnummer=} no file found\")",
         "detail": "main",
         "documentation": {}
     },
@@ -2326,7 +1900,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def open_file():\n    \"\"\"\n    Open a file.\n    This function is called when the user clicks the \"Open\" button in the editor settings tab.\n    \"\"\"\n    # Open a file browser to select a file\n    file_path, _ = QFileDialog.getOpenFileName(parent=main_window, caption=\"Open File\")\n    global_vars.ui.lineEditFilePath.setText(file_path)\n    logger.debug(f\"File path: {global_vars.ui.lineEditFilePath.text()}\")\n    # Open the selected file and load its content into the text edit widget",
+        "peekOfCode": "def open_file() -> None:\n    \"\"\"Open a file.\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path, _ = QFileDialog.getOpenFileName(parent=main_window, caption=\"Open File\")\n    if not file_path:\n        return\n    global_vars.ui.lineEditFilePath.setText(file_path)\n    logger.debug(f\"File path: {file_path}\")",
         "detail": "main",
         "documentation": {}
     },
@@ -2335,7 +1909,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def save_open_file():\n    \"\"\"\n    Save or open a file.\n    This function is called when the user clicks the \"Speichern\" button in the editor settings tab.\n    \"\"\"\n    # save the file to the selected file path but prompt the user before overwriting the file\n    file_path = global_vars.ui.lineEditFilePath.text()\n    if file_path:\n        if os.path.exists(file_path):\n            overwrite = QMessageBox.question(main_window, \"Overwrite File?\", f\"The file {file_path} already exists. Do you want to overwrite it?\", QMessageBox.Yes | QMessageBox.No)",
+        "peekOfCode": "def save_open_file() -> None:\n    \"\"\"Save or open a file.\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path = global_vars.ui.lineEditFilePath.text()\n    if not file_path:\n        logger.debug(\"No file path specified\")\n        QMessageBox.warning(main_window, \"Error\", \"Please select a file to save.\")\n        return",
         "detail": "main",
         "documentation": {}
     },
@@ -2344,7 +1918,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def execute_command():\n    \"\"\"\n    Execute a command in the console.\n    \"\"\"\n    command = global_vars.ui.lineEditCommand.text().strip()\n    # Check if the command starts with \">\"\n    if command.startswith(\"> \"):\n        command = command[2:].strip()  # Remove the \"> \" prefix\n    if not command:\n        return",
+        "peekOfCode": "def execute_command() -> None:\n    \"\"\"Execute a command in the console.\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    command = global_vars.ui.lineEditCommand.text().strip()\n    # Check if the command starts with \">\"\n    if command.startswith(\"> \"):\n        command = command[2:].strip()\n    if not command:",
         "detail": "main",
         "documentation": {}
     },
@@ -2353,7 +1927,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def handle_stdout():\n    \"\"\"\n    Handle standard output.\n    \"\"\"\n    data = global_vars.process.readAllStandardOutput()\n    stdout = bytes(data).decode(\"utf-8\", errors=\"replace\")\n    global_vars.ui.textEditConsole.append(stdout)\ndef handle_stderr():\n    \"\"\"\n    Handle standard error output.",
+        "peekOfCode": "def handle_stdout() -> None:\n    \"\"\"Handle standard output.\"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'textEditConsole'):\n        logger.error(\"UI not initialized\")\n        return\n    if not isinstance(global_vars.process, QProcess):\n        logger.error(\"Process not initialized or wrong type\")\n        return\n    data = global_vars.process.readAll()  # Use readAll() instead of readAllStandardOutput()\n    stdout = bytes(data.data()).decode(\"utf-8\", errors=\"replace\")",
         "detail": "main",
         "documentation": {}
     },
@@ -2362,7 +1936,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def handle_stderr():\n    \"\"\"\n    Handle standard error output.\n    \"\"\"\n    data = global_vars.process.readAllStandardError()\n    stderr = bytes(data).decode(\"utf-8\", errors=\"replace\")\n    global_vars.ui.textEditConsole.append(stderr)\ndef set_settings_line_edits():\n    \"\"\"\n    Set the line edits in the settings page to the current settings.",
+        "peekOfCode": "def handle_stderr() -> None:\n    \"\"\"Handle standard error output.\"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'textEditConsole'):\n        logger.error(\"UI not initialized\")\n        return\n    if not isinstance(global_vars.process, QProcess):\n        logger.error(\"Process not initialized or wrong type\")\n        return\n    data = global_vars.process.readAll()\n    stderr = bytes(data.data()).decode(\"utf-8\", errors=\"replace\")",
         "detail": "main",
         "documentation": {}
     },
@@ -2371,7 +1945,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def set_settings_line_edits():\n    \"\"\"\n    Set the line edits in the settings page to the current settings.\n    This function is called when the settings page is opened or when the settings are changed.\n    \"\"\"\n    global_vars.ui.lineEditDisplayHeight.setText(str(settings.settings['display']['specs']['height']))\n    global_vars.ui.lineEditDisplayWidth.setText(str(settings.settings['display']['specs']['width']))\n    global_vars.ui.lineEditDisplayRefreshRate.setText(str(int(float(settings.settings['display']['specs']['refresh_rate']))))\n    global_vars.ui.lineEditDisplayModel.setText(settings.settings['display']['specs']['model'])\n    # Set the combo box value",
+        "peekOfCode": "def set_settings_line_edits() -> None:\n    \"\"\"Set the line edits in the settings page to the current settings.\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    global_vars.ui.lineEditDisplayHeight.setText(str(settings.settings['display']['specs']['height']))\n    global_vars.ui.lineEditDisplayWidth.setText(str(settings.settings['display']['specs']['width']))\n    global_vars.ui.lineEditDisplayRefreshRate.setText(str(int(float(settings.settings['display']['specs']['refresh_rate']))))\n    global_vars.ui.lineEditDisplayModel.setText(settings.settings['display']['specs']['model'])\n    current_model = settings.settings['info']['UR_Model']",
         "detail": "main",
         "documentation": {}
     },
@@ -2398,7 +1972,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def exit_app():\n    \"\"\"\n    Exit the application.\n    \"\"\"\n    if 'server' in globals():\n        server_stop()\n    sys.exit(0)\ndef set_wordlist():\n    \"\"\"\n    Set the wordlist.",
+        "peekOfCode": "def exit_app():\n    \"\"\"\n    Exit the application.\n    \"\"\"\n    if 'server' in globals():\n        server_stop()\n    sys.exit(0)\ndef set_wordlist() -> None:\n    \"\"\"Set the wordlist.\"\"\"\n    if not global_vars.ui:",
         "detail": "main",
         "documentation": {}
     },
@@ -2407,7 +1981,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def set_wordlist():\n    \"\"\"\n    Set the wordlist.\n    \"\"\"\n    global completer  # Declare completer as global\n    wordlist = load_wordlist()\n    completer = QCompleter(wordlist, main_window)  # Now this will access the global variable\n    global_vars.ui.EingabePallettenplan.setCompleter(completer)\n    file_watcher = QFileSystemWatcher([global_vars.PATH_USB_STICK], main_window)\n    file_watcher.directoryChanged.connect(update_wordlist)",
+        "peekOfCode": "def set_wordlist() -> None:\n    \"\"\"Set the wordlist.\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    global completer  # Declare completer as global\n    wordlist = load_wordlist()\n    completer = QCompleter(wordlist, main_window)\n    global_vars.ui.EingabePallettenplan.setCompleter(completer)\n    file_watcher = QFileSystemWatcher([global_vars.PATH_USB_STICK], main_window)",
         "detail": "main",
         "documentation": {}
     },
@@ -2416,7 +1990,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def open_folder_dialog():\n    \"\"\"\n    Open the folder dialog.\n    \"\"\"\n    # show warning dialog if the user wants to set the path\n    # only if the user acknowledges the warning dialog and the risks then continue with choosing the folder else cancel asap\n    response = QMessageBox.warning(main_window, \"Warnung! - Mögliche Risiken!\", \"<b>Möchten Sie den Pfad wirklich ändern?</b><br>Dies könnte zu Problemen führen, wenn bereits ein Palettenplan geladen ist und nach dem Setzen des Pfades nicht ein neuer geladen wird.\", QMessageBox.Yes | QMessageBox.No)\n    main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink\n    if response == QMessageBox.Yes:\n        pass",
+        "peekOfCode": "def open_folder_dialog():\n    \"\"\"\n    Open the folder dialog.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    # show warning dialog if the user wants to set the path\n    # only if the user acknowledges the warning dialog and the risks then continue with choosing the folder else cancel asap\n    response = QMessageBox.warning(main_window, \"Warnung! - Mögliche Risiken!\", \"<b>Möchten Sie den Pfad wirklich ändern?</b><br>Dies könnte zu Problemen führen, wenn bereits ein Palettenplan geladen ist und nach dem Setzen des Pfades nicht ein neuer geladen wird.\", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)",
         "detail": "main",
         "documentation": {}
     },
@@ -2425,7 +1999,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def open_file_dialog():\n    \"\"\"\n    Open the file dialog.\n    \"\"\"\n    file_path = QFileDialog.getOpenFileName(main_window, \"Open Audio File\", \"\", \"Audio Files (*.wav)\")\n    if file_path:\n        global_vars.ui.audioPathEdit.setText(file_path[0])\ndef update_wordlist():\n    \"\"\"\n    Update the wordlist.",
+        "peekOfCode": "def open_file_dialog() -> None:\n    \"\"\"Open the file dialog.\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path = QFileDialog.getOpenFileName(main_window, \"Open Audio File\", \"\", \"Audio Files (*.wav)\")\n    if file_path:\n        global_vars.ui.audioPathEdit.setText(file_path[0])\ndef update_wordlist() -> None:\n    \"\"\"Update the wordlist.\"\"\"",
         "detail": "main",
         "documentation": {}
     },
@@ -2434,7 +2008,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def update_wordlist():\n    \"\"\"\n    Update the wordlist.\n    \"\"\"\n    new_wordlist = load_wordlist()\n    completer.model().setStringList(new_wordlist)  # This will now work with the global completer\n    set_wordlist()\ndef check_for_updates():\n    \"\"\"\n    Check for a file called MultipackParser under /media/ and /mnt/.",
+        "peekOfCode": "def update_wordlist() -> None:\n    \"\"\"Update the wordlist.\"\"\"\n    new_wordlist = load_wordlist()\n    model = completer.model()\n    if not isinstance(model, QStringListModel):\n        completer.setModel(QStringListModel(new_wordlist))\n    else:\n        model.setStringList(new_wordlist)\ndef check_for_updates():\n    \"\"\"",
         "detail": "main",
         "documentation": {}
     },
@@ -2479,7 +2053,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def set_audio_volume():\n    \"\"\"Set system audio volume using amixer\"\"\"\n    if not global_vars.audio_muted:\n        volume = '0%'\n        icon_name = \":/Sound/imgs/volume-off.png\"\n    else:\n        volume = '100%'\n        icon_name = \":/Sound/imgs/volume-on.png\"\n    logger.debug(f\"Setting audio volume to {volume}\")\n    try:",
+        "peekOfCode": "def set_audio_volume() -> None:\n    \"\"\"Set system audio volume using amixer\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    if not global_vars.audio_muted:\n        volume = '0%'\n        icon_name = \":/Sound/imgs/volume-off.png\"\n    else:\n        volume = '100%'",
         "detail": "main",
         "documentation": {}
     },
@@ -2542,7 +2116,7 @@
         "kind": 5,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "os.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\n# global_vars.PATH_USB_STICK = 'E:\\' # Pfad zu den .rob Dateien nur auskommentieren zum testen\nif global_vars.PATH_USB_STICK == '..':\n    # Bekomme CWD und setze den Pfad auf den Überordner\n    logger.debug(os.path.dirname(os.getcwd()))\n    global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' \n####################\n# Server functions #\n####################\ndef server_start():",
+        "peekOfCode": "os.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\n# global_vars.PATH_USB_STICK = 'E:\\' # Pfad zu den .rob Dateien nur auskommentieren zum testen\nif global_vars.PATH_USB_STICK == '..':\n    # Bekomme CWD und setze den Pfad auf den Überordner\n    logger.debug(os.path.dirname(os.getcwd()))\n    global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' \n####################\n# Server functions #\n####################\ndef server_start() -> Literal[0]:",
         "detail": "main",
         "documentation": {}
     }
