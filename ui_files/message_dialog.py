@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (QDialog, QVBoxLayout, QTableWidget, 
                               QTableWidgetItem, QPushButton, QHeaderView)
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor
 from utils.message import Message, MessageType
 
 class MessageDialog(QDialog):
@@ -37,10 +38,10 @@ class MessageDialog(QDialog):
             
             # Set color based on message type
             color = {
-                MessageType.INFO: "#ffffff",
-                MessageType.WARNING: "#fff3cd",
-                MessageType.ERROR: "#f8d7da"
-            }.get(msg.type, "#ffffff")
+                MessageType.INFO: QColor("#ffffff"),
+                MessageType.WARNING: QColor("#fff3cd"),
+                MessageType.ERROR: QColor("#f8d7da")
+            }.get(msg.type, QColor("#ffffff"))
             
             for j in range(4):
                 self.table.item(i, j).setBackground(color)

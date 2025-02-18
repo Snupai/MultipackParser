@@ -16,6 +16,14 @@
         "documentation": {}
     },
     {
+        "label": "QDialog",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QVBoxLayout",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -616,6 +624,14 @@
         "documentation": {}
     },
     {
+        "label": "QColor",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
         "label": "QGuiApplication",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
@@ -1032,43 +1048,51 @@
         "documentation": {}
     },
     {
+        "label": "MessageType",
+        "importPath": "utils.message",
+        "description": "utils.message",
+        "isExtraImport": true,
+        "detail": "utils.message",
+        "documentation": {}
+    },
+    {
+        "label": "Message",
+        "importPath": "utils.message",
+        "description": "utils.message",
+        "isExtraImport": true,
+        "detail": "utils.message",
+        "documentation": {}
+    },
+    {
+        "label": "MessageType",
+        "importPath": "utils.message",
+        "description": "utils.message",
+        "isExtraImport": true,
+        "detail": "utils.message",
+        "documentation": {}
+    },
+    {
+        "label": "MessageType",
+        "importPath": "utils.message",
+        "description": "utils.message",
+        "isExtraImport": true,
+        "detail": "utils.message",
+        "documentation": {}
+    },
+    {
+        "label": "Message",
+        "importPath": "utils.message",
+        "description": "utils.message",
+        "isExtraImport": true,
+        "detail": "utils.message",
+        "documentation": {}
+    },
+    {
         "label": "QtCore",
         "importPath": "PySide6",
         "description": "PySide6",
         "isExtraImport": true,
         "detail": "PySide6",
-        "documentation": {}
-    },
-    {
-        "label": "Message",
-        "importPath": "utils.message",
-        "description": "utils.message",
-        "isExtraImport": true,
-        "detail": "utils.message",
-        "documentation": {}
-    },
-    {
-        "label": "MessageType",
-        "importPath": "utils.message",
-        "description": "utils.message",
-        "isExtraImport": true,
-        "detail": "utils.message",
-        "documentation": {}
-    },
-    {
-        "label": "MessageType",
-        "importPath": "utils.message",
-        "description": "utils.message",
-        "isExtraImport": true,
-        "detail": "utils.message",
-        "documentation": {}
-    },
-    {
-        "label": "Message",
-        "importPath": "utils.message",
-        "description": "utils.message",
-        "isExtraImport": true,
-        "detail": "utils.message",
         "documentation": {}
     },
     {

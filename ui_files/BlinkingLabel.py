@@ -1,7 +1,8 @@
-from PySide6.QtWidgets import QLabel
+from PySide6.QtWidgets import QLabel, QDialog
 from PySide6.QtCore import QTimer, QRect, Qt
 from PySide6.QtGui import QFont
 from typing import Optional
+from utils.message import MessageType
 
 class BlinkingLabel(QLabel):
     def __init__(self, text: str, color: str, geometry: QRect, parent=None, 
@@ -69,24 +70,25 @@ class BlinkingLabel(QLabel):
             from ui_files.message_dialog import MessageDialog
             from utils import global_vars
             
-            dialog = MessageDialog(global_vars.message_manager.get_all_messages(), self.parent())
-            if dialog.exec() == QDialog.DialogCode.Accepted:
-                # Acknowledge selected messages
-                messages = global_vars.message_manager.get_all_messages()
-                for row in dialog.selected_for_acknowledgment:
-                    global_vars.message_manager.acknowledge_message(messages[row])
-                
-                # Update label text/color based on newest active message
-                latest = global_vars.message_manager.get_latest_message()
-                if latest:
-                    self.update_text(latest.text)
-                    color = {
-                        MessageType.INFO: "black",
-                        MessageType.WARNING: "orange",
-                        MessageType.ERROR: "red"
-                    }.get(latest.type, "black")
-                    self.update_color(color)
-                else:
-                    self.update_text("Keine aktiven Meldungen")
-                    self.update_color("black")
+            if global_vars.message_manager:
+                dialog = MessageDialog(global_vars.message_manager.get_all_messages(), self.parent())
+                if dialog.exec() == QDialog.DialogCode.Accepted:
+                    # Acknowledge selected messages
+                    messages = global_vars.message_manager.get_all_messages()
+                    for row in dialog.selected_for_acknowledgment:
+                        global_vars.message_manager.acknowledge_message(messages[row])
+                    
+                    # Update label text/color based on newest active message
+                    latest = global_vars.message_manager.get_latest_message()
+                    if latest:
+                        self.update_text(latest.text)
+                        color = {
+                            MessageType.INFO: "black",
+                            MessageType.WARNING: "orange",
+                            MessageType.ERROR: "red"
+                        }.get(latest.type, "black")
+                        self.update_color(color)
+                    else:
+                        self.update_text("Keine aktiven Meldungen")
+                        self.update_color("black")
         
