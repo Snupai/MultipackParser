@@ -1223,19 +1223,19 @@
         "documentation": {}
     },
     {
-        "label": "Settings",
-        "importPath": "utils.settings",
-        "description": "utils.settings",
-        "isExtraImport": true,
-        "detail": "utils.settings",
-        "documentation": {}
-    },
-    {
         "label": "BlinkingLabel",
         "importPath": "ui_files.BlinkingLabel",
         "description": "ui_files.BlinkingLabel",
         "isExtraImport": true,
         "detail": "ui_files.BlinkingLabel",
+        "documentation": {}
+    },
+    {
+        "label": "Settings",
+        "importPath": "utils.settings",
+        "description": "utils.settings",
+        "isExtraImport": true,
+        "detail": "utils.settings",
         "documentation": {}
     },
     {
@@ -1954,7 +1954,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def restart_app():\n    \"\"\"\n    Restart the system.\n    \"\"\"\n    try:\n        settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        response = QMessageBox.question(main_window, \"Verwerfen oder Speichern\", \n                                      \"Möchten Sie die neuen Daten verwerfen oder speichern?\",",
+        "peekOfCode": "def restart_app():\n    \"\"\"\n    Restart the system.\n    \"\"\"\n    try:\n        settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        response = QMessageBox.question(main_window, \"Verwerfen oder Speichern\", \n                                            \"Möchten Sie die neuen Daten verwerfen oder speichern?\",",
         "detail": "main",
         "documentation": {}
     },
@@ -1963,7 +1963,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def save_and_exit_app():\n    \"\"\"\n    Safely exit the application.\n    \"\"\"\n    try:\n        settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        # If settings do not match, ask whether to discard or save the new data\n        response = QMessageBox.question(main_window, \"Verwerfen oder Speichern\", \"Möchten Sie die neuen Daten verwerfen oder speichern?\",",
+        "peekOfCode": "def save_and_exit_app():\n    \"\"\"\n    Safely exit the application.\n    \"\"\"\n    try:\n        settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        # If settings do not match, ask whether to discard or save the new data\n        response = QMessageBox.question(main_window, \"Verwerfen oder Speichern\", ",
         "detail": "main",
         "documentation": {}
     },
@@ -2017,7 +2017,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def check_for_updates():\n    \"\"\"\n    Check for a file called MultipackParser under /media/ and /mnt/.\n    If it exists, spawn an updater process to replace the current binary.\n    \"\"\"\n    # TODO: Add visual feedback to the user so that they know that the application is checking for updates\n    search_paths = [\"/media\", \"/mnt\"]\n    update_file_name = \"MultipackParser\"\n    found_update_file = None\n    # Traverse /media and /mnt to find the update file",
+        "peekOfCode": "def check_for_updates():\n    \"\"\"\n    Check for a file called MultipackParser under /media/ and /mnt/.\n    If it exists, spawn an updater process to replace the current binary.\n    \"\"\"\n    # TODO: Add visual feedback to the user so that they know that the application is checking for updates\n    # disable the main window for interaction\n    main_window.setDisabled(True)\n    msg_box = QMessageBox()\n    msg_box.setWindowTitle(\"Update suchen\")",
         "detail": "main",
         "documentation": {}
     },

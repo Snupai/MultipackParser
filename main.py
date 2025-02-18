@@ -44,12 +44,12 @@ from PySide6.QtCore import Qt, QFileSystemWatcher, QProcess, QRegularExpression,
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QIcon
 from ui_files.ui_main_window import Ui_Form
 from ui_files import MainWindowResources_rc
-from utils import global_vars
+from ui_files.BlinkingLabel import BlinkingLabel
 from utils.settings import Settings
+from utils import global_vars
 from utils import UR_Common_functions as UR
 from utils import UR10_Server_functions as UR10
 from utils import UR20_Server_functions as UR20
-from ui_files.BlinkingLabel import BlinkingLabel
 
 logger = global_vars.logger
 
@@ -59,7 +59,7 @@ audio_thread_running = False
 os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
 # global_vars.PATH_USB_STICK = 'E:\' # Pfad zu den .rob Dateien nur auskommentieren zum testen
- 
+
 if global_vars.PATH_USB_STICK == '..':
     # Bekomme CWD und setze den Pfad auf den Überordner
     logger.debug(os.path.dirname(os.getcwd()))
@@ -68,7 +68,7 @@ if global_vars.PATH_USB_STICK == '..':
 ####################
 # Server functions #
 ####################
-                 
+
 def server_start() -> Literal[0]:
     """
     Start the XMLRPC server.
@@ -128,7 +128,7 @@ def server_start() -> Literal[0]:
     
     server.serve_forever()
     return 0
- 
+
 def server_stop() -> None:
     """
     Stop the XMLRPC server.
@@ -138,7 +138,7 @@ def server_stop() -> None:
     server.shutdown()
     logger.debug("Server stopped")
     datensenden_manipulation(True, "Server starten", "")
- 
+
 def server_thread() -> None:
     """
     Start the XMLRPC server in a separate thread.
@@ -149,7 +149,7 @@ def server_thread() -> None:
     if global_vars.ui and global_vars.ui.ButtonStopRPCServer:
         global_vars.ui.ButtonStopRPCServer.setEnabled(True)
     datensenden_manipulation(False, "Server läuft", "green")
- 
+
 def datensenden_manipulation(visibility: bool, display_text: str, display_colour: str) -> None:
     """Manipulate the visibility of the "Daten Senden" button and the display text."""
     if global_vars.ui:
@@ -187,7 +187,7 @@ def send_cmd_play() -> None:
     finally:
         logger.debug('closing socket')
         sock.close()
- 
+
 def send_cmd_pause() -> None:
     """
     Send a command to the robot to pause.
@@ -211,7 +211,7 @@ def send_cmd_pause() -> None:
     finally:
         logger.debug('closing socket')
         sock.close()
- 
+
 def send_cmd_stop() -> None:
     """
     Send a command to the robot to stop.
@@ -601,10 +601,10 @@ def restart_app():
     except ValueError as e:
         logger.error(f"Error: {e}")
         response = QMessageBox.question(main_window, "Verwerfen oder Speichern", 
-                                      "Möchten Sie die neuen Daten verwerfen oder speichern?",
-                                      QMessageBox.StandardButton.Discard | QMessageBox.StandardButton.Save, 
-                                      QMessageBox.StandardButton.Save
-                                  )
+                                            "Möchten Sie die neuen Daten verwerfen oder speichern?",
+                                            QMessageBox.StandardButton.Discard | QMessageBox.StandardButton.Save, 
+                                            QMessageBox.StandardButton.Save
+                                            )
         if response == QMessageBox.StandardButton.Save:
             try:
                 settings.save_settings()
@@ -627,8 +627,10 @@ def save_and_exit_app():
         logger.error(f"Error: {e}")
     
         # If settings do not match, ask whether to discard or save the new data
-        response = QMessageBox.question(main_window, "Verwerfen oder Speichern", "Möchten Sie die neuen Daten verwerfen oder speichern?",
-                                        QMessageBox.StandardButton.Discard | QMessageBox.StandardButton.Save, QMessageBox.StandardButton.Save)
+        response = QMessageBox.question(main_window, "Verwerfen oder Speichern", 
+                                            "Möchten Sie die neuen Daten verwerfen oder speichern?",
+                                            QMessageBox.StandardButton.Discard | QMessageBox.StandardButton.Save, 
+                                            QMessageBox.StandardButton.Save)
         main_window.setWindowState(main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink
         if response == QMessageBox.StandardButton.Save:
             try:
@@ -716,6 +718,14 @@ def check_for_updates():
     If it exists, spawn an updater process to replace the current binary.
     """
     # TODO: Add visual feedback to the user so that they know that the application is checking for updates
+    # disable the main window for interaction
+    main_window.setDisabled(True)
+    msg_box = QMessageBox()
+    msg_box.setWindowTitle("Update suchen")
+    msg_box.setText("Es wird nach einem Update gesucht.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.")
+    msg_box.setIcon(QMessageBox.Icon.Information)
+    msg_box.show()
+    
     search_paths = ["/media", "/mnt"]
     update_file_name = "MultipackParser"
     found_update_file = None
@@ -731,9 +741,18 @@ def check_for_updates():
 
     if not found_update_file:
         logger.info("No update file found.")
+        # enable the main window for interaction
+        main_window.setDisabled(False)
+        # show a message box to the user that no update file was found
+        msg_box.setWindowTitle("Keine Updates gefunden")
+        msg_box.setText("Es wurden keine Updates gefunden. Die aktuelle Version ist die neueste Version.")
+        msg_box.exec()
         return
 
     logger.info(f"Update file found: {found_update_file}")
+    # show a message box to the user that an update was found
+    msg_box.setWindowTitle("Update gefunden")
+    msg_box.setText("Es wurde ein Update gefunden.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.")
 
     # copy the new binary to cwd/update/MultipackParser and make it executable
     os.makedirs("update", exist_ok=True)
@@ -765,10 +784,13 @@ def check_for_updates():
     # Compare versions
     if new_version[0] <= current_version[0] and new_version[1] <= current_version[1] and new_version[2] <= current_version[2]:
         logger.info("No new version found.")
+        # change the text of the message box to "Die aktuelle Version ist die neuere Version."
+        msg_box.setText("Die aktuelle Version ist die neuere Version.")
         return
     
     logger.info(f"New version found: {new_version}")
-
+    # change the text of the message box to "Update gefunden. Version {new_version} ist verfügbar.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird."
+    msg_box.setText(f"Update gefunden. Version {new_version} wird installiert.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.")
     # Spawn an updater process
     current_binary = sys.argv[0]  # Path to the running binary
     updater_script = f"""#!/bin/bash
@@ -836,9 +858,9 @@ def play_stepback_warning():
             try:
                 # Use aplay to play the audio file
                 subprocess.run(['aplay', settings.settings['admin']['alarm_sound_file']], 
-                            check=True,
-                            stdout=subprocess.DEVNULL,
-                            stderr=subprocess.DEVNULL)
+                                check=True,
+                                stdout=subprocess.DEVNULL,
+                                stderr=subprocess.DEVNULL)
                 logger.debug("Stepback warning played")
                 time.sleep(0.1)  # Small delay between loops
                 
@@ -866,9 +888,9 @@ def set_audio_volume() -> None:
     logger.debug(f"Setting audio volume to {volume}")
     try:
         subprocess.run(['amixer', 'set', 'Master', volume], 
-                      stdout=subprocess.DEVNULL,
-                      stderr=subprocess.DEVNULL,
-                      check=True)
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                        check=True)
         global_vars.ui.pushButtonVolumeOnOff.setIcon(QIcon(icon_name))
         global_vars.audio_muted = not global_vars.audio_muted
     except Exception as e:
