@@ -5,6 +5,7 @@ from logging.handlers import RotatingFileHandler
 from typing import Union, Optional, List, TYPE_CHECKING
 import multiprocessing
 from datetime import datetime
+from utils.message_manager import MessageManager
 
 if TYPE_CHECKING:
     from utils.settings import Settings
@@ -105,3 +106,5 @@ NOE_PACKAGE_PER_LAYER: int = 1
 NOE_PACKAGE_POSITION_INFO: int = 9
 
 blinking_label: Optional['BlinkingLabel'] = None  # Initialize as None, will be set to BlinkingLabel instance later
+
+message_manager: Optional[MessageManager] = None

@@ -16,6 +16,54 @@
         "documentation": {}
     },
     {
+        "label": "QVBoxLayout",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QTableWidget",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QTableWidgetItem",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QPushButton",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QHeaderView",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QDialog",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QMessageBox",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -281,6 +329,14 @@
     },
     {
         "label": "QRect",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
         "isExtraImport": true,
@@ -920,6 +976,30 @@
         "documentation": {}
     },
     {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Literal",
         "importPath": "typing",
         "description": "typing",
@@ -957,6 +1037,38 @@
         "description": "PySide6",
         "isExtraImport": true,
         "detail": "PySide6",
+        "documentation": {}
+    },
+    {
+        "label": "Message",
+        "importPath": "utils.message",
+        "description": "utils.message",
+        "isExtraImport": true,
+        "detail": "utils.message",
+        "documentation": {}
+    },
+    {
+        "label": "MessageType",
+        "importPath": "utils.message",
+        "description": "utils.message",
+        "isExtraImport": true,
+        "detail": "utils.message",
+        "documentation": {}
+    },
+    {
+        "label": "MessageType",
+        "importPath": "utils.message",
+        "description": "utils.message",
+        "isExtraImport": true,
+        "detail": "utils.message",
+        "documentation": {}
+    },
+    {
+        "label": "Message",
+        "importPath": "utils.message",
+        "description": "utils.message",
+        "isExtraImport": true,
+        "detail": "utils.message",
         "documentation": {}
     },
     {
@@ -1077,6 +1189,54 @@
         "documentation": {}
     },
     {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "MessageManager",
+        "importPath": "utils.message_manager",
+        "description": "utils.message_manager",
+        "isExtraImport": true,
+        "detail": "utils.message_manager",
+        "documentation": {}
+    },
+    {
+        "label": "MessageManager",
+        "importPath": "utils.message_manager",
+        "description": "utils.message_manager",
+        "isExtraImport": true,
+        "detail": "utils.message_manager",
+        "documentation": {}
+    },
+    {
+        "label": "Enum",
+        "importPath": "enum",
+        "description": "enum",
+        "isExtraImport": true,
+        "detail": "enum",
+        "documentation": {}
+    },
+    {
+        "label": "Enum",
+        "importPath": "enum",
+        "description": "enum",
+        "isExtraImport": true,
+        "detail": "enum",
+        "documentation": {}
+    },
+    {
         "label": "subprocess",
         "kind": 6,
         "isExtraImport": true,
@@ -1183,14 +1343,6 @@
         "documentation": {}
     },
     {
-        "label": "Enum",
-        "importPath": "enum",
-        "description": "enum",
-        "isExtraImport": true,
-        "detail": "enum",
-        "documentation": {}
-    },
-    {
         "label": "QQmlApplicationEngine",
         "importPath": "PySide6.QtQml",
         "description": "PySide6.QtQml",
@@ -1293,6 +1445,15 @@
         "documentation": {}
     },
     {
+        "label": "MessageDialog",
+        "kind": 6,
+        "importPath": "ui_files.message_dialog",
+        "description": "ui_files.message_dialog",
+        "peekOfCode": "class MessageDialog(QDialog):\n    def __init__(self, messages, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Meldungsliste\")\n        self.setMinimumSize(800, 400)\n        layout = QVBoxLayout(self)\n        # Create table\n        self.table = QTableWidget()\n        self.table.setColumnCount(4)\n        self.table.setHorizontalHeaderLabels([\"Zeitstempel\", \"Typ\", \"Meldung\", \"Status\"])",
+        "detail": "ui_files.message_dialog",
+        "documentation": {}
+    },
+    {
         "label": "PasswordEntryDialog",
         "kind": 6,
         "importPath": "ui_files.PasswordDialog",
@@ -1335,6 +1496,33 @@
         "description": "ui_files.ui_password_entry",
         "peekOfCode": "class Ui_Dialog(object):\n    def setupUi(self, Dialog):\n        if not Dialog.objectName():\n            Dialog.setObjectName(u\"Dialog\")\n        Dialog.resize(385, 136)\n        self.lineEdit = QLineEdit(Dialog)\n        self.lineEdit.setObjectName(u\"lineEdit\")\n        self.lineEdit.setGeometry(QRect(30, 60, 113, 22))\n        self.lineEdit.setInputMethodHints(Qt.InputMethodHint.ImhHiddenText|Qt.InputMethodHint.ImhNoAutoUppercase|Qt.InputMethodHint.ImhNoPredictiveText|Qt.InputMethodHint.ImhPreferNumbers|Qt.InputMethodHint.ImhSensitiveData)\n        self.lineEdit.setMaxLength(20)",
         "detail": "ui_files.ui_password_entry",
+        "documentation": {}
+    },
+    {
+        "label": "MessageType",
+        "kind": 6,
+        "importPath": "utils.message",
+        "description": "utils.message",
+        "peekOfCode": "class MessageType(Enum):\n    INFO = \"info\"\n    WARNING = \"warning\" \n    ERROR = \"error\"\nclass Message:\n    def __init__(self, text: str, type: MessageType, timestamp: Optional[datetime] = None):\n        self.text = text\n        self.type = type\n        self.timestamp = timestamp or datetime.now()\n        self.acknowledged = False",
+        "detail": "utils.message",
+        "documentation": {}
+    },
+    {
+        "label": "Message",
+        "kind": 6,
+        "importPath": "utils.message",
+        "description": "utils.message",
+        "peekOfCode": "class Message:\n    def __init__(self, text: str, type: MessageType, timestamp: Optional[datetime] = None):\n        self.text = text\n        self.type = type\n        self.timestamp = timestamp or datetime.now()\n        self.acknowledged = False\n    def __str__(self):\n        return f\"[{self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}] {self.type.name}: {self.text}\"",
+        "detail": "utils.message",
+        "documentation": {}
+    },
+    {
+        "label": "MessageManager",
+        "kind": 6,
+        "importPath": "utils.message_manager",
+        "description": "utils.message_manager",
+        "peekOfCode": "class MessageManager:\n    def __init__(self):\n        self._messages: List[Message] = []\n        self._active_messages: List[Message] = []\n    def add_message(self, text: str, type: MessageType) -> Message:\n        message = Message(text, type)\n        self._messages.append(message)\n        self._active_messages.append(message)\n        return message\n    def acknowledge_message(self, message: Message) -> None:",
+        "detail": "utils.message_manager",
         "documentation": {}
     },
     {
@@ -1810,7 +1998,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def update_status_label(text: str, color: str, blink: bool = False, second_color: str | None = None) -> None:\n    \"\"\"Update the status label with the given text and color\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    if not hasattr(global_vars.ui, 'LabelPalletenplanInfo'):\n        logger.error(\"Label not found in UI\")\n        return\n    global_vars.blinking_label = BlinkingLabel(\n        text, ",
+        "peekOfCode": "def update_status_label(text: str, color: str, blink: bool = False, second_color: str | None = None) -> None:\n    \"\"\"Update the status label with the given text and color\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    # Add message to manager\n    message_type = {\n        \"red\": MessageType.ERROR,\n        \"orange\": MessageType.WARNING,\n        \"green\": MessageType.INFO,",
         "detail": "main",
         "documentation": {}
     },

@@ -50,6 +50,8 @@ from utils import global_vars
 from utils import UR_Common_functions as UR
 from utils import UR10_Server_functions as UR10
 from utils import UR20_Server_functions as UR20
+from utils.message import MessageType, Message
+from utils.message_manager import MessageManager
 
 logger = global_vars.logger
 
@@ -245,6 +247,16 @@ def update_status_label(text: str, color: str, blink: bool = False, second_color
     if not global_vars.ui:
         logger.error("UI not initialized")
         return
+
+    # Add message to manager
+    message_type = {
+        "red": MessageType.ERROR,
+        "orange": MessageType.WARNING,
+        "green": MessageType.INFO,
+        "black": MessageType.INFO
+    }.get(color, MessageType.INFO)
+    
+    global_vars.message_manager.add_message(text, message_type)
 
     if not hasattr(global_vars.ui, 'LabelPalletenplanInfo'):
         logger.error("Label not found in UI")
@@ -1129,6 +1141,10 @@ def main():
     main_window.closeEvent = allow_close_event
     main_window.keyPressEvent = handle_key_press_event
     ###########################################################
+
+    # Initialize message manager
+    global_vars.message_manager = MessageManager()
+
     main_window.show()
     sys.exit(app.exec())
 
