@@ -380,6 +380,11 @@ def load() -> None:
         global_vars.ui.EingabeStartlage.setEnabled(True)
         global_vars.ui.checkBoxEinzelpaket.setEnabled(True)
 
+        # Update Startlage SpinBox with new max value
+        if global_vars.g_AnzLagen is not None:
+            global_vars.ui.EingabeStartlage.setMaximum(global_vars.g_AnzLagen)
+            # If current value is above new max, it will be automatically clamped
+
         if global_vars.g_PaketDim is None:
             logger.error("Package dimensions not initialized")
             return
@@ -999,6 +1004,10 @@ def main():
     # Apply QIntValidator to restrict the input to only integers
     int_validator = QIntValidator()
     global_vars.ui.EingabeKartonhoehe.setValidator(int_validator)
+
+    # Set min/max values for EingabeStartlage SpinBox
+    global_vars.ui.EingabeStartlage.setMinimum(1)
+    global_vars.ui.EingabeStartlage.setMaximum(99)  # Default max, will be updated when plan is loaded
 
     # Apply CustomDoubleValidator to restrict the input to only numbers
     float_validator = CustomDoubleValidator()
