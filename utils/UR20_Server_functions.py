@@ -1,39 +1,69 @@
 # implementation of UR20 functions to be called by the server
 
+from PySide6.QtWidgets import QMessageBox, QLabel
 from PySide6.QtGui import QPixmap
 from . import global_vars
 import time
 from main import update_status_label
-from typing import Literal
+from typing import Literal, cast
+from PySide6.QtCore import Qt
 
-# the scanner image stuff for 3 scanners
+def show_scanner_safety_dialog(Bild: QPixmap) -> bool:
+    """Show safety confirmation dialog and return whether user confirmed."""
+    if global_vars.ui:
+        msg = QMessageBox(global_vars.ui.stackedWidget.widget(0))
+        msg.setWindowTitle("Sicherheitswarnung")
+        msg.setText("Ist der Arbeitsbereich um den Roboter frei?")
+        msg.setIcon(QMessageBox.Icon.Warning)
+        msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        msg.setDefaultButton(QMessageBox.StandardButton.No)
+        
+        # Make dialog frameless and always on top
+        msg.setWindowFlags(
+            Qt.WindowType.FramelessWindowHint | 
+            Qt.WindowType.WindowStaysOnTopHint
+        )
+        
+        # Add scanner image
+        label = cast(QLabel | None, msg.findChild(QLabel, "", Qt.FindChildOption.FindChildrenRecursively))
+        if label:
+            label.setPixmap(Bild)
+            
+        return msg.exec() == QMessageBox.StandardButton.Yes
+    return False
+
 def UR20_scannerStatus(status: str) -> int:
-    """
-    Set the scanner status.
-    """
-
+    """Set the scanner status."""
     if not status == "True,True,True" and global_vars.timestamp_scanner_fault is None:
         global_vars.timestamp_scanner_fault = time.time()
-        update_status_label("Bitte Arbeitsbereich räumen.", "red", True)
+        update_status_label("Bitte Arbeitsbereich räumen.", "red", True, block=True)
 
-    if global_vars.ui and global_vars.ui.label_7:
-        match status:
-            case "True,True,True":
-                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1&2&3io.png'))
-            case "False,False,False":
-                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1&2&3nio.png'))
-            case "True,False,False":
-                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1io.png'))
-            case "False,True,False":
-                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner2io.png'))
-            case "False,False,True":
-                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner3io.png'))
-            case "True,True,False":
-                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner3nio.png'))
-            case "True,False,True":
-                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner2nio.png'))
-            case "False,True,True":
-                global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR20/imgs/UR20/scanner1nio.png'))
+    image: QPixmap | None = None
+    match status:
+        case "True,True,True":
+            image = QPixmap(u':/ScannerUR20/imgs/UR20/scanner1&2&3io.png')
+        case "False,False,False":
+            image = QPixmap(u':/ScannerUR20/imgs/UR20/scanner1&2&3nio.png')
+        case "True,False,False":
+            image = QPixmap(u':/ScannerUR20/imgs/UR20/scanner1io.png')
+        case "False,True,False":
+            image = QPixmap(u':/ScannerUR20/imgs/UR20/scanner2io.png')
+        case "False,False,True":
+            image = QPixmap(u':/ScannerUR20/imgs/UR20/scanner3io.png')
+        case "True,True,False":
+            image = QPixmap(u':/ScannerUR20/imgs/UR20/scanner3nio.png')
+        case "True,False,True":
+            image = QPixmap(u':/ScannerUR20/imgs/UR20/scanner2nio.png')
+        case "False,True,True":
+            image = QPixmap(u':/ScannerUR20/imgs/UR20/scanner1nio.png')
+    if image and global_vars.ui and global_vars.ui.label_7:
+        global_vars.ui.label_7.setPixmap(image)
+        if not status == "True,True,True":
+            if show_scanner_safety_dialog(image):
+                if global_vars.message_manager:
+                    global_vars.message_manager.unblock_message("Bitte Arbeitsbereich räumen.")
+                    global_vars.message_manager.acknowledge_message("Bitte Arbeitsbereich räumen.")
+                    global_vars.timestamp_scanner_fault = None
     return 0
 
 
