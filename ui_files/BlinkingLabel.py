@@ -44,7 +44,12 @@ class BlinkingLabel(QLabel):
         self.show()
 
     def toggle_visibility(self) -> None:
-        self.setVisible(not self.isVisible())
+        """Instead of hiding, just make text transparent"""
+        current_style = self.styleSheet()
+        if "rgba" in current_style and "0)" in current_style:  # If transparent
+            self.setStyleSheet(f"color: {self.base_color};")
+        else:
+            self.setStyleSheet("color: rgba(0,0,0,0);")  # Transparent
     
     def change_color(self, colours) -> None:
         # get current colour and set to the opposite colour
@@ -78,9 +83,10 @@ class BlinkingLabel(QLabel):
                     for row in dialog.selected_for_acknowledgment:
                         global_vars.message_manager.acknowledge_message(messages[row])
                     
-                    # Update label text/color based on newest active message
-                    latest = global_vars.message_manager.get_latest_message()
-                    if latest:
+                    # Get latest unacknowledged message
+                    active_messages = global_vars.message_manager.get_active_messages()
+                    if active_messages:
+                        latest = active_messages[-1]
                         self.update_text(latest.text)
                         color = {
                             MessageType.INFO: "black",
@@ -89,6 +95,8 @@ class BlinkingLabel(QLabel):
                         }.get(latest.type, "black")
                         self.update_color(color)
                     else:
-                        self.update_text("Keine aktiven Meldungen")
-                        self.update_color("black")
+                        # Hide blinking label and show original label
+                        self.hide()
+                        if global_vars.ui and hasattr(global_vars.ui, 'LabelPalletenplanInfo'):
+                            global_vars.ui.LabelPalletenplanInfo.show()
         
