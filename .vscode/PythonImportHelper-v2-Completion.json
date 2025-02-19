@@ -656,14 +656,6 @@
         "documentation": {}
     },
     {
-        "label": "QtCore",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
         "label": "QFont",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
@@ -1168,30 +1160,19 @@
         "documentation": {}
     },
     {
-        "label": "sys",
-        "kind": 6,
+        "label": "QtCore",
+        "importPath": "PySide6",
+        "description": "PySide6",
         "isExtraImport": true,
-        "importPath": "sys",
-        "description": "sys",
-        "detail": "sys",
+        "detail": "PySide6",
         "documentation": {}
     },
     {
-        "label": "os",
-        "kind": 6,
+        "label": "global_vars",
+        "importPath": "utils",
+        "description": "utils",
         "isExtraImport": true,
-        "importPath": "os",
-        "description": "os",
-        "detail": "os",
-        "documentation": {}
-    },
-    {
-        "label": "hashlib",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "hashlib",
-        "description": "hashlib",
-        "detail": "hashlib",
+        "detail": "utils",
         "documentation": {}
     },
     {
@@ -1240,6 +1221,33 @@
         "description": "utils",
         "isExtraImport": true,
         "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "hashlib",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "hashlib",
+        "description": "hashlib",
+        "detail": "hashlib",
         "documentation": {}
     },
     {

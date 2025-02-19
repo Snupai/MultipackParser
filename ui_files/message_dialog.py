@@ -4,6 +4,7 @@ from PySide6.QtWidgets import (QDialog, QVBoxLayout, QTableWidget,
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
 from utils.message import Message, MessageType
+from utils import global_vars
 
 class MessageDialog(QDialog):
     def __init__(self, messages, parent=None):
@@ -61,8 +62,16 @@ class MessageDialog(QDialog):
                 color.setAlpha(128)
             
             for j in range(4):
-                self.table.item(i, j).setBackground(color)
-                
+                item = self.table.item(i, j)
+                item.setBackground(color)
+                # Disable selection for acknowledged or blocked messages
+                if (msg.acknowledged or 
+                    (global_vars.message_manager and msg.text in global_vars.message_manager._blocked_messages)):
+                    item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsSelectable)
+
+        # Enable/disable acknowledge button based on selection
+        self.ack_button.setEnabled(len(self.table.selectedItems()) > 0)
+        
     def acknowledge_selected(self):
         selected_rows = set(item.row() for item in self.table.selectedItems())
         self.selected_for_acknowledgment = selected_rows

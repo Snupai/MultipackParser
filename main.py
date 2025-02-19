@@ -52,7 +52,7 @@ from utils import UR10_Server_functions as UR10
 from utils import UR20_Server_functions as UR20
 from utils.message import MessageType, Message
 from utils.message_manager import MessageManager
-from PySide6.QtCore import QtCore
+from PySide6 import QtCore
 import traceback
 
 logger = global_vars.logger
@@ -392,6 +392,9 @@ def load() -> None:
         if global_vars.message_manager:
             message_strings = ["Kein Pallettenplan geladen", "Kein Plan gefunden"]
             for message_string in message_strings:
+                # unblock the message if it is blocked
+                if message_string in global_vars.message_manager._blocked_messages:
+                    global_vars.message_manager.unblock_message(message_string)
                 global_vars.message_manager.acknowledge_message(message_string)
         update_status_label("Plan erfolgreich geladen", "green", instant_acknowledge=True)
         global_vars.ui.ButtonOpenParameterRoboter.setEnabled(True)
@@ -640,7 +643,8 @@ def restart_app():
         logger.error(f"Error: {e}")
         response = QMessageBox.question(main_window, "Verwerfen oder Speichern", 
                                             "Möchten Sie die neuen Daten verwerfen oder speichern?",
-                                            QMessageBox.StandardButton.Discard | QMessageBox.StandardButton.Save, 
+                                            QMessageBox.StandardButton.Discard | 
+                                            QMessageBox.StandardButton.Save, 
                                             QMessageBox.StandardButton.Save
                                             )
         if response == QMessageBox.StandardButton.Save:
@@ -1049,7 +1053,7 @@ def main():
         logger.debug(f"{global_vars.PATH_USB_STICK=}")
 
         # write initial message to BlinkingLabel using update_status_label
-        update_status_label("Kein Pallettenplan geladen", "black", False)
+        update_status_label("Kein Pallettenplan geladen", "black", False, block=True)
 
         # Set the regular expression validator for EingabePallettenplan
         regex = QRegularExpression(r"^[0-9\-_]*$")

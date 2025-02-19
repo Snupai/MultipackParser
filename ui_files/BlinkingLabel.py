@@ -95,8 +95,8 @@ class BlinkingLabel(QLabel):
                         }.get(latest.type, "black")
                         self.update_color(color)
                     else:
-                        # Hide blinking label and show original label
-                        self.hide()
-                        if global_vars.ui and hasattr(global_vars.ui, 'LabelPalletenplanInfo'):
-                            global_vars.ui.LabelPalletenplanInfo.show()
+                        # Show default operational message
+                        self.update_text("Everything operational")
+                        self.update_color("green")
+                        self.stop_blinking()
         
