@@ -7,7 +7,18 @@ from utils.message import Message, MessageType
 from utils import global_vars
 
 class MessageDialog(QDialog):
+    """Dialog for displaying and acknowledging messages.
+
+    Args:
+        QDialog (QDialog): The parent class of the message dialog.
+    """
     def __init__(self, messages, parent=None):
+        """Initialize the message dialog.
+
+        Args:
+            messages (list): The list of messages to be displayed.
+            parent (QWidget, optional): The parent widget. Defaults to None.
+        """
         super().__init__(parent)
         self.setWindowTitle("Meldungsliste")
         self.setMinimumSize(800, 400)
@@ -40,6 +51,11 @@ class MessageDialog(QDialog):
         self.update_messages(messages)
         
     def update_messages(self, messages):
+        """Update the messages in the table.
+
+        Args:
+            messages (list): The list of messages to be displayed.
+        """
         # Filter messages based on checkbox state
         filtered_messages = messages if self.show_history.isChecked() else [m for m in messages if not m.acknowledged]
         
@@ -73,6 +89,8 @@ class MessageDialog(QDialog):
         self.ack_button.setEnabled(len(self.table.selectedItems()) > 0)
         
     def acknowledge_selected(self):
+        """Acknowledge the selected messages.
+        """
         selected_rows = set(item.row() for item in self.table.selectedItems())
         self.selected_for_acknowledgment = selected_rows
         self.accept()

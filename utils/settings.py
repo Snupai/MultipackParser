@@ -11,12 +11,12 @@ from . import global_vars
 logger = global_vars.logger
 
 class Settings:
-    """
-    This class handles the settings of the application using QSettings.
+    """Settings class.
     """
 
     def __init__(self):
-        """Initialize the settings with QSettings"""
+        """Initialize the settings with QSettings.
+        """
         # Create QSettings instance with organization and application name
         self.qsettings = QSettings("Multipack", "MultipackParser")
         
@@ -65,8 +65,7 @@ class Settings:
         self.load_settings()
 
     def getDisplayModel(self):
-        """
-        Get the display model.
+        """Get the display model.
 
         Returns:
             str: The display model.
@@ -85,8 +84,7 @@ class Settings:
             return f"Error retrieving display model: {str(e)}"
 
     def getDisplayResolution(self):
-        """
-        Get the display resolution.
+        """Get the display resolution.
 
         Returns:
             tuple: The display resolution as a tuple of width and height.
@@ -117,8 +115,7 @@ class Settings:
             return (800, 600)  # Return a default resolution on error
 
     def getDisplayRefreshRate(self):
-        """
-        Get the display refresh rate.
+        """Get the display refresh rate.
 
         Returns:
             int: The display refresh rate.
@@ -142,7 +139,8 @@ class Settings:
             return 60  # Return a default refresh rate on error
 
     def _update_debug_globals(self):
-        """Update global variables based on debug settings"""
+        """Update global variables based on debug settings.
+        """
         debug_options = self.settings["admin"]["debug_options"]
         if debug_options["UR20_palette1_empty"]:
             global_vars.UR20_palette1_empty = debug_options["UR20_palette1_empty"]
@@ -153,7 +151,8 @@ class Settings:
         logger.debug(f"Updated global debug variables: {debug_options}")
 
     def save_settings(self):
-        """Save settings using QSettings"""
+        """Save settings using QSettings.
+        """
         logger.debug("Saving settings")
         for group, values in self.settings.items():
             self.qsettings.beginGroup(group)
@@ -170,7 +169,8 @@ class Settings:
         self._update_debug_globals()  # Update globals after saving settings
 
     def load_settings(self):
-        """Load settings from QSettings, using defaults if not found"""
+        """Load settings from QSettings, using defaults if not found.
+        """
         logger.debug("Loading settings")
         for group, values in self.default_settings.items():
             self.settings[group] = {}
@@ -212,12 +212,20 @@ class Settings:
         self._update_debug_globals()  # Update globals after loading settings
 
     def reset_unsaved_changes(self):
-        """Reload settings from storage"""
+        """Reset unsaved changes.
+        """
         logger.debug("Resetting unsaved changes")
         self.load_settings()
 
     def compare_loaded_settings_to_saved_settings(self):
-        """Compare current settings with those stored in QSettings"""
+        """Compare current settings with those stored in QSettings.
+
+        Raises:
+            ValueError: If the loaded settings do not match the saved settings
+
+        Returns:
+            bool: True if the loaded settings match the saved settings, False otherwise
+        """
         stored_settings = {}
         for group, values in self.default_settings.items():
             stored_settings[group] = {}
@@ -238,7 +246,11 @@ class Settings:
         return True
 
     def __str__(self):
-        """String representation of settings"""
+        """String representation of settings.
+
+        Returns:
+            str: The string representation of the settings
+        """
         return str(self.settings)
 
 if __name__ == '__main__':

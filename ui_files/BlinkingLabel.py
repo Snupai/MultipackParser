@@ -5,10 +5,26 @@ from typing import Optional
 from utils.message import MessageType
 
 class BlinkingLabel(QLabel):
+    """BlinkingLabel class.
+
+    Args:
+        QLabel (QLabel): The parent class of the BlinkingLabel
+    """
     def __init__(self, text: str, color: str, geometry: QRect, parent=None, 
                  second_color: Optional[str] = None, 
                  font: Optional[QFont] = None,
                  alignment: Optional[Qt.AlignmentFlag] = None) -> None:
+        """Initialize the BlinkingLabel.
+
+        Args:
+            text (str): The text to display
+            color (str): The color of the text
+            geometry (QRect): The geometry of the label
+            parent (QWidget, optional): The parent of the label. Defaults to None.
+            second_color (Optional[str], optional): The second color of the text. Defaults to None.
+            font (Optional[QFont], optional): The font of the text. Defaults to None.
+            alignment (Optional[Qt.AlignmentFlag], optional): The alignment of the text. Defaults to None.
+        """
         super().__init__(text, parent)
         self.setGeometry(geometry)
         self.setStyleSheet(f"color: {color};")
@@ -23,7 +39,8 @@ class BlinkingLabel(QLabel):
             self.setAlignment(alignment)
 
     def start_blinking(self) -> None:
-        """Start the blinking animation"""
+        """Start the blinking animation.
+        """
         if self.timer is None:
             self.timer = QTimer(self)
             if not self.second_color:
@@ -36,7 +53,8 @@ class BlinkingLabel(QLabel):
         self.show()
 
     def stop_blinking(self) -> None:
-        """Stop the blinking animation"""
+        """Stop the blinking animation.
+        """
         if self.timer:
             self.timer.stop()
         self.is_blinking = False
@@ -44,7 +62,8 @@ class BlinkingLabel(QLabel):
         self.show()
 
     def toggle_visibility(self) -> None:
-        """Instead of hiding, just make text transparent"""
+        """Toggle the visibility of the label.
+        """
         current_style = self.styleSheet()
         if "rgba" in current_style and "0)" in current_style:  # If transparent
             self.setStyleSheet(f"color: {self.base_color};")
@@ -52,6 +71,11 @@ class BlinkingLabel(QLabel):
             self.setStyleSheet("color: rgba(0,0,0,0);")  # Transparent
     
     def change_color(self, colours) -> None:
+        """Change the color of the label.
+
+        Args:
+            colours (list): The list of colours to change to
+        """
         # get current colour and set to the opposite colour
         current_colour = self.styleSheet().split(":")[1].strip()[:-1]
         if current_colour == colours[0]:
@@ -61,16 +85,30 @@ class BlinkingLabel(QLabel):
         self.setStyleSheet(f"color: {next_colour};")
 
     def update_text(self, text: str) -> None:
-        """Update the label text"""
+        """Update the text of the label.
+
+        Args:
+            text (str): The text to update the label with
+        """
         self.setText(text)
 
     def update_color(self, color: str, second_color: Optional[str] = None) -> None:
-        """Update the label colors"""
+        """Update the color of the label.
+
+        Args:
+            color (str): The color of the label
+            second_color (Optional[str], optional): The second color of the label. Defaults to None.
+        """
         self.base_color = color
         self.second_color = second_color
         self.setStyleSheet(f"color: {color};")
         
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event) -> None:
+        """Handle the mouse press event.
+
+        Args:
+            event (QMouseEvent): The mouse event
+        """
         if event.button() == Qt.MouseButton.LeftButton:
             from ui_files.message_dialog import MessageDialog
             from utils import global_vars

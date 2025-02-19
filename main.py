@@ -32,15 +32,16 @@ import socket
 from xmlrpc.server import SimpleXMLRPCServer
 import logging
 from datetime import datetime
-from typing import Literal
+from typing import Literal, cast
 from enum import Enum
 
 # import the needed qml modules for the virtual keyboard to work
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickView
 ################################################################
-from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QCompleter, QFileDialog, QMessageBox
-from PySide6.QtCore import Qt, QFileSystemWatcher, QProcess, QRegularExpression, QLocale, QStringListModel
+from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox, 
+                              QCompleter, QFileDialog, QMessageBox, QLabel)
+from PySide6.QtCore import Qt, QFileSystemWatcher, QProcess, QRegularExpression, QLocale, QStringListModel, QTimer
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QIcon, QPixmap
 from ui_files.ui_main_window import Ui_Form
 from ui_files import MainWindowResources_rc
@@ -74,11 +75,10 @@ if global_vars.PATH_USB_STICK == '..':
 ####################
 
 def server_start() -> Literal[0]:
-    """
-    Start the XMLRPC server.
+    """Start the XMLRPC server.
 
     Returns:
-        0
+        Literal[0]: The exit code of the application.
     """
     global server
     server = SimpleXMLRPCServer(("", 8080), allow_none=True)
@@ -103,14 +103,14 @@ def server_start() -> Literal[0]:
     server.register_function(UR.UR_Karton, "UR_Karton")
     server.register_function(UR.UR_Lagen, "UR_Lagen")
     server.register_function(UR.UR_Zwischenlagen, "UR_Zwischenlagen")
-    server.register_function(UR.UR_PaketPos, "UR_PaketPos")
+    server.register_function(UR.UR_PaketPos, "UR_PaketPos") # type: ignore
     server.register_function(UR.UR_AnzLagen, "UR_AnzLagen")
     server.register_function(UR.UR_AnzPakete, "UR_AnzPakete")
     server.register_function(UR.UR_PaketeZuordnung, "UR_PaketeZuordnung")
     server.register_function(UR.UR_Paket_hoehe, "UR_Paket_hoehe")
     server.register_function(UR.UR_Startlage, "UR_Startlage")
     server.register_function(UR.UR_Quergreifen, "UR_Quergreifen")
-    server.register_function(UR.UR_CoG, "UR_CoG")
+    server.register_function(UR.UR_CoG, "UR_CoG") # type: ignore
     server.register_function(UR.UR_MasseGeschaetzt, "UR_MasseGeschaetzt")
     server.register_function(UR.UR_PickOffsetX, "UR_PickOffsetX")
     server.register_function(UR.UR_PickOffsetY, "UR_PickOffsetY")
@@ -134,8 +134,7 @@ def server_start() -> Literal[0]:
     return 0
 
 def server_stop() -> None:
-    """
-    Stop the XMLRPC server.
+    """Stop the XMLRPC server.
     """
     if global_vars.ui and global_vars.ui.ButtonStopRPCServer:
         global_vars.ui.ButtonStopRPCServer.setEnabled(False)
@@ -148,8 +147,7 @@ def server_stop() -> None:
     global_vars.message_manager.acknowledge_message(message)
 
 def server_thread() -> None:
-    """
-    Start the XMLRPC server in a separate thread.
+    """Start the XMLRPC server in a separate thread.
     """
     logger.debug("Starting server thread")
     xServerThread = threading.Thread(target=server_start)
@@ -163,7 +161,13 @@ def server_thread() -> None:
     global_vars.message_manager.acknowledge_message(message)
 
 def datensenden_manipulation(visibility: bool, display_text: str, display_colour: str) -> None:
-    """Manipulate the visibility of the "Daten Senden" button and the display text."""
+    """Manipulate the visibility of the "Daten Senden" button and the display text.
+
+    Args:
+        visibility (bool): Whether the "Daten Senden" button should be visible.
+        display_text (str): The text to be displayed in the "Daten Senden" button.
+        display_colour (str): The colour of the "Daten Senden" button.
+    """
     if global_vars.ui:
         buttons = []
         if hasattr(global_vars.ui, 'ButtonDatenSenden'):
@@ -177,8 +181,7 @@ def datensenden_manipulation(visibility: bool, display_text: str, display_colour
             button.setText(display_text)
 
 def send_cmd_play() -> None:
-    """
-    Send a command to the robot to start.
+    """Send a command to the robot to start.
     """
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
@@ -201,8 +204,7 @@ def send_cmd_play() -> None:
         sock.close()
 
 def send_cmd_pause() -> None:
-    """
-    Send a command to the robot to pause.
+    """Send a command to the robot to pause.
     """
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
@@ -225,8 +227,7 @@ def send_cmd_pause() -> None:
         sock.close()
 
 def send_cmd_stop() -> None:
-    """
-    Send a command to the robot to stop.
+    """Send a command to the robot to stop.
     """
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
@@ -253,7 +254,16 @@ def send_cmd_stop() -> None:
 ################
 
 def update_status_label(text: str, color: str, blink: bool = False, second_color: str | None = None, instant_acknowledge: bool = False, block: bool = False) -> None:
-    """Update the status label with the given text and color"""
+    """Update the status label with the given text and color.
+
+    Args:
+        text (str): The text to be displayed in the status label.
+        color (str): The color of the status label.
+        blink (bool, optional): Whether the status label should blink. Defaults to False.
+        second_color (str | None, optional): The second color of the status label. Defaults to None.
+        instant_acknowledge (bool, optional): Whether the status label should be acknowledged immediately. Defaults to False.
+        block (bool, optional): Whether the status label should be blocked. Defaults to False.
+    """
     if not global_vars.ui:
         logger.error("UI not initialized")
         return
@@ -277,37 +287,40 @@ def update_status_label(text: str, color: str, blink: bool = False, second_color
         logger.error("Label not found in UI")
         return
 
-    # Delete old blinking label if it exists
-    if global_vars.blinking_label is not None:
-        global_vars.blinking_label.deleteLater()
-        global_vars.blinking_label = None
+    # Create new blinking label only if it doesn't exist
+    if global_vars.blinking_label is None:
+        global_vars.blinking_label = BlinkingLabel(
+            text, 
+            color, 
+            global_vars.ui.LabelPalletenplanInfo.geometry(), 
+            parent=global_vars.ui.stackedWidget.widget(0),
+            second_color=second_color,
+            font=global_vars.ui.LabelPalletenplanInfo.font(),
+            alignment=global_vars.ui.LabelPalletenplanInfo.alignment()
+        )
+        global_vars.ui.LabelPalletenplanInfo.hide()
+    else:
+        global_vars.blinking_label.update_text(text)
+        global_vars.blinking_label.update_color(color, second_color)
 
-    global_vars.blinking_label = BlinkingLabel(
-        text, 
-        color, 
-        global_vars.ui.LabelPalletenplanInfo.geometry(), 
-        parent=global_vars.ui.stackedWidget.widget(0),
-        second_color=second_color,
-        font=global_vars.ui.LabelPalletenplanInfo.font(),
-        alignment=global_vars.ui.LabelPalletenplanInfo.alignment()
-    )
-    global_vars.ui.LabelPalletenplanInfo.hide()
-
-    # Update blinking label
-    if global_vars.blinking_label is not None:
-        if blink:
-            global_vars.blinking_label.start_blinking()
-        else:
-            global_vars.blinking_label.stop_blinking()
+    # Update blinking state
+    if blink:
+        global_vars.blinking_label.start_blinking()
+    else:
+        global_vars.blinking_label.stop_blinking()
 
 class Page(Enum):
+    """Enum for the pages.
+
+    Args:
+        Enum (Enum): The enum for the pages.
+    """
     MAIN_PAGE = 0
     PARAMETER_PAGE = 1
     SETTINGS_PAGE = 2
 
 def open_password_dialog() -> None:
-    """
-    Open the password dialog.
+    """Open the password dialog.
     """
     from ui_files.PasswordDialog import PasswordEntryDialog
     dialog = PasswordEntryDialog(parent_window=main_window)
@@ -321,8 +334,10 @@ def open_password_dialog() -> None:
         logger.error("Failed to initialize password dialog UI")
 
 def open_page(page: Page) -> None:
-    """
-    Open the specified page.
+    """Open the specified page.
+
+    Args:
+        page (Page): The page to be opened.
     """
     if global_vars.ui and global_vars.ui.stackedWidget:
         if page == Page.SETTINGS_PAGE:
@@ -331,8 +346,7 @@ def open_page(page: Page) -> None:
         global_vars.ui.stackedWidget.setCurrentIndex(page.value)
 
 def open_explorer() -> None:
-    """
-    Open the explorer.
+    """Open the explorer.
     """
     logger.info("Opening explorer")
     try:
@@ -351,8 +365,7 @@ def open_explorer() -> None:
         logger.error(f"Failed to open file explorer: {e}")
 
 def open_terminal() -> None:
-    """
-    Open the terminal.
+    """Open the terminal.
     """
     logger.info("Opening terminal")
     try:
@@ -371,7 +384,8 @@ def open_terminal() -> None:
         logger.error(f"Failed to open terminal: {e}")
 
 def load() -> None:
-    """Load the pallet plan from file."""
+    """Load the pallet plan from file.
+    """
     if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):
         logger.error("UI not initialized")
         return
@@ -425,20 +439,16 @@ def load() -> None:
         global_vars.ui.EingabeKartonhoehe.setText(str(global_vars.g_PaketDim[2]))
 
 def send_data() -> None:
-    """
-    Send the data to the robot.
-
-    This function is called when the user clicks the "Daten Senden" button.
+    """Send the data to the robot.
     """
     logger.debug("Button Daten Senden clicked")
     server_thread()
 
 def load_wordlist() -> list:
-    """
-    Load the wordlist from the USB stick.
+    """Load the wordlist from the USB stick.
 
     Returns:
-        A list of wordlist items.
+        list: A list of wordlist items.
     """
     wordlist = []
     count = 0
@@ -451,17 +461,15 @@ def load_wordlist() -> list:
     return wordlist
 
 def init_settings():
-    """Initialize the settings"""
+    """Initialize the settings
+    """
     global settings
     settings = Settings()
     global_vars.PATH_USB_STICK = settings.settings['admin']['path']
     logger.debug(f"Settings initialized: {settings}")
 
 def leave_settings_page():
-    """
-    Leave the settings page.
-    
-    This function is called when the user clicks the "Zurueck" button in the settings page.
+    """Leave the settings page.
     """
     try:
         settings.compare_loaded_settings_to_saved_settings()
@@ -494,7 +502,8 @@ def leave_settings_page():
     open_page(Page.MAIN_PAGE)
 
 def open_file() -> None:
-    """Open a file."""
+    """Open a file.
+    """
     if not global_vars.ui:
         logger.error("UI not initialized")
         return
@@ -515,7 +524,8 @@ def open_file() -> None:
         QMessageBox.critical(main_window, "Error", f"Failed to open file: {e}")
 
 def save_open_file() -> None:
-    """Save or open a file."""
+    """Save or open a file.
+    """
     if not global_vars.ui:
         logger.error("UI not initialized")
         return
@@ -543,7 +553,8 @@ def save_open_file() -> None:
         QMessageBox.critical(main_window, "Error", f"Failed to save file: {e}")
 
 def execute_command() -> None:
-    """Execute a command in the console."""
+    """Execute a command in the console.
+    """
     if not global_vars.ui:
         logger.error("UI not initialized")
         return
@@ -580,7 +591,8 @@ def execute_command() -> None:
     global_vars.process = process
 
 def handle_stdout() -> None:
-    """Handle standard output."""
+    """Handle standard output.
+    """
     if not global_vars.ui or not hasattr(global_vars.ui, 'textEditConsole'):
         logger.error("UI not initialized")
         return
@@ -594,7 +606,8 @@ def handle_stdout() -> None:
     global_vars.ui.textEditConsole.append(stdout)
 
 def handle_stderr() -> None:
-    """Handle standard error output."""
+    """Handle standard error output.
+    """
     if not global_vars.ui or not hasattr(global_vars.ui, 'textEditConsole'):
         logger.error("UI not initialized")
         return
@@ -608,7 +621,8 @@ def handle_stderr() -> None:
     global_vars.ui.textEditConsole.append(stderr)
 
 def set_settings_line_edits() -> None:
-    """Set the line edits in the settings page to the current settings."""
+    """Set the line edits in the settings page to the current settings.
+    """
     if not global_vars.ui:
         logger.error("UI not initialized")
         return
@@ -634,8 +648,7 @@ def set_settings_line_edits() -> None:
     global_vars.ui.audioPathEdit.setText(settings.settings['admin']['alarm_sound_file'])
 
 def restart_app():
-    """
-    Restart the system.
+    """Restart the application.
     """
     try:
         settings.compare_loaded_settings_to_saved_settings()
@@ -660,8 +673,7 @@ def restart_app():
     subprocess.run(['sudo', 'reboot'], check=True)
 
 def save_and_exit_app():
-    """
-    Safely exit the application.
+    """Save and exit the application.
     """
     try:
         settings.compare_loaded_settings_to_saved_settings()
@@ -690,15 +702,15 @@ def save_and_exit_app():
     exit_app()
 
 def exit_app():
-    """
-    Exit the application.
+    """Exit the application.
     """
     if 'server' in globals():
         server_stop()
     sys.exit(0)
 
 def set_wordlist() -> None:
-    """Set the wordlist."""
+    """Set the wordlist.
+    """
     if not global_vars.ui:
         logger.error("UI not initialized")
         return
@@ -712,8 +724,7 @@ def set_wordlist() -> None:
     file_watcher.directoryChanged.connect(update_wordlist)
 
 def open_folder_dialog():
-    """
-    Open the folder dialog.
+    """Open the folder dialog.
     """
     if not global_vars.ui:
         logger.error("UI not initialized")
@@ -737,7 +748,8 @@ def open_folder_dialog():
         set_wordlist()
 
 def open_file_dialog() -> None:
-    """Open the file dialog."""
+    """Open the file dialog.
+    """
     if not global_vars.ui:
         logger.error("UI not initialized")
         return
@@ -747,7 +759,8 @@ def open_file_dialog() -> None:
         global_vars.ui.audioPathEdit.setText(file_path[0])
 
 def update_wordlist() -> None:
-    """Update the wordlist."""
+    """Update the wordlist.
+    """
     new_wordlist = load_wordlist()
     model = completer.model()
     if not isinstance(model, QStringListModel):
@@ -756,10 +769,9 @@ def update_wordlist() -> None:
         model.setStringList(new_wordlist)
 
 def check_for_updates():
-    """
-    Check for a file called MultipackParser under /media/ and /mnt/.
-    If it exists, spawn an updater process to replace the current binary.
-    """
+    """Check for updates.
+    """    
+    
     # TODO: Add visual feedback to the user so that they know that the application is checking for updates
     # disable the main window for interaction
     main_window.setDisabled(True)
@@ -871,8 +883,7 @@ reboot
     exit_app()
 
 def spawn_play_stepback_warning_thread():
-    """
-    Spawn a thread to play the stepback warning.
+    """Spawn a thread to play the stepback warning.
     """
     global audio_thread, audio_thread_running
     if audio_thread is None:
@@ -882,8 +893,7 @@ def spawn_play_stepback_warning_thread():
         audio_thread.start()
 
 def kill_play_stepback_warning_thread():
-    """
-    Kill the thread playing the stepback warning.
+    """Kill the thread playing the stepback warning.
     """
     global audio_thread, audio_thread_running
     audio_thread_running = False
@@ -891,8 +901,7 @@ def kill_play_stepback_warning_thread():
         audio_thread = None
 
 def play_stepback_warning():
-    """
-    Play the stepback warning in a loop using aplay.
+    """Play the stepback warning in a loop using aplay.
     """
     global audio_thread_running
     
@@ -917,7 +926,8 @@ def play_stepback_warning():
         logger.debug("Audio thread stopping")
 
 def set_audio_volume() -> None:
-    """Set system audio volume using amixer"""
+    """Set the audio volume.
+    """
     if not global_vars.ui:
         logger.error("UI not initialized")
         return
@@ -940,10 +950,7 @@ def set_audio_volume() -> None:
         logger.error(f"Error setting volume: {e}")
 
 def delay_warning_sound():
-    """
-    This should be called in a thread at the start of the application. and never get stopped.
-    Delays the warning sound start by 40 seconds.
-    The sound starts if global_vars.timestamp_scanner_fault is not None and 40 seconds or older than current time.
+    """Delay the warning sound start by 40 seconds.
     """
     while True:
         if global_vars.timestamp_scanner_fault and (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds() >= 40:
@@ -958,18 +965,43 @@ def delay_warning_sound():
 #################
 
 class CustomDoubleValidator(QDoubleValidator):
-    """Custom double validator that allows commas to be used as decimal separators."""
+    """Custom double validator that allows commas to be used as decimal separators.
+
+    Args:
+        QDoubleValidator (QDoubleValidator): The double validator to be used.
+    """
     
     def validate(self, arg__1: str, arg__2: int) -> object:
-        """Validate the input."""
+        """Validate the input.
+
+        Args:
+            arg__1 (str): The input to be validated.
+            arg__2 (int): The position of the input.
+
+        Returns:
+            object: The result of the validation.
+        """
         return super().validate(arg__1.replace(',', '.'), arg__2)
 
     def fixup(self, input: str) -> str:
-        """Fixup the input."""
+        """Fixup the input.
+
+        Args:
+            input (str): The input to be fixed.
+
+        Returns:
+            str: The fixed input.
+        """
         return input.replace(',', '.')
 
 def exception_handler(exc_type, exc_value, exc_traceback):
-    """Global exception handler to log unhandled exceptions"""
+    """Global exception handler to log unhandled exceptions
+
+    Args:
+        exc_type (type): The type of the exception.
+        exc_value (Exception): The exception value.
+        exc_traceback (traceback): The traceback of the exception.
+    """
     if issubclass(exc_type, KeyboardInterrupt):
         # Don't log keyboard interrupt
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
@@ -978,7 +1010,13 @@ def exception_handler(exc_type, exc_value, exc_traceback):
     logger.critical("Uncaught exception:", exc_info=(exc_type, exc_value, exc_traceback))
 
 def qt_message_handler(mode, context, message):
-    """Handler for Qt messages"""
+    """Handler for Qt messages
+
+    Args:
+        mode (QtCore.QtMsgType): The mode of the message.
+        context (QtCore.QtMsgType): The context of the message.
+        message (str): The message to be logged.
+    """
     if mode == QtCore.QtMsgType.QtFatalMsg:
         logger.critical(f"Qt Fatal: {message}")
     elif mode == QtCore.QtMsgType.QtCriticalMsg:
@@ -990,8 +1028,10 @@ def qt_message_handler(mode, context, message):
 
 # Main function to run the application
 def main():
-    """
-    Main function to run the application.
+    """Main function to run the application.
+
+    Returns:
+        int: The exit code of the application.
     """
     global main_window
     
@@ -1130,8 +1170,7 @@ def main():
         global_vars.ui.pushButtonSpeichern_2.clicked.connect(settings.save_settings)
 
         def hash_password(password, salt=None):
-            """
-            Hash a password.
+            """Hash a password.
 
             Args:
                 password (str): The password to be hashed.
@@ -1170,8 +1209,7 @@ def main():
         allow_close = False
 
         def allow_close_event(event):
-            """
-            Allow the window to close.
+            """Allow the window to close.
 
             Args:
                 event (QEvent): The event object.
@@ -1184,7 +1222,11 @@ def main():
                 event.ignore()
 
         def handle_key_press_event(event) -> None:
-            """Handle key press events."""
+            """Handle key press events.
+
+            Args:
+                event (QEvent): The event object.
+            """
             global allow_close
             if (event.modifiers() == (Qt.KeyboardModifier.ControlModifier | 
                                      Qt.KeyboardModifier.AltModifier | 
@@ -1224,11 +1266,49 @@ def main():
         sys.exit(1)
 
 def handle_scanner_status(message: str, image_path: str):
-    """Handle scanner status updates from server thread"""
-    if message == "Bitte Arbeitsbereich räumen.":
-        update_status_label(message, "red", True, block=True)
+    """Handle scanner status updates from server thread
+
+    Args:
+        message (str): The message from the scanner.
+        image_path (str): The path to the image from the scanner.
+    """
+    if message != "True,True,True":
+        # Update existing blinking label instead of creating new one
+        if global_vars.blinking_label:
+            global_vars.blinking_label.update_text("Bitte Arbeitsbereich räumen.")
+            global_vars.blinking_label.update_color("red")
+            global_vars.blinking_label.start_blinking()
+        else:
+            update_status_label("Bitte Arbeitsbereich räumen.", "red", True, block=True)
+            
+        # Show safety dialog immediately
+        if global_vars.ui and image_path:
+            pixmap = QPixmap(image_path)
+            scaled_pixmap = pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            dialog = QMessageBox()
+            dialog.setWindowTitle("Sicherheitswarnung")
+            dialog.setText("Ist der Arbeitsbereich um den Roboter frei?")
+            dialog.setIconPixmap(scaled_pixmap)
+            dialog.setStandardButtons(QMessageBox.StandardButton.Yes)
+            dialog.exec()
+            if dialog.clickedButton() == QMessageBox.StandardButton.Yes:
+                if global_vars.message_manager:
+                    global_vars.message_manager.unblock_message("Bitte Arbeitsbereich räumen.")
+                    global_vars.message_manager.acknowledge_message("Bitte Arbeitsbereich räumen.")
+                update_status_label("Press Reset-Button to clear robot.", "blue", False, block=True)
+    else:
+        if global_vars.message_manager:
+            global_vars.message_manager.unblock_message("Press Reset-Button to clear robot.")
+            global_vars.message_manager.acknowledge_message("Press Reset-Button to clear robot.")
+            global_vars.timestamp_scanner_fault = None
+            update_status_label("Everything operational", "green", False, instant_acknowledge=True)
+    
+    # Update scanner image
     if image_path and global_vars.ui and global_vars.ui.label_7:
-        global_vars.ui.label_7.setPixmap(QPixmap(image_path))
+        pixmap = QPixmap(image_path)
+        global_vars.ui.label_7.setPixmap(pixmap)
+        
+
 
 if __name__ == "__main__":
     main()

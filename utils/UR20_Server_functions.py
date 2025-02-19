@@ -9,45 +9,34 @@ from typing import Literal, cast
 from PySide6.QtCore import Qt, QObject, Signal
 
 class ScannerSignals(QObject):
+    """Signals for the scanner.
+
+    Args:
+        QObject (QObject): The parent class of the signals.
+    """
     status_changed = Signal(str, str)  # status, image_path
 
 scanner_signals = ScannerSignals()
 
-def show_scanner_safety_dialog(Bild: QPixmap) -> bool:
-    """Show safety confirmation dialog and return whether user confirmed."""
-    if global_vars.ui:
-        msg = QMessageBox(global_vars.ui.stackedWidget.widget(0))
-        msg.setWindowTitle("Sicherheitswarnung")
-        msg.setText("Ist der Arbeitsbereich um den Roboter frei?")
-        msg.setIcon(QMessageBox.Icon.Warning)
-        msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-        msg.setDefaultButton(QMessageBox.StandardButton.No)
-        
-        # Make dialog frameless and always on top
-        msg.setWindowFlags(
-            Qt.WindowType.FramelessWindowHint | 
-            Qt.WindowType.WindowStaysOnTopHint
-        )
-        
-        # Add scanner image
-        label = cast(QLabel | None, msg.findChild(QLabel, "", Qt.FindChildOption.FindChildrenRecursively))
-        if label:
-            label.setPixmap(Bild)
-            
-        return msg.exec() == QMessageBox.StandardButton.Yes
-    return False
-
 def UR20_scannerStatus(status: str) -> int:
-    """Set the scanner status."""
+    """Set the scanner status.
+
+    Args:
+        status (str): The status of the scanner.
+
+    Returns:
+        int: The exit code of the application.
+    """
     if not status == "True,True,True" and global_vars.timestamp_scanner_fault is None:
         global_vars.timestamp_scanner_fault = time.time()
-        # Use signal instead of direct UI update
-        scanner_signals.status_changed.emit("Bitte Arbeitsbereich räumen.", "red")
 
     image_path = None
+    message = "Bitte Arbeitsbereich räumen."  # Default message for unsafe conditions
+    
     match status:
         case "True,True,True":
             image_path = u':/ScannerUR20/imgs/UR20/scanner1&2&3io.png'
+            message = "Alles in Ordnung"
         case "False,False,False":
             image_path = u':/ScannerUR20/imgs/UR20/scanner1&2&3nio.png'
         case "True,False,False":
@@ -64,19 +53,24 @@ def UR20_scannerStatus(status: str) -> int:
             image_path = u':/ScannerUR20/imgs/UR20/scanner1nio.png'
 
     if image_path:
+        # Update image directly first
+        if global_vars.ui and global_vars.ui.label_7:
+            global_vars.ui.label_7.setPixmap(QPixmap(image_path))
+        # Then emit signal for other handlers
         scanner_signals.status_changed.emit(status, image_path)
     return 0
 
 
 # change active pallet
 def UR20_SetActivePalette(pallet_number) -> Literal[0] | Literal[1]:
-    '''
-    pallet_number: number of pallet
-    
-    returns: 
-        1 if pallet was set
-        0 if pallet was not set
-    '''
+    """Set the active pallet.
+
+    Args:
+        pallet_number (int): The number of the pallet to be set as active.
+
+    Returns:
+        Literal[0] | Literal[1]: 0 if the pallet is not empty, 1 if the pallet is empty.
+    """
     # TODO: Set the active pallet to the given pallet number
     # Check if requested pallet is empty before setting it
     if pallet_number == 1 and not global_vars.UR20_palette1_empty:
@@ -90,24 +84,21 @@ def UR20_SetActivePalette(pallet_number) -> Literal[0] | Literal[1]:
 
 # get active pallet number
 def UR20_GetActivePaletteNumber() -> int:
-    '''
-    returns: 
-        current number of active pallet
-        where 1 is the first pallet and 2 is the second pallet and 0 is no pallet
-    '''
+    """Get the active pallet number.
+
+    Returns:
+        int: The number of the active pallet.
+    """
     # TODO: Check to see what pallet is currently active
     return global_vars.UR20_active_palette
 
 # get pallet status
 def UR20_GetPaletteStatus(pallet_number) -> Literal[1] | Literal[0] | Literal[-1]:
-    '''
-    pallet_number: number of pallet
+    """Get the status of the given pallet.
 
-    returns: 
-        1 if pallet is empty
-        0 if pallet is full
-        -1 if pallet number is invalid
-    '''
+    Returns:
+        Literal[1] | Literal[0] | Literal[-1]: 1 if the pallet is empty, 0 if the pallet is full, -1 if the pallet number is invalid.
+    """
     # TODO: check if the given pallet number is valid and if the according pallet space is empty or not
     match pallet_number:
         case 1:
