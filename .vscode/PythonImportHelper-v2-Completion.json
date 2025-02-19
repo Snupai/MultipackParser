@@ -64,6 +64,22 @@
         "documentation": {}
     },
     {
+        "label": "QHBoxLayout",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QCheckBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QDialog",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -273,6 +289,22 @@
     },
     {
         "label": "QWidget",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMessageBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLabel",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
         "isExtraImport": true,
@@ -561,6 +593,14 @@
     },
     {
         "label": "QSettings",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
         "isExtraImport": true,
@@ -1016,7 +1056,31 @@
         "documentation": {}
     },
     {
+        "label": "Union",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Set",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Literal",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "cast",
         "importPath": "typing",
         "description": "typing",
         "isExtraImport": true,
@@ -1473,7 +1537,7 @@
         "kind": 6,
         "importPath": "ui_files.message_dialog",
         "description": "ui_files.message_dialog",
-        "peekOfCode": "class MessageDialog(QDialog):\n    def __init__(self, messages, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Meldungsliste\")\n        self.setMinimumSize(800, 400)\n        layout = QVBoxLayout(self)\n        # Create table\n        self.table = QTableWidget()\n        self.table.setColumnCount(4)\n        self.table.setHorizontalHeaderLabels([\"Zeitstempel\", \"Typ\", \"Meldung\", \"Status\"])",
+        "peekOfCode": "class MessageDialog(QDialog):\n    def __init__(self, messages, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Meldungsliste\")\n        self.setMinimumSize(800, 400)\n        layout = QVBoxLayout(self)\n        # Add checkbox for showing history\n        self.show_history = QCheckBox(\"Verlauf anzeigen\")\n        self.show_history.setChecked(False)\n        self.show_history.stateChanged.connect(lambda: self.update_messages(messages))",
         "detail": "ui_files.message_dialog",
         "documentation": {}
     },
@@ -1509,7 +1573,7 @@
         "kind": 6,
         "importPath": "ui_files.ui_main_window",
         "description": "ui_files.ui_main_window",
-        "peekOfCode": "class Ui_Form(object):\n    def setupUi(self, Form):\n        if not Form.objectName():\n            Form.setObjectName(u\"Form\")\n        Form.setWindowModality(Qt.WindowModality.NonModal)\n        Form.resize(1280, 720)\n        Form.setMinimumSize(QSize(1280, 720))\n        Form.setMaximumSize(QSize(1280, 720))\n        palette = QPalette()\n        brush = QBrush(QColor(85, 85, 255, 255))",
+        "peekOfCode": "class Ui_Form(object):\n    def setupUi(self, Form):\n        if not Form.objectName():\n            Form.setObjectName(u\"Form\")\n        Form.setWindowModality(Qt.NonModal)\n        Form.resize(1280, 720)\n        Form.setMinimumSize(QSize(1280, 720))\n        Form.setMaximumSize(QSize(1280, 720))\n        palette = QPalette()\n        brush = QBrush(QColor(85, 85, 255, 255))",
         "detail": "ui_files.ui_main_window",
         "documentation": {}
     },
@@ -1545,7 +1609,7 @@
         "kind": 6,
         "importPath": "utils.message_manager",
         "description": "utils.message_manager",
-        "peekOfCode": "class MessageManager:\n    def __init__(self):\n        self._messages: List[Message] = []\n        self._active_messages: List[Message] = []\n    def add_message(self, text: str, type: MessageType) -> Message:\n        message = Message(text, type)\n        self._messages.append(message)\n        self._active_messages.append(message)\n        return message\n    def acknowledge_message(self, message: Message) -> None:",
+        "peekOfCode": "class MessageManager:\n    def __init__(self):\n        self._messages: List[Message] = []\n        self._active_messages: List[Message] = []\n        self._blocked_messages: Set[str] = set()\n    def add_message(self, text: str, type: MessageType, block: bool = False) -> Message:\n        \"\"\"Add a new message.\n        Args:\n            text (str): The message text\n            type (MessageType): The message type",
         "detail": "utils.message_manager",
         "documentation": {}
     },
@@ -1604,11 +1668,20 @@
         "documentation": {}
     },
     {
+        "label": "show_scanner_safety_dialog",
+        "kind": 2,
+        "importPath": "utils.UR20_Server_functions",
+        "description": "utils.UR20_Server_functions",
+        "peekOfCode": "def show_scanner_safety_dialog(Bild: QPixmap) -> bool:\n    \"\"\"Show safety confirmation dialog and return whether user confirmed.\"\"\"\n    if global_vars.ui:\n        msg = QMessageBox(global_vars.ui.stackedWidget.widget(0))\n        msg.setWindowTitle(\"Sicherheitswarnung\")\n        msg.setText(\"Ist der Arbeitsbereich um den Roboter frei?\")\n        msg.setIcon(QMessageBox.Icon.Warning)\n        msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)\n        msg.setDefaultButton(QMessageBox.StandardButton.No)\n        # Make dialog frameless and always on top",
+        "detail": "utils.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
         "label": "UR20_scannerStatus",
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_scannerStatus(status: str) -> int:\n    \"\"\"\n    Set the scanner status.\n    \"\"\"\n    if not status == \"True,True,True\" and global_vars.timestamp_scanner_fault is None:\n        global_vars.timestamp_scanner_fault = time.time()\n        update_status_label(\"Bitte Arbeitsbereich räumen.\", \"red\", True)\n    if global_vars.ui and global_vars.ui.label_7:\n        match status:\n            case \"True,True,True\":",
+        "peekOfCode": "def UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\"\"\"\n    if not status == \"True,True,True\" and global_vars.timestamp_scanner_fault is None:\n        global_vars.timestamp_scanner_fault = time.time()\n        update_status_label(\"Bitte Arbeitsbereich räumen.\", \"red\", True, block=True)\n    image: QPixmap | None = None\n    match status:\n        case \"True,True,True\":\n            image = QPixmap(u':/ScannerUR20/imgs/UR20/scanner1&2&3io.png')\n        case \"False,False,False\":",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -1968,7 +2041,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def server_stop() -> None:\n    \"\"\"\n    Stop the XMLRPC server.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n        global_vars.ui.ButtonStopRPCServer.setEnabled(False)\n    server.shutdown()\n    logger.debug(\"Server stopped\")\n    datensenden_manipulation(True, \"Server starten\", \"\")\ndef server_thread() -> None:",
+        "peekOfCode": "def server_stop() -> None:\n    \"\"\"\n    Stop the XMLRPC server.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n        global_vars.ui.ButtonStopRPCServer.setEnabled(False)\n    server.shutdown()\n    logger.debug(\"Server stopped\")\n    datensenden_manipulation(True, \"Server starten\", \"\")\n    if global_vars.message_manager is None:",
         "detail": "main",
         "documentation": {}
     },
@@ -2022,7 +2095,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def update_status_label(text: str, color: str, blink: bool = False, second_color: str | None = None) -> None:\n    \"\"\"Update the status label with the given text and color\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    # Add message to manager\n    message_type = {\n        \"red\": MessageType.ERROR,\n        \"orange\": MessageType.WARNING,\n        \"green\": MessageType.INFO,",
+        "peekOfCode": "def update_status_label(text: str, color: str, blink: bool = False, second_color: str | None = None, instant_acknowledge: bool = False, block: bool = False) -> None:\n    \"\"\"Update the status label with the given text and color\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    # Add message to manager\n    if global_vars.message_manager is None:\n        global_vars.message_manager = MessageManager()\n    message_type = {\n        \"red\": MessageType.ERROR,",
         "detail": "main",
         "documentation": {}
     },
@@ -2283,7 +2356,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def main():\n    \"\"\"\n    Main function to run the application.\n    \"\"\"\n    global main_window\n    parser = argparse.ArgumentParser(description=\"Multipack Parser Application\")\n    parser.add_argument('--version', action='store_true', help='Show version information and exit')\n    parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose logging')\n    parser.add_argument('--rob-path', type=str, help='Path to the .rob files')\n    args = parser.parse_args()",
+        "peekOfCode": "def main():\n    \"\"\"\n    Main function to run the application.\n    \"\"\"\n    global main_window\n    # Initialize message manager at start of main\n    global_vars.message_manager = MessageManager()\n    parser = argparse.ArgumentParser(description=\"Multipack Parser Application\")\n    parser.add_argument('--version', action='store_true', help='Show version information and exit')\n    parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose logging')",
         "detail": "main",
         "documentation": {}
     },
