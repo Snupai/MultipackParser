@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import (QDialog, QVBoxLayout, QTableWidget, 
-                              QTableWidgetItem, QPushButton, QHeaderView)
+                              QTableWidgetItem, QPushButton, QHeaderView,
+                              QHBoxLayout, QCheckBox)
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
 from utils.message import Message, MessageType
@@ -12,25 +13,37 @@ class MessageDialog(QDialog):
         
         layout = QVBoxLayout(self)
         
+        # Add checkbox for showing history
+        self.show_history = QCheckBox("Verlauf anzeigen")
+        self.show_history.setChecked(False)
+        self.show_history.stateChanged.connect(lambda: self.update_messages(messages))
+        
         # Create table
         self.table = QTableWidget()
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(["Zeitstempel", "Typ", "Meldung", "Status"])
         self.table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         
+        # Button layout
+        button_layout = QHBoxLayout()
+        self.ack_button = QPushButton("Quittieren")
+        self.ack_button.clicked.connect(self.acknowledge_selected)
+        button_layout.addWidget(self.show_history)
+        button_layout.addStretch()
+        button_layout.addWidget(self.ack_button)
+        
+        layout.addWidget(self.table)
+        layout.addLayout(button_layout)
+        
         # Add messages to table
         self.update_messages(messages)
         
-        # Add Acknowledge button
-        self.ack_button = QPushButton("Quittieren")
-        self.ack_button.clicked.connect(self.acknowledge_selected)
-        
-        layout.addWidget(self.table)
-        layout.addWidget(self.ack_button)
-        
     def update_messages(self, messages):
-        self.table.setRowCount(len(messages))
-        for i, msg in enumerate(messages):
+        # Filter messages based on checkbox state
+        filtered_messages = messages if self.show_history.isChecked() else [m for m in messages if not m.acknowledged]
+        
+        self.table.setRowCount(len(filtered_messages))
+        for i, msg in enumerate(filtered_messages):
             self.table.setItem(i, 0, QTableWidgetItem(msg.timestamp.strftime('%Y-%m-%d %H:%M:%S')))
             self.table.setItem(i, 1, QTableWidgetItem(msg.type.name))
             self.table.setItem(i, 2, QTableWidgetItem(msg.text))
@@ -42,6 +55,10 @@ class MessageDialog(QDialog):
                 MessageType.WARNING: QColor("#fff3cd"),
                 MessageType.ERROR: QColor("#f8d7da")
             }.get(msg.type, QColor("#ffffff"))
+            
+            # Make acknowledged messages slightly transparent
+            if msg.acknowledged:
+                color.setAlpha(128)
             
             for j in range(4):
                 self.table.item(i, j).setBackground(color)
