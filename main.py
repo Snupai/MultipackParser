@@ -140,6 +140,10 @@ def server_stop() -> None:
     server.shutdown()
     logger.debug("Server stopped")
     datensenden_manipulation(True, "Server starten", "")
+    if global_vars.message_manager is None:
+        global_vars.message_manager = MessageManager()
+    message = global_vars.message_manager.add_message("XMLRPC Server gestoppt", MessageType.INFO)
+    global_vars.message_manager.acknowledge_message(message)
 
 def server_thread() -> None:
     """
@@ -151,6 +155,10 @@ def server_thread() -> None:
     if global_vars.ui and global_vars.ui.ButtonStopRPCServer:
         global_vars.ui.ButtonStopRPCServer.setEnabled(True)
     datensenden_manipulation(False, "Server läuft", "green")
+    if global_vars.message_manager is None:
+        global_vars.message_manager = MessageManager()
+    message = global_vars.message_manager.add_message("XMLRPC Server gestartet", MessageType.INFO)
+    global_vars.message_manager.acknowledge_message(message)
 
 def datensenden_manipulation(visibility: bool, display_text: str, display_colour: str) -> None:
     """Manipulate the visibility of the "Daten Senden" button and the display text."""
@@ -242,13 +250,16 @@ def send_cmd_stop() -> None:
 # UI functions #
 ################
 
-def update_status_label(text: str, color: str, blink: bool = False, second_color: str | None = None) -> None:
+def update_status_label(text: str, color: str, blink: bool = False, second_color: str | None = None, instant_acknowledge: bool = False, block: bool = False) -> None:
     """Update the status label with the given text and color"""
     if not global_vars.ui:
         logger.error("UI not initialized")
         return
 
     # Add message to manager
+    if global_vars.message_manager is None:
+        global_vars.message_manager = MessageManager()
+        
     message_type = {
         "red": MessageType.ERROR,
         "orange": MessageType.WARNING,
@@ -256,11 +267,18 @@ def update_status_label(text: str, color: str, blink: bool = False, second_color
         "black": MessageType.INFO
     }.get(color, MessageType.INFO)
     
-    global_vars.message_manager.add_message(text, message_type)
+    message: Message = global_vars.message_manager.add_message(text, message_type, block=block)
+    if instant_acknowledge:
+        global_vars.message_manager.acknowledge_message(message)
 
     if not hasattr(global_vars.ui, 'LabelPalletenplanInfo'):
         logger.error("Label not found in UI")
         return
+
+    # Delete old blinking label if it exists
+    if global_vars.blinking_label is not None:
+        global_vars.blinking_label.deleteLater()
+        global_vars.blinking_label = None
 
     global_vars.blinking_label = BlinkingLabel(
         text, 
@@ -273,11 +291,8 @@ def update_status_label(text: str, color: str, blink: bool = False, second_color
     )
     global_vars.ui.LabelPalletenplanInfo.hide()
 
-    # Update existing blinking label
+    # Update blinking label
     if global_vars.blinking_label is not None:
-        global_vars.blinking_label.update_text(text)
-        global_vars.blinking_label.update_color(color, second_color)
-        
         if blink:
             global_vars.blinking_label.start_blinking()
         else:
@@ -372,7 +387,11 @@ def load() -> None:
     if global_vars.ui:
         global_vars.ui.EingabePallettenplan.clearFocus()
         logger.debug(f"File for {Artikelnummer=} found")
-        update_status_label("Plan erfolgreich geladen", "green")
+        if global_vars.message_manager:
+            message_strings = ["Kein Pallettenplan geladen", "Kein Plan gefunden"]
+            for message_string in message_strings:
+                global_vars.message_manager.acknowledge_message(message_string)
+        update_status_label("Plan erfolgreich geladen", "green", instant_acknowledge=True)
         global_vars.ui.ButtonOpenParameterRoboter.setEnabled(True)
         global_vars.ui.ButtonDatenSenden.setEnabled(True)
         global_vars.ui.EingabeKartonGewicht.setEnabled(True)
@@ -948,6 +967,10 @@ def main():
     Main function to run the application.
     """
     global main_window
+    
+    # Initialize message manager at start of main
+    global_vars.message_manager = MessageManager()
+    
     parser = argparse.ArgumentParser(description="Multipack Parser Application")
     parser.add_argument('--version', action='store_true', help='Show version information and exit')
     parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose logging')
@@ -993,6 +1016,9 @@ def main():
     logger.debug(f"{sys.argv=}")
     logger.debug(f"{global_vars.VERSION=}")
     logger.debug(f"{global_vars.PATH_USB_STICK=}")
+
+    # write initial message to BlinkingLabel using update_status_label
+    update_status_label("Kein Pallettenplan geladen", "black", False)
 
     # Set the regular expression validator for EingabePallettenplan
     regex = QRegularExpression(r"^[0-9\-_]*$")
@@ -1150,9 +1176,6 @@ def main():
     main_window.closeEvent = allow_close_event
     main_window.keyPressEvent = handle_key_press_event
     ###########################################################
-
-    # Initialize message manager
-    global_vars.message_manager = MessageManager()
 
     main_window.show()
     sys.exit(app.exec())
