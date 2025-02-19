@@ -656,6 +656,14 @@
         "documentation": {}
     },
     {
+        "label": "QtCore",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
         "label": "QFont",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
@@ -1479,6 +1487,15 @@
         "documentation": {}
     },
     {
+        "label": "traceback",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "traceback",
+        "description": "traceback",
+        "detail": "traceback",
+        "documentation": {}
+    },
+    {
         "label": "BlinkingLabel",
         "kind": 6,
         "importPath": "ui_files.BlinkingLabel",
@@ -2023,7 +2040,7 @@
         "kind": 6,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "class CustomDoubleValidator(QDoubleValidator):\n    \"\"\"Custom double validator that allows commas to be used as decimal separators.\"\"\"\n    def validate(self, arg__1: str, arg__2: int) -> object:\n        \"\"\"Validate the input.\"\"\"\n        return super().validate(arg__1.replace(',', '.'), arg__2)\n    def fixup(self, input: str) -> str:\n        \"\"\"Fixup the input.\"\"\"\n        return input.replace(',', '.')\n# Main function to run the application\ndef main():",
+        "peekOfCode": "class CustomDoubleValidator(QDoubleValidator):\n    \"\"\"Custom double validator that allows commas to be used as decimal separators.\"\"\"\n    def validate(self, arg__1: str, arg__2: int) -> object:\n        \"\"\"Validate the input.\"\"\"\n        return super().validate(arg__1.replace(',', '.'), arg__2)\n    def fixup(self, input: str) -> str:\n        \"\"\"Fixup the input.\"\"\"\n        return input.replace(',', '.')\ndef exception_handler(exc_type, exc_value, exc_traceback):\n    \"\"\"Global exception handler to log unhandled exceptions\"\"\"",
         "detail": "main",
         "documentation": {}
     },
@@ -2348,6 +2365,24 @@
         "importPath": "main",
         "description": "main",
         "peekOfCode": "def delay_warning_sound():\n    \"\"\"\n    This should be called in a thread at the start of the application. and never get stopped.\n    Delays the warning sound start by 40 seconds.\n    The sound starts if global_vars.timestamp_scanner_fault is not None and 40 seconds or older than current time.\n    \"\"\"\n    while True:\n        if global_vars.timestamp_scanner_fault and (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds() >= 40:\n            if not audio_thread_running:\n                spawn_play_stepback_warning_thread()",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "exception_handler",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def exception_handler(exc_type, exc_value, exc_traceback):\n    \"\"\"Global exception handler to log unhandled exceptions\"\"\"\n    if issubclass(exc_type, KeyboardInterrupt):\n        # Don't log keyboard interrupt\n        sys.__excepthook__(exc_type, exc_value, exc_traceback)\n        return\n    logger.critical(\"Uncaught exception:\", exc_info=(exc_type, exc_value, exc_traceback))\ndef qt_message_handler(mode, context, message):\n    \"\"\"Handler for Qt messages\"\"\"\n    if mode == QtCore.QtMsgType.QtFatalMsg:",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "qt_message_handler",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def qt_message_handler(mode, context, message):\n    \"\"\"Handler for Qt messages\"\"\"\n    if mode == QtCore.QtMsgType.QtFatalMsg:\n        logger.critical(f\"Qt Fatal: {message}\")\n    elif mode == QtCore.QtMsgType.QtCriticalMsg:\n        logger.critical(f\"Qt Critical: {message}\")\n    elif mode == QtCore.QtMsgType.QtWarningMsg:\n        logger.warning(f\"Qt Warning: {message}\")\n    elif mode == QtCore.QtMsgType.QtInfoMsg:\n        logger.info(f\"Qt Info: {message}\")",
         "detail": "main",
         "documentation": {}
     },

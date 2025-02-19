@@ -52,6 +52,8 @@ from utils import UR10_Server_functions as UR10
 from utils import UR20_Server_functions as UR20
 from utils.message import MessageType, Message
 from utils.message_manager import MessageManager
+from PySide6.QtCore import QtCore
+import traceback
 
 logger = global_vars.logger
 
@@ -665,7 +667,8 @@ def save_and_exit_app():
         # If settings do not match, ask whether to discard or save the new data
         response = QMessageBox.question(main_window, "Verwerfen oder Speichern", 
                                             "Möchten Sie die neuen Daten verwerfen oder speichern?",
-                                            QMessageBox.StandardButton.Discard | QMessageBox.StandardButton.Save, 
+                                            QMessageBox.StandardButton.Discard | 
+                                            QMessageBox.StandardButton.Save, 
                                             QMessageBox.StandardButton.Save)
         main_window.setWindowState(main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink
         if response == QMessageBox.StandardButton.Save:
@@ -961,6 +964,26 @@ class CustomDoubleValidator(QDoubleValidator):
         """Fixup the input."""
         return input.replace(',', '.')
 
+def exception_handler(exc_type, exc_value, exc_traceback):
+    """Global exception handler to log unhandled exceptions"""
+    if issubclass(exc_type, KeyboardInterrupt):
+        # Don't log keyboard interrupt
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+        
+    logger.critical("Uncaught exception:", exc_info=(exc_type, exc_value, exc_traceback))
+
+def qt_message_handler(mode, context, message):
+    """Handler for Qt messages"""
+    if mode == QtCore.QtMsgType.QtFatalMsg:
+        logger.critical(f"Qt Fatal: {message}")
+    elif mode == QtCore.QtMsgType.QtCriticalMsg:
+        logger.critical(f"Qt Critical: {message}")
+    elif mode == QtCore.QtMsgType.QtWarningMsg:
+        logger.warning(f"Qt Warning: {message}")
+    elif mode == QtCore.QtMsgType.QtInfoMsg:
+        logger.info(f"Qt Info: {message}")
+
 # Main function to run the application
 def main():
     """
@@ -997,188 +1020,200 @@ def main():
     # Update locale setting
     QLocale.setDefault(QLocale(QLocale.Language.German, QLocale.Country.Germany))
 
-    app = QApplication(sys.argv)
-    main_window = QMainWindow()
-    main_window.setWindowFlags(Qt.WindowType.FramelessWindowHint)  # Use WindowType enum
-    global_vars.ui = Ui_Form()
-    global_vars.ui.setupUi(main_window)
-    global_vars.ui.stackedWidget.setCurrentIndex(0)
-    global_vars.ui.tabWidget_2.setCurrentIndex(0)
-
-    # init settings
-    init_settings()
+    # Set up global exception handling
+    sys.excepthook = exception_handler
     
-    # set last restart and number of use cycles
-    settings.settings['info']['last_restart'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    settings.settings['info']['number_of_use_cycles'] = str(int(settings.settings['info']['number_of_use_cycles']) + 1)
-    settings.save_settings()
+    # Set up Qt message handling
+    QtCore.qInstallMessageHandler(qt_message_handler)
+    
+    try:
+        # Initialize the application
+        app = QApplication(sys.argv)
+        main_window = QMainWindow()
+        main_window.setWindowFlags(Qt.WindowType.FramelessWindowHint)  # Use WindowType enum
+        global_vars.ui = Ui_Form()
+        global_vars.ui.setupUi(main_window)
+        global_vars.ui.stackedWidget.setCurrentIndex(0)
+        global_vars.ui.tabWidget_2.setCurrentIndex(0)
 
-    logger.debug(f"{sys.argv=}")
-    logger.debug(f"{global_vars.VERSION=}")
-    logger.debug(f"{global_vars.PATH_USB_STICK=}")
+        # init settings
+        init_settings()
+        
+        # set last restart and number of use cycles
+        settings.settings['info']['last_restart'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        settings.settings['info']['number_of_use_cycles'] = str(int(settings.settings['info']['number_of_use_cycles']) + 1)
+        settings.save_settings()
 
-    # write initial message to BlinkingLabel using update_status_label
-    update_status_label("Kein Pallettenplan geladen", "black", False)
+        logger.debug(f"{sys.argv=}")
+        logger.debug(f"{global_vars.VERSION=}")
+        logger.debug(f"{global_vars.PATH_USB_STICK=}")
 
-    # Set the regular expression validator for EingabePallettenplan
-    regex = QRegularExpression(r"^[0-9\-_]*$")
-    validator = QRegularExpressionValidator(regex)
-    global_vars.ui.EingabePallettenplan.setValidator(validator)
+        # write initial message to BlinkingLabel using update_status_label
+        update_status_label("Kein Pallettenplan geladen", "black", False)
 
-    set_wordlist()
+        # Set the regular expression validator for EingabePallettenplan
+        regex = QRegularExpression(r"^[0-9\-_]*$")
+        validator = QRegularExpressionValidator(regex)
+        global_vars.ui.EingabePallettenplan.setValidator(validator)
 
-    # Apply QIntValidator to restrict the input to only integers
-    int_validator = QIntValidator()
-    global_vars.ui.EingabeKartonhoehe.setValidator(int_validator)
+        set_wordlist()
 
-    # Set min/max values for EingabeStartlage SpinBox
-    global_vars.ui.EingabeStartlage.setMinimum(1)
-    global_vars.ui.EingabeStartlage.setMaximum(99)  # Default max, will be updated when plan is loaded
+        # Apply QIntValidator to restrict the input to only integers
+        int_validator = QIntValidator()
+        global_vars.ui.EingabeKartonhoehe.setValidator(int_validator)
 
-    # Apply CustomDoubleValidator to restrict the input to only numbers
-    float_validator = CustomDoubleValidator()
-    float_validator.setNotation(QDoubleValidator.Notation.StandardNotation)
-    float_validator.setDecimals(2)  # Set to desired number of decimals
-    global_vars.ui.EingabeKartonGewicht.setValidator(float_validator)
+        # Set min/max values for EingabeStartlage SpinBox
+        global_vars.ui.EingabeStartlage.setMinimum(1)
+        global_vars.ui.EingabeStartlage.setMaximum(99)  # Default max, will be updated when plan is loaded
 
-    # if the user entered a Artikelnummer in the text box and presses enter it calls the load function
-    global_vars.ui.EingabePallettenplan.returnPressed.connect(load)
+        # Apply CustomDoubleValidator to restrict the input to only numbers
+        float_validator = CustomDoubleValidator()
+        float_validator.setNotation(QDoubleValidator.Notation.StandardNotation)
+        float_validator.setDecimals(2)  # Set to desired number of decimals
+        global_vars.ui.EingabeKartonGewicht.setValidator(float_validator)
 
-    #Page 1 Buttons
-    global_vars.ui.ButtonSettings.clicked.connect(open_password_dialog)
-    global_vars.ui.LadePallettenplan.clicked.connect(load)
-    global_vars.ui.ButtonOpenParameterRoboter.clicked.connect(lambda: open_page(Page.PARAMETER_PAGE))
-    global_vars.ui.ButtonDatenSenden.clicked.connect(send_data)
-    global_vars.ui.startaudio.clicked.connect(spawn_play_stepback_warning_thread)
-    global_vars.ui.stopaudio.clicked.connect(kill_play_stepback_warning_thread)
-    # when global_vars.ui.pushButtonVolumeOnOff is clicked and changed to state checked then set the audio volume of the system to 0% if it is not checked then set it to 100%
-    global_vars.ui.pushButtonVolumeOnOff.clicked.connect(set_audio_volume)
+        # if the user entered a Artikelnummer in the text box and presses enter it calls the load function
+        global_vars.ui.EingabePallettenplan.returnPressed.connect(load)
 
-    #Page 2 Buttons
-    # Roboter Tab
-    global_vars.ui.ButtonZurueck.clicked.connect(lambda: open_page(Page.MAIN_PAGE))
-    global_vars.ui.ButtonRoboterStart.clicked.connect(send_cmd_play)
-    global_vars.ui.ButtonRoboterPause.clicked.connect(send_cmd_pause)
-    global_vars.ui.ButtonRoboterStop.clicked.connect(send_cmd_stop)
-    global_vars.ui.ButtonStopRPCServer.clicked.connect(server_stop)
-    # Aufnahme Tab
-    global_vars.ui.ButtonZurueck_2.clicked.connect(lambda: open_page(Page.MAIN_PAGE))
-    global_vars.ui.ButtonDatenSenden_2.clicked.connect(send_data)
+        #Page 1 Buttons
+        global_vars.ui.ButtonSettings.clicked.connect(open_password_dialog)
+        global_vars.ui.LadePallettenplan.clicked.connect(load)
+        global_vars.ui.ButtonOpenParameterRoboter.clicked.connect(lambda: open_page(Page.PARAMETER_PAGE))
+        global_vars.ui.ButtonDatenSenden.clicked.connect(send_data)
+        global_vars.ui.startaudio.clicked.connect(spawn_play_stepback_warning_thread)
+        global_vars.ui.stopaudio.clicked.connect(kill_play_stepback_warning_thread)
+        # when global_vars.ui.pushButtonVolumeOnOff is clicked and changed to state checked then set the audio volume of the system to 0% if it is not checked then set it to 100%
+        global_vars.ui.pushButtonVolumeOnOff.clicked.connect(set_audio_volume)
 
-    # Page 3 Stuff
-    # Settings Tab
-    global_vars.ui.ButtonZurueck_3.clicked.connect(leave_settings_page)
-    global_vars.ui.pushButtonSpeichern.clicked.connect(settings.save_settings)
-    global_vars.ui.lineEditDisplayHeight.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('height', int(text)))
-    global_vars.ui.lineEditDisplayWidth.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('width', int(text)))
-    global_vars.ui.lineEditDisplayRefreshRate.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('refresh_rate', int(text)))
-    global_vars.ui.lineEditDisplayModel.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('model', text))
-    global_vars.ui.comboBoxChooseURModel.currentTextChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Model', text))
-    global_vars.ui.lineEditURSerialNo.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Serial_Number', text))
-    global_vars.ui.lineEditURManufacturingDate.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Manufacturing_Date', text))
-    global_vars.ui.lineEditURSoftwareVer.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Software_Version', text))
-    global_vars.ui.lineEditURName.textChanged.connect(lambda text: settings.settings['info'].__setitem__('Pallettierer_Name', text))
-    global_vars.ui.lineEditURStandort.textChanged.connect(lambda text: settings.settings['info'].__setitem__('Pallettierer_Standort', text))
-    global_vars.ui.lineEditNumberPlans.textChanged.connect(lambda text: settings.settings['info'].__setitem__('number_of_plans', int(text)))
-    global_vars.ui.lineEditNumberCycles.textChanged.connect(lambda text: settings.settings['info'].__setitem__('number_of_use_cycles', int(text)))
-    global_vars.ui.lineEditLastRestart.textChanged.connect(lambda text: settings.settings['info'].__setitem__('last_restart', text))
-    global_vars.ui.pathEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('path', text))
-    global_vars.ui.buttonSelectRobPath.clicked.connect(open_folder_dialog)
-    global_vars.ui.audioPathEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('alarm_sound_file', text))
-    global_vars.ui.buttonSelectAudioFilePath.clicked.connect(open_file_dialog)
-    set_settings_line_edits()
-    #global_vars.ui.checkBox.stateChanged.connect(lambda state: settings.settings['audio'].__setitem__('sound', state == Qt.Checked))
-    #global_vars.ui.checkBox.setChecked(settings.settings['audio']['sound'])
-    #
-    # TODO: implement the rest of the settings
-    global_vars.ui.ButtonZurueck_4.clicked.connect(leave_settings_page)
-    global_vars.ui.pushButtonSpeichern_2.clicked.connect(settings.save_settings)
+        #Page 2 Buttons
+        # Roboter Tab
+        global_vars.ui.ButtonZurueck.clicked.connect(lambda: open_page(Page.MAIN_PAGE))
+        global_vars.ui.ButtonRoboterStart.clicked.connect(send_cmd_play)
+        global_vars.ui.ButtonRoboterPause.clicked.connect(send_cmd_pause)
+        global_vars.ui.ButtonRoboterStop.clicked.connect(send_cmd_stop)
+        global_vars.ui.ButtonStopRPCServer.clicked.connect(server_stop)
+        # Aufnahme Tab
+        global_vars.ui.ButtonZurueck_2.clicked.connect(lambda: open_page(Page.MAIN_PAGE))
+        global_vars.ui.ButtonDatenSenden_2.clicked.connect(send_data)
 
-    def hash_password(password, salt=None):
-        """
-        Hash a password.
+        # Page 3 Stuff
+        # Settings Tab
+        global_vars.ui.ButtonZurueck_3.clicked.connect(leave_settings_page)
+        global_vars.ui.pushButtonSpeichern.clicked.connect(settings.save_settings)
+        global_vars.ui.lineEditDisplayHeight.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('height', int(text)))
+        global_vars.ui.lineEditDisplayWidth.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('width', int(text)))
+        global_vars.ui.lineEditDisplayRefreshRate.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('refresh_rate', int(text)))
+        global_vars.ui.lineEditDisplayModel.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('model', text))
+        global_vars.ui.comboBoxChooseURModel.currentTextChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Model', text))
+        global_vars.ui.lineEditURSerialNo.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Serial_Number', text))
+        global_vars.ui.lineEditURManufacturingDate.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Manufacturing_Date', text))
+        global_vars.ui.lineEditURSoftwareVer.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Software_Version', text))
+        global_vars.ui.lineEditURName.textChanged.connect(lambda text: settings.settings['info'].__setitem__('Pallettierer_Name', text))
+        global_vars.ui.lineEditURStandort.textChanged.connect(lambda text: settings.settings['info'].__setitem__('Pallettierer_Standort', text))
+        global_vars.ui.lineEditNumberPlans.textChanged.connect(lambda text: settings.settings['info'].__setitem__('number_of_plans', int(text)))
+        global_vars.ui.lineEditNumberCycles.textChanged.connect(lambda text: settings.settings['info'].__setitem__('number_of_use_cycles', int(text)))
+        global_vars.ui.lineEditLastRestart.textChanged.connect(lambda text: settings.settings['info'].__setitem__('last_restart', text))
+        global_vars.ui.pathEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('path', text))
+        global_vars.ui.buttonSelectRobPath.clicked.connect(open_folder_dialog)
+        global_vars.ui.audioPathEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('alarm_sound_file', text))
+        global_vars.ui.buttonSelectAudioFilePath.clicked.connect(open_file_dialog)
+        set_settings_line_edits()
+        #global_vars.ui.checkBox.stateChanged.connect(lambda state: settings.settings['audio'].__setitem__('sound', state == Qt.Checked))
+        #global_vars.ui.checkBox.setChecked(settings.settings['audio']['sound'])
+        #
+        # TODO: implement the rest of the settings
+        global_vars.ui.ButtonZurueck_4.clicked.connect(leave_settings_page)
+        global_vars.ui.pushButtonSpeichern_2.clicked.connect(settings.save_settings)
 
-        Args:
-            password (str): The password to be hashed.
-            salt (str, optional): The salt to be used. Defaults to None.
+        def hash_password(password, salt=None):
+            """
+            Hash a password.
 
-        Returns:
-            str: The hashed password.
-        """
-        if salt is None:
-            salt = os.urandom(16)
-        salted_password = salt + password.encode()
-        hashed_password = hashlib.sha256(salted_password).hexdigest()
-        return salt.hex() + '$' + hashed_password
+            Args:
+                password (str): The password to be hashed.
+                salt (str, optional): The salt to be used. Defaults to None.
 
-    global_vars.ui.passwordEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('password', hash_password(text)) if text else None)
-    #
-    global_vars.ui.ButtonZurueck_5.clicked.connect(leave_settings_page)
-    global_vars.ui.pushButtonSpeichern_3.clicked.connect(save_open_file)
-    global_vars.ui.pushButtonOpenFile.clicked.connect(open_file)
+            Returns:
+                str: The hashed password.
+            """
+            if salt is None:
+                salt = os.urandom(16)
+            salted_password = salt + password.encode()
+            hashed_password = hashlib.sha256(salted_password).hexdigest()
+            return salt.hex() + '$' + hashed_password
 
-    global_vars.ui.ButtonZurueck_6.clicked.connect(leave_settings_page)
-    global_vars.ui.pushButtonSpeichern_4.clicked.connect(settings.save_settings)
+        global_vars.ui.passwordEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('password', hash_password(text)) if text else None)
+        #
+        global_vars.ui.ButtonZurueck_5.clicked.connect(leave_settings_page)
+        global_vars.ui.pushButtonSpeichern_3.clicked.connect(save_open_file)
+        global_vars.ui.pushButtonOpenFile.clicked.connect(open_file)
 
-    global_vars.ui.ButtonZurueck_7.clicked.connect(leave_settings_page)
-    global_vars.ui.lineEditCommand.setText("> ")  # Set initial text
-    global_vars.ui.lineEditCommand.setPlaceholderText("command")  # Set placeholder text
-    global_vars.ui.lineEditCommand.returnPressed.connect(execute_command)
+        global_vars.ui.ButtonZurueck_6.clicked.connect(leave_settings_page)
+        global_vars.ui.pushButtonSpeichern_4.clicked.connect(settings.save_settings)
 
-    global_vars.ui.pushButtonSearchUpdate.clicked.connect(check_for_updates)
-    global_vars.ui.pushButtonExitApp.clicked.connect(restart_app)
+        global_vars.ui.ButtonZurueck_7.clicked.connect(leave_settings_page)
+        global_vars.ui.lineEditCommand.setText("> ")  # Set initial text
+        global_vars.ui.lineEditCommand.setPlaceholderText("command")  # Set placeholder text
+        global_vars.ui.lineEditCommand.returnPressed.connect(execute_command)
+
+        global_vars.ui.pushButtonSearchUpdate.clicked.connect(check_for_updates)
+        global_vars.ui.pushButtonExitApp.clicked.connect(restart_app)
 
 
-    # TODO: Remove this closing key combination once out of development
-    ###########################################################
-    global allow_close
-    allow_close = False
-
-    def allow_close_event(event):
-        """
-        Allow the window to close.
-
-        Args:
-            event (QEvent): The event object.
-        """
+        # TODO: Remove this closing key combination once out of development
+        ###########################################################
         global allow_close
-        if allow_close:
-            event.accept()
-            allow_close = False
-        else:
-            event.ignore()
+        allow_close = False
 
-    def handle_key_press_event(event) -> None:
-        """Handle key press events."""
-        global allow_close
-        if (event.modifiers() == (Qt.KeyboardModifier.ControlModifier | 
-                                 Qt.KeyboardModifier.AltModifier | 
-                                 Qt.KeyboardModifier.ShiftModifier) and 
-            event.key() == Qt.Key.Key_C):
-            allow_close = True
-            exit_app()
-        elif (event.modifiers() == (Qt.KeyboardModifier.ControlModifier | 
-                                   Qt.KeyboardModifier.AltModifier) and 
-              event.key() == Qt.Key.Key_N):
-            messageBox = QMessageBox()
-            messageBox.setWindowTitle("Multipack Parser")
-            messageBox.setTextFormat(Qt.TextFormat.RichText)
-            messageBox.setText('''
-            <div style="text-align: center;">
-            Yann-Luca Näher - \u00a9 2024<br>
-            <a href="https://github.com/Snupai">Github</a>
-            </div>''')
-            messageBox.setStandardButtons(QMessageBox.StandardButton.Ok)
-            messageBox.setDefaultButton(QMessageBox.StandardButton.Ok)
-            messageBox.exec()
-            main_window.setWindowState(main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink
-            
-    main_window.closeEvent = allow_close_event
-    main_window.keyPressEvent = handle_key_press_event
-    ###########################################################
+        def allow_close_event(event):
+            """
+            Allow the window to close.
 
-    main_window.show()
-    sys.exit(app.exec())
+            Args:
+                event (QEvent): The event object.
+            """
+            global allow_close
+            if allow_close:
+                event.accept()
+                allow_close = False
+            else:
+                event.ignore()
+
+        def handle_key_press_event(event) -> None:
+            """Handle key press events."""
+            global allow_close
+            if (event.modifiers() == (Qt.KeyboardModifier.ControlModifier | 
+                                     Qt.KeyboardModifier.AltModifier | 
+                                     Qt.KeyboardModifier.ShiftModifier) and 
+                event.key() == Qt.Key.Key_C):
+                allow_close = True
+                exit_app()
+            elif (event.modifiers() == (Qt.KeyboardModifier.ControlModifier | 
+                                       Qt.KeyboardModifier.AltModifier) and 
+                  event.key() == Qt.Key.Key_N):
+                messageBox = QMessageBox()
+                messageBox.setWindowTitle("Multipack Parser")
+                messageBox.setTextFormat(Qt.TextFormat.RichText)
+                messageBox.setText('''
+                <div style="text-align: center;">
+                Yann-Luca Näher - \u00a9 2024<br>
+                <a href="https://github.com/Snupai">Github</a>
+                </div>''')
+                messageBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                messageBox.setDefaultButton(QMessageBox.StandardButton.Ok)
+                messageBox.exec()
+                main_window.setWindowState(main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink
+                
+        main_window.closeEvent = allow_close_event
+        main_window.keyPressEvent = handle_key_press_event
+        ###########################################################
+
+        main_window.show()
+        sys.exit(app.exec())
+
+    except Exception as e:
+        logger.critical(f"Fatal error in main: {str(e)}", exc_info=True)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
