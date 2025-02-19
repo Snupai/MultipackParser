@@ -608,6 +608,22 @@
         "documentation": {}
     },
     {
+        "label": "QObject",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Signal",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
         "label": "Qt",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
@@ -977,6 +993,14 @@
     },
     {
         "label": "QIcon",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPixmap",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
         "isExtraImport": true,
@@ -1693,6 +1717,15 @@
         "documentation": {}
     },
     {
+        "label": "ScannerSignals",
+        "kind": 6,
+        "importPath": "utils.UR20_Server_functions",
+        "description": "utils.UR20_Server_functions",
+        "peekOfCode": "class ScannerSignals(QObject):\n    status_changed = Signal(str, str)  # status, image_path\nscanner_signals = ScannerSignals()\ndef show_scanner_safety_dialog(Bild: QPixmap) -> bool:\n    \"\"\"Show safety confirmation dialog and return whether user confirmed.\"\"\"\n    if global_vars.ui:\n        msg = QMessageBox(global_vars.ui.stackedWidget.widget(0))\n        msg.setWindowTitle(\"Sicherheitswarnung\")\n        msg.setText(\"Ist der Arbeitsbereich um den Roboter frei?\")\n        msg.setIcon(QMessageBox.Icon.Warning)",
+        "detail": "utils.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
         "label": "show_scanner_safety_dialog",
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
@@ -1706,7 +1739,7 @@
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\"\"\"\n    if not status == \"True,True,True\" and global_vars.timestamp_scanner_fault is None:\n        global_vars.timestamp_scanner_fault = time.time()\n        update_status_label(\"Bitte Arbeitsbereich räumen.\", \"red\", True, block=True)\n    image: QPixmap | None = None\n    match status:\n        case \"True,True,True\":\n            image = QPixmap(u':/ScannerUR20/imgs/UR20/scanner1&2&3io.png')\n        case \"False,False,False\":",
+        "peekOfCode": "def UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\"\"\"\n    if not status == \"True,True,True\" and global_vars.timestamp_scanner_fault is None:\n        global_vars.timestamp_scanner_fault = time.time()\n        # Use signal instead of direct UI update\n        scanner_signals.status_changed.emit(\"Bitte Arbeitsbereich räumen.\", \"red\")\n    image_path = None\n    match status:\n        case \"True,True,True\":\n            image_path = u':/ScannerUR20/imgs/UR20/scanner1&2&3io.png'",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -1734,6 +1767,15 @@
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
         "peekOfCode": "def UR20_GetPaletteStatus(pallet_number) -> Literal[1] | Literal[0] | Literal[-1]:\n    '''\n    pallet_number: number of pallet\n    returns: \n        1 if pallet is empty\n        0 if pallet is full\n        -1 if pallet number is invalid\n    '''\n    # TODO: check if the given pallet number is valid and if the according pallet space is empty or not\n    match pallet_number:",
+        "detail": "utils.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "scanner_signals",
+        "kind": 5,
+        "importPath": "utils.UR20_Server_functions",
+        "description": "utils.UR20_Server_functions",
+        "peekOfCode": "scanner_signals = ScannerSignals()\ndef show_scanner_safety_dialog(Bild: QPixmap) -> bool:\n    \"\"\"Show safety confirmation dialog and return whether user confirmed.\"\"\"\n    if global_vars.ui:\n        msg = QMessageBox(global_vars.ui.stackedWidget.widget(0))\n        msg.setWindowTitle(\"Sicherheitswarnung\")\n        msg.setText(\"Ist der Arbeitsbereich um den Roboter frei?\")\n        msg.setIcon(QMessageBox.Icon.Warning)\n        msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)\n        msg.setDefaultButton(QMessageBox.StandardButton.No)",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -2400,6 +2442,15 @@
         "importPath": "main",
         "description": "main",
         "peekOfCode": "def main():\n    \"\"\"\n    Main function to run the application.\n    \"\"\"\n    global main_window\n    # Initialize message manager at start of main\n    global_vars.message_manager = MessageManager()\n    parser = argparse.ArgumentParser(description=\"Multipack Parser Application\")\n    parser.add_argument('--version', action='store_true', help='Show version information and exit')\n    parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose logging')",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "handle_scanner_status",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def handle_scanner_status(message: str, image_path: str):\n    \"\"\"Handle scanner status updates from server thread\"\"\"\n    if message == \"Bitte Arbeitsbereich räumen.\":\n        update_status_label(message, \"red\", True, block=True)\n    if image_path and global_vars.ui and global_vars.ui.label_7:\n        global_vars.ui.label_7.setPixmap(QPixmap(image_path))\nif __name__ == \"__main__\":\n    main()",
         "detail": "main",
         "documentation": {}
     },

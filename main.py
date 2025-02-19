@@ -41,7 +41,7 @@ from PySide6.QtQuick import QQuickView
 ################################################################
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QCompleter, QFileDialog, QMessageBox
 from PySide6.QtCore import Qt, QFileSystemWatcher, QProcess, QRegularExpression, QLocale, QStringListModel
-from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QIcon
+from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QIcon, QPixmap
 from ui_files.ui_main_window import Ui_Form
 from ui_files import MainWindowResources_rc
 from ui_files.BlinkingLabel import BlinkingLabel
@@ -1212,12 +1212,23 @@ def main():
         main_window.keyPressEvent = handle_key_press_event
         ###########################################################
 
+        # Connect scanner signals
+        from utils.UR20_Server_functions import scanner_signals
+        scanner_signals.status_changed.connect(handle_scanner_status)
+
         main_window.show()
         sys.exit(app.exec())
 
     except Exception as e:
         logger.critical(f"Fatal error in main: {str(e)}", exc_info=True)
         sys.exit(1)
+
+def handle_scanner_status(message: str, image_path: str):
+    """Handle scanner status updates from server thread"""
+    if message == "Bitte Arbeitsbereich räumen.":
+        update_status_label(message, "red", True, block=True)
+    if image_path and global_vars.ui and global_vars.ui.label_7:
+        global_vars.ui.label_7.setPixmap(QPixmap(image_path))
 
 if __name__ == "__main__":
     main()
