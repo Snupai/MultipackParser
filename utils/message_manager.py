@@ -1,8 +1,7 @@
 from typing import List, Optional, Union, Set
 from datetime import datetime
 from .message import Message, MessageType
-from . import global_vars
-logger = global_vars.logger
+from .logging_config import logger
 
 class MessageManager:
     """Manager for messages.

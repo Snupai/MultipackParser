@@ -7,8 +7,7 @@ import base64
 import copy
 from PySide6.QtCore import QSettings
 from . import global_vars
-
-logger = global_vars.logger
+from .logging_config import logger
 
 class Settings:
     """Settings class.
@@ -17,6 +16,7 @@ class Settings:
     def __init__(self):
         """Initialize the settings with QSettings.
         """
+        logger.debug("Initializing Settings")
         # Create QSettings instance with organization and application name
         self.qsettings = QSettings("Multipack", "MultipackParser")
         
@@ -139,8 +139,7 @@ class Settings:
             return 60  # Return a default refresh rate on error
 
     def _update_debug_globals(self):
-        """Update global variables based on debug settings.
-        """
+        """Update global debug variables."""
         debug_options = self.settings["admin"]["debug_options"]
         if debug_options["UR20_palette1_empty"]:
             global_vars.UR20_palette1_empty = debug_options["UR20_palette1_empty"]

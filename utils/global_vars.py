@@ -7,108 +7,26 @@ import multiprocessing
 from datetime import datetime
 import os
 import sys
-from utils.message_manager import MessageManager
 
 if TYPE_CHECKING:
     from utils.settings import Settings
     from ui_files.ui_main_window import Ui_Form
     from ui_files.BlinkingLabel import BlinkingLabel
+    from utils.message_manager import MessageManager
 
-def get_log_path() -> str:
-    """Get the appropriate log file path whether running as script or frozen exe"""
-    if getattr(sys, 'frozen', False):
-        # Running as compiled executable
-        base_path = os.path.dirname(sys.executable)
-    else:
-        # Running as script
-        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    
-    # Create logs directory if it doesn't exist
-    logs_dir = os.path.join(base_path, 'logs')
-    os.makedirs(logs_dir, exist_ok=True)
-    
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    log_file = os.path.join(logs_dir, f'multipack_parser_{timestamp}.log')
-    
-    # Ensure the file can be created
-    try:
-        with open(log_file, 'a') as f:
-            pass
-    except Exception as e:
-        print(f"Error creating log file: {e}")
-        # Fallback to a location we know we can write to
-        log_file = os.path.join(os.path.expanduser('~'), f'multipack_parser_{timestamp}.log')
-    
-    return log_file
+from .logging_config import logger
 
-def setup_logger() -> logging.Logger:
-    """Setup and configure the logger
-
-    Returns:
-        logging.Logger: Configured logger instance
-    """
-    # Create logger
-    logger = logging.getLogger('multipack_parser')
-    logger.setLevel(logging.INFO)  # Set level first
-    
-    # Remove any existing handlers
-    logger.handlers.clear()
-    
-    try:
-        # Create formatters and handlers
-        log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        
-        # File handler with timestamp in filename
-        log_path = get_log_path()
-        file_handler = RotatingFileHandler(
-            log_path,
-            maxBytes=5*1024*1024,  # 5MB
-            backupCount=5,  # Keep 5 backup files
-            encoding='utf-8'
-        )
-        file_handler.setFormatter(log_formatter)
-        file_handler.setLevel(logging.INFO)
-        logger.addHandler(file_handler)
-        
-        # Console handler
-        console_handler = logging.StreamHandler(sys.stdout)  # Explicitly use stdout
-        console_handler.setFormatter(log_formatter)
-        console_handler.setLevel(logging.INFO)
-        logger.addHandler(console_handler)
-        
-        # Test the logger
-        logger.info(f"Logging initialized. Log file: {log_path}")
-        
-    except Exception as e:
-        print(f"Error setting up logger: {e}")
-        # Set up a basic console logger as fallback
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-        logger.addHandler(console_handler)
-        logger.error(f"Failed to initialize file logging: {e}")
-    
-    return logger
-
-# Initialize logger
-logger = setup_logger()
-
-# Test the logger immediately
-logger.info("Global variables module initialized")
-
+# Global variables
 process: Optional[multiprocessing.Process] = None
-
-#######################################
-# Settings
-
 settings: Optional['Settings'] = None
+message_manager: Optional['MessageManager'] = None
 
 # Variables
-
 settings_file: str = 'MultipackParser.conf'
-
 VERSION: str = '1.5.7'
 
-robot_ip: str = '192.168.0.1' # DO NOT CHANGE
+# Network settings
+robot_ip: str = '192.168.0.1'  # DO NOT CHANGE
 
 # UR20 palette place
 UR20_active_palette: int = 0
@@ -177,4 +95,5 @@ NOE_PACKAGE_POSITION_INFO: int = 9
 
 blinking_label: Optional['BlinkingLabel'] = None  # Initialize as None, will be set to BlinkingLabel instance later
 
-message_manager: Optional[MessageManager] = None
+# Initialize logger
+logger.info("Global variables module initialized")
