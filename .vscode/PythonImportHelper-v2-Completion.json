@@ -1200,19 +1200,11 @@
         "documentation": {}
     },
     {
-        "label": "QtCore",
-        "importPath": "PySide6",
-        "description": "PySide6",
+        "label": "global_vars",
+        "importPath": "utils",
+        "description": "utils",
         "isExtraImport": true,
-        "detail": "PySide6",
-        "documentation": {}
-    },
-    {
-        "label": "QtCore",
-        "importPath": "PySide6",
-        "description": "PySide6",
-        "isExtraImport": true,
-        "detail": "PySide6",
+        "detail": "utils",
         "documentation": {}
     },
     {
@@ -1269,6 +1261,22 @@
         "description": "utils",
         "isExtraImport": true,
         "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "QtCore",
+        "importPath": "PySide6",
+        "description": "PySide6",
+        "isExtraImport": true,
+        "detail": "PySide6",
+        "documentation": {}
+    },
+    {
+        "label": "QtCore",
+        "importPath": "PySide6",
+        "description": "PySide6",
+        "isExtraImport": true,
+        "detail": "PySide6",
         "documentation": {}
     },
     {
@@ -1561,6 +1569,15 @@
         "documentation": {}
     },
     {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "ui_files.BlinkingLabel",
+        "description": "ui_files.BlinkingLabel",
+        "peekOfCode": "logger = global_vars.logger\nclass BlinkingLabel(QLabel):\n    \"\"\"BlinkingLabel class.\n    Args:\n        QLabel (QLabel): The parent class of the BlinkingLabel\n    \"\"\"\n    def __init__(self, text: str, color: str, geometry: QRect, parent=None, \n                 second_color: Optional[str] = None, \n                 font: Optional[QFont] = None,\n                 alignment: Optional[Qt.AlignmentFlag] = None) -> None:",
+        "detail": "ui_files.BlinkingLabel",
+        "documentation": {}
+    },
+    {
         "label": "qInitResources",
         "kind": 2,
         "importPath": "ui_files.MainWindowResources_rc",
@@ -1660,6 +1677,33 @@
         "documentation": {}
     },
     {
+        "label": "get_log_path",
+        "kind": 2,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "def get_log_path() -> str:\n    \"\"\"Get the appropriate log file path whether running as script or frozen exe\"\"\"\n    if getattr(sys, 'frozen', False):\n        # Running as compiled executable\n        base_path = os.path.dirname(sys.executable)\n    else:\n        # Running as script\n        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))\n    # Create logs directory if it doesn't exist\n    logs_dir = os.path.join(base_path, 'logs')",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "setup_logger",
+        "kind": 2,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "def setup_logger() -> logging.Logger:\n    \"\"\"Setup and configure the logger\n    Returns:\n        logging.Logger: Configured logger instance\n    \"\"\"\n    # Create logger\n    logger = logging.getLogger('multipack_parser')\n    logger.setLevel(logging.INFO)  # Set level first\n    # Remove any existing handlers\n    logger.handlers.clear()",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "logger = setup_logger()\n# Test the logger immediately\nlogger.info(\"Global variables module initialized\")\nprocess: Optional[multiprocessing.Process] = None\n#######################################\n# Settings\nsettings: Optional['Settings'] = None\n# Variables\nsettings_file: str = 'MultipackParser.conf'\nVERSION: str = '1.5.7'",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
         "label": "MessageType",
         "kind": 6,
         "importPath": "utils.message",
@@ -1682,7 +1726,16 @@
         "kind": 6,
         "importPath": "utils.message_manager",
         "description": "utils.message_manager",
-        "peekOfCode": "class MessageManager:\n    \"\"\"Manager for messages.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the message manager.\n        \"\"\"\n        self._messages: List[Message] = []\n        self._active_messages: List[Message] = []\n        self._blocked_messages: Set[str] = set()\n    def add_message(self, text: str, type: MessageType, block: bool = False) -> Message:",
+        "peekOfCode": "class MessageManager:\n    \"\"\"Manager for messages.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the message manager.\n        \"\"\"\n        logger.debug(\"Initializing MessageManager\")\n        self._messages: List[Message] = []\n        self._active_messages: List[Message] = []\n        self._blocked_messages: Set[str] = set()",
+        "detail": "utils.message_manager",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.message_manager",
+        "description": "utils.message_manager",
+        "peekOfCode": "logger = global_vars.logger\nclass MessageManager:\n    \"\"\"Manager for messages.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the message manager.\n        \"\"\"\n        logger.debug(\"Initializing MessageManager\")\n        self._messages: List[Message] = []\n        self._active_messages: List[Message] = []",
         "detail": "utils.message_manager",
         "documentation": {}
     },
@@ -1754,7 +1807,7 @@
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    if not status == \"True,True,True\" and global_vars.timestamp_scanner_fault is None:\n        global_vars.timestamp_scanner_fault = time.time()\n    image_path = None",
+        "peekOfCode": "def UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger.debug(f\"Scanner status update received: {status}\")\n    if not status == \"True,True,True\" and global_vars.timestamp_scanner_fault is None:\n        logger.warning(\"Scanner fault detected\")",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -1763,7 +1816,7 @@
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_SetActivePalette(pallet_number) -> Literal[0] | Literal[1]:\n    \"\"\"Set the active pallet.\n    Args:\n        pallet_number (int): The number of the pallet to be set as active.\n    Returns:\n        Literal[0] | Literal[1]: 0 if the pallet is not empty, 1 if the pallet is empty.\n    \"\"\"\n    # TODO: Set the active pallet to the given pallet number\n    # Check if requested pallet is empty before setting it\n    if pallet_number == 1 and not global_vars.UR20_palette1_empty:",
+        "peekOfCode": "def UR20_SetActivePalette(pallet_number) -> Literal[0] | Literal[1]:\n    \"\"\"Set the active pallet.\n    Args:\n        pallet_number (int): The number of the pallet to be set as active.\n    Returns:\n        Literal[0] | Literal[1]: 0 if the pallet is not empty, 1 if the pallet is empty.\n    \"\"\"\n    logger.debug(f\"Request to set active palette to {pallet_number}\")\n    if pallet_number == 1 and not global_vars.UR20_palette1_empty:\n        logger.warning(\"Cannot set palette 1 as active - not empty\")",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -1772,7 +1825,7 @@
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_GetActivePaletteNumber() -> int:\n    \"\"\"Get the active pallet number.\n    Returns:\n        int: The number of the active pallet.\n    \"\"\"\n    # TODO: Check to see what pallet is currently active\n    return global_vars.UR20_active_palette\n# get pallet status\ndef UR20_GetPaletteStatus(pallet_number) -> Literal[1] | Literal[0] | Literal[-1]:\n    \"\"\"Get the status of the given pallet.",
+        "peekOfCode": "def UR20_GetActivePaletteNumber() -> int:\n    \"\"\"Get the active pallet number.\n    Returns:\n        int: The number of the active pallet.\n    \"\"\"\n    logger.debug(f\"Current active palette: {global_vars.UR20_active_palette}\")\n    return global_vars.UR20_active_palette\n# get pallet status\ndef UR20_GetPaletteStatus(pallet_number) -> Literal[1] | Literal[0] | Literal[-1]:\n    \"\"\"Get the status of the given pallet.",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -1781,7 +1834,16 @@
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_GetPaletteStatus(pallet_number) -> Literal[1] | Literal[0] | Literal[-1]:\n    \"\"\"Get the status of the given pallet.\n    Returns:\n        Literal[1] | Literal[0] | Literal[-1]: 1 if the pallet is empty, 0 if the pallet is full, -1 if the pallet number is invalid.\n    \"\"\"\n    # TODO: check if the given pallet number is valid and if the according pallet space is empty or not\n    match pallet_number:\n        case 1:\n            return 1 if global_vars.UR20_palette1_empty else 0\n        case 2:",
+        "peekOfCode": "def UR20_GetPaletteStatus(pallet_number) -> Literal[1] | Literal[0] | Literal[-1]:\n    \"\"\"Get the status of the given pallet.\n    Returns:\n        Literal[1] | Literal[0] | Literal[-1]: 1 if the pallet is empty, 0 if the pallet is full, -1 if the pallet number is invalid.\n    \"\"\"\n    logger.debug(f\"Checking status of palette {pallet_number}\")\n    match pallet_number:\n        case 1:\n            status = 1 if global_vars.UR20_palette1_empty else 0\n            logger.info(f\"Palette 1 status: {'empty' if status else 'not empty'}\")",
+        "detail": "utils.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.UR20_Server_functions",
+        "description": "utils.UR20_Server_functions",
+        "peekOfCode": "logger = global_vars.logger\nclass ScannerSignals(QObject):\n    \"\"\"Signals for the scanner.\n    Args:\n        QObject (QObject): The parent class of the signals.\n    \"\"\"\n    status_changed = Signal(str, str)  # status, image_path\nscanner_signals = ScannerSignals()\ndef UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -1790,7 +1852,7 @@
         "kind": 5,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "scanner_signals = ScannerSignals()\ndef UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    if not status == \"True,True,True\" and global_vars.timestamp_scanner_fault is None:\n        global_vars.timestamp_scanner_fault = time.time()",
+        "peekOfCode": "scanner_signals = ScannerSignals()\ndef UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger.debug(f\"Scanner status update received: {status}\")\n    if not status == \"True,True,True\" and global_vars.timestamp_scanner_fault is None:",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -2393,7 +2455,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def spawn_play_stepback_warning_thread():\n    \"\"\"Spawn a thread to play the stepback warning.\n    \"\"\"\n    global audio_thread, audio_thread_running\n    if audio_thread is None:\n        audio_thread_running = True\n        audio_thread = threading.Thread(target=play_stepback_warning)\n        audio_thread.daemon = True\n        audio_thread.start()\ndef kill_play_stepback_warning_thread():",
+        "peekOfCode": "def spawn_play_stepback_warning_thread():\n    \"\"\"Spawn a thread to play the stepback warning.\n    \"\"\"\n    global audio_thread, audio_thread_running\n    logger.info(\"Starting stepback warning audio thread\")\n    audio_thread_running = True\n    audio_thread = threading.Thread(target=play_stepback_warning)\n    audio_thread.daemon = True\n    audio_thread.start()\ndef kill_play_stepback_warning_thread():",
         "detail": "main",
         "documentation": {}
     },
@@ -2402,7 +2464,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def kill_play_stepback_warning_thread():\n    \"\"\"Kill the thread playing the stepback warning.\n    \"\"\"\n    global audio_thread, audio_thread_running\n    audio_thread_running = False\n    if audio_thread:\n        audio_thread = None\ndef play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.\n    \"\"\"",
+        "peekOfCode": "def kill_play_stepback_warning_thread():\n    \"\"\"Kill the thread playing the stepback warning.\n    \"\"\"\n    global audio_thread, audio_thread_running\n    logger.info(\"Stopping stepback warning audio thread\")\n    audio_thread_running = False\n    if audio_thread:\n        audio_thread = None\ndef play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.",
         "detail": "main",
         "documentation": {}
     },
@@ -2411,7 +2473,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.\n    \"\"\"\n    global audio_thread_running\n    try:\n        while audio_thread_running:\n            try:\n                # Use aplay to play the audio file\n                subprocess.run(['aplay', settings.settings['admin']['alarm_sound_file']], \n                                check=True,",
+        "peekOfCode": "def play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.\n    \"\"\"\n    global audio_thread_running\n    logger.debug(\"Starting stepback warning playback loop\")\n    try:\n        while audio_thread_running:\n            try:\n                # Use aplay to play the audio file\n                logger.debug(f\"Playing audio file: {settings.settings['admin']['alarm_sound_file']}\")",
         "detail": "main",
         "documentation": {}
     },
@@ -2420,7 +2482,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    if not global_vars.audio_muted:\n        volume = '0%'\n        icon_name = \":/Sound/imgs/volume-off.png\"\n    else:",
+        "peekOfCode": "def set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = '0%' if not global_vars.audio_muted else '100%'\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"\n    logger.info(f\"Setting audio volume to {volume}\")\n    try:",
         "detail": "main",
         "documentation": {}
     },
@@ -2429,7 +2491,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def delay_warning_sound():\n    \"\"\"Delay the warning sound start by 40 seconds.\n    \"\"\"\n    while True:\n        if global_vars.timestamp_scanner_fault and (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds() >= 40:\n            if not audio_thread_running:\n                spawn_play_stepback_warning_thread()\n        if global_vars.timestamp_scanner_fault is None:\n            kill_play_stepback_warning_thread()\n        time.sleep(5)",
+        "peekOfCode": "def delay_warning_sound():\n    \"\"\"Delay the warning sound start by 40 seconds.\n    \"\"\"\n    logger.debug(\"Starting delay warning sound monitor\")\n    while True:\n        try:\n            if global_vars.timestamp_scanner_fault:\n                delay = (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds()\n                if delay >= 40:\n                    logger.info(\"40-second delay reached, starting warning sound\")",
         "detail": "main",
         "documentation": {}
     },
@@ -2452,11 +2514,20 @@
         "documentation": {}
     },
     {
+        "label": "setup_logging",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def setup_logging(verbose: bool) -> None:\n    \"\"\"Configure logging level based on verbose flag\n    Args:\n        verbose (bool): Whether to enable verbose (DEBUG) logging\n    \"\"\"\n    log_level = logging.DEBUG if verbose else logging.INFO\n    logger.setLevel(log_level)\n    for handler in logger.handlers:\n        handler.setLevel(log_level)\n    logger.info(f\"Logging level set to: {log_level}\")",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
         "label": "main",
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    global main_window\n    # Initialize message manager at start of main\n    global_vars.message_manager = MessageManager()\n    parser = argparse.ArgumentParser(description=\"Multipack Parser Application\")\n    parser.add_argument('--version', action='store_true', help='Show version information and exit')",
+        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    global main_window\n    # Parse arguments first\n    parser = argparse.ArgumentParser(description=\"Multipack Parser Application\")\n    parser.add_argument('-v', '--version', action='store_true', help='Show version information and exit')\n    parser.add_argument('-V', '--verbose', action='store_true', help='Enable verbose logging')",
         "detail": "main",
         "documentation": {}
     },
@@ -2465,7 +2536,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def handle_scanner_status(message: str, image_path: str):\n    \"\"\"Handle scanner status updates from server thread\n    Args:\n        message (str): The message from the scanner.\n        image_path (str): The path to the image from the scanner.\n    \"\"\"\n    if message != \"True,True,True\":\n        # Update existing blinking label instead of creating new one\n        if global_vars.blinking_label:\n            global_vars.blinking_label.update_text(\"Bitte Arbeitsbereich räumen.\")",
+        "peekOfCode": "def handle_scanner_status(message: str, image_path: str):\n    \"\"\"Handle scanner status updates from server thread\n    Args:\n        message (str): The message from the scanner.\n        image_path (str): The path to the image from the scanner.\n    \"\"\"\n    logger.debug(f\"Received scanner status - Message: {message}, Image: {image_path}\")\n    if message != \"True,True,True\":\n        logger.warning(\"Scanner detected safety violation\")\n        # Update existing blinking label instead of creating new one",
         "detail": "main",
         "documentation": {}
     },

@@ -3,6 +3,8 @@ from PySide6.QtCore import QTimer, QRect, Qt
 from PySide6.QtGui import QFont
 from typing import Optional
 from utils.message import MessageType
+from utils import global_vars
+logger = global_vars.logger
 
 class BlinkingLabel(QLabel):
     """BlinkingLabel class.
@@ -25,6 +27,7 @@ class BlinkingLabel(QLabel):
             font (Optional[QFont], optional): The font of the text. Defaults to None.
             alignment (Optional[Qt.AlignmentFlag], optional): The alignment of the text. Defaults to None.
         """
+        logger.debug(f"Creating BlinkingLabel: {text} (color: {color})")
         super().__init__(text, parent)
         self.setGeometry(geometry)
         self.setStyleSheet(f"color: {color};")
@@ -41,6 +44,7 @@ class BlinkingLabel(QLabel):
     def start_blinking(self) -> None:
         """Start the blinking animation.
         """
+        logger.debug("Starting blink animation")
         if self.timer is None:
             self.timer = QTimer(self)
             if not self.second_color:
@@ -55,6 +59,7 @@ class BlinkingLabel(QLabel):
     def stop_blinking(self) -> None:
         """Stop the blinking animation.
         """
+        logger.debug("Stopping blink animation")
         if self.timer:
             self.timer.stop()
         self.is_blinking = False
@@ -90,6 +95,7 @@ class BlinkingLabel(QLabel):
         Args:
             text (str): The text to update the label with
         """
+        logger.debug(f"Updating label text: {text}")
         self.setText(text)
 
     def update_color(self, color: str, second_color: Optional[str] = None) -> None:
@@ -99,6 +105,7 @@ class BlinkingLabel(QLabel):
             color (str): The color of the label
             second_color (Optional[str], optional): The second color of the label. Defaults to None.
         """
+        logger.debug(f"Updating label colors - primary: {color}, secondary: {second_color}")
         self.base_color = color
         self.second_color = second_color
         self.setStyleSheet(f"color: {color};")
@@ -111,7 +118,6 @@ class BlinkingLabel(QLabel):
         """
         if event.button() == Qt.MouseButton.LeftButton:
             from ui_files.message_dialog import MessageDialog
-            from utils import global_vars
             
             if global_vars.message_manager:
                 dialog = MessageDialog(global_vars.message_manager.get_all_messages(), self.parent())

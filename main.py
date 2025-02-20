@@ -886,16 +886,17 @@ def spawn_play_stepback_warning_thread():
     """Spawn a thread to play the stepback warning.
     """
     global audio_thread, audio_thread_running
-    if audio_thread is None:
-        audio_thread_running = True
-        audio_thread = threading.Thread(target=play_stepback_warning)
-        audio_thread.daemon = True
-        audio_thread.start()
+    logger.info("Starting stepback warning audio thread")
+    audio_thread_running = True
+    audio_thread = threading.Thread(target=play_stepback_warning)
+    audio_thread.daemon = True
+    audio_thread.start()
 
 def kill_play_stepback_warning_thread():
     """Kill the thread playing the stepback warning.
     """
     global audio_thread, audio_thread_running
+    logger.info("Stopping stepback warning audio thread")
     audio_thread_running = False
     if audio_thread:
         audio_thread = None
@@ -904,61 +905,69 @@ def play_stepback_warning():
     """Play the stepback warning in a loop using aplay.
     """
     global audio_thread_running
+    logger.debug("Starting stepback warning playback loop")
     
     try:
         while audio_thread_running:
             try:
                 # Use aplay to play the audio file
+                logger.debug(f"Playing audio file: {settings.settings['admin']['alarm_sound_file']}")
                 subprocess.run(['aplay', settings.settings['admin']['alarm_sound_file']], 
-                                check=True,
-                                stdout=subprocess.DEVNULL,
-                                stderr=subprocess.DEVNULL)
-                logger.debug("Stepback warning played")
+                             check=True,
+                             stdout=subprocess.DEVNULL,
+                             stderr=subprocess.DEVNULL)
+                logger.debug("Stepback warning played successfully")
                 time.sleep(0.1)  # Small delay between loops
                 
             except subprocess.CalledProcessError as e:
-                logger.error(f"Error during playback: {e}")
+                logger.error(f"Error during audio playback: {e}")
                 break
                 
     except Exception as e:
-        logger.error(f"Error in audio thread: {e}")
+        logger.error(f"Fatal error in audio thread: {e}")
     finally:
-        logger.debug("Audio thread stopping")
+        logger.debug("Audio playback thread stopping")
 
 def set_audio_volume() -> None:
     """Set the audio volume.
     """
     if not global_vars.ui:
-        logger.error("UI not initialized")
+        logger.error("UI not initialized, cannot set audio volume")
         return
         
-    if not global_vars.audio_muted:
-        volume = '0%'
-        icon_name = ":/Sound/imgs/volume-off.png"
-    else:
-        volume = '100%'
-        icon_name = ":/Sound/imgs/volume-on.png"
-    logger.debug(f"Setting audio volume to {volume}")
+    volume = '0%' if not global_vars.audio_muted else '100%'
+    icon_name = ":/Sound/imgs/volume-off.png" if not global_vars.audio_muted else ":/Sound/imgs/volume-on.png"
+    
+    logger.info(f"Setting audio volume to {volume}")
     try:
         subprocess.run(['amixer', 'set', 'Master', volume], 
-                        stdout=subprocess.DEVNULL,
-                        stderr=subprocess.DEVNULL,
-                        check=True)
+                      stdout=subprocess.DEVNULL,
+                      stderr=subprocess.DEVNULL,
+                      check=True)
         global_vars.ui.pushButtonVolumeOnOff.setIcon(QIcon(icon_name))
         global_vars.audio_muted = not global_vars.audio_muted
+        logger.debug("Audio volume set successfully")
     except Exception as e:
-        logger.error(f"Error setting volume: {e}")
+        logger.error(f"Failed to set audio volume: {e}")
 
 def delay_warning_sound():
     """Delay the warning sound start by 40 seconds.
     """
+    logger.debug("Starting delay warning sound monitor")
     while True:
-        if global_vars.timestamp_scanner_fault and (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds() >= 40:
-            if not audio_thread_running:
-                spawn_play_stepback_warning_thread()
-        if global_vars.timestamp_scanner_fault is None:
-            kill_play_stepback_warning_thread()
-        time.sleep(5)
+        try:
+            if global_vars.timestamp_scanner_fault:
+                delay = (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds()
+                if delay >= 40:
+                    logger.info("40-second delay reached, starting warning sound")
+                    if not audio_thread_running:
+                        spawn_play_stepback_warning_thread()
+            if global_vars.timestamp_scanner_fault is None:
+                logger.debug("Scanner fault cleared, stopping warning sound")
+                kill_play_stepback_warning_thread()
+            time.sleep(5)
+        except Exception as e:
+            logger.error(f"Error in delay warning sound monitor: {e}")
 
 #################
 # Main function #
@@ -1026,7 +1035,18 @@ def qt_message_handler(mode, context, message):
     elif mode == QtCore.QtMsgType.QtInfoMsg:
         logger.info(f"Qt Info: {message}")
 
-# Main function to run the application
+def setup_logging(verbose: bool) -> None:
+    """Configure logging level based on verbose flag
+    
+    Args:
+        verbose (bool): Whether to enable verbose (DEBUG) logging
+    """
+    log_level = logging.DEBUG if verbose else logging.INFO
+    logger.setLevel(log_level)
+    for handler in logger.handlers:
+        handler.setLevel(log_level)
+    logger.info(f"Logging level set to: {log_level}")
+
 def main():
     """Main function to run the application.
 
@@ -1035,29 +1055,25 @@ def main():
     """
     global main_window
     
+    # Parse arguments first
+    parser = argparse.ArgumentParser(description="Multipack Parser Application")
+    parser.add_argument('-v', '--version', action='store_true', help='Show version information and exit')
+    parser.add_argument('-V', '--verbose', action='store_true', help='Enable verbose logging')
+    parser.add_argument('-l', '--license', action='store_true', help='Show license information and exit')
+    args = parser.parse_args()
+
+    # Setup logging based on verbose flag
+    setup_logging(args.verbose)
+    
     # Initialize message manager at start of main
     global_vars.message_manager = MessageManager()
     
-    parser = argparse.ArgumentParser(description="Multipack Parser Application")
-    parser.add_argument('--version', action='store_true', help='Show version information and exit')
-    parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose logging')
-    parser.add_argument('--rob-path', type=str, help='Path to the .rob files')
-    args = parser.parse_args()
-
     if args.version:
         print(f"Multipack Parser Application Version: {global_vars.VERSION}")
         return
-    if args.verbose:
-        # enable verbose logging
-        logger.setLevel(logging.DEBUG)
-    if args.rob_path:
-        # try to check if the path is valid
-        if os.path.exists(args.rob_path):
-            # set the path to the .rob files
-            global_vars.PATH_USB_STICK = args.rob_path
-        else:
-            logger.error(f"Path {args.rob_path} does not exist")
-            return
+    if args.license:
+        print(__license__)
+        return
         
     logger.debug(f"MultipackParser Application Version: {global_vars.VERSION}")
 
@@ -1272,31 +1288,43 @@ def handle_scanner_status(message: str, image_path: str):
         message (str): The message from the scanner.
         image_path (str): The path to the image from the scanner.
     """
+    logger.debug(f"Received scanner status - Message: {message}, Image: {image_path}")
+    
     if message != "True,True,True":
+        logger.warning("Scanner detected safety violation")
         # Update existing blinking label instead of creating new one
         if global_vars.blinking_label:
+            logger.debug("Updating existing blinking label")
             global_vars.blinking_label.update_text("Bitte Arbeitsbereich räumen.")
             global_vars.blinking_label.update_color("red")
             global_vars.blinking_label.start_blinking()
         else:
+            logger.debug("Creating new warning status label")
             update_status_label("Bitte Arbeitsbereich räumen.", "red", True, block=True)
             
         # Show safety dialog immediately
         if global_vars.ui and image_path:
-            pixmap = QPixmap(image_path)
-            scaled_pixmap = pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
-            dialog = QMessageBox()
-            dialog.setWindowTitle("Sicherheitswarnung")
-            dialog.setText("Ist der Arbeitsbereich um den Roboter frei?")
-            dialog.setIconPixmap(scaled_pixmap)
-            dialog.setStandardButtons(QMessageBox.StandardButton.Yes)
-            dialog.exec()
-            if dialog.clickedButton() == QMessageBox.StandardButton.Yes:
-                if global_vars.message_manager:
-                    global_vars.message_manager.unblock_message("Bitte Arbeitsbereich räumen.")
-                    global_vars.message_manager.acknowledge_message("Bitte Arbeitsbereich räumen.")
-                update_status_label("Press Reset-Button to clear robot.", "blue", False, block=True)
+            logger.info("Displaying safety warning dialog")
+            try:
+                pixmap = QPixmap(image_path)
+                scaled_pixmap = pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                dialog = QMessageBox()
+                dialog.setWindowTitle("Sicherheitswarnung")
+                dialog.setText("Ist der Arbeitsbereich um den Roboter frei?")
+                dialog.setIconPixmap(scaled_pixmap)
+                dialog.setStandardButtons(QMessageBox.StandardButton.Yes)
+                dialog.exec()
+                
+                if dialog.clickedButton() == QMessageBox.StandardButton.Yes:
+                    logger.info("User confirmed safety area is clear")
+                    if global_vars.message_manager:
+                        global_vars.message_manager.unblock_message("Bitte Arbeitsbereich räumen.")
+                        global_vars.message_manager.acknowledge_message("Bitte Arbeitsbereich räumen.")
+                    update_status_label("Press Reset-Button to clear robot.", "blue", False, block=True)
+            except Exception as e:
+                logger.error(f"Error displaying safety dialog: {e}")
     else:
+        logger.info("Scanner reports all clear")
         if global_vars.message_manager:
             global_vars.message_manager.unblock_message("Press Reset-Button to clear robot.")
             global_vars.message_manager.acknowledge_message("Press Reset-Button to clear robot.")
@@ -1305,10 +1333,12 @@ def handle_scanner_status(message: str, image_path: str):
     
     # Update scanner image
     if image_path and global_vars.ui and global_vars.ui.label_7:
-        pixmap = QPixmap(image_path)
-        global_vars.ui.label_7.setPixmap(pixmap)
-        
-
+        try:
+            logger.debug("Updating scanner image display")
+            pixmap = QPixmap(image_path)
+            global_vars.ui.label_7.setPixmap(pixmap)
+        except Exception as e:
+            logger.error(f"Failed to update scanner image: {e}")
 
 if __name__ == "__main__":
     main()

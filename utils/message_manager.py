@@ -1,6 +1,8 @@
 from typing import List, Optional, Union, Set
 from datetime import datetime
 from .message import Message, MessageType
+from . import global_vars
+logger = global_vars.logger
 
 class MessageManager:
     """Manager for messages.
@@ -8,6 +10,7 @@ class MessageManager:
     def __init__(self):
         """Initialize the message manager.
         """
+        logger.debug("Initializing MessageManager")
         self._messages: List[Message] = []
         self._active_messages: List[Message] = []
         self._blocked_messages: Set[str] = set()
@@ -23,10 +26,12 @@ class MessageManager:
         Returns:
             Message: The new message
         """
+        logger.debug(f"Adding message: {text} (type: {type}, block: {block})")
         message = Message(text, type)
         self._messages.append(message)
         self._active_messages.append(message)
         if block:
+            logger.debug(f"Blocking message: {text}")
             self._blocked_messages.add(text)
         return message
         
@@ -36,6 +41,7 @@ class MessageManager:
         Args:
             text (str): The text of the message to block
         """
+        logger.debug(f"Blocking message: {text}")
         self._blocked_messages.add(text)
         
     def unblock_message(self, text: str) -> None:
@@ -44,6 +50,7 @@ class MessageManager:
         Args:
             text (str): The text of the message to unblock
         """
+        logger.debug(f"Unblocking message: {text}")
         self._blocked_messages.discard(text)
         
     def acknowledge_message(self, message: Union[Message, str]) -> bool:
@@ -56,18 +63,26 @@ class MessageManager:
             bool: True if the message was acknowledged, False otherwise
         """
         text = message.text if isinstance(message, Message) else message
+        logger.debug(f"Attempting to acknowledge message: {text}")
+        
         if text in self._blocked_messages:
+            logger.debug(f"Message is blocked, cannot acknowledge: {text}")
             return False
             
         if isinstance(message, str):
-            msg: Message | None = self.get_active_message(message)
+            msg = self.get_active_message(text)
             if msg is None:
+                logger.warning(f"Message not found: {text}")
                 return False
             message = msg
+            
         if message in self._active_messages:
+            logger.info(f"Message acknowledged: {text}")
             message.acknowledged = True
             self._active_messages.remove(message)
             return True
+            
+        logger.warning(f"Message not active, cannot acknowledge: {text}")
         return False
 
     def get_all_messages(self) -> List[Message]:
