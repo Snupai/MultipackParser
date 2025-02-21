@@ -111,17 +111,25 @@ class BlinkingLabel(QLabel):
         self.setStyleSheet(f"color: {color};")
         
     def mousePressEvent(self, event) -> None:
-        """Handle the mouse press event.
-
-        Args:
-            event (QMouseEvent): The mouse event
-        """
+        """Handle the mouse press event."""
         if event.button() == Qt.MouseButton.LeftButton:
+            logger.debug("BlinkingLabel clicked")
             from ui_files.message_dialog import MessageDialog
             
             if global_vars.message_manager:
-                dialog = MessageDialog(global_vars.message_manager.get_all_messages(), self.parent())
-                if dialog.exec() == QDialog.DialogCode.Accepted:
+                logger.debug("Creating MessageDialog")
+                messages = global_vars.message_manager.get_all_messages()
+                logger.debug(f"Number of messages: {len(messages)}")
+                
+                dialog = MessageDialog(messages, self.window())
+                dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose, False)  # Prevent auto-deletion
+                dialog.setModal(True)  # Ensure dialog is modal
+                
+                logger.debug("Showing MessageDialog")
+                result = dialog.exec()
+                logger.debug(f"Dialog result: {result}")
+                
+                if result == QDialog.DialogCode.Accepted:
                     # Acknowledge selected messages
                     messages = global_vars.message_manager.get_all_messages()
                     for row in dialog.selected_for_acknowledgment:
@@ -143,4 +151,6 @@ class BlinkingLabel(QLabel):
                         self.update_text("Everything operational")
                         self.update_color("green")
                         self.stop_blinking()
+            else:
+                logger.warning("No message manager available")
         

@@ -2,9 +2,12 @@ from PySide6.QtWidgets import (QDialog, QVBoxLayout, QTableWidget,
                               QTableWidgetItem, QPushButton, QHeaderView,
                               QHBoxLayout, QCheckBox)
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QFont
 from utils.message import Message, MessageType
 from utils import global_vars
+import logging
+
+logger = logging.getLogger(__name__)
 
 class MessageDialog(QDialog):
     """Dialog for displaying and acknowledging messages.
@@ -19,9 +22,20 @@ class MessageDialog(QDialog):
             messages (list): The list of messages to be displayed.
             parent (QWidget, optional): The parent widget. Defaults to None.
         """
+        logger.debug(f"Initializing MessageDialog with {len(messages)} messages")
         super().__init__(parent)
         self.setWindowTitle("Meldungsliste")
         self.setMinimumSize(800, 400)
+        
+        # Remove standard window frame but keep dialog behavior
+        self.setWindowFlags(
+            Qt.WindowType.FramelessWindowHint | 
+            Qt.WindowType.WindowStaysOnTopHint |
+            Qt.WindowType.Dialog
+        )
+        
+        # Ensure dialog is modal
+        self.setModal(True)
         
         layout = QVBoxLayout(self)
         
@@ -38,11 +52,24 @@ class MessageDialog(QDialog):
         
         # Button layout
         button_layout = QHBoxLayout()
+        
+        # Create custom close button with larger size
+        self.close_button = QPushButton("Schließen")
+        self.close_button.setMinimumSize(120, 40)  # Make button bigger
+        font = QFont()
+        font.setPointSize(12)  # Increase font size
+        self.close_button.setFont(font)
+        self.close_button.clicked.connect(self.handle_close)
+        
         self.ack_button = QPushButton("Quittieren")
+        self.ack_button.setMinimumSize(120, 40)  # Make button bigger
+        self.ack_button.setFont(font)  # Use same font
         self.ack_button.clicked.connect(self.acknowledge_selected)
+        
         button_layout.addWidget(self.show_history)
         button_layout.addStretch()
         button_layout.addWidget(self.ack_button)
+        button_layout.addWidget(self.close_button)
         
         layout.addWidget(self.table)
         layout.addLayout(button_layout)
@@ -94,3 +121,17 @@ class MessageDialog(QDialog):
         selected_rows = set(item.row() for item in self.table.selectedItems())
         self.selected_for_acknowledgment = selected_rows
         self.accept()
+
+    def handle_close(self) -> None:
+        """Handle the close button click."""
+        self.reject()
+
+    def mousePressEvent(self, event) -> None:
+        """Handle mouse press events for dragging the window."""
+        if event.button() == Qt.MouseButton.LeftButton:
+            self._drag_pos = event.pos()
+
+    def mouseMoveEvent(self, event) -> None:
+        """Handle mouse move events for dragging the window."""
+        if hasattr(self, '_drag_pos'):
+            self.move(self.pos() + event.pos() - self._drag_pos)

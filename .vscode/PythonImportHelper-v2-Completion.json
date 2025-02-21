@@ -704,6 +704,14 @@
         "documentation": {}
     },
     {
+        "label": "QFont",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
         "label": "QGuiApplication",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
@@ -1280,6 +1288,15 @@
         "documentation": {}
     },
     {
+        "label": "logging",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "logging",
+        "description": "logging",
+        "detail": "logging",
+        "documentation": {}
+    },
+    {
         "label": "sys",
         "kind": 6,
         "isExtraImport": true,
@@ -1312,15 +1329,6 @@
         "description": "ui_files.ui_password_entry",
         "isExtraImport": true,
         "detail": "ui_files.ui_password_entry",
-        "documentation": {}
-    },
-    {
-        "label": "logging",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "logging",
-        "description": "logging",
-        "detail": "logging",
         "documentation": {}
     },
     {
@@ -1644,6 +1652,15 @@
         "importPath": "ui_files.message_dialog",
         "description": "ui_files.message_dialog",
         "peekOfCode": "class MessageDialog(QDialog):\n    \"\"\"Dialog for displaying and acknowledging messages.\n    Args:\n        QDialog (QDialog): The parent class of the message dialog.\n    \"\"\"\n    def __init__(self, messages, parent=None):\n        \"\"\"Initialize the message dialog.\n        Args:\n            messages (list): The list of messages to be displayed.\n            parent (QWidget, optional): The parent widget. Defaults to None.",
+        "detail": "ui_files.message_dialog",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "ui_files.message_dialog",
+        "description": "ui_files.message_dialog",
+        "peekOfCode": "logger = logging.getLogger(__name__)\nclass MessageDialog(QDialog):\n    \"\"\"Dialog for displaying and acknowledging messages.\n    Args:\n        QDialog (QDialog): The parent class of the message dialog.\n    \"\"\"\n    def __init__(self, messages, parent=None):\n        \"\"\"Initialize the message dialog.\n        Args:\n            messages (list): The list of messages to be displayed.",
         "detail": "ui_files.message_dialog",
         "documentation": {}
     },
