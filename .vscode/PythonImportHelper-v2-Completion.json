@@ -1652,7 +1652,7 @@
         "kind": 6,
         "importPath": "ui_files.PasswordDialog",
         "description": "ui_files.PasswordDialog",
-        "peekOfCode": "class PasswordEntryDialog(QDialog):\n    \"\"\"Password entry dialog.\n    Args:\n        QDialog (QDialog): The parent class of the password entry dialog.\n    Returns:\n        bool: True if the password was accepted, False otherwise.\n    \"\"\"\n    password_accepted = False\n    ui = None\n    def __init__(self, parent_window=None) -> None:",
+        "peekOfCode": "class PasswordEntryDialog(QDialog):\n    \"\"\"Password entry dialog.\n    Args:\n        QDialog (QDialog): The parent class of the password entry dialog.\n    Returns:\n        bool: True if the password was accepted, False otherwise.\n    \"\"\"\n    password_accepted: bool = False\n    ui: Ui_Dialog\n    def __init__(self, parent_window=None) -> None:",
         "detail": "ui_files.PasswordDialog",
         "documentation": {}
     },
@@ -1670,7 +1670,7 @@
         "kind": 5,
         "importPath": "ui_files.PasswordDialog",
         "description": "ui_files.PasswordDialog",
-        "peekOfCode": "logger = global_vars.logger\n# Define the password entry dialog class\nclass PasswordEntryDialog(QDialog):\n    \"\"\"Password entry dialog.\n    Args:\n        QDialog (QDialog): The parent class of the password entry dialog.\n    Returns:\n        bool: True if the password was accepted, False otherwise.\n    \"\"\"\n    password_accepted = False",
+        "peekOfCode": "logger = global_vars.logger\n# Define the password entry dialog class\nclass PasswordEntryDialog(QDialog):\n    \"\"\"Password entry dialog.\n    Args:\n        QDialog (QDialog): The parent class of the password entry dialog.\n    Returns:\n        bool: True if the password was accepted, False otherwise.\n    \"\"\"\n    password_accepted: bool = False",
         "detail": "ui_files.PasswordDialog",
         "documentation": {}
     },

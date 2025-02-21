@@ -25,8 +25,8 @@ class PasswordEntryDialog(QDialog):
     Returns:
         bool: True if the password was accepted, False otherwise.
     """
-    password_accepted = False
-    ui = None
+    password_accepted: bool = False
+    ui: Ui_Dialog
 
     def __init__(self, parent_window=None) -> None:
         """Initialize the PasswordEntryDialog class.
