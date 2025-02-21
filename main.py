@@ -1055,11 +1055,37 @@ def main():
     """
     global main_window
     
-    # Parse arguments first
-    parser = argparse.ArgumentParser(description="Multipack Parser Application")
-    parser.add_argument('-v', '--version', action='store_true', help='Show version information and exit')
-    parser.add_argument('-V', '--verbose', action='store_true', help='Enable verbose logging')
-    parser.add_argument('-l', '--license', action='store_true', help='Show license information and exit')
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(
+        description="Multipack Parser Application",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  %(prog)s                     # Run normally
+  %(prog)s -v                  # Show version and exit
+  %(prog)s -V                  # Run with verbose logging
+        """
+    )
+    
+    info_group = parser.add_argument_group('Information')
+    info_group.add_argument(
+        '-v', '--version',
+        action='store_true',
+        help='Show version information and exit'
+    )
+    info_group.add_argument(
+        '-l', '--license',
+        action='store_true', 
+        help='Show license information and exit'
+    )
+    
+    debug_group = parser.add_argument_group('Debug Options') 
+    debug_group.add_argument(
+        '-V', '--verbose',
+        action='store_true',
+        help='Enable verbose (debug) logging output'
+    )
+    
     args = parser.parse_args()
 
     # Setup logging based on verbose flag

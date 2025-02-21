@@ -2525,7 +2525,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    global main_window\n    # Parse arguments first\n    parser = argparse.ArgumentParser(description=\"Multipack Parser Application\")\n    parser.add_argument('-v', '--version', action='store_true', help='Show version information and exit')\n    parser.add_argument('-V', '--verbose', action='store_true', help='Enable verbose logging')",
+        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    global main_window\n    # Parse command line arguments\n    parser = argparse.ArgumentParser(\n        description=\"Multipack Parser Application\",\n        formatter_class=argparse.RawDescriptionHelpFormatter,",
         "detail": "main",
         "documentation": {}
     },
