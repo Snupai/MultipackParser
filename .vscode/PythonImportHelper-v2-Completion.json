@@ -400,6 +400,14 @@
         "documentation": {}
     },
     {
+        "label": "QRect",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
         "label": "Qt",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
@@ -705,6 +713,14 @@
     },
     {
         "label": "QFont",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QGuiApplication",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
         "isExtraImport": true,

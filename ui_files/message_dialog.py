@@ -1,8 +1,8 @@
 from PySide6.QtWidgets import (QDialog, QVBoxLayout, QTableWidget, 
                               QTableWidgetItem, QPushButton, QHeaderView,
                               QHBoxLayout, QCheckBox)
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor, QFont
+from PySide6.QtCore import Qt, QRect
+from PySide6.QtGui import QColor, QFont, QGuiApplication
 from utils.message import Message, MessageType
 from utils import global_vars
 import logging
@@ -27,11 +27,19 @@ class MessageDialog(QDialog):
         self.setWindowTitle("Meldungsliste")
         self.setMinimumSize(800, 400)
         
-        # Remove standard window frame but keep dialog behavior
+        # Remove standard window frame and set dialog flags
         self.setWindowFlags(
             Qt.WindowType.FramelessWindowHint | 
             Qt.WindowType.WindowStaysOnTopHint |
             Qt.WindowType.Dialog
+        )
+        
+        # Center the dialog on screen
+        screen = QGuiApplication.primaryScreen().geometry()
+        self.setGeometry(
+            (screen.width() - 800) // 2,
+            (screen.height() - 400) // 2,
+            800, 400
         )
         
         # Ensure dialog is modal
@@ -125,13 +133,3 @@ class MessageDialog(QDialog):
     def handle_close(self) -> None:
         """Handle the close button click."""
         self.reject()
-
-    def mousePressEvent(self, event) -> None:
-        """Handle mouse press events for dragging the window."""
-        if event.button() == Qt.MouseButton.LeftButton:
-            self._drag_pos = event.pos()
-
-    def mouseMoveEvent(self, event) -> None:
-        """Handle mouse move events for dragging the window."""
-        if hasattr(self, '_drag_pos'):
-            self.move(self.pos() + event.pos() - self._drag_pos)
