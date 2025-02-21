@@ -57,6 +57,8 @@ class MessageDialog(QDialog):
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(["Zeitstempel", "Typ", "Meldung", "Status"])
         self.table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+        self.table.setSelectionMode(QTableWidget.SelectionMode.NoSelection)  # Disable selection
+        self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)  # Disable editing
         
         # Button layout
         button_layout = QHBoxLayout()
@@ -70,8 +72,8 @@ class MessageDialog(QDialog):
         self.close_button.clicked.connect(self.handle_close)
         
         self.ack_button = QPushButton("Quittieren")
-        self.ack_button.setMinimumSize(120, 40)  # Make button bigger
-        self.ack_button.setFont(font)  # Use same font
+        self.ack_button.setMinimumSize(120, 40)
+        self.ack_button.setFont(font)
         self.ack_button.clicked.connect(self.acknowledge_selected)
         
         button_layout.addWidget(self.show_history)
@@ -91,15 +93,27 @@ class MessageDialog(QDialog):
         Args:
             messages (list): The list of messages to be displayed.
         """
-        # Filter messages based on checkbox state
         filtered_messages = messages if self.show_history.isChecked() else [m for m in messages if not m.acknowledged]
         
         self.table.setRowCount(len(filtered_messages))
         for i, msg in enumerate(filtered_messages):
-            self.table.setItem(i, 0, QTableWidgetItem(msg.timestamp.strftime('%Y-%m-%d %H:%M:%S')))
-            self.table.setItem(i, 1, QTableWidgetItem(msg.type.name))
-            self.table.setItem(i, 2, QTableWidgetItem(msg.text))
-            self.table.setItem(i, 3, QTableWidgetItem("Quittiert" if msg.acknowledged else "Aktiv"))
+            # Create read-only items
+            timestamp_item = QTableWidgetItem(msg.timestamp.strftime('%Y-%m-%d %H:%M:%S'))
+            type_item = QTableWidgetItem(msg.type.name)
+            text_item = QTableWidgetItem(msg.text)
+            status_item = QTableWidgetItem("Quittiert" if msg.acknowledged else "Aktiv")
+            
+            # Set items as not selectable and not editable
+            flags = Qt.ItemFlag.ItemIsEnabled
+            timestamp_item.setFlags(flags)
+            type_item.setFlags(flags)
+            text_item.setFlags(flags)
+            status_item.setFlags(flags)
+            
+            self.table.setItem(i, 0, timestamp_item)
+            self.table.setItem(i, 1, type_item)
+            self.table.setItem(i, 2, text_item)
+            self.table.setItem(i, 3, status_item)
             
             # Set color based on message type
             color = {
@@ -113,22 +127,30 @@ class MessageDialog(QDialog):
                 color.setAlpha(128)
             
             for j in range(4):
-                item = self.table.item(i, j)
-                item.setBackground(color)
-                # Disable selection for acknowledged or blocked messages
-                if (msg.acknowledged or 
-                    (global_vars.message_manager and msg.text in global_vars.message_manager._blocked_messages)):
-                    item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsSelectable)
+                self.table.item(i, j).setBackground(color)
 
-        # Enable/disable acknowledge button based on selection
-        self.ack_button.setEnabled(len(self.table.selectedItems()) > 0)
-        
     def acknowledge_selected(self):
-        """Acknowledge the selected messages.
-        """
-        selected_rows = set(item.row() for item in self.table.selectedItems())
-        self.selected_for_acknowledgment = selected_rows
-        self.accept()
+        """Acknowledge all non-blocked messages."""
+        if not global_vars.message_manager:
+            return
+            
+        unblocked_messages = [
+            msg for msg in self.get_visible_messages() 
+            if not msg.acknowledged and 
+            msg.text not in global_vars.message_manager._blocked_messages
+        ]
+        
+        # Acknowledge messages without closing dialog
+        for msg in unblocked_messages:
+            global_vars.message_manager.acknowledge_message(msg)
+            
+        # Update the display
+        self.update_messages(global_vars.message_manager.get_all_messages())
+
+    def get_visible_messages(self):
+        """Get the currently visible messages based on filter."""
+        messages = global_vars.message_manager.get_all_messages()
+        return messages if self.show_history.isChecked() else [m for m in messages if not m.acknowledged]
 
     def handle_close(self) -> None:
         """Handle the close button click."""
