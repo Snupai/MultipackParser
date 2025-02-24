@@ -1327,29 +1327,6 @@ def handle_scanner_status(message: str, image_path: str):
         else:
             logger.debug("Creating new warning status label")
             update_status_label("Bitte Arbeitsbereich räumen.", "red", True, block=True)
-        """
-        # Show safety dialog immediately
-        if global_vars.ui and image_path:
-            logger.info("Displaying safety warning dialog")
-            try:
-                pixmap = QPixmap(image_path)
-                scaled_pixmap = pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
-                dialog = QMessageBox()
-                dialog.setWindowTitle("Sicherheitswarnung")
-                dialog.setText("Ist der Arbeitsbereich um den Roboter frei?")
-                dialog.setIconPixmap(scaled_pixmap)
-                dialog.setStandardButtons(QMessageBox.StandardButton.Yes)
-                dialog.exec()
-                
-                if dialog.clickedButton() == QMessageBox.StandardButton.Yes:
-                    logger.info("User confirmed safety area is clear")
-                    if global_vars.message_manager:
-                        global_vars.message_manager.unblock_message("Bitte Arbeitsbereich räumen.")
-                        global_vars.message_manager.acknowledge_message("Bitte Arbeitsbereich räumen.")
-                    update_status_label("Press Reset-Button to clear robot.", "blue", False, block=True)
-            except Exception as e:
-                logger.error(f"Error displaying safety dialog: {e}")
-        """
     else:
         logger.info("Scanner reports all clear")
         if global_vars.message_manager:
