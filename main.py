@@ -55,6 +55,7 @@ from utils.message import MessageType, Message
 from utils.message_manager import MessageManager
 from PySide6 import QtCore
 import traceback
+from utils.startup_dialogs import show_palette_config_dialog
 
 logger = global_vars.logger
 
@@ -1136,6 +1137,17 @@ Examples:
 
         # write initial message to BlinkingLabel using update_status_label
         update_status_label("Kein Pallettenplan geladen", "black", False, block=True)
+
+        # Show palette configuration dialog for UR20 robot
+        if settings.settings['info']['UR_Model'] == 'UR20':
+            logger.info("UR20 robot detected, showing palette configuration dialog")
+            show_palette_config_dialog(main_window)
+        else:
+            logger.info(f"Robot model is {settings.settings['info']['UR_Model']}, skipping palette configuration")
+            # Reset palette variables for non-UR20 robots
+            global_vars.UR20_active_palette = 0
+            global_vars.UR20_palette1_empty = False
+            global_vars.UR20_palette2_empty = False
 
         # Set the regular expression validator for EingabePallettenplan
         regex = QRegularExpression(r"^[0-9\-_]*$")

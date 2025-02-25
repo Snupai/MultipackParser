@@ -296,6 +296,78 @@
         "documentation": {}
     },
     {
+        "label": "QDialog",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QVBoxLayout",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QHBoxLayout",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLabel",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QPushButton",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QRadioButton",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QSpinBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QGroupBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMessageBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QMessageBox",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -609,6 +681,14 @@
     },
     {
         "label": "QSettings",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
         "isExtraImport": true,
@@ -1600,6 +1680,14 @@
         "documentation": {}
     },
     {
+        "label": "show_palette_config_dialog",
+        "importPath": "utils.startup_dialogs",
+        "description": "utils.startup_dialogs",
+        "isExtraImport": true,
+        "detail": "utils.startup_dialogs",
+        "documentation": {}
+    },
+    {
         "label": "BlinkingLabel",
         "kind": 6,
         "importPath": "ui_files.BlinkingLabel",
@@ -1786,6 +1874,33 @@
         "description": "utils.settings",
         "peekOfCode": "class Settings:\n    \"\"\"Settings class.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the settings with QSettings.\n        \"\"\"\n        logger.debug(\"Initializing Settings\")\n        # Create QSettings instance with organization and application name\n        self.qsettings = QSettings(\"Multipack\", \"MultipackParser\")\n        # Define default settings",
         "detail": "utils.settings",
+        "documentation": {}
+    },
+    {
+        "label": "PaletteConfigDialog",
+        "kind": 6,
+        "importPath": "utils.startup_dialogs",
+        "description": "utils.startup_dialogs",
+        "peekOfCode": "class PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(600)  # Increased width\n        self.setMinimumHeight(500)  # Added minimum height\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Main layout\n        layout = QVBoxLayout(self)",
+        "detail": "utils.startup_dialogs",
+        "documentation": {}
+    },
+    {
+        "label": "show_palette_config_dialog",
+        "kind": 2,
+        "importPath": "utils.startup_dialogs",
+        "description": "utils.startup_dialogs",
+        "peekOfCode": "def show_palette_config_dialog(parent=None):\n    \"\"\"Show the palette configuration dialog and apply settings.\n    Args:\n        parent: Parent widget\n    Returns:\n        bool: True if configuration was successful, False otherwise\n    \"\"\"\n    dialog = PaletteConfigDialog(parent)\n    # Make sure dialog appears in front of main window\n    dialog.setWindowModality(Qt.ApplicationModal)",
+        "detail": "utils.startup_dialogs",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.startup_dialogs",
+        "description": "utils.startup_dialogs",
+        "peekOfCode": "logger = logging.getLogger(__name__)\nclass PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(600)  # Increased width\n        self.setMinimumHeight(500)  # Added minimum height\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Main layout",
+        "detail": "utils.startup_dialogs",
         "documentation": {}
     },
     {
