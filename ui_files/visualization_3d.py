@@ -63,7 +63,7 @@ class MatplotlibCanvas(FigureCanvas):
         self.ax = fig.add_subplot(111, projection='3d')
         super().__init__(fig)
         self.setParent(parent)
-
+        self.ax.mouse_init(rotate_btn=None, zoom_btn=None)
 
 def initialize_3d_view(frame):
     """Initialize the 3D view in the given frame.
@@ -113,6 +113,8 @@ def calculate_package_centers(center, width, length, rotation, num_packages):
 
 
 def parse_rob_file(file_path) -> Pallet:
+    
+    start_time = time.time()
     with open(file_path, 'r') as file:
         lines = file.readlines()
 
@@ -210,6 +212,8 @@ def parse_rob_file(file_path) -> Pallet:
     for num in layer_order:
         layers.append(Layer(unique_layer_id=num, boxes=unique_layers[num - 1].boxes))
     pallet = Pallet(layers=layers)
+    parse_time = time.time() - start_time
+    logger.info(f"Parse time: {parse_time:.3f} seconds")
     return pallet
 
 def display_pallet_3d(canvas, pallet_name):

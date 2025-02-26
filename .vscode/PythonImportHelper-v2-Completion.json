@@ -2034,7 +2034,7 @@
         "kind": 6,
         "importPath": "ui_files.visualization_3d",
         "description": "ui_files.visualization_3d",
-        "peekOfCode": "class MatplotlibCanvas(FigureCanvas):\n    def __init__(self, parent=None, width=6, height=4, dpi=100):\n        fig = Figure(figsize=(width, height), dpi=dpi)\n        self.ax = fig.add_subplot(111, projection='3d')\n        super().__init__(fig)\n        self.setParent(parent)\ndef initialize_3d_view(frame):\n    \"\"\"Initialize the 3D view in the given frame.\n    Args:\n        frame (QFrame): The frame to initialize the 3D view in.",
+        "peekOfCode": "class MatplotlibCanvas(FigureCanvas):\n    def __init__(self, parent=None, width=6, height=4, dpi=100):\n        fig = Figure(figsize=(width, height), dpi=dpi)\n        self.ax = fig.add_subplot(111, projection='3d')\n        super().__init__(fig)\n        self.setParent(parent)\n        self.ax.mouse_init(rotate_btn=None, zoom_btn=None)\ndef initialize_3d_view(frame):\n    \"\"\"Initialize the 3D view in the given frame.\n    Args:",
         "detail": "ui_files.visualization_3d",
         "documentation": {}
     },
@@ -2070,7 +2070,7 @@
         "kind": 2,
         "importPath": "ui_files.visualization_3d",
         "description": "ui_files.visualization_3d",
-        "peekOfCode": "def parse_rob_file(file_path) -> Pallet:\n    with open(file_path, 'r') as file:\n        lines = file.readlines()\n    package_dimensions = list(map(int, lines[1].strip().split()))\n    package_width, package_length, package_height = package_dimensions[0:3]\n    num_unique_layers = int(lines[2].strip())\n    num_layers = int(lines[3].strip())\n    layer_order = []\n    current_line = 5\n    for _ in range(num_layers):",
+        "peekOfCode": "def parse_rob_file(file_path) -> Pallet:\n    start_time = time.time()\n    with open(file_path, 'r') as file:\n        lines = file.readlines()\n    package_dimensions = list(map(int, lines[1].strip().split()))\n    package_width, package_length, package_height = package_dimensions[0:3]\n    num_unique_layers = int(lines[2].strip())\n    num_layers = int(lines[3].strip())\n    layer_order = []\n    current_line = 5",
         "detail": "ui_files.visualization_3d",
         "documentation": {}
     },
