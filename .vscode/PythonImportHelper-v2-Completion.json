@@ -480,6 +480,22 @@
         "documentation": {}
     },
     {
+        "label": "QSplashScreen",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QProgressBar",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QTimer",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
@@ -2968,7 +2984,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    global main_window\n    # Parse command line arguments\n    parser = argparse.ArgumentParser(\n        description=\"Multipack Parser Application\",\n        formatter_class=argparse.RawDescriptionHelpFormatter,",
+        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    global main_window\n    # Initialize the application first\n    app = QApplication(sys.argv)\n    # Create and show the splash screen\n    splash_pix = QPixmap(\":/Szaidel Logo/imgs/logoszaidel-transparent-big.png\")",
         "detail": "main",
         "documentation": {}
     },
