@@ -32,22 +32,30 @@ import socket
 from xmlrpc.server import SimpleXMLRPCServer
 import logging
 from datetime import datetime
+from typing import Literal, cast
+from enum import Enum
 
 # import the needed qml modules for the virtual keyboard to work
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickView
 ################################################################
-from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QCompleter, QFileDialog, QMessageBox
-from PySide6.QtCore import Qt, QFileSystemWatcher, QProcess, QRegularExpression, QLocale
-from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QIcon
+from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox, 
+                              QCompleter, QFileDialog, QMessageBox, QLabel)
+from PySide6.QtCore import Qt, QFileSystemWatcher, QProcess, QRegularExpression, QLocale, QStringListModel, QTimer
+from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QIcon, QPixmap
 from ui_files.ui_main_window import Ui_Form
 from ui_files import MainWindowResources_rc
-from utils import global_vars
+from ui_files.BlinkingLabel import BlinkingLabel
 from utils.settings import Settings
+from utils import global_vars
 from utils import UR_Common_functions as UR
 from utils import UR10_Server_functions as UR10
 from utils import UR20_Server_functions as UR20
-from ui_files.BlinkingLabel import BlinkingLabel
+from utils.message import MessageType, Message
+from utils.message_manager import MessageManager
+from PySide6 import QtCore
+import traceback
+from utils.startup_dialogs import show_palette_config_dialog
 
 logger = global_vars.logger
 
@@ -57,7 +65,7 @@ audio_thread_running = False
 os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
 # global_vars.PATH_USB_STICK = 'E:\' # Pfad zu den .rob Dateien nur auskommentieren zum testen
- 
+
 if global_vars.PATH_USB_STICK == '..':
     # Bekomme CWD und setze den Pfad auf den Überordner
     logger.debug(os.path.dirname(os.getcwd()))
@@ -66,13 +74,12 @@ if global_vars.PATH_USB_STICK == '..':
 ####################
 # Server functions #
 ####################
-                 
-def server_start():
-    """
-    Start the XMLRPC server.
+
+def server_start() -> Literal[0]:
+    """Start the XMLRPC server.
 
     Returns:
-        0
+        Literal[0]: The exit code of the application.
     """
     global server
     server = SimpleXMLRPCServer(("", 8080), allow_none=True)
@@ -97,14 +104,14 @@ def server_start():
     server.register_function(UR.UR_Karton, "UR_Karton")
     server.register_function(UR.UR_Lagen, "UR_Lagen")
     server.register_function(UR.UR_Zwischenlagen, "UR_Zwischenlagen")
-    server.register_function(UR.UR_PaketPos, "UR_PaketPos")
+    server.register_function(UR.UR_PaketPos, "UR_PaketPos") # type: ignore
     server.register_function(UR.UR_AnzLagen, "UR_AnzLagen")
     server.register_function(UR.UR_AnzPakete, "UR_AnzPakete")
     server.register_function(UR.UR_PaketeZuordnung, "UR_PaketeZuordnung")
     server.register_function(UR.UR_Paket_hoehe, "UR_Paket_hoehe")
     server.register_function(UR.UR_Startlage, "UR_Startlage")
     server.register_function(UR.UR_Quergreifen, "UR_Quergreifen")
-    server.register_function(UR.UR_CoG, "UR_CoG")
+    server.register_function(UR.UR_CoG, "UR_CoG") # type: ignore
     server.register_function(UR.UR_MasseGeschaetzt, "UR_MasseGeschaetzt")
     server.register_function(UR.UR_PickOffsetX, "UR_PickOffsetX")
     server.register_function(UR.UR_PickOffsetY, "UR_PickOffsetY")
@@ -117,53 +124,68 @@ def server_start():
         server.register_function(UR10.UR10_scanner2bild, "UR_scanner2bild")
         server.register_function(UR10.UR10_scanner1and2iobild, "UR_scanner1and2iobild")
     elif robot_type == 'UR20':
+        server.register_function(UR20.UR20_scannerStatus, "UR_scannerStatus") # type: ignore
         server.register_function(UR20.UR20_SetActivePalette, "UR_SetActivePalette")
         server.register_function(UR20.UR20_GetActivePaletteNumber, "UR_GetActivePaletteNumber")
         server.register_function(UR20.UR20_GetPaletteStatus, "UR_GetPaletteStatus")
-        server.register_function(UR20.UR20_scannerStatus, "UR_scannerStatus")
         
     logger.debug(f"Successfully registered functions for {robot_type}")
     
     server.serve_forever()
     return 0
- 
-def server_stop():
+
+def server_stop() -> None:
+    """Stop the XMLRPC server.
     """
-    Stop the XMLRPC server.
-    """
-    global_vars.ui.ButtonStopRPCServer.setEnabled(False)
+    if global_vars.ui and global_vars.ui.ButtonStopRPCServer:
+        global_vars.ui.ButtonStopRPCServer.setEnabled(False)
     server.shutdown()
     logger.debug("Server stopped")
     datensenden_manipulation(True, "Server starten", "")
- 
-def server_thread():
-    """
-    Start the XMLRPC server in a separate thread.
+    if global_vars.message_manager is None:
+        global_vars.message_manager = MessageManager()
+    message = global_vars.message_manager.add_message("XMLRPC Server gestoppt", MessageType.INFO)
+    global_vars.message_manager.acknowledge_message(message)
+
+def server_thread() -> None:
+    """Start the XMLRPC server in a separate thread.
     """
     logger.debug("Starting server thread")
     xServerThread = threading.Thread(target=server_start)
     xServerThread.start()
-    global_vars.ui.ButtonStopRPCServer.setEnabled(True)
+    if global_vars.ui and global_vars.ui.ButtonStopRPCServer:
+        global_vars.ui.ButtonStopRPCServer.setEnabled(True)
     datensenden_manipulation(False, "Server läuft", "green")
- 
-def datensenden_manipulation(visibility: bool, display_text: str, display_colour: str):
-    """
-    Manipulate the visibility of the "Daten Senden" button and the display text.
-    """
-    buttons = [global_vars.ui.ButtonDatenSenden, global_vars.ui.ButtonDatenSenden_2]
-    for button in buttons:
-        button.setStyleSheet(f"color: {display_colour}")
-        button.setEnabled(visibility)
-        button.setText(display_text)
+    if global_vars.message_manager is None:
+        global_vars.message_manager = MessageManager()
+    message = global_vars.message_manager.add_message("XMLRPC Server gestartet", MessageType.INFO)
+    global_vars.message_manager.acknowledge_message(message)
 
-def send_cmd_play():
+def datensenden_manipulation(visibility: bool, display_text: str, display_colour: str) -> None:
+    """Manipulate the visibility of the "Daten Senden" button and the display text.
+
+    Args:
+        visibility (bool): Whether the "Daten Senden" button should be visible.
+        display_text (str): The text to be displayed in the "Daten Senden" button.
+        display_colour (str): The colour of the "Daten Senden" button.
     """
-    Send a command to the robot to start.
+    if global_vars.ui:
+        buttons = []
+        if hasattr(global_vars.ui, 'ButtonDatenSenden'):
+            buttons.append(global_vars.ui.ButtonDatenSenden)
+        if hasattr(global_vars.ui, 'ButtonDatenSenden_2'):
+            buttons.append(global_vars.ui.ButtonDatenSenden_2)
+            
+        for button in buttons:
+            button.setStyleSheet(f"color: {display_colour}")
+            button.setEnabled(visibility)
+            button.setText(display_text)
+
+def send_cmd_play() -> None:
+    """Send a command to the robot to start.
     """
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        # Create a TCP/IP socket
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        
         # Connect the socket to the port where the server is listening
         server_address = (global_vars.robot_ip, 29999)
         logger.debug('connecting to %s port %s' %(server_address))
@@ -181,15 +203,12 @@ def send_cmd_play():
     finally:
         logger.debug('closing socket')
         sock.close()
- 
-def send_cmd_pause():
+
+def send_cmd_pause() -> None:
+    """Send a command to the robot to pause.
     """
-    Send a command to the robot to pause.
-    """
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        # Create a TCP/IP socket
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        
         # Connect the socket to the port where the server is listening
         server_address = (global_vars.robot_ip, 29999)
         logger.debug('connecting to %s port %s' %(server_address))
@@ -207,15 +226,12 @@ def send_cmd_pause():
     finally:
         logger.debug('closing socket')
         sock.close()
- 
-def send_cmd_stop():
+
+def send_cmd_stop() -> None:
+    """Send a command to the robot to stop.
     """
-    Send a command to the robot to stop.
-    """
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        # Create a TCP/IP socket
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        
         # Connect the socket to the port where the server is listening
         server_address = (global_vars.robot_ip, 29999)
         logger.debug('connecting to %s port %s' %(server_address))
@@ -238,10 +254,42 @@ def send_cmd_stop():
 # UI functions #
 ################
 
-def update_status_label(text: str, color: str, blink: bool = False, second_color: str = None):
-    """Update the status label with the given text and color"""
-    # Create blinking label if it doesn't exist
-    if not hasattr(global_vars, 'blinking_label'):
+def update_status_label(text: str, color: str, blink: bool = False, second_color: str | None = None, instant_acknowledge: bool = False, block: bool = False) -> None:
+    """Update the status label with the given text and color.
+
+    Args:
+        text (str): The text to be displayed in the status label.
+        color (str): The color of the status label.
+        blink (bool, optional): Whether the status label should blink. Defaults to False.
+        second_color (str | None, optional): The second color of the status label. Defaults to None.
+        instant_acknowledge (bool, optional): Whether the status label should be acknowledged immediately. Defaults to False.
+        block (bool, optional): Whether the status label should be blocked. Defaults to False.
+    """
+    if not global_vars.ui:
+        logger.error("UI not initialized")
+        return
+
+    # Add message to manager
+    if global_vars.message_manager is None:
+        global_vars.message_manager = MessageManager()
+        
+    message_type = {
+        "red": MessageType.ERROR,
+        "orange": MessageType.WARNING,
+        "green": MessageType.INFO,
+        "black": MessageType.INFO
+    }.get(color, MessageType.INFO)
+    
+    message: Message = global_vars.message_manager.add_message(text, message_type, block=block)
+    if instant_acknowledge:
+        global_vars.message_manager.acknowledge_message(message)
+
+    if not hasattr(global_vars.ui, 'LabelPalletenplanInfo'):
+        logger.error("Label not found in UI")
+        return
+
+    # Create new blinking label only if it doesn't exist
+    if global_vars.blinking_label is None:
         global_vars.blinking_label = BlinkingLabel(
             text, 
             color, 
@@ -251,58 +299,55 @@ def update_status_label(text: str, color: str, blink: bool = False, second_color
             font=global_vars.ui.LabelPalletenplanInfo.font(),
             alignment=global_vars.ui.LabelPalletenplanInfo.alignment()
         )
-        global_vars.ui.LabelPalletenplanInfo.hide()  # Hide the original label
-    
-    # Update the blinking label
-    global_vars.blinking_label.update_text(text)
-    global_vars.blinking_label.update_color(color, second_color)
-    
+        global_vars.ui.LabelPalletenplanInfo.hide()
+    else:
+        global_vars.blinking_label.update_text(text)
+        global_vars.blinking_label.update_color(color, second_color)
+
+    # Update blinking state
     if blink:
         global_vars.blinking_label.start_blinking()
     else:
         global_vars.blinking_label.stop_blinking()
 
-    
+class Page(Enum):
+    """Enum for the pages.
+
+    Args:
+        Enum (Enum): The enum for the pages.
+    """
+    MAIN_PAGE = 0
+    PARAMETER_PAGE = 1
+    SETTINGS_PAGE = 2
 
 def open_password_dialog() -> None:
+    """Open the password dialog.
     """
-    Open the password dialog.
-    """
-    from ui_files.PasswordDialog import PasswordEntryDialog  # Import here instead of top
+    from ui_files.PasswordDialog import PasswordEntryDialog
     dialog = PasswordEntryDialog(parent_window=main_window)
-    #dialog.setModal(False) #cant set to true because it will block the qtvirtualkeyboard
-    dialog.show()
-    dialog.ui.lineEdit.setFocus()
-    dialog.exec()
-    if dialog.password_accepted:
-        open_settings_page()
+    if hasattr(dialog, 'ui') and dialog.ui is not None:
+        dialog.show()
+        dialog.ui.lineEdit.setFocus()
+        dialog.exec()
+        if dialog.password_accepted:
+            open_page(Page.SETTINGS_PAGE)
+    else:
+        logger.error("Failed to initialize password dialog UI")
 
-def open_settings_page() -> None:
-    """
-    Open the settings page.
-    """
-    # set page of the stacked widgets to index 2
-    settings.reset_unsaved_changes()
-    global_vars.ui.stackedWidget.setCurrentIndex(2)
+def open_page(page: Page) -> None:
+    """Open the specified page.
 
-def open_parameter_page() -> None:
+    Args:
+        page (Page): The page to be opened.
     """
-    Open the parameter page.
-    """
-    # set page of the stacked widgets to index 1
-    global_vars.ui.tabWidget.setCurrentIndex(0)
-    global_vars.ui.stackedWidget.setCurrentIndex(1)
-
-def open_main_page() -> None:
-    """
-    Open the main page.
-    """
-    # set page of the stacked widgets to index 0
-    global_vars.ui.stackedWidget.setCurrentIndex(0)
+    if global_vars.ui and global_vars.ui.stackedWidget:
+        if page == Page.SETTINGS_PAGE:
+            settings.reset_unsaved_changes()
+        global_vars.ui.tabWidget.setCurrentIndex(0)            
+        global_vars.ui.stackedWidget.setCurrentIndex(page.value)
 
 def open_explorer() -> None:
-    """
-    Open the explorer.
+    """Open the explorer.
     """
     logger.info("Opening explorer")
     try:
@@ -321,8 +366,7 @@ def open_explorer() -> None:
         logger.error(f"Failed to open file explorer: {e}")
 
 def open_terminal() -> None:
-    """
-    Open the terminal.
+    """Open the terminal.
     """
     logger.info("Opening terminal")
     try:
@@ -341,31 +385,48 @@ def open_terminal() -> None:
         logger.error(f"Failed to open terminal: {e}")
 
 def load() -> None:
+    """Load the pallet plan from file.
     """
-    Load the selected file.
+    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):
+        logger.error("UI not initialized")
+        return
 
-    This function is called when the user clicks the "Lade Palettenplan" button.
-    """
-    # get the value of the EingabePalettenplan text box and run UR_SET_FILENAME then check if the file exists and if it doesnt open a message box
     Artikelnummer = global_vars.ui.EingabePallettenplan.text()
     UR.UR_SetFileName(Artikelnummer)
     
     errorReadDataFromUsbStick = UR.UR_ReadDataFromUsbStick()
-
-    if errorReadDataFromUsbStick == 1:
+    if errorReadDataFromUsbStick:
         logger.error(f"Error reading file for {Artikelnummer=} no file found")
-        update_status_label("Kein Plan gefunden", "red")
-    else:
-        # remove the editing focus from the text box
+        update_status_label("Kein Plan gefunden", "red", True)
+        return
+
+    # Enable UI elements and update values only if UI exists
+    if global_vars.ui:
         global_vars.ui.EingabePallettenplan.clearFocus()
         logger.debug(f"File for {Artikelnummer=} found")
-        update_status_label("Plan erfolgreich geladen", "green")
+        if global_vars.message_manager:
+            message_strings = ["Kein Pallettenplan geladen", "Kein Plan gefunden"]
+            for message_string in message_strings:
+                # unblock the message if it is blocked
+                if message_string in global_vars.message_manager._blocked_messages:
+                    global_vars.message_manager.unblock_message(message_string)
+                global_vars.message_manager.acknowledge_message(message_string)
+        update_status_label("Plan erfolgreich geladen", "green", instant_acknowledge=True)
         global_vars.ui.ButtonOpenParameterRoboter.setEnabled(True)
         global_vars.ui.ButtonDatenSenden.setEnabled(True)
         global_vars.ui.EingabeKartonGewicht.setEnabled(True)
         global_vars.ui.EingabeKartonhoehe.setEnabled(True)
         global_vars.ui.EingabeStartlage.setEnabled(True)
         global_vars.ui.checkBoxEinzelpaket.setEnabled(True)
+
+        # Update Startlage SpinBox with new max value
+        if global_vars.g_AnzLagen is not None:
+            global_vars.ui.EingabeStartlage.setMaximum(global_vars.g_AnzLagen)
+            # If current value is above new max, it will be automatically clamped
+
+        if global_vars.g_PaketDim is None:
+            logger.error("Package dimensions not initialized")
+            return
 
         Volumen = (global_vars.g_PaketDim[0] * global_vars.g_PaketDim[1] * global_vars.g_PaketDim[2]) / 1E+9 # in m³
         logger.debug(f"{Volumen=}")
@@ -379,20 +440,16 @@ def load() -> None:
         global_vars.ui.EingabeKartonhoehe.setText(str(global_vars.g_PaketDim[2]))
 
 def send_data() -> None:
-    """
-    Send the data to the robot.
-
-    This function is called when the user clicks the "Daten Senden" button.
+    """Send the data to the robot.
     """
     logger.debug("Button Daten Senden clicked")
     server_thread()
 
 def load_wordlist() -> list:
-    """
-    Load the wordlist from the USB stick.
+    """Load the wordlist from the USB stick.
 
     Returns:
-        A list of wordlist items.
+        list: A list of wordlist items.
     """
     wordlist = []
     count = 0
@@ -405,17 +462,15 @@ def load_wordlist() -> list:
     return wordlist
 
 def init_settings():
-    """Initialize the settings"""
+    """Initialize the settings
+    """
     global settings
     settings = Settings()
     global_vars.PATH_USB_STICK = settings.settings['admin']['path']
     logger.debug(f"Settings initialized: {settings}")
 
 def leave_settings_page():
-    """
-    Leave the settings page.
-    
-    This function is called when the user clicks the "Zurueck" button in the settings page.
+    """Leave the settings page.
     """
     try:
         settings.compare_loaded_settings_to_saved_settings()
@@ -423,10 +478,15 @@ def leave_settings_page():
         logger.error(f"Error: {e}")
     
         # If settings do not match, ask whether to discard or save the new data
-        response = QMessageBox.question(main_window, "Verwerfen oder Speichern", "Möchten Sie die neuen Daten verwerfen oder speichern?",
-                                        QMessageBox.Discard | QMessageBox.Save, QMessageBox.Save)
-        main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink
-        if response == QMessageBox.Save:
+        response = QMessageBox.question(
+            main_window, 
+            "Verwerfen oder Speichern",
+            "Möchten Sie die neuen Daten verwerfen oder speichern?",
+            QMessageBox.StandardButton.Discard | QMessageBox.StandardButton.Save,
+            QMessageBox.StandardButton.Save
+        )
+        main_window.setWindowState(main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink
+        if response == QMessageBox.StandardButton.Save:
             try:
                 settings.save_settings()
                 logger.debug("New settings saved.")
@@ -434,68 +494,77 @@ def leave_settings_page():
                 logger.error(f"Failed to save settings: {e}")
                 QMessageBox.critical(main_window, "Error", f"Failed to save settings: {e}")
                 return
-        elif response == QMessageBox.Discard:
+        elif response == QMessageBox.StandardButton.Discard:
             settings.reset_unsaved_changes()
             set_settings_line_edits()
             logger.debug("All changes discarded.")
     
     # Navigate back to the main page
-    open_main_page()
+    open_page(Page.MAIN_PAGE)
 
-def open_file():
+def open_file() -> None:
+    """Open a file.
     """
-    Open a file.
+    if not global_vars.ui:
+        logger.error("UI not initialized")
+        return
 
-    This function is called when the user clicks the "Open" button in the editor settings tab.
-    """
-    # Open a file browser to select a file
     file_path, _ = QFileDialog.getOpenFileName(parent=main_window, caption="Open File")
+    if not file_path:
+        return
+
     global_vars.ui.lineEditFilePath.setText(file_path)
-    logger.debug(f"File path: {global_vars.ui.lineEditFilePath.text()}")
+    logger.debug(f"File path: {file_path}")
     
-    # Open the selected file and load its content into the text edit widget
     try:
         with open(file_path, 'r') as file:
             file_content = file.read()
-        global_vars.ui.textEditFile.setPlainText(file_content)  # Use setPlainText for QTextEdit
+        global_vars.ui.textEditFile.setPlainText(file_content)
     except Exception as e:
         logger.error(f"Failed to open file: {e}")
         QMessageBox.critical(main_window, "Error", f"Failed to open file: {e}")
-        main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink
 
-def save_open_file():
+def save_open_file() -> None:
+    """Save or open a file.
     """
-    Save or open a file.
-
-    This function is called when the user clicks the "Speichern" button in the editor settings tab.
-    """
-    # save the file to the selected file path but prompt the user before overwriting the file
+    if not global_vars.ui:
+        logger.error("UI not initialized")
+        return
+        
     file_path = global_vars.ui.lineEditFilePath.text()
-    if file_path:
+    if not file_path:
+        logger.debug("No file path specified")
+        QMessageBox.warning(main_window, "Error", "Please select a file to save.")
+        return
+
+    try:
         if os.path.exists(file_path):
-            overwrite = QMessageBox.question(main_window, "Overwrite File?", f"The file {file_path} already exists. Do you want to overwrite it?", QMessageBox.Yes | QMessageBox.No)
-            main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink
-            if overwrite == QMessageBox.Yes:
+            overwrite = QMessageBox.question(main_window, "Overwrite File?", 
+                f"The file {file_path} already exists. Do you want to overwrite it?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            )
+            if overwrite == QMessageBox.StandardButton.Yes:
                 with open(file_path, 'w') as file:
                     file.write(global_vars.ui.textEditFile.toPlainText())
-            else:
-                logger.debug("File not saved.")
         else:
             with open(file_path, 'w') as file:
                 file.write(global_vars.ui.textEditFile.toPlainText())
-    else:
-        logger.debug("File not saved.")
-        QMessageBox.warning(main_window, "Error", "Please select a file to save.")
+    except Exception as e:
+        logger.error(f"Failed to save file: {e}")
+        QMessageBox.critical(main_window, "Error", f"Failed to save file: {e}")
 
-def execute_command():
+def execute_command() -> None:
+    """Execute a command in the console.
     """
-    Execute a command in the console.
-    """
+    if not global_vars.ui:
+        logger.error("UI not initialized")
+        return
+
     command = global_vars.ui.lineEditCommand.text().strip()
 
     # Check if the command starts with ">"
     if command.startswith("> "):
-        command = command[2:].strip()  # Remove the "> " prefix
+        command = command[2:].strip()
 
     if not command:
         return
@@ -503,14 +572,14 @@ def execute_command():
     # Clear the console if the command is 'cls' or 'clear'
     if command.lower() in ['cls', 'clear']:
         global_vars.ui.textEditConsole.clear()
-        global_vars.ui.lineEditCommand.setText("> ")  # Reset lineEdit with the prefix
+        global_vars.ui.lineEditCommand.setText("> ")
         return
 
     global_vars.ui.textEditConsole.append(f"$ {command}")
-    global_vars.ui.lineEditCommand.setText("> ")  # Reset lineEdit with the prefix
+    global_vars.ui.lineEditCommand.setText("> ")
 
     process = QProcess()
-    process.setProcessChannelMode(QProcess.MergedChannels)
+    process.setProcessChannelMode(QProcess.ProcessChannelMode.MergedChannels)
     process.readyReadStandardOutput.connect(handle_stdout)
     process.readyReadStandardError.connect(handle_stderr)
 
@@ -522,33 +591,48 @@ def execute_command():
 
     global_vars.process = process
 
-def handle_stdout():
+def handle_stdout() -> None:
+    """Handle standard output.
     """
-    Handle standard output.
-    """
-    data = global_vars.process.readAllStandardOutput()
-    stdout = bytes(data).decode("utf-8", errors="replace")
+    if not global_vars.ui or not hasattr(global_vars.ui, 'textEditConsole'):
+        logger.error("UI not initialized")
+        return
+        
+    if not isinstance(global_vars.process, QProcess):
+        logger.error("Process not initialized or wrong type")
+        return
+
+    data = global_vars.process.readAll()  # Use readAll() instead of readAllStandardOutput()
+    stdout = bytes(data.data()).decode("utf-8", errors="replace")
     global_vars.ui.textEditConsole.append(stdout)
 
-def handle_stderr():
+def handle_stderr() -> None:
+    """Handle standard error output.
     """
-    Handle standard error output.
-    """
-    data = global_vars.process.readAllStandardError()
-    stderr = bytes(data).decode("utf-8", errors="replace")
+    if not global_vars.ui or not hasattr(global_vars.ui, 'textEditConsole'):
+        logger.error("UI not initialized")
+        return
+        
+    if not isinstance(global_vars.process, QProcess):
+        logger.error("Process not initialized or wrong type")
+        return
+
+    data = global_vars.process.readAll()
+    stderr = bytes(data.data()).decode("utf-8", errors="replace")
     global_vars.ui.textEditConsole.append(stderr)
 
-def set_settings_line_edits():
+def set_settings_line_edits() -> None:
+    """Set the line edits in the settings page to the current settings.
     """
-    Set the line edits in the settings page to the current settings.
+    if not global_vars.ui:
+        logger.error("UI not initialized")
+        return
 
-    This function is called when the settings page is opened or when the settings are changed.
-    """
     global_vars.ui.lineEditDisplayHeight.setText(str(settings.settings['display']['specs']['height']))
     global_vars.ui.lineEditDisplayWidth.setText(str(settings.settings['display']['specs']['width']))
     global_vars.ui.lineEditDisplayRefreshRate.setText(str(int(float(settings.settings['display']['specs']['refresh_rate']))))
     global_vars.ui.lineEditDisplayModel.setText(settings.settings['display']['specs']['model'])
-    # Set the combo box value
+    
     current_model = settings.settings['info']['UR_Model']
     index = global_vars.ui.comboBoxChooseURModel.findText(current_model)
     if index >= 0:
@@ -565,18 +649,19 @@ def set_settings_line_edits():
     global_vars.ui.audioPathEdit.setText(settings.settings['admin']['alarm_sound_file'])
 
 def restart_app():
-    """
-    Restart the system.
+    """Restart the application.
     """
     try:
         settings.compare_loaded_settings_to_saved_settings()
     except ValueError as e:
         logger.error(f"Error: {e}")
         response = QMessageBox.question(main_window, "Verwerfen oder Speichern", 
-                                      "Möchten Sie die neuen Daten verwerfen oder speichern?",
-                                      QMessageBox.Discard | QMessageBox.Save, 
-                                      QMessageBox.Save)
-        if response == QMessageBox.Save:
+                                            "Möchten Sie die neuen Daten verwerfen oder speichern?",
+                                            QMessageBox.StandardButton.Discard | 
+                                            QMessageBox.StandardButton.Save, 
+                                            QMessageBox.StandardButton.Save
+                                            )
+        if response == QMessageBox.StandardButton.Save:
             try:
                 settings.save_settings()
             except Exception as e:
@@ -589,8 +674,7 @@ def restart_app():
     subprocess.run(['sudo', 'reboot'], check=True)
 
 def save_and_exit_app():
-    """
-    Safely exit the application.
+    """Save and exit the application.
     """
     try:
         settings.compare_loaded_settings_to_saved_settings()
@@ -598,10 +682,13 @@ def save_and_exit_app():
         logger.error(f"Error: {e}")
     
         # If settings do not match, ask whether to discard or save the new data
-        response = QMessageBox.question(main_window, "Verwerfen oder Speichern", "Möchten Sie die neuen Daten verwerfen oder speichern?",
-                                        QMessageBox.Discard | QMessageBox.Save, QMessageBox.Save)
-        main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink
-        if response == QMessageBox.Save:
+        response = QMessageBox.question(main_window, "Verwerfen oder Speichern", 
+                                            "Möchten Sie die neuen Daten verwerfen oder speichern?",
+                                            QMessageBox.StandardButton.Discard | 
+                                            QMessageBox.StandardButton.Save, 
+                                            QMessageBox.StandardButton.Save)
+        main_window.setWindowState(main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink
+        if response == QMessageBox.StandardButton.Save:
             try:
                 settings.save_settings()
                 logger.debug("New settings saved.")
@@ -609,41 +696,45 @@ def save_and_exit_app():
                 logger.error(f"Failed to save settings: {e}")
                 QMessageBox.critical(main_window, "Error", f"Failed to save settings: {e}")
                 return
-        elif response == QMessageBox.Discard:
+        elif response == QMessageBox.StandardButton.Discard:
             settings.reset_unsaved_changes()
             set_settings_line_edits()
             logger.debug("All changes discarded.")
     exit_app()
 
 def exit_app():
-    """
-    Exit the application.
+    """Exit the application.
     """
     if 'server' in globals():
         server_stop()
     sys.exit(0)
 
-def set_wordlist():
+def set_wordlist() -> None:
+    """Set the wordlist.
     """
-    Set the wordlist.
-    """
+    if not global_vars.ui:
+        logger.error("UI not initialized")
+        return
+        
     global completer  # Declare completer as global
     wordlist = load_wordlist()
-    completer = QCompleter(wordlist, main_window)  # Now this will access the global variable
+    completer = QCompleter(wordlist, main_window)
     global_vars.ui.EingabePallettenplan.setCompleter(completer)
 
     file_watcher = QFileSystemWatcher([global_vars.PATH_USB_STICK], main_window)
     file_watcher.directoryChanged.connect(update_wordlist)
 
 def open_folder_dialog():
+    """Open the folder dialog.
     """
-    Open the folder dialog.
-    """
+    if not global_vars.ui:
+        logger.error("UI not initialized")
+        return
     # show warning dialog if the user wants to set the path
     # only if the user acknowledges the warning dialog and the risks then continue with choosing the folder else cancel asap
-    response = QMessageBox.warning(main_window, "Warnung! - Mögliche Risiken!", "<b>Möchten Sie den Pfad wirklich ändern?</b><br>Dies könnte zu Problemen führen, wenn bereits ein Palettenplan geladen ist und nach dem Setzen des Pfades nicht ein neuer geladen wird.", QMessageBox.Yes | QMessageBox.No)
-    main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink
-    if response == QMessageBox.Yes:
+    response = QMessageBox.warning(main_window, "Warnung! - Mögliche Risiken!", "<b>Möchten Sie den Pfad wirklich ändern?</b><br>Dies könnte zu Problemen führen, wenn bereits ein Palettenplan geladen ist und nach dem Setzen des Pfades nicht ein neuer geladen wird.", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+    main_window.setWindowState(main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink
+    if response == QMessageBox.StandardButton.Yes:
         pass
     else:
         return
@@ -655,30 +746,42 @@ def open_folder_dialog():
         logger.debug(f"{folder=}")
         global_vars.ui.pathEdit.setText(folder)
         global_vars.PATH_USB_STICK = folder
-        set_wordlist()  # Ensure this is defined before calling it
+        set_wordlist()
 
-def open_file_dialog():
+def open_file_dialog() -> None:
+    """Open the file dialog.
     """
-    Open the file dialog.
-    """
+    if not global_vars.ui:
+        logger.error("UI not initialized")
+        return
+        
     file_path = QFileDialog.getOpenFileName(main_window, "Open Audio File", "", "Audio Files (*.wav)")
     if file_path:
         global_vars.ui.audioPathEdit.setText(file_path[0])
 
-def update_wordlist():
-    """
-    Update the wordlist.
+def update_wordlist() -> None:
+    """Update the wordlist.
     """
     new_wordlist = load_wordlist()
-    completer.model().setStringList(new_wordlist)  # This will now work with the global completer
-    set_wordlist()
+    model = completer.model()
+    if not isinstance(model, QStringListModel):
+        completer.setModel(QStringListModel(new_wordlist))
+    else:
+        model.setStringList(new_wordlist)
 
 def check_for_updates():
-    """
-    Check for a file called MultipackParser under /media/ and /mnt/.
-    If it exists, spawn an updater process to replace the current binary.
-    """
+    """Check for updates.
+    """    
+    
     # TODO: Add visual feedback to the user so that they know that the application is checking for updates
+    # disable the main window for interaction
+    main_window.setDisabled(True)
+    msg_box = QMessageBox()
+    msg_box.setWindowTitle("Update suchen")
+    msg_box.setText("Es wird nach einem Update gesucht.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.")
+    msg_box.setIcon(QMessageBox.Icon.Information)
+    msg_box.show()
+    
     search_paths = ["/media", "/mnt"]
     update_file_name = "MultipackParser"
     found_update_file = None
@@ -694,9 +797,18 @@ def check_for_updates():
 
     if not found_update_file:
         logger.info("No update file found.")
+        # enable the main window for interaction
+        main_window.setDisabled(False)
+        # show a message box to the user that no update file was found
+        msg_box.setWindowTitle("Keine Updates gefunden")
+        msg_box.setText("Es wurden keine Updates gefunden. Die aktuelle Version ist die neueste Version.")
+        msg_box.exec()
         return
 
     logger.info(f"Update file found: {found_update_file}")
+    # show a message box to the user that an update was found
+    msg_box.setWindowTitle("Update gefunden")
+    msg_box.setText("Es wurde ein Update gefunden.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.")
 
     # copy the new binary to cwd/update/MultipackParser and make it executable
     os.makedirs("update", exist_ok=True)
@@ -728,10 +840,13 @@ def check_for_updates():
     # Compare versions
     if new_version[0] <= current_version[0] and new_version[1] <= current_version[1] and new_version[2] <= current_version[2]:
         logger.info("No new version found.")
+        # change the text of the message box to "Die aktuelle Version ist die neuere Version."
+        msg_box.setText("Die aktuelle Version ist die neuere Version.")
         return
     
     logger.info(f"New version found: {new_version}")
-
+    # change the text of the message box to "Update gefunden. Version {new_version} ist verfügbar.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird."
+    msg_box.setText(f"Update gefunden. Version {new_version} wird installiert.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.")
     # Spawn an updater process
     current_binary = sys.argv[0]  # Path to the running binary
     updater_script = f"""#!/bin/bash
@@ -769,342 +884,477 @@ reboot
     exit_app()
 
 def spawn_play_stepback_warning_thread():
-    """
-    Spawn a thread to play the stepback warning.
+    """Spawn a thread to play the stepback warning.
     """
     global audio_thread, audio_thread_running
-    if audio_thread is None:
-        audio_thread_running = True
-        audio_thread = threading.Thread(target=play_stepback_warning)
-        audio_thread.daemon = True
-        audio_thread.start()
+    logger.info("Starting stepback warning audio thread")
+    audio_thread_running = True
+    audio_thread = threading.Thread(target=play_stepback_warning)
+    audio_thread.daemon = True
+    audio_thread.start()
 
 def kill_play_stepback_warning_thread():
-    """
-    Kill the thread playing the stepback warning.
+    """Kill the thread playing the stepback warning.
     """
     global audio_thread, audio_thread_running
+    logger.info("Stopping stepback warning audio thread")
     audio_thread_running = False
     if audio_thread:
         audio_thread = None
 
 def play_stepback_warning():
-    """
-    Play the stepback warning in a loop using aplay.
+    """Play the stepback warning in a loop using aplay.
     """
     global audio_thread_running
+    logger.debug("Starting stepback warning playback loop")
     
     try:
         while audio_thread_running:
             try:
                 # Use aplay to play the audio file
+                logger.debug(f"Playing audio file: {settings.settings['admin']['alarm_sound_file']}")
                 subprocess.run(['aplay', settings.settings['admin']['alarm_sound_file']], 
-                            check=True,
-                            stdout=subprocess.DEVNULL,
-                            stderr=subprocess.DEVNULL)
-                logger.debug("Stepback warning played")
+                             check=True,
+                             stdout=subprocess.DEVNULL,
+                             stderr=subprocess.DEVNULL)
+                logger.debug("Stepback warning played successfully")
                 time.sleep(0.1)  # Small delay between loops
                 
             except subprocess.CalledProcessError as e:
-                logger.error(f"Error during playback: {e}")
+                logger.error(f"Error during audio playback: {e}")
                 break
                 
     except Exception as e:
-        logger.error(f"Error in audio thread: {e}")
+        logger.error(f"Fatal error in audio thread: {e}")
     finally:
-        logger.debug("Audio thread stopping")
+        logger.debug("Audio playback thread stopping")
 
-def set_audio_volume():
-    """Set system audio volume using amixer"""
-    if not global_vars.audio_muted:
-        volume = '0%'
-        icon_name = ":/Sound/imgs/volume-off.png"
-    else:
-        volume = '100%'
-        icon_name = ":/Sound/imgs/volume-on.png"
-    logger.debug(f"Setting audio volume to {volume}")
+def set_audio_volume() -> None:
+    """Set the audio volume.
+    """
+    if not global_vars.ui:
+        logger.error("UI not initialized, cannot set audio volume")
+        return
+        
+    volume = '0%' if not global_vars.audio_muted else '100%'
+    icon_name = ":/Sound/imgs/volume-off.png" if not global_vars.audio_muted else ":/Sound/imgs/volume-on.png"
+    
+    logger.info(f"Setting audio volume to {volume}")
     try:
-        # Try PulseAudio first, then fallback to default ALSA
-        try:
-            subprocess.run(['amixer', '-D', 'pulse', 'set', 'Master', volume], 
-                         stdout=subprocess.DEVNULL,
-                         stderr=subprocess.DEVNULL,
-                         check=True)
-        except:
-            subprocess.run(['amixer', 'set', 'Master', volume], 
-                         stdout=subprocess.DEVNULL,
-                         stderr=subprocess.DEVNULL,
-                         check=True)
+        subprocess.run(['amixer', 'set', 'Master', volume], 
+                      stdout=subprocess.DEVNULL,
+                      stderr=subprocess.DEVNULL,
+                      check=True)
         global_vars.ui.pushButtonVolumeOnOff.setIcon(QIcon(icon_name))
         global_vars.audio_muted = not global_vars.audio_muted
+        logger.debug("Audio volume set successfully")
     except Exception as e:
-        logger.error(f"Error setting volume: {e}")
+        logger.error(f"Failed to set audio volume: {e}")
 
 def delay_warning_sound():
+    """Delay the warning sound start by 40 seconds.
     """
-    This should be called in a thread at the start of the application. and never get stopped.
-    Delays the warning sound start by 40 seconds.
-    The sound starts if global_vars.timestamp_scanner_fault is not None and 40 seconds or older than current time.
-    """
+    logger.debug("Starting delay warning sound monitor")
     while True:
-        if global_vars.timestamp_scanner_fault and (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds() >= 40:
-            if not audio_thread_running:
-                spawn_play_stepback_warning_thread()
-        if global_vars.timestamp_scanner_fault is None:
-            kill_play_stepback_warning_thread()
-        time.sleep(5)
+        try:
+            if global_vars.timestamp_scanner_fault:
+                delay = (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds()
+                if delay >= 40:
+                    logger.info("40-second delay reached, starting warning sound")
+                    if not audio_thread_running:
+                        spawn_play_stepback_warning_thread()
+            if global_vars.timestamp_scanner_fault is None:
+                logger.debug("Scanner fault cleared, stopping warning sound")
+                kill_play_stepback_warning_thread()
+            time.sleep(5)
+        except Exception as e:
+            logger.error(f"Error in delay warning sound monitor: {e}")
 
 #################
 # Main function #
 #################
 
 class CustomDoubleValidator(QDoubleValidator):
-    """
-    Custom double validator.
+    """Custom double validator that allows commas to be used as decimal separators.
 
-    This class inherits from QDoubleValidator and overrides the validate method to allow
-    commas to be used as decimal separators.
+    Args:
+        QDoubleValidator (QDoubleValidator): The double validator to be used.
     """
-    def validate(self, usr_input, pos):
-        """
-        Validate the input.
+    
+    def validate(self, arg__1: str, arg__2: int) -> object:
+        """Validate the input.
 
         Args:
-            input (str): The input to be validated.
-            pos (int): The position of the input in the text box.
+            arg__1 (str): The input to be validated.
+            arg__2 (int): The position of the input.
 
         Returns:
-            bool: True if the input is valid, False otherwise.
+            object: The result of the validation.
         """
-        if ',' in usr_input:
-            usr_input = usr_input.replace(',', '.')
-        return super().validate(usr_input, pos)
+        return super().validate(arg__1.replace(',', '.'), arg__2)
 
-    def fixup(self, usr_input):
-        """
-        Fixup the input.
+    def fixup(self, input: str) -> str:
+        """Fixup the input.
 
         Args:
-            input (str): The input to be fixed up.
+            input (str): The input to be fixed.
 
         Returns:
-            str: The fixed up input.
+            str: The fixed input.
         """
-        if ',' in usr_input:
-            usr_input = usr_input.replace(',', '.')
-        return usr_input  # Directly return the modified input without further processing
+        return input.replace(',', '.')
 
-# Main function to run the application
+def exception_handler(exc_type, exc_value, exc_traceback):
+    """Global exception handler to log unhandled exceptions
+
+    Args:
+        exc_type (type): The type of the exception.
+        exc_value (Exception): The exception value.
+        exc_traceback (traceback): The traceback of the exception.
+    """
+    if issubclass(exc_type, KeyboardInterrupt):
+        # Don't log keyboard interrupt
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+        
+    logger.critical("Uncaught exception:", exc_info=(exc_type, exc_value, exc_traceback))
+
+def qt_message_handler(mode, context, message):
+    """Handler for Qt messages
+
+    Args:
+        mode (QtCore.QtMsgType): The mode of the message.
+        context (QtCore.QtMsgType): The context of the message.
+        message (str): The message to be logged.
+    """
+    if mode == QtCore.QtMsgType.QtFatalMsg:
+        logger.critical(f"Qt Fatal: {message}")
+    elif mode == QtCore.QtMsgType.QtCriticalMsg:
+        logger.critical(f"Qt Critical: {message}")
+    elif mode == QtCore.QtMsgType.QtWarningMsg:
+        logger.warning(f"Qt Warning: {message}")
+    elif mode == QtCore.QtMsgType.QtInfoMsg:
+        logger.info(f"Qt Info: {message}")
+
+def setup_logging(verbose: bool) -> None:
+    """Configure logging level based on verbose flag
+    
+    Args:
+        verbose (bool): Whether to enable verbose (DEBUG) logging
+    """
+    log_level = logging.DEBUG if verbose else logging.INFO
+    logger.setLevel(log_level)
+    for handler in logger.handlers:
+        handler.setLevel(log_level)
+    logger.info(f"Logging level set to: {log_level}")
+
 def main():
-    """
-    Main function to run the application.
+    """Main function to run the application.
+
+    Returns:
+        int: The exit code of the application.
     """
     global main_window
-    parser = argparse.ArgumentParser(description="Multipack Parser Application")
-    parser.add_argument('--version', action='store_true', help='Show version information and exit')
-    parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose logging')
-    parser.add_argument('--rob-path', type=str, help='Path to the .rob files')
+    
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(
+        description="Multipack Parser Application",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  %(prog)s                     # Run normally
+  %(prog)s -v                  # Show version and exit
+  %(prog)s -V                  # Run with verbose logging
+        """
+    )
+    
+    info_group = parser.add_argument_group('Information')
+    info_group.add_argument(
+        '-v', '--version',
+        action='store_true',
+        help='Show version information and exit'
+    )
+    info_group.add_argument(
+        '-l', '--license',
+        action='store_true', 
+        help='Show license information and exit'
+    )
+    
+    debug_group = parser.add_argument_group('Debug Options') 
+    debug_group.add_argument(
+        '-V', '--verbose',
+        action='store_true',
+        help='Enable verbose (debug) logging output'
+    )
+    
     args = parser.parse_args()
 
+    # Setup logging based on verbose flag
+    setup_logging(args.verbose)
+    
+    # Initialize message manager at start of main
+    global_vars.message_manager = MessageManager()
+    
     if args.version:
         print(f"Multipack Parser Application Version: {global_vars.VERSION}")
         return
-    if args.verbose:
-        # enable verbose logging
-        logger.setLevel(logging.DEBUG)
-    if args.rob_path:
-        # try to check if the path is valid
-        if os.path.exists(args.rob_path):
-            # set the path to the .rob files
-            global_vars.PATH_USB_STICK = args.rob_path
-        else:
-            logger.error(f"Path {args.rob_path} does not exist")
-            return
+    if args.license:
+        print(__license__)
+        return
         
     logger.debug(f"MultipackParser Application Version: {global_vars.VERSION}")
 
-    QLocale.setDefault(QLocale(QLocale.German, QLocale.Germany)) # set locale to german for german keyboard layout
+    # Update locale setting
+    QLocale.setDefault(QLocale(QLocale.Language.German, QLocale.Country.Germany))
 
-    app = QApplication(sys.argv)
-    main_window = QMainWindow()
-    main_window.setWindowFlags(Qt.FramelessWindowHint) # remove the window border to prevent moving or minimizing the window
-    global_vars.ui = Ui_Form()
-    global_vars.ui.setupUi(main_window)
-    global_vars.ui.stackedWidget.setCurrentIndex(0)
-    global_vars.ui.tabWidget_2.setCurrentIndex(0)
-
-    # init settings
-    init_settings()
+    # Set up global exception handling
+    sys.excepthook = exception_handler
     
-    # set last restart and number of use cycles
-    settings.settings['info']['last_restart'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    settings.settings['info']['number_of_use_cycles'] = str(int(settings.settings['info']['number_of_use_cycles']) + 1)
-    settings.save_settings()
+    # Set up Qt message handling
+    QtCore.qInstallMessageHandler(qt_message_handler)
+    
+    try:
+        # Initialize the application
+        app = QApplication(sys.argv)
+        main_window = QMainWindow()
+        main_window.setWindowFlags(Qt.WindowType.FramelessWindowHint)  # Use WindowType enum
+        global_vars.ui = Ui_Form()
+        global_vars.ui.setupUi(main_window)
+        global_vars.ui.stackedWidget.setCurrentIndex(0)
+        global_vars.ui.tabWidget_2.setCurrentIndex(0)
 
-    logger.debug(f"{sys.argv=}")
-    logger.debug(f"{global_vars.VERSION=}")
-    logger.debug(f"{global_vars.PATH_USB_STICK=}")
+        # init settings
+        init_settings()
+        
+        # set last restart and number of use cycles
+        settings.settings['info']['last_restart'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        settings.settings['info']['number_of_use_cycles'] = str(int(settings.settings['info']['number_of_use_cycles']) + 1)
+        settings.save_settings()
 
-    # Set the regular expression validator for EingabePallettenplan
-    regex = QRegularExpression(r"^[0-9\-_]*$")
-    validator = QRegularExpressionValidator(regex)
-    global_vars.ui.EingabePallettenplan.setValidator(validator)
+        logger.debug(f"{sys.argv=}")
+        logger.debug(f"{global_vars.VERSION=}")
+        logger.debug(f"{global_vars.PATH_USB_STICK=}")
 
-    set_wordlist()
+        # write initial message to BlinkingLabel using update_status_label
+        update_status_label("Kein Pallettenplan geladen", "black", False, block=True)
 
-    # Apply QIntValidator to restrict the input to only integers
-    int_validator = QIntValidator()
-    global_vars.ui.EingabeKartonhoehe.setValidator(int_validator)
-
-    # Apply CustomDoubleValidator to restrict the input to only numbers
-    float_validator = CustomDoubleValidator()
-    float_validator.setNotation(QDoubleValidator.StandardNotation)
-    float_validator.setDecimals(2)  # Set to desired number of decimals
-    global_vars.ui.EingabeKartonGewicht.setValidator(float_validator)
-
-    # if the user entered a Artikelnummer in the text box and presses enter it calls the load function
-    global_vars.ui.EingabePallettenplan.returnPressed.connect(load)
-
-    #Page 1 Buttons
-    global_vars.ui.ButtonSettings.clicked.connect(open_password_dialog)
-    global_vars.ui.LadePallettenplan.clicked.connect(load)
-    global_vars.ui.ButtonOpenParameterRoboter.clicked.connect(open_parameter_page)
-    global_vars.ui.ButtonDatenSenden.clicked.connect(send_data)
-    global_vars.ui.startaudio.clicked.connect(spawn_play_stepback_warning_thread)
-    global_vars.ui.stopaudio.clicked.connect(kill_play_stepback_warning_thread)
-    # when global_vars.ui.pushButtonVolumeOnOff is clicked and changed to state checked then set the audio volume of the system to 0% if it is not checked then set it to 100%
-    global_vars.ui.pushButtonVolumeOnOff.clicked.connect(set_audio_volume)
-
-    #Page 2 Buttons
-    # Roboter Tab
-    global_vars.ui.ButtonZurueck.clicked.connect(open_main_page)
-    global_vars.ui.ButtonRoboterStart.clicked.connect(send_cmd_play)
-    global_vars.ui.ButtonRoboterPause.clicked.connect(send_cmd_pause)
-    global_vars.ui.ButtonRoboterStop.clicked.connect(send_cmd_stop)
-    global_vars.ui.ButtonStopRPCServer.clicked.connect(server_stop)
-    # Aufnahme Tab
-    global_vars.ui.ButtonZurueck_2.clicked.connect(open_main_page)
-    global_vars.ui.ButtonDatenSenden_2.clicked.connect(send_data)
-
-    # Page 3 Stuff
-    # Settings Tab
-    global_vars.ui.ButtonZurueck_3.clicked.connect(leave_settings_page)
-    global_vars.ui.pushButtonSpeichern.clicked.connect(settings.save_settings)
-    global_vars.ui.lineEditDisplayHeight.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('height', int(text)))
-    global_vars.ui.lineEditDisplayWidth.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('width', int(text)))
-    global_vars.ui.lineEditDisplayRefreshRate.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('refresh_rate', int(text)))
-    global_vars.ui.lineEditDisplayModel.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('model', text))
-    global_vars.ui.comboBoxChooseURModel.currentTextChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Model', text))
-    global_vars.ui.lineEditURSerialNo.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Serial_Number', text))
-    global_vars.ui.lineEditURManufacturingDate.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Manufacturing_Date', text))
-    global_vars.ui.lineEditURSoftwareVer.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Software_Version', text))
-    global_vars.ui.lineEditURName.textChanged.connect(lambda text: settings.settings['info'].__setitem__('Pallettierer_Name', text))
-    global_vars.ui.lineEditURStandort.textChanged.connect(lambda text: settings.settings['info'].__setitem__('Pallettierer_Standort', text))
-    global_vars.ui.lineEditNumberPlans.textChanged.connect(lambda text: settings.settings['info'].__setitem__('number_of_plans', int(text)))
-    global_vars.ui.lineEditNumberCycles.textChanged.connect(lambda text: settings.settings['info'].__setitem__('number_of_use_cycles', int(text)))
-    global_vars.ui.lineEditLastRestart.textChanged.connect(lambda text: settings.settings['info'].__setitem__('last_restart', text))
-    global_vars.ui.pathEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('path', text))
-    global_vars.ui.buttonSelectRobPath.clicked.connect(open_folder_dialog)
-    global_vars.ui.audioPathEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('alarm_sound_file', text))
-    global_vars.ui.buttonSelectAudioFilePath.clicked.connect(open_file_dialog)
-    set_settings_line_edits()
-    #global_vars.ui.checkBox.stateChanged.connect(lambda state: settings.settings['audio'].__setitem__('sound', state == Qt.Checked))
-    #global_vars.ui.checkBox.setChecked(settings.settings['audio']['sound'])
-    #
-    # TODO: implement the rest of the settings
-    global_vars.ui.ButtonZurueck_4.clicked.connect(leave_settings_page)
-    global_vars.ui.pushButtonSpeichern_2.clicked.connect(settings.save_settings)
-
-    def hash_password(password, salt=None):
-        """
-        Hash a password.
-
-        Args:
-            password (str): The password to be hashed.
-            salt (str, optional): The salt to be used. Defaults to None.
-
-        Returns:
-            str: The hashed password.
-        """
-        if salt is None:
-            salt = os.urandom(16)
-        salted_password = salt + password.encode()
-        hashed_password = hashlib.sha256(salted_password).hexdigest()
-        return salt.hex() + '$' + hashed_password
-
-    global_vars.ui.passwordEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('password', hash_password(text)) if text else None)
-    #
-    global_vars.ui.ButtonZurueck_5.clicked.connect(leave_settings_page)
-    global_vars.ui.pushButtonSpeichern_3.clicked.connect(save_open_file)
-    global_vars.ui.pushButtonOpenFile.clicked.connect(open_file)
-
-    global_vars.ui.ButtonZurueck_6.clicked.connect(leave_settings_page)
-    global_vars.ui.pushButtonSpeichern_4.clicked.connect(settings.save_settings)
-
-    global_vars.ui.ButtonZurueck_7.clicked.connect(leave_settings_page)
-    global_vars.ui.lineEditCommand.setText("> ")  # Set initial text
-    global_vars.ui.lineEditCommand.setPlaceholderText("command")  # Set placeholder text
-    global_vars.ui.lineEditCommand.returnPressed.connect(execute_command)
-
-    global_vars.ui.pushButtonSearchUpdate.clicked.connect(check_for_updates)
-    global_vars.ui.pushButtonExitApp.clicked.connect(restart_app)
-
-
-    # TODO: Remove this closing key combination once out of development
-    ###########################################################
-    global allow_close
-    allow_close = False
-
-    def allow_close_event(event):
-        """
-        Allow the window to close.
-
-        Args:
-            event (QEvent): The event object.
-        """
-        global allow_close
-        if allow_close:
-            event.accept()
-            allow_close = False
+        # Show palette configuration dialog for UR20 robot
+        if settings.settings['info']['UR_Model'] == 'UR20':
+            logger.info("UR20 robot detected, showing palette configuration dialog")
+            show_palette_config_dialog(main_window)
         else:
-            event.ignore()
+            logger.info(f"Robot model is {settings.settings['info']['UR_Model']}, skipping palette configuration")
+            # Reset palette variables for non-UR20 robots
+            global_vars.UR20_active_palette = 0
+            global_vars.UR20_palette1_empty = False
+            global_vars.UR20_palette2_empty = False
 
-    def handle_key_press_event(event):
-        """
-        Handle key press events.
+        # Set the regular expression validator for EingabePallettenplan
+        regex = QRegularExpression(r"^[0-9\-_]*$")
+        validator = QRegularExpressionValidator(regex)
+        global_vars.ui.EingabePallettenplan.setValidator(validator)
 
-        Args:
-            event (QEvent): The event object.
+        set_wordlist()
 
-        Returns:
-            bool: True if the event was handled, False otherwise.
-        """
+        # Apply QIntValidator to restrict the input to only integers
+        int_validator = QIntValidator()
+        global_vars.ui.EingabeKartonhoehe.setValidator(int_validator)
+
+        # Set min/max values for EingabeStartlage SpinBox
+        global_vars.ui.EingabeStartlage.setMinimum(1)
+        global_vars.ui.EingabeStartlage.setMaximum(99)  # Default max, will be updated when plan is loaded
+
+        # Apply CustomDoubleValidator to restrict the input to only numbers
+        float_validator = CustomDoubleValidator()
+        float_validator.setNotation(QDoubleValidator.Notation.StandardNotation)
+        float_validator.setDecimals(2)  # Set to desired number of decimals
+        global_vars.ui.EingabeKartonGewicht.setValidator(float_validator)
+
+        # if the user entered a Artikelnummer in the text box and presses enter it calls the load function
+        global_vars.ui.EingabePallettenplan.returnPressed.connect(load)
+
+        #Page 1 Buttons
+        global_vars.ui.ButtonSettings.clicked.connect(open_password_dialog)
+        global_vars.ui.LadePallettenplan.clicked.connect(load)
+        global_vars.ui.ButtonOpenParameterRoboter.clicked.connect(lambda: open_page(Page.PARAMETER_PAGE))
+        global_vars.ui.ButtonDatenSenden.clicked.connect(send_data)
+        global_vars.ui.startaudio.clicked.connect(spawn_play_stepback_warning_thread)
+        global_vars.ui.stopaudio.clicked.connect(kill_play_stepback_warning_thread)
+        # when global_vars.ui.pushButtonVolumeOnOff is clicked and changed to state checked then set the audio volume of the system to 0% if it is not checked then set it to 100%
+        global_vars.ui.pushButtonVolumeOnOff.clicked.connect(set_audio_volume)
+
+        #Page 2 Buttons
+        # Roboter Tab
+        global_vars.ui.ButtonZurueck.clicked.connect(lambda: open_page(Page.MAIN_PAGE))
+        global_vars.ui.ButtonRoboterStart.clicked.connect(send_cmd_play)
+        global_vars.ui.ButtonRoboterPause.clicked.connect(send_cmd_pause)
+        global_vars.ui.ButtonRoboterStop.clicked.connect(send_cmd_stop)
+        global_vars.ui.ButtonStopRPCServer.clicked.connect(server_stop)
+        # Aufnahme Tab
+        global_vars.ui.ButtonZurueck_2.clicked.connect(lambda: open_page(Page.MAIN_PAGE))
+        global_vars.ui.ButtonDatenSenden_2.clicked.connect(send_data)
+
+        # Page 3 Stuff
+        # Settings Tab
+        global_vars.ui.ButtonZurueck_3.clicked.connect(leave_settings_page)
+        global_vars.ui.pushButtonSpeichern.clicked.connect(settings.save_settings)
+        global_vars.ui.lineEditDisplayHeight.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('height', int(text)))
+        global_vars.ui.lineEditDisplayWidth.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('width', int(text)))
+        global_vars.ui.lineEditDisplayRefreshRate.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('refresh_rate', int(text)))
+        global_vars.ui.lineEditDisplayModel.textChanged.connect(lambda text: settings.settings['display']['specs'].__setitem__('model', text))
+        global_vars.ui.comboBoxChooseURModel.currentTextChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Model', text))
+        global_vars.ui.lineEditURSerialNo.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Serial_Number', text))
+        global_vars.ui.lineEditURManufacturingDate.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Manufacturing_Date', text))
+        global_vars.ui.lineEditURSoftwareVer.textChanged.connect(lambda text: settings.settings['info'].__setitem__('UR_Software_Version', text))
+        global_vars.ui.lineEditURName.textChanged.connect(lambda text: settings.settings['info'].__setitem__('Pallettierer_Name', text))
+        global_vars.ui.lineEditURStandort.textChanged.connect(lambda text: settings.settings['info'].__setitem__('Pallettierer_Standort', text))
+        global_vars.ui.lineEditNumberPlans.textChanged.connect(lambda text: settings.settings['info'].__setitem__('number_of_plans', int(text)))
+        global_vars.ui.lineEditNumberCycles.textChanged.connect(lambda text: settings.settings['info'].__setitem__('number_of_use_cycles', int(text)))
+        global_vars.ui.lineEditLastRestart.textChanged.connect(lambda text: settings.settings['info'].__setitem__('last_restart', text))
+        global_vars.ui.pathEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('path', text))
+        global_vars.ui.buttonSelectRobPath.clicked.connect(open_folder_dialog)
+        global_vars.ui.audioPathEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('alarm_sound_file', text))
+        global_vars.ui.buttonSelectAudioFilePath.clicked.connect(open_file_dialog)
+        set_settings_line_edits()
+        #global_vars.ui.checkBox.stateChanged.connect(lambda state: settings.settings['audio'].__setitem__('sound', state == Qt.Checked))
+        #global_vars.ui.checkBox.setChecked(settings.settings['audio']['sound'])
+        #
+        # TODO: implement the rest of the settings
+        global_vars.ui.ButtonZurueck_4.clicked.connect(leave_settings_page)
+        global_vars.ui.pushButtonSpeichern_2.clicked.connect(settings.save_settings)
+
+        def hash_password(password, salt=None):
+            """Hash a password.
+
+            Args:
+                password (str): The password to be hashed.
+                salt (str, optional): The salt to be used. Defaults to None.
+
+            Returns:
+                str: The hashed password.
+            """
+            if salt is None:
+                salt = os.urandom(16)
+            salted_password = salt + password.encode()
+            hashed_password = hashlib.sha256(salted_password).hexdigest()
+            return salt.hex() + '$' + hashed_password
+
+        global_vars.ui.passwordEdit.textChanged.connect(lambda text: settings.settings['admin'].__setitem__('password', hash_password(text)) if text else None)
+        #
+        global_vars.ui.ButtonZurueck_5.clicked.connect(leave_settings_page)
+        global_vars.ui.pushButtonSpeichern_3.clicked.connect(save_open_file)
+        global_vars.ui.pushButtonOpenFile.clicked.connect(open_file)
+
+        global_vars.ui.ButtonZurueck_6.clicked.connect(leave_settings_page)
+        global_vars.ui.pushButtonSpeichern_4.clicked.connect(settings.save_settings)
+
+        global_vars.ui.ButtonZurueck_7.clicked.connect(leave_settings_page)
+        global_vars.ui.lineEditCommand.setText("> ")  # Set initial text
+        global_vars.ui.lineEditCommand.setPlaceholderText("command")  # Set placeholder text
+        global_vars.ui.lineEditCommand.returnPressed.connect(execute_command)
+
+        global_vars.ui.pushButtonSearchUpdate.clicked.connect(check_for_updates)
+        global_vars.ui.pushButtonExitApp.clicked.connect(restart_app)
+
+
+        # TODO: Remove this closing key combination once out of development
+        ###########################################################
         global allow_close
-        if (event.modifiers() == (Qt.ControlModifier | Qt.AltModifier | Qt.ShiftModifier) and 
-            event.key() == Qt.Key_C):
-            allow_close = True
-            exit_app()
-        elif (event.modifiers() == (Qt.ControlModifier | Qt.AltModifier) and 
-            event.key() == Qt.Key_N):
-            messageBox = QMessageBox()
-            messageBox.setWindowTitle("Multipack Parser")
-            messageBox.setTextFormat(Qt.TextFormat.RichText)
-            messageBox.setText('''
-            <div style="text-align: center;">
-            Yann-Luca Näher - \u00a9 2024<br>
-            <a href="https://github.com/Snupai">Github</a>
-            </div>''')
-            messageBox.setStandardButtons(QMessageBox.Ok)
-            messageBox.setDefaultButton(QMessageBox.Ok)
-            messageBox.exec()
-            main_window.setWindowState(main_window.windowState() ^ Qt.WindowActive)  # This will make the window blink
-        return True
+        allow_close = False
 
-    main_window.closeEvent = allow_close_event
-    main_window.keyPressEvent = handle_key_press_event
-    ###########################################################
-    main_window.show()
-    sys.exit(app.exec())
+        def allow_close_event(event):
+            """Allow the window to close.
+
+            Args:
+                event (QEvent): The event object.
+            """
+            global allow_close
+            if allow_close:
+                event.accept()
+                allow_close = False
+            else:
+                event.ignore()
+
+        def handle_key_press_event(event) -> None:
+            """Handle key press events.
+
+            Args:
+                event (QEvent): The event object.
+            """
+            global allow_close
+            if (event.modifiers() == (Qt.KeyboardModifier.ControlModifier | 
+                                     Qt.KeyboardModifier.AltModifier | 
+                                     Qt.KeyboardModifier.ShiftModifier) and 
+                event.key() == Qt.Key.Key_C):
+                allow_close = True
+                exit_app()
+            elif (event.modifiers() == (Qt.KeyboardModifier.ControlModifier | 
+                                       Qt.KeyboardModifier.AltModifier) and 
+                  event.key() == Qt.Key.Key_N):
+                messageBox = QMessageBox()
+                messageBox.setWindowTitle("Multipack Parser")
+                messageBox.setTextFormat(Qt.TextFormat.RichText)
+                messageBox.setText('''
+                <div style="text-align: center;">
+                Yann-Luca Näher - \u00a9 2024<br>
+                <a href="https://github.com/Snupai">Github</a>
+                </div>''')
+                messageBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                messageBox.setDefaultButton(QMessageBox.StandardButton.Ok)
+                messageBox.exec()
+                main_window.setWindowState(main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink
+                
+        main_window.closeEvent = allow_close_event
+        main_window.keyPressEvent = handle_key_press_event
+        ###########################################################
+
+        # Connect scanner signals
+        from utils.UR20_Server_functions import scanner_signals
+        scanner_signals.status_changed.connect(handle_scanner_status)
+
+        main_window.show()
+        sys.exit(app.exec())
+
+    except Exception as e:
+        logger.critical(f"Fatal error in main: {str(e)}", exc_info=True)
+        sys.exit(1)
+
+def handle_scanner_status(message: str, image_path: str):
+    """Handle scanner status updates from server thread
+
+    Args:
+        message (str): The message from the scanner.
+        image_path (str): The path to the image from the scanner.
+    """
+    logger.debug(f"Received scanner status - Message: {message}, Image: {image_path}")
+    
+    if message != "True,True,True":
+        logger.warning("Scanner detected safety violation")
+        # Update existing blinking label instead of creating new one
+        if global_vars.blinking_label:
+            logger.debug("Updating existing blinking label")
+            global_vars.blinking_label.update_text("Bitte Arbeitsbereich räumen.")
+            global_vars.blinking_label.update_color("red")
+            global_vars.blinking_label.start_blinking()
+        else:
+            logger.debug("Creating new warning status label")
+            update_status_label("Bitte Arbeitsbereich räumen.", "red", True, block=True)
+    else:
+        logger.info("Scanner reports all clear")
+        if global_vars.message_manager:
+            global_vars.message_manager.unblock_message("Bitte Arbeitsbereich räumen.")
+            global_vars.message_manager.acknowledge_message("Bitte Arbeitsbereich räumen.")
+            global_vars.timestamp_scanner_fault = None
+            update_status_label("Everything operational", "green", False, instant_acknowledge=True)
+    
+    # Update scanner image
+    if image_path and global_vars.ui and global_vars.ui.label_7:
+        try:
+            logger.debug("Updating scanner image display")
+            pixmap = QPixmap(image_path)
+            global_vars.ui.label_7.setPixmap(pixmap)
+        except Exception as e:
+            logger.error(f"Failed to update scanner image: {e}")
 
 if __name__ == "__main__":
     main()
