@@ -2980,11 +2980,20 @@
         "documentation": {}
     },
     {
+        "label": "show_instant_splash",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def show_instant_splash():\n    \"\"\"Show an instant splash screen before any initialization.\"\"\"\n    import sys\n    from PySide6.QtWidgets import QApplication, QSplashScreen, QLabel\n    from PySide6.QtGui import QPixmap\n    from PySide6.QtCore import Qt, QTimer\n    # Create minimal QApplication instance just for the splash\n    if not QApplication.instance():\n        temp_app = QApplication(sys.argv)\n    else:",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
         "label": "main",
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    global main_window\n    # Initialize the application first\n    app = QApplication(sys.argv)\n    # Create and show the splash screen\n    splash_pix = QPixmap(\":/Szaidel Logo/imgs/logoszaidel-transparent-big.png\")",
+        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    global main_window\n    # Show instant splash before any initialization\n    temp_splash = show_instant_splash()\n    # Initialize the application\n    app = QApplication.instance() or QApplication(sys.argv)",
         "detail": "main",
         "documentation": {}
     },

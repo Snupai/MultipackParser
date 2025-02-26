@@ -1056,6 +1056,37 @@ def setup_logging(verbose: bool) -> None:
         handler.setLevel(log_level)
     logger.info(f"Logging level set to: {log_level}")
 
+def show_instant_splash():
+    """Show an instant splash screen before any initialization."""
+    import sys
+    from PySide6.QtWidgets import QApplication, QSplashScreen, QLabel
+    from PySide6.QtGui import QPixmap
+    from PySide6.QtCore import Qt, QTimer
+
+    # Create minimal QApplication instance just for the splash
+    if not QApplication.instance():
+        temp_app = QApplication(sys.argv)
+    else:
+        temp_app = QApplication.instance()
+
+    # Create a simple splash screen with just the logo
+    splash_pix = QPixmap(":/Szaidel Logo/imgs/logoszaidel-transparent-big.png")
+    temp_splash = QSplashScreen(splash_pix)
+    
+    # Add a "Loading..." label
+    loading_label = QLabel(temp_splash)
+    loading_label.setGeometry(splash_pix.width()/4, splash_pix.height() - 50,
+                            splash_pix.width()/2, 30)
+    loading_label.setAlignment(Qt.AlignCenter)
+    loading_label.setStyleSheet("color: #333333; font-size: 14px;")
+    loading_label.setText("Loading...")
+    
+    # Show splash immediately
+    temp_splash.show()
+    temp_app.processEvents()
+    
+    return temp_splash
+
 def main():
     """Main function to run the application.
 
@@ -1064,10 +1095,13 @@ def main():
     """
     global main_window
     
-    # Initialize the application first
-    app = QApplication(sys.argv)
+    # Show instant splash before any initialization
+    temp_splash = show_instant_splash()
     
-    # Create and show the splash screen
+    # Initialize the application
+    app = QApplication.instance() or QApplication(sys.argv)
+    
+    # Create and show the proper splash screen
     splash_pix = QPixmap(":/Szaidel Logo/imgs/logoszaidel-transparent-big.png")
     splash = QSplashScreen(splash_pix)
     
@@ -1097,100 +1131,90 @@ def main():
     loading_label.setAlignment(Qt.AlignCenter)
     loading_label.setStyleSheet("color: #333333; font-size: 14px;")
     
+    # Show new splash screen and hide temporary one
     splash.show()
+    temp_splash.finish(splash)
     app.processEvents()
     
-    # Parse command line arguments
-    progress.setValue(10)
-    loading_label.setText("Parsing command line arguments...")
+    # Start with initial progress
+    progress.setValue(5)
+    loading_label.setText("Initializing...")
     app.processEvents()
-    
-    parser = argparse.ArgumentParser(
-        description="Multipack Parser Application",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
+
+    try:
+        # Parse command line arguments
+        progress.setValue(10)
+        loading_label.setText("Parsing arguments...")
+        app.processEvents()
+        
+        parser = argparse.ArgumentParser(
+            description="Multipack Parser Application",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""
 Examples:
   %(prog)s                     # Run normally
   %(prog)s -v                  # Show version and exit
   %(prog)s -V                  # Run with verbose logging
-        """
-    )
-    
-    info_group = parser.add_argument_group('Information')
-    info_group.add_argument(
-        '-v', '--version',
-        action='store_true',
-        help='Show version information and exit'
-    )
-    info_group.add_argument(
-        '-l', '--license',
-        action='store_true', 
-        help='Show license information and exit'
-    )
-    
-    debug_group = parser.add_argument_group('Debug Options') 
-    debug_group.add_argument(
-        '-V', '--verbose',
-        action='store_true',
-        help='Enable verbose (debug) logging output'
-    )
-    
-    args = parser.parse_args()
-
-    # Setup logging based on verbose flag
-    progress.setValue(20)
-    loading_label.setText("Setting up logging...")
-    app.processEvents()
-    setup_logging(args.verbose)
-    
-    # Initialize message manager at start of main
-    progress.setValue(30)
-    loading_label.setText("Initializing message manager...")
-    app.processEvents()
-    global_vars.message_manager = MessageManager()
-    
-    if args.version:
-        print(f"Multipack Parser Application Version: {global_vars.VERSION}")
-        return
-    if args.license:
-        print(__license__)
-        return
+            """
+        )
         
-    logger.debug(f"MultipackParser Application Version: {global_vars.VERSION}")
+        info_group = parser.add_argument_group('Information')
+        info_group.add_argument(
+            '-v', '--version',
+            action='store_true',
+            help='Show version information and exit'
+        )
+        info_group.add_argument(
+            '-l', '--license',
+            action='store_true', 
+            help='Show license information and exit'
+        )
+        
+        debug_group = parser.add_argument_group('Debug Options') 
+        debug_group.add_argument(
+            '-V', '--verbose',
+            action='store_true',
+            help='Enable verbose (debug) logging output'
+        )
+        
+        args = parser.parse_args()
 
-    # Update locale setting
-    progress.setValue(40)
-    loading_label.setText("Setting up locale...")
-    app.processEvents()
-    QLocale.setDefault(QLocale(QLocale.Language.German, QLocale.Country.Germany))
+        if args.version:
+            print(f"Multipack Parser Application Version: {global_vars.VERSION}")
+            return
+        if args.license:
+            print(__license__)
+            return
 
-    # Set up global exception handling
-    progress.setValue(50)
-    loading_label.setText("Setting up error handling...")
-    app.processEvents()
-    sys.excepthook = exception_handler
-    QtCore.qInstallMessageHandler(qt_message_handler)
-    
-    try:
-        # Initialize the main window
-        progress.setValue(60)
+        # Setup logging and basic initialization
+        progress.setValue(15)
+        loading_label.setText("Setting up logging...")
+        app.processEvents()
+        
+        setup_logging(args.verbose)
+        logger.debug(f"MultipackParser Application Version: {global_vars.VERSION}")
+        global_vars.message_manager = MessageManager()
+        QLocale.setDefault(QLocale(QLocale.Language.German, QLocale.Country.Germany))
+        sys.excepthook = exception_handler
+        QtCore.qInstallMessageHandler(qt_message_handler)
+        
+        progress.setValue(25)
         loading_label.setText("Creating main window...")
         app.processEvents()
+
+        # Initialize main window and UI
         main_window = QMainWindow()
         main_window.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-        
-        progress.setValue(70)
-        loading_label.setText("Setting up UI...")
-        app.processEvents()
         global_vars.ui = Ui_Form()
         global_vars.ui.setupUi(main_window)
         global_vars.ui.stackedWidget.setCurrentIndex(0)
         global_vars.ui.tabWidget_2.setCurrentIndex(0)
 
-        # Initialize settings
-        progress.setValue(80)
+        progress.setValue(50)
         loading_label.setText("Loading settings...")
         app.processEvents()
+
+        # Initialize settings
         init_settings()
         
         # Set last restart and number of use cycles
@@ -1198,16 +1222,14 @@ Examples:
         settings.settings['info']['number_of_use_cycles'] = str(int(settings.settings['info']['number_of_use_cycles']) + 1)
         settings.save_settings()
 
-        # Write initial message
-        progress.setValue(85)
-        loading_label.setText("Setting up status messages...")
+        progress.setValue(75)
+        loading_label.setText("Setting up application...")
         app.processEvents()
+
+        # Write initial message
         update_status_label("Kein Pallettenplan geladen", "black", False, block=True)
 
         # Show palette configuration dialog for UR20 robot
-        progress.setValue(90)
-        loading_label.setText("Checking robot configuration...")
-        app.processEvents()
         if settings.settings['info']['UR_Model'] == 'UR20':
             logger.info("UR20 robot detected, showing palette configuration dialog")
             show_palette_config_dialog(main_window)
@@ -1218,11 +1240,6 @@ Examples:
             global_vars.UR20_palette2_empty = False
 
         # Set up input validation
-        progress.setValue(95)
-        loading_label.setText("Setting up UI components...")
-        app.processEvents()
-        
-        # Set up validators
         regex = QRegularExpression(r"^[0-9\-_]*$")
         validator = QRegularExpressionValidator(regex)
         global_vars.ui.EingabePallettenplan.setValidator(validator)
@@ -1244,7 +1261,11 @@ Examples:
         global_vars.ui.EingabeStartlage.setMinimum(1)
         global_vars.ui.EingabeStartlage.setMaximum(99)
 
-        # Connect signals
+        progress.setValue(90)
+        loading_label.setText("Connecting signals...")
+        app.processEvents()
+
+        # Connect all signals
         global_vars.ui.EingabePallettenplan.returnPressed.connect(load)
         global_vars.ui.openExperimentalTab.clicked.connect(lambda: open_page(Page.EXPERIMENTAL_PAGE))
         global_vars.ui.ButtonZurueck_8.clicked.connect(lambda: open_page(Page.MAIN_PAGE))
@@ -1387,17 +1408,31 @@ Examples:
         progress.setValue(100)
         loading_label.setText("Starting application...")
         app.processEvents()
-        
-        # Delay a bit to show 100%
-        time.sleep(0.5)
-        
-        # Hide splash and show main window
+
+        # Hide splash and show main window immediately
         splash.finish(main_window)
         main_window.show()
         
         sys.exit(app.exec())
 
     except Exception as e:
+        # Show error in splash screen before exiting
+        loading_label.setText("Error during startup!")
+        progress.setStyleSheet("""
+            QProgressBar {
+                border: 2px solid grey;
+                border-radius: 5px;
+                text-align: center;
+                background-color: #f0f0f0;
+            }
+            QProgressBar::chunk {
+                background-color: #ff0000;
+                width: 10px;
+                margin: 0.5px;
+            }
+        """)
+        app.processEvents()
+        time.sleep(2)  # Show error for 2 seconds
         logger.critical(f"Fatal error in main: {str(e)}", exc_info=True)
         sys.exit(1)
 
