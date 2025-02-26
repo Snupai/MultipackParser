@@ -384,9 +384,9 @@ def display_pallet_3d(canvas, pallet_name):
     progress.setValue(100)
     progress.close()
     
-    logger.info(f"\nPerformance Metrics:"
-    f"Box creation time: {box_creation_time:.3f} seconds"
-    f"Render time: {render_time:.3f} seconds"
-    f"Total time: {total_time:.3f} seconds"
-    f"Boxes drawn: {total_boxes}"
+    logger.info(f"\nPerformance Metrics:\n"
+    f"Box creation time: {box_creation_time:.3f} seconds\n"
+    f"Render time: {render_time:.3f} seconds\n"
+    f"Total time: {total_time:.3f} seconds\n"
+    f"Boxes drawn: {total_boxes}\n"
     f"Average time per box: {(total_time/total_boxes)*1000:.2f} ms")
