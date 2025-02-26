@@ -7,7 +7,8 @@ matplotlib.use('qtagg', force=True)
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-from PySide6.QtWidgets import QVBoxLayout
+from PySide6.QtWidgets import QVBoxLayout, QProgressDialog
+from PySide6.QtCore import Qt
 from utils import global_vars
 import time
 
@@ -223,9 +224,24 @@ def display_pallet_3d(canvas, pallet_name):
         canvas (MatplotlibCanvas): The canvas to draw on
         pallet (Pallet): The pallet data to visualize
     """
+    # Create and show progress dialog
+    progress = QProgressDialog("Rendering 3D visualization...", None, 0, 100)
+    progress.setWindowModality(Qt.WindowModal)
+    progress.setWindowTitle("Loading")
+    progress.setCancelButton(None)  # No cancel button
+    progress.setMinimumDuration(0)  # Show immediately
+    progress.setValue(0)
+    
+    # Parse file
+    progress.setValue(10)
+    progress.setLabelText("Parsing .rob file...")
     pallet = parse_rob_file(global_vars.PATH_USB_STICK + pallet_name + ".rob")
+    
     start_time = time.time()
     canvas.ax.clear()
+
+    progress.setValue(20)
+    progress.setLabelText("Setting up view...")
 
     # Set camera angle to view from origin corner
     elev, azim = 30, 40  # These angles will give a good view from the origin corner
@@ -236,10 +252,16 @@ def display_pallet_3d(canvas, pallet_name):
     min_y, max_y = 0, 800
     min_z, max_z = 0, 0
 
+    progress.setValue(30)
+    progress.setLabelText("Creating boxes...")
     box_creation_start = time.time()
+    
     # Reverse layer order to draw from top to bottom
     allfaces = []
     allfacecolors = []
+    total_boxes = sum(len(layer.boxes) for layer in pallet.layers)
+    boxes_processed = 0
+    
     for layer_idx, layer in enumerate(reversed(pallet.layers)):
         layer_num = len(pallet.layers) - layer_idx - 1  # Calculate actual layer number
         for box in layer.boxes:
@@ -320,12 +342,19 @@ def display_pallet_3d(canvas, pallet_name):
 
             allfaces.extend(faces)
             allfacecolors.extend(face_colors)
+            
+            boxes_processed += 1
+            progress.setValue(30 + int((boxes_processed / total_boxes) * 40))
 
+    progress.setValue(70)
+    progress.setLabelText("Creating 3D collection...")
     poly3d = Poly3DCollection(allfaces, facecolors=allfacecolors, edgecolors='black', alpha=1)
     canvas.ax.add_collection3d(poly3d)
 
     box_creation_time = time.time() - box_creation_start
 
+    progress.setValue(80)
+    progress.setLabelText("Setting view limits...")
     # Set view limits and labels
     canvas.ax.set_xlim(min_x, max_x)
     canvas.ax.set_ylim(min_y, max_y)
@@ -334,9 +363,6 @@ def display_pallet_3d(canvas, pallet_name):
     canvas.ax.set_xlabel('X')
     canvas.ax.set_ylabel('Y')
     canvas.ax.set_zlabel('Z')
-    
-    # Calculate total boxes
-    total_boxes = sum(len(layer.boxes) for layer in pallet.layers)
     
     canvas.ax.set_title(f'3D View of Pallet ({total_boxes} boxes)')
 
@@ -347,15 +373,20 @@ def display_pallet_3d(canvas, pallet_name):
     
     canvas.ax.set_box_aspect([x_range/100, y_range/100, z_range/100])
     
+    progress.setValue(90)
+    progress.setLabelText("Rendering final view...")
     render_start = time.time()
     canvas.draw()
     render_time = time.time() - render_start
     
     total_time = time.time() - start_time
     
-    print(f"\nPerformance Metrics:")
-    print(f"Box creation time: {box_creation_time:.3f} seconds")
-    print(f"Render time: {render_time:.3f} seconds")
-    print(f"Total time: {total_time:.3f} seconds")
-    print(f"Boxes drawn: {total_boxes}")
-    print(f"Average time per box: {(total_time/total_boxes)*1000:.2f} ms")
+    progress.setValue(100)
+    progress.close()
+    
+    logger.info(f"\nPerformance Metrics:"
+    f"Box creation time: {box_creation_time:.3f} seconds"
+    f"Render time: {render_time:.3f} seconds"
+    f"Total time: {total_time:.3f} seconds"
+    f"Boxes drawn: {total_boxes}"
+    f"Average time per box: {(total_time/total_boxes)*1000:.2f} ms")

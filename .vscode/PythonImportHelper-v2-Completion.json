@@ -320,6 +320,14 @@
         "documentation": {}
     },
     {
+        "label": "QProgressDialog",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QDialog",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -697,6 +705,14 @@
     },
     {
         "label": "QUrl",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
         "isExtraImport": true,
@@ -2079,7 +2095,7 @@
         "kind": 2,
         "importPath": "ui_files.visualization_3d",
         "description": "ui_files.visualization_3d",
-        "peekOfCode": "def display_pallet_3d(canvas, pallet_name):\n    \"\"\"Display a 3D visualization of the pallet.\n    Args:\n        canvas (MatplotlibCanvas): The canvas to draw on\n        pallet (Pallet): The pallet data to visualize\n    \"\"\"\n    pallet = parse_rob_file(global_vars.PATH_USB_STICK + pallet_name + \".rob\")\n    start_time = time.time()\n    canvas.ax.clear()\n    # Set camera angle to view from origin corner",
+        "peekOfCode": "def display_pallet_3d(canvas, pallet_name):\n    \"\"\"Display a 3D visualization of the pallet.\n    Args:\n        canvas (MatplotlibCanvas): The canvas to draw on\n        pallet (Pallet): The pallet data to visualize\n    \"\"\"\n    # Create and show progress dialog\n    progress = QProgressDialog(\"Rendering 3D visualization...\", None, 0, 100)\n    progress.setWindowModality(Qt.WindowModal)\n    progress.setWindowTitle(\"Loading\")",
         "detail": "ui_files.visualization_3d",
         "documentation": {}
     },
