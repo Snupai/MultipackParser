@@ -2970,7 +2970,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def load_rob_files():\n    \"\"\"Load .rob files into the list widget.\"\"\"\n    if not global_vars.ui:\n        return\n    global_vars.ui.robFilesListWidget.clear()\n    for file in os.listdir(global_vars.PATH_USB_STICK):\n        if file.endswith(\".rob\"):\n            global_vars.ui.robFilesListWidget.addItem(file[:-4])\ndef display_selected_file(item):\n    \"\"\"Display the selected file in 3D.",
+        "peekOfCode": "def load_rob_files():\n    \"\"\"Load .rob files into the list widget.\"\"\"\n    if not global_vars.ui:\n        return\n    global_vars.ui.robFilesListWidget.clear()\n    rob_files = []\n    for file in os.listdir(global_vars.PATH_USB_STICK):\n        if file.endswith(\".rob\"):\n            rob_files.append(file[:-4])\n    # Sort the list alphabetically",
         "detail": "main",
         "documentation": {}
     },

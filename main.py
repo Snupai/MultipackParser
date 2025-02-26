@@ -1384,9 +1384,17 @@ def load_rob_files():
         return
         
     global_vars.ui.robFilesListWidget.clear()
+    rob_files = []
     for file in os.listdir(global_vars.PATH_USB_STICK):
         if file.endswith(".rob"):
-            global_vars.ui.robFilesListWidget.addItem(file[:-4])
+            rob_files.append(file[:-4])
+    
+    # Sort the list alphabetically
+    rob_files.sort()
+    
+    # Add sorted items to the list widget
+    for file in rob_files:
+        global_vars.ui.robFilesListWidget.addItem(file)
 
 def display_selected_file(item):
     """Display the selected file in 3D.
