@@ -17,9 +17,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFormLayout,
     QFrame, QHBoxLayout, QHeaderView, QLabel,
-    QLineEdit, QPushButton, QSizePolicy, QSpinBox,
-    QStackedWidget, QTabWidget, QTextEdit, QToolButton,
-    QTreeView, QWidget)
+    QLineEdit, QListWidget, QListWidgetItem, QPushButton,
+    QSizePolicy, QSpinBox, QStackedWidget, QTabWidget,
+    QTextEdit, QToolButton, QTreeView, QWidget)
 from . import MainWindowResources_rc
 
 class Ui_Form(object):
@@ -215,6 +215,9 @@ class Ui_Form(object):
         self.stopaudio = QPushButton(self.MainMenu)
         self.stopaudio.setObjectName(u"stopaudio")
         self.stopaudio.setGeometry(QRect(260, 470, 75, 24))
+        self.openExperimentalTab = QPushButton(self.MainMenu)
+        self.openExperimentalTab.setObjectName(u"openExperimentalTab")
+        self.openExperimentalTab.setGeometry(QRect(1150, 660, 121, 41))
         self.stackedWidget.addWidget(self.MainMenu)
         self.checkBoxEinzelpaket.raise_()
         self.ButtonDatenSenden.raise_()
@@ -237,6 +240,7 @@ class Ui_Form(object):
         self.stopaudio.raise_()
         self.ButtonSettings.raise_()
         self.pushButtonVolumeOnOff.raise_()
+        self.openExperimentalTab.raise_()
         self.RoboParameter = QWidget()
         self.RoboParameter.setObjectName(u"RoboParameter")
         self.tabWidget = QTabWidget(self.RoboParameter)
@@ -660,14 +664,38 @@ class Ui_Form(object):
         self.lineEditCommand.setGeometry(QRect(90, 330, 1151, 22))
         self.tabWidget_2.addTab(self.consoleSettingsTab, "")
         self.stackedWidget.addWidget(self.Settings)
+        self.Experimental = QWidget()
+        self.Experimental.setObjectName(u"Experimental")
+        self.availableRobFiles = QLabel(self.Experimental)
+        self.availableRobFiles.setObjectName(u"availableRobFiles")
+        self.availableRobFiles.setGeometry(QRect(100, 0, 201, 31))
+        self.ButtonZurueck_8 = QPushButton(self.Experimental)
+        self.ButtonZurueck_8.setObjectName(u"ButtonZurueck_8")
+        self.ButtonZurueck_8.setGeometry(QRect(0, 270, 81, 81))
+        self.ButtonZurueck_8.setCursor(QCursor(Qt.PointingHandCursor))
+        self.ButtonZurueck_8.setIcon(icon3)
+        self.ButtonZurueck_8.setIconSize(QSize(81, 81))
+        self.ButtonZurueck_8.setFlat(True)
+        self.robFilesListWidget = QListWidget(self.Experimental)
+        self.robFilesListWidget.setObjectName(u"robFilesListWidget")
+        self.robFilesListWidget.setGeometry(QRect(100, 30, 181, 641))
+        self.deselectRobFile = QPushButton(self.Experimental)
+        self.deselectRobFile.setObjectName(u"deselectRobFile")
+        self.deselectRobFile.setGeometry(QRect(100, 680, 181, 24))
+        self.MatplotLibCanvasFrame = QFrame(self.Experimental)
+        self.MatplotLibCanvasFrame.setObjectName(u"MatplotLibCanvasFrame")
+        self.MatplotLibCanvasFrame.setGeometry(QRect(290, 30, 971, 671))
+        self.MatplotLibCanvasFrame.setFrameShape(QFrame.StyledPanel)
+        self.MatplotLibCanvasFrame.setFrameShadow(QFrame.Raised)
+        self.stackedWidget.addWidget(self.Experimental)
 
         self.retranslateUi(Form)
 
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(3)
         self.ButtonSettings.setDefault(False)
         self.pushButtonVolumeOnOff.setDefault(False)
         self.tabWidget.setCurrentIndex(0)
-        self.tabWidget_2.setCurrentIndex(0)
+        self.tabWidget_2.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(Form)
@@ -692,6 +720,7 @@ class Ui_Form(object):
         self.pushButtonVolumeOnOff.setText("")
         self.startaudio.setText(QCoreApplication.translate("Form", u"start", None))
         self.stopaudio.setText(QCoreApplication.translate("Form", u"stop", None))
+        self.openExperimentalTab.setText(QCoreApplication.translate("Form", u"Experimental", None))
         self.ButtonZurueck.setText("")
         self.ImageSzaidelLogoBig.setText("")
         self.ButtonRoboterStop.setText(QCoreApplication.translate("Form", u"Roboter Stop", None))
@@ -757,5 +786,8 @@ class Ui_Form(object):
 #endif // QT_CONFIG(accessibility)
         self.ButtonZurueck_7.setText("")
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.consoleSettingsTab), QCoreApplication.translate("Form", u"Console", None))
+        self.availableRobFiles.setText(QCoreApplication.translate("Form", u"Available .rob files", None))
+        self.ButtonZurueck_8.setText("")
+        self.deselectRobFile.setText(QCoreApplication.translate("Form", u"Deselect", None))
     # retranslateUi
 

@@ -168,6 +168,22 @@
         "documentation": {}
     },
     {
+        "label": "QListWidget",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QListWidgetItem",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QPushButton",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -289,6 +305,14 @@
     },
     {
         "label": "QWidget",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QVBoxLayout",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
         "isExtraImport": true,
@@ -433,6 +457,14 @@
     },
     {
         "label": "QLabel",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QVBoxLayout",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
         "isExtraImport": true,
@@ -1152,6 +1184,22 @@
         "documentation": {}
     },
     {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Union",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Optional",
         "importPath": "typing",
         "description": "typing",
@@ -1344,6 +1392,14 @@
         "documentation": {}
     },
     {
+        "label": "global_vars",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
         "label": "UR_Common_functions",
         "importPath": "utils",
         "description": "utils",
@@ -1428,6 +1484,88 @@
         "documentation": {}
     },
     {
+        "label": "Enum",
+        "importPath": "enum",
+        "description": "enum",
+        "isExtraImport": true,
+        "detail": "enum",
+        "documentation": {}
+    },
+    {
+        "label": "Enum",
+        "importPath": "enum",
+        "description": "enum",
+        "isExtraImport": true,
+        "detail": "enum",
+        "documentation": {}
+    },
+    {
+        "label": "Enum",
+        "importPath": "enum",
+        "description": "enum",
+        "isExtraImport": true,
+        "detail": "enum",
+        "documentation": {}
+    },
+    {
+        "label": "matplotlib",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "matplotlib",
+        "description": "matplotlib",
+        "detail": "matplotlib",
+        "documentation": {}
+    },
+    {
+        "label": "FigureCanvasQTAgg",
+        "importPath": "matplotlib.backends.backend_qtagg",
+        "description": "matplotlib.backends.backend_qtagg",
+        "isExtraImport": true,
+        "detail": "matplotlib.backends.backend_qtagg",
+        "documentation": {}
+    },
+    {
+        "label": "Figure",
+        "importPath": "matplotlib.figure",
+        "description": "matplotlib.figure",
+        "isExtraImport": true,
+        "detail": "matplotlib.figure",
+        "documentation": {}
+    },
+    {
+        "label": "Figure",
+        "importPath": "matplotlib.figure",
+        "description": "matplotlib.figure",
+        "isExtraImport": true,
+        "detail": "matplotlib.figure",
+        "documentation": {}
+    },
+    {
+        "label": "Poly3DCollection",
+        "importPath": "mpl_toolkits.mplot3d.art3d",
+        "description": "mpl_toolkits.mplot3d.art3d",
+        "isExtraImport": true,
+        "detail": "mpl_toolkits.mplot3d.art3d",
+        "documentation": {}
+    },
+    {
+        "label": "Poly3DCollection",
+        "importPath": "mpl_toolkits.mplot3d.art3d",
+        "description": "mpl_toolkits.mplot3d.art3d",
+        "isExtraImport": true,
+        "detail": "mpl_toolkits.mplot3d.art3d",
+        "documentation": {}
+    },
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
         "label": "RotatingFileHandler",
         "importPath": "logging.handlers",
         "description": "logging.handlers",
@@ -1493,22 +1631,6 @@
         "documentation": {}
     },
     {
-        "label": "Enum",
-        "importPath": "enum",
-        "description": "enum",
-        "isExtraImport": true,
-        "detail": "enum",
-        "documentation": {}
-    },
-    {
-        "label": "Enum",
-        "importPath": "enum",
-        "description": "enum",
-        "isExtraImport": true,
-        "detail": "enum",
-        "documentation": {}
-    },
-    {
         "label": "subprocess",
         "kind": 6,
         "isExtraImport": true,
@@ -1542,15 +1664,6 @@
         "importPath": "copy",
         "description": "copy",
         "detail": "copy",
-        "documentation": {}
-    },
-    {
-        "label": "time",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "time",
-        "description": "time",
-        "detail": "time",
         "documentation": {}
     },
     {
@@ -1655,6 +1768,38 @@
         "documentation": {}
     },
     {
+        "label": "initialize_3d_view",
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "isExtraImport": true,
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "clear_canvas",
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "isExtraImport": true,
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "display_pallet_3d",
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "isExtraImport": true,
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "MatplotlibCanvas",
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "isExtraImport": true,
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
         "label": "Settings",
         "importPath": "utils.settings",
         "description": "utils.settings",
@@ -1685,6 +1830,14 @@
         "description": "utils.startup_dialogs",
         "isExtraImport": true,
         "detail": "utils.startup_dialogs",
+        "documentation": {}
+    },
+    {
+        "label": "FigureCanvasQTAgg",
+        "importPath": "matplotlib.backends.backend_qt5agg",
+        "description": "matplotlib.backends.backend_qt5agg",
+        "isExtraImport": true,
+        "detail": "matplotlib.backends.backend_qt5agg",
         "documentation": {}
     },
     {
@@ -1811,6 +1964,132 @@
         "description": "ui_files.ui_password_entry",
         "peekOfCode": "class Ui_Dialog(object):\n    def setupUi(self, Dialog):\n        if not Dialog.objectName():\n            Dialog.setObjectName(u\"Dialog\")\n        Dialog.resize(385, 136)\n        self.lineEdit = QLineEdit(Dialog)\n        self.lineEdit.setObjectName(u\"lineEdit\")\n        self.lineEdit.setGeometry(QRect(30, 60, 113, 22))\n        self.lineEdit.setInputMethodHints(Qt.InputMethodHint.ImhHiddenText|Qt.InputMethodHint.ImhNoAutoUppercase|Qt.InputMethodHint.ImhNoPredictiveText|Qt.InputMethodHint.ImhPreferNumbers|Qt.InputMethodHint.ImhSensitiveData)\n        self.lineEdit.setMaxLength(20)",
         "detail": "ui_files.ui_password_entry",
+        "documentation": {}
+    },
+    {
+        "label": "Side",
+        "kind": 6,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "class Side(Enum):\n    top = 1\n    right = 2\n    bottom = 3\n    left = 4\nclass Corner(Enum):\n    top_right = 1\n    bottom_right = 2\n    bottom_left = 3\n    top_left = 4",
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "Corner",
+        "kind": 6,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "class Corner(Enum):\n    top_right = 1\n    bottom_right = 2\n    bottom_left = 3\n    top_left = 4\nclass Rotation(Enum):\n    zero = 0\n    ninety = 90\n    one_eighty = 180\n    two_seventy = 270",
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "Rotation",
+        "kind": 6,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "class Rotation(Enum):\n    zero = 0\n    ninety = 90\n    one_eighty = 180\n    two_seventy = 270\nclass Rectangle:\n    def __init__(self, width: int, length: int, x: int, y: int):\n        self.width = width\n        self.length = length\n        self.x = x",
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "Rectangle",
+        "kind": 6,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "class Rectangle:\n    def __init__(self, width: int, length: int, x: int, y: int):\n        self.width = width\n        self.length = length\n        self.x = x\n        self.y = y\nclass Box:\n    def __init__(self, blueNumber: int, blueLine: Union[Side, Corner, None], rotation: Rotation, rect: Rectangle, height: int):\n        self.blueNumber = blueNumber\n        self.blueLine = blueLine",
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "Box",
+        "kind": 6,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "class Box:\n    def __init__(self, blueNumber: int, blueLine: Union[Side, Corner, None], rotation: Rotation, rect: Rectangle, height: int):\n        self.blueNumber = blueNumber\n        self.blueLine = blueLine\n        self.rotation = rotation\n        self.rect = rect\n        self.height = height\nclass Layer:\n    def __init__(self, unique_layer_id: int, boxes: List[Box]):\n        self.unique_layer_id = unique_layer_id",
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "Layer",
+        "kind": 6,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "class Layer:\n    def __init__(self, unique_layer_id: int, boxes: List[Box]):\n        self.unique_layer_id = unique_layer_id\n        self.boxes = boxes\nclass Pallet:\n    def __init__(self, layers: List[Layer]):\n        self.layers = layers\n        self.layer_count = len(layers)\n        self.total_boxes = sum(map(lambda layer: len(layer.boxes), layers))\nclass MatplotlibCanvas(FigureCanvas):",
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "Pallet",
+        "kind": 6,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "class Pallet:\n    def __init__(self, layers: List[Layer]):\n        self.layers = layers\n        self.layer_count = len(layers)\n        self.total_boxes = sum(map(lambda layer: len(layer.boxes), layers))\nclass MatplotlibCanvas(FigureCanvas):\n    def __init__(self, parent=None, width=6, height=4, dpi=100):\n        fig = Figure(figsize=(width, height), dpi=dpi)\n        self.ax = fig.add_subplot(111, projection='3d')\n        super().__init__(fig)",
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "MatplotlibCanvas",
+        "kind": 6,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "class MatplotlibCanvas(FigureCanvas):\n    def __init__(self, parent=None, width=6, height=4, dpi=100):\n        fig = Figure(figsize=(width, height), dpi=dpi)\n        self.ax = fig.add_subplot(111, projection='3d')\n        super().__init__(fig)\n        self.setParent(parent)\ndef initialize_3d_view(frame):\n    \"\"\"Initialize the 3D view in the given frame.\n    Args:\n        frame (QFrame): The frame to initialize the 3D view in.",
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "initialize_3d_view",
+        "kind": 2,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "def initialize_3d_view(frame):\n    \"\"\"Initialize the 3D view in the given frame.\n    Args:\n        frame (QFrame): The frame to initialize the 3D view in.\n    \"\"\"\n    canvas = MatplotlibCanvas(frame, width=12, height=9, dpi=100)\n    layout = QVBoxLayout(frame)\n    layout.addWidget(canvas)\n    return canvas\ndef clear_canvas(canvas):",
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "clear_canvas",
+        "kind": 2,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "def clear_canvas(canvas):\n    \"\"\"Clear the matplotlib canvas.\n    Args:\n        canvas (MatplotlibCanvas): The canvas to clear.\n    \"\"\"\n    if not isinstance(canvas, MatplotlibCanvas):\n        return\n    canvas.ax.clear()\n    canvas.ax.set_axis_off()\n    canvas.draw()",
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "calculate_package_centers",
+        "kind": 2,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "def calculate_package_centers(center, width, length, rotation, num_packages):\n    centers = []\n    for i in range(num_packages):\n        if rotation == 0:\n            x = center[0] + (i - (num_packages - 1) / 2) * width\n            y = center[1]\n        elif rotation == 90:\n            x = center[0]\n            y = center[1] + (i - (num_packages - 1) / 2) * width\n        elif rotation == 180:",
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "parse_rob_file",
+        "kind": 2,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "def parse_rob_file(file_path) -> Pallet:\n    with open(file_path, 'r') as file:\n        lines = file.readlines()\n    package_dimensions = list(map(int, lines[1].strip().split()))\n    package_width, package_length, package_height = package_dimensions[0:3]\n    num_unique_layers = int(lines[2].strip())\n    num_layers = int(lines[3].strip())\n    layer_order = []\n    current_line = 5\n    for _ in range(num_layers):",
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "display_pallet_3d",
+        "kind": 2,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "def display_pallet_3d(canvas, pallet_name):\n    \"\"\"Display a 3D visualization of the pallet.\n    Args:\n        canvas (MatplotlibCanvas): The canvas to draw on\n        pallet (Pallet): The pallet data to visualize\n    \"\"\"\n    pallet = parse_rob_file(global_vars.PATH_USB_STICK + pallet_name + \".rob\")\n    start_time = time.time()\n    canvas.ax.clear()\n    # Set camera angle to view from origin corner",
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "logger = global_vars.logger\nclass Side(Enum):\n    top = 1\n    right = 2\n    bottom = 3\n    left = 4\nclass Corner(Enum):\n    top_right = 1\n    bottom_right = 2\n    bottom_left = 3",
+        "detail": "ui_files.visualization_3d",
         "documentation": {}
     },
     {
@@ -2304,7 +2583,7 @@
         "kind": 6,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "class Page(Enum):\n    \"\"\"Enum for the pages.\n    Args:\n        Enum (Enum): The enum for the pages.\n    \"\"\"\n    MAIN_PAGE = 0\n    PARAMETER_PAGE = 1\n    SETTINGS_PAGE = 2\ndef open_password_dialog() -> None:\n    \"\"\"Open the password dialog.",
+        "peekOfCode": "class Page(Enum):\n    \"\"\"Enum for the pages.\n    Args:\n        Enum (Enum): The enum for the pages.\n    \"\"\"\n    MAIN_PAGE = 0\n    PARAMETER_PAGE = 1\n    SETTINGS_PAGE = 2\n    EXPERIMENTAL_PAGE = 3\ndef open_password_dialog() -> None:",
         "detail": "main",
         "documentation": {}
     },
@@ -2683,6 +2962,24 @@
         "importPath": "main",
         "description": "main",
         "peekOfCode": "def handle_scanner_status(message: str, image_path: str):\n    \"\"\"Handle scanner status updates from server thread\n    Args:\n        message (str): The message from the scanner.\n        image_path (str): The path to the image from the scanner.\n    \"\"\"\n    logger.debug(f\"Received scanner status - Message: {message}, Image: {image_path}\")\n    if message != \"True,True,True\":\n        logger.warning(\"Scanner detected safety violation\")\n        # Update existing blinking label instead of creating new one",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "load_rob_files",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def load_rob_files():\n    \"\"\"Load .rob files into the list widget.\"\"\"\n    if not global_vars.ui:\n        return\n    global_vars.ui.robFilesListWidget.clear()\n    for file in os.listdir(global_vars.PATH_USB_STICK):\n        if file.endswith(\".rob\"):\n            global_vars.ui.robFilesListWidget.addItem(file[:-4])\ndef display_selected_file(item):\n    \"\"\"Display the selected file in 3D.",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "display_selected_file",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def display_selected_file(item):\n    \"\"\"Display the selected file in 3D.\n    Args:\n        item (QListWidgetItem): The selected item.\n    \"\"\"\n    if not global_vars.ui:\n        return\n    # Get the canvas from the frame\n    canvas = global_vars.ui.MatplotLibCanvasFrame.findChild(MatplotlibCanvas)\n    if not canvas:",
         "detail": "main",
         "documentation": {}
     },

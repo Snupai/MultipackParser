@@ -40,12 +40,13 @@ from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickView
 ################################################################
 from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox, 
-                              QCompleter, QFileDialog, QMessageBox, QLabel)
+                              QCompleter, QFileDialog, QMessageBox, QLabel, QVBoxLayout)
 from PySide6.QtCore import Qt, QFileSystemWatcher, QProcess, QRegularExpression, QLocale, QStringListModel, QTimer
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QIcon, QPixmap
 from ui_files.ui_main_window import Ui_Form
 from ui_files import MainWindowResources_rc
 from ui_files.BlinkingLabel import BlinkingLabel
+from ui_files.visualization_3d import initialize_3d_view, clear_canvas, display_pallet_3d, MatplotlibCanvas
 from utils.settings import Settings
 from utils import global_vars
 from utils import UR_Common_functions as UR
@@ -56,6 +57,12 @@ from utils.message_manager import MessageManager
 from PySide6 import QtCore
 import traceback
 from utils.startup_dialogs import show_palette_config_dialog
+
+import matplotlib
+matplotlib.use('qtagg', force=True)
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 logger = global_vars.logger
 
@@ -319,6 +326,7 @@ class Page(Enum):
     MAIN_PAGE = 0
     PARAMETER_PAGE = 1
     SETTINGS_PAGE = 2
+    EXPERIMENTAL_PAGE = 3
 
 def open_password_dialog() -> None:
     """Open the password dialog.
@@ -1156,6 +1164,20 @@ Examples:
 
         set_wordlist()
 
+        # Connect experimental page buttons
+        global_vars.ui.openExperimentalTab.clicked.connect(lambda: open_page(Page.EXPERIMENTAL_PAGE))
+        global_vars.ui.ButtonZurueck_8.clicked.connect(lambda: open_page(Page.MAIN_PAGE))
+
+        # Initialize 3D view
+        canvas = initialize_3d_view(global_vars.ui.MatplotLibCanvasFrame)
+
+        # Connect rob file list widget
+        global_vars.ui.robFilesListWidget.itemClicked.connect(lambda item: display_selected_file(item))
+        global_vars.ui.deselectRobFile.clicked.connect(lambda: clear_canvas(canvas))
+
+        # Load rob files into list widget
+        load_rob_files()
+
         # Apply QIntValidator to restrict the input to only integers
         int_validator = QIntValidator()
         global_vars.ui.EingabeKartonhoehe.setValidator(int_validator)
@@ -1355,6 +1377,33 @@ def handle_scanner_status(message: str, image_path: str):
             global_vars.ui.label_7.setPixmap(pixmap)
         except Exception as e:
             logger.error(f"Failed to update scanner image: {e}")
+
+def load_rob_files():
+    """Load .rob files into the list widget."""
+    if not global_vars.ui:
+        return
+        
+    global_vars.ui.robFilesListWidget.clear()
+    for file in os.listdir(global_vars.PATH_USB_STICK):
+        if file.endswith(".rob"):
+            global_vars.ui.robFilesListWidget.addItem(file[:-4])
+
+def display_selected_file(item):
+    """Display the selected file in 3D.
+
+    Args:
+        item (QListWidgetItem): The selected item.
+    """
+    if not global_vars.ui:
+        return
+    
+    # Get the canvas from the frame
+    canvas = global_vars.ui.MatplotLibCanvasFrame.findChild(MatplotlibCanvas)
+    if not canvas:
+        return
+        
+    # Display the pallet in 3D
+    display_pallet_3d(canvas, item.text())
 
 if __name__ == "__main__":
     main()
