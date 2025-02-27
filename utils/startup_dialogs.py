@@ -14,43 +14,47 @@ class PaletteConfigDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Palette Configuration")
-        self.setMinimumWidth(800)  # Increased width for images
-        self.setMinimumHeight(600)  # Increased height for images
+        self.setMinimumWidth(600)  # Reduced width
+        self.setMaximumHeight(680)  # Set maximum height for RPi display
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        
+        # Store pixmaps as class variables
+        self.no_palette_pixmap = QPixmap()  # Empty pixmap for no selection
+        self.palette1_pixmap = QPixmap(":/ScannerUR20/imgs/UR20/scanner3nio.png")
+        self.palette2_pixmap = QPixmap(":/ScannerUR20/imgs/UR20/scanner1nio.png")
         
         # Main layout
         layout = QVBoxLayout(self)
-        layout.setSpacing(20)  # Increased spacing between elements
-        layout.setContentsMargins(20, 20, 20, 20)  # Increased margins
+        layout.setSpacing(10)  # Reduced spacing between elements
+        layout.setContentsMargins(15, 15, 15, 15)  # Reduced margins
         
         # Info label
         info_label = QLabel("Please confirm the status of each palette:")
-        info_label.setStyleSheet("font-weight: bold; font-size: 18px;")  # Increased font size
+        info_label.setStyleSheet("font-weight: bold; font-size: 16px;")  # Slightly reduced font size
         layout.addWidget(info_label)
         
         # Palette 1 group with image
         palette1_container = QHBoxLayout()
+        palette1_container.setSpacing(10)  # Reduced spacing
         
         # Image for Palette 1
         palette1_image = QLabel()
-        palette1_image.setFixedSize(200, 200)
+        palette1_image.setFixedSize(140, 140)  # Reduced image size
         palette1_image.setStyleSheet("border: 2px solid #cccccc; border-radius: 5px; padding: 5px; background-color: white;")
-        # Load image directly with QPixmap
-        pixmap1 = QPixmap(":/ScannerUR20/imgs/UR20/scanner3nio.png")
-        if not pixmap1.isNull():
-            pixmap1 = pixmap1.scaled(180, 180, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        palette1_image.setPixmap(pixmap1)
+        if not self.palette1_pixmap.isNull():
+            scaled_pixmap1 = self.palette1_pixmap.scaled(120, 120, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            palette1_image.setPixmap(scaled_pixmap1)
         palette1_image.setAlignment(Qt.AlignCenter)
         palette1_container.addWidget(palette1_image)
         
         # Palette 1 controls
         palette1_group = QGroupBox("Palette 1")
-        palette1_group.setStyleSheet("QGroupBox { font-size: 16px; font-weight: bold; } QRadioButton { font-size: 16px; min-height: 30px; }")
+        palette1_group.setStyleSheet("QGroupBox { font-size: 14px; font-weight: bold; } QRadioButton { font-size: 14px; min-height: 25px; }")  # Reduced sizes
         palette1_layout = QVBoxLayout()
-        palette1_layout.setSpacing(15)
+        palette1_layout.setSpacing(8)  # Reduced spacing
         
         palette1_desc = QLabel("Left side palette position")
-        palette1_desc.setStyleSheet("font-size: 14px; color: #666666;")
+        palette1_desc.setStyleSheet("font-size: 12px; color: #666666;")  # Reduced font size
         palette1_layout.addWidget(palette1_desc)
         
         self.palette1_empty_radio = QRadioButton("Empty")
@@ -65,27 +69,26 @@ class PaletteConfigDialog(QDialog):
         
         # Palette 2 group with image
         palette2_container = QHBoxLayout()
+        palette2_container.setSpacing(10)  # Reduced spacing
         
         # Image for Palette 2
         palette2_image = QLabel()
-        palette2_image.setFixedSize(200, 200)
+        palette2_image.setFixedSize(140, 140)  # Reduced image size
         palette2_image.setStyleSheet("border: 2px solid #cccccc; border-radius: 5px; padding: 5px; background-color: white;")
-        # Load image directly with QPixmap
-        pixmap2 = QPixmap(":/ScannerUR20/imgs/UR20/scanner1nio.png")
-        if not pixmap2.isNull():
-            pixmap2 = pixmap2.scaled(180, 180, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        palette2_image.setPixmap(pixmap2)
+        if not self.palette2_pixmap.isNull():
+            scaled_pixmap2 = self.palette2_pixmap.scaled(120, 120, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            palette2_image.setPixmap(scaled_pixmap2)
         palette2_image.setAlignment(Qt.AlignCenter)
         palette2_container.addWidget(palette2_image)
         
         # Palette 2 controls
         palette2_group = QGroupBox("Palette 2")
-        palette2_group.setStyleSheet("QGroupBox { font-size: 16px; font-weight: bold; } QRadioButton { font-size: 16px; min-height: 30px; }")
+        palette2_group.setStyleSheet("QGroupBox { font-size: 14px; font-weight: bold; } QRadioButton { font-size: 14px; min-height: 25px; }")  # Reduced sizes
         palette2_layout = QVBoxLayout()
-        palette2_layout.setSpacing(15)
+        palette2_layout.setSpacing(8)  # Reduced spacing
         
         palette2_desc = QLabel("Right side palette position")
-        palette2_desc.setStyleSheet("font-size: 14px; color: #666666;")
+        palette2_desc.setStyleSheet("font-size: 12px; color: #666666;")  # Reduced font size
         palette2_layout.addWidget(palette2_desc)
         
         self.palette2_empty_radio = QRadioButton("Empty")
@@ -98,11 +101,14 @@ class PaletteConfigDialog(QDialog):
         palette2_container.addWidget(palette2_group)
         layout.addLayout(palette2_container)
         
-        # Active palette selection
+        # Active palette selection with preview
+        active_palette_container = QHBoxLayout()
+        
+        # Active palette controls
         active_palette_group = QGroupBox("Active Palette")
-        active_palette_group.setStyleSheet("QGroupBox { font-size: 16px; font-weight: bold; } QRadioButton { font-size: 16px; min-height: 30px; }")
+        active_palette_group.setStyleSheet("QGroupBox { font-size: 14px; font-weight: bold; } QRadioButton { font-size: 14px; min-height: 25px; }")
         active_palette_layout = QVBoxLayout()
-        active_palette_layout.setSpacing(15)
+        active_palette_layout.setSpacing(8)
         
         self.active_palette_none = QRadioButton("None (0)")
         self.active_palette_1 = QRadioButton("Palette 1")
@@ -113,12 +119,28 @@ class PaletteConfigDialog(QDialog):
         active_palette_layout.addWidget(self.active_palette_1)
         active_palette_layout.addWidget(self.active_palette_2)
         active_palette_group.setLayout(active_palette_layout)
-        layout.addWidget(active_palette_group)
+        active_palette_container.addWidget(active_palette_group)
+        
+        # Active palette preview
+        preview_group = QGroupBox("Active Palette Preview")
+        preview_group.setStyleSheet("QGroupBox { font-size: 14px; font-weight: bold; }")
+        preview_layout = QVBoxLayout()
+        
+        self.active_palette_image = QLabel()
+        self.active_palette_image.setFixedSize(140, 140)
+        self.active_palette_image.setStyleSheet("border: 2px solid #cccccc; border-radius: 5px; padding: 5px; background-color: white;")
+        self.active_palette_image.setAlignment(Qt.AlignCenter)
+        preview_layout.addWidget(self.active_palette_image)
+        
+        preview_group.setLayout(preview_layout)
+        active_palette_container.addWidget(preview_group)
+        
+        layout.addLayout(active_palette_container)
         
         # Buttons
         button_layout = QHBoxLayout()
         self.confirm_button = QPushButton("Confirm")
-        self.confirm_button.setStyleSheet("font-size: 16px; min-height: 40px; padding: 5px 15px;")
+        self.confirm_button.setStyleSheet("font-size: 14px; min-height: 35px; padding: 5px 15px;")
         self.confirm_button.clicked.connect(self.accept)
         button_layout.addStretch()
         button_layout.addWidget(self.confirm_button)
@@ -128,6 +150,30 @@ class PaletteConfigDialog(QDialog):
         # Connect signals to update UI state
         self.palette1_not_empty_radio.toggled.connect(self.update_ui_state)
         self.palette2_not_empty_radio.toggled.connect(self.update_ui_state)
+        
+        # Connect active palette selection signals
+        self.active_palette_none.toggled.connect(self.update_active_palette_preview)
+        self.active_palette_1.toggled.connect(self.update_active_palette_preview)
+        self.active_palette_2.toggled.connect(self.update_active_palette_preview)
+        
+        # Initialize preview
+        self.update_active_palette_preview()
+    
+    def update_active_palette_preview(self):
+        """Update the active palette preview image based on selection."""
+        if self.active_palette_1.isChecked():
+            pixmap = self.palette1_pixmap
+        elif self.active_palette_2.isChecked():
+            pixmap = self.palette2_pixmap
+        else:  # None selected
+            pixmap = self.no_palette_pixmap
+            
+        if not pixmap.isNull():
+            scaled_pixmap = pixmap.scaled(120, 120, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.active_palette_image.setPixmap(scaled_pixmap)
+        else:
+            self.active_palette_image.clear()
+            self.active_palette_image.setText("No Palette Selected")
     
     def update_ui_state(self):
         """Update UI state based on palette status selections."""

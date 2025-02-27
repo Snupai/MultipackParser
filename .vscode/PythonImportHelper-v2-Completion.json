@@ -2216,7 +2216,7 @@
         "kind": 6,
         "importPath": "utils.startup_dialogs",
         "description": "utils.startup_dialogs",
-        "peekOfCode": "class PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(800)  # Increased width for images\n        self.setMinimumHeight(600)  # Increased height for images\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Main layout\n        layout = QVBoxLayout(self)",
+        "peekOfCode": "class PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(600)  # Reduced width\n        self.setMaximumHeight(680)  # Set maximum height for RPi display\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Store pixmaps as class variables\n        self.no_palette_pixmap = QPixmap()  # Empty pixmap for no selection",
         "detail": "utils.startup_dialogs",
         "documentation": {}
     },
@@ -2234,7 +2234,7 @@
         "kind": 5,
         "importPath": "utils.startup_dialogs",
         "description": "utils.startup_dialogs",
-        "peekOfCode": "logger = logging.getLogger(__name__)\nclass PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(800)  # Increased width for images\n        self.setMinimumHeight(600)  # Increased height for images\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Main layout",
+        "peekOfCode": "logger = logging.getLogger(__name__)\nclass PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(600)  # Reduced width\n        self.setMaximumHeight(680)  # Set maximum height for RPi display\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Store pixmaps as class variables",
         "detail": "utils.startup_dialogs",
         "documentation": {}
     },
