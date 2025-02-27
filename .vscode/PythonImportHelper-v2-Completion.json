@@ -480,6 +480,22 @@
         "documentation": {}
     },
     {
+        "label": "QSplashScreen",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QProgressBar",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QTimer",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
@@ -1136,6 +1152,14 @@
         "documentation": {}
     },
     {
+        "label": "QPixmap",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
         "label": "QIntValidator",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
@@ -1169,6 +1193,22 @@
     },
     {
         "label": "QPixmap",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPainter",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QColor",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
         "isExtraImport": true,
@@ -1700,6 +1740,14 @@
         "documentation": {}
     },
     {
+        "label": "MainWindowResources_rc",
+        "importPath": "ui_files",
+        "description": "ui_files",
+        "isExtraImport": true,
+        "detail": "ui_files",
+        "documentation": {}
+    },
+    {
         "label": "argparse",
         "kind": 6,
         "isExtraImport": true,
@@ -1765,14 +1813,6 @@
         "description": "ui_files.ui_main_window",
         "isExtraImport": true,
         "detail": "ui_files.ui_main_window",
-        "documentation": {}
-    },
-    {
-        "label": "MainWindowResources_rc",
-        "importPath": "ui_files",
-        "description": "ui_files",
-        "isExtraImport": true,
-        "detail": "ui_files",
         "documentation": {}
     },
     {
@@ -2176,7 +2216,7 @@
         "kind": 6,
         "importPath": "utils.startup_dialogs",
         "description": "utils.startup_dialogs",
-        "peekOfCode": "class PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(600)  # Increased width\n        self.setMinimumHeight(500)  # Added minimum height\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Main layout\n        layout = QVBoxLayout(self)",
+        "peekOfCode": "class PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(800)  # Increased width for images\n        self.setMinimumHeight(600)  # Increased height for images\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Main layout\n        layout = QVBoxLayout(self)",
         "detail": "utils.startup_dialogs",
         "documentation": {}
     },
@@ -2194,7 +2234,7 @@
         "kind": 5,
         "importPath": "utils.startup_dialogs",
         "description": "utils.startup_dialogs",
-        "peekOfCode": "logger = logging.getLogger(__name__)\nclass PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(600)  # Increased width\n        self.setMinimumHeight(500)  # Added minimum height\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Main layout",
+        "peekOfCode": "logger = logging.getLogger(__name__)\nclass PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(800)  # Increased width for images\n        self.setMinimumHeight(600)  # Increased height for images\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Main layout",
         "detail": "utils.startup_dialogs",
         "documentation": {}
     },
@@ -2613,6 +2653,15 @@
         "documentation": {}
     },
     {
+        "label": "show_instant_splash",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def show_instant_splash():\n    \"\"\"Show an instant splash screen before any initialization.\"\"\"\n    import sys\n    from PySide6.QtWidgets import QApplication, QSplashScreen, QLabel\n    from PySide6.QtGui import QPixmap, QPainter, QColor\n    from PySide6.QtCore import Qt\n    # Create minimal QApplication instance just for the splash\n    if not QApplication.instance():\n        temp_app = QApplication(sys.argv)\n    else:",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
         "label": "server_start",
         "kind": 2,
         "importPath": "main",
@@ -2968,7 +3017,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    global main_window\n    # Parse command line arguments\n    parser = argparse.ArgumentParser(\n        description=\"Multipack Parser Application\",\n        formatter_class=argparse.RawDescriptionHelpFormatter,",
+        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    global main_window\n    # Initialize the application\n    app = QApplication.instance() or QApplication(sys.argv)\n    # Create and show the proper splash screen\n    logo_pix = QPixmap(\":/Szaidel Logo/imgs/logoszaidel-transparent-big.png\")",
         "detail": "main",
         "documentation": {}
     },
@@ -3005,6 +3054,15 @@
         "importPath": "main",
         "description": "main",
         "peekOfCode": "__license__ = '''\n    Multipack Parser Application - to parse the data from the Multipack Robot to an UR Robot\n    Copyright (C) 2024  Yann-Luca Näher\n    This program is free software: you can redistribute it and/or modify\n    it under the terms of the GNU General Public License as published by\n    the Free Software Foundation, either version 3 of the License, or\n    (at your option) any later version.\n    This program is distributed in the hope that it will be useful,\n    but WITHOUT ANY WARRANTY; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "temp_splash",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "temp_splash = show_instant_splash()\n#TODO: After starting the program, ask the user to confirm each palette if it is empty or not. and if it is not empty ask the user to confirm if the user wants to continue anyways and ask for the current layer.\n#TODO: Implement option for UR10e or UR20 robot. If UR20 is selected robot will have 2 pallets. else only it is like the old code.\n#TODO: Implement seemless palletizing with 2 pallets for UR20 robot.\nimport sys\nimport subprocess\nimport argparse\nimport hashlib\nimport os\nimport shutil",
         "detail": "main",
         "documentation": {}
     },
