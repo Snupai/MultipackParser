@@ -22,7 +22,7 @@ def show_instant_splash():
     """Show an instant splash screen before any initialization."""
     import sys
     from PySide6.QtWidgets import QApplication, QSplashScreen, QLabel
-    from PySide6.QtGui import QPixmap
+    from PySide6.QtGui import QPixmap, QPainter, QColor
     from PySide6.QtCore import Qt
 
     # Create minimal QApplication instance just for the splash
@@ -31,8 +31,18 @@ def show_instant_splash():
     else:
         temp_app = QApplication.instance()
 
-    # Create a simple splash screen with just the logo
-    splash_pix = QPixmap(":/Szaidel Logo/imgs/logoszaidel-transparent-big.png")
+    # Load the logo
+    logo_pix = QPixmap(":/Szaidel Logo/imgs/logoszaidel-transparent-big.png")
+    
+    # Create a white background pixmap of the same size
+    splash_pix = QPixmap(logo_pix.size())
+    splash_pix.fill(QColor(255, 255, 255))  # Fill with white
+    
+    # Paint the logo onto the white background
+    painter = QPainter(splash_pix)
+    painter.drawPixmap(0, 0, logo_pix)
+    painter.end()
+    
     temp_splash = QSplashScreen(splash_pix)
     
     # Add a "Loading..." label
@@ -79,7 +89,7 @@ from PySide6.QtQuick import QQuickView
 from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox, 
                               QCompleter, QFileDialog, QMessageBox, QLabel, QVBoxLayout, QSplashScreen, QProgressBar)
 from PySide6.QtCore import Qt, QFileSystemWatcher, QProcess, QRegularExpression, QLocale, QStringListModel, QTimer
-from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QIcon, QPixmap
+from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QIcon, QPixmap, QPainter, QColor
 from ui_files.ui_main_window import Ui_Form
 from ui_files.BlinkingLabel import BlinkingLabel
 from ui_files.visualization_3d import initialize_3d_view, clear_canvas, display_pallet_3d, MatplotlibCanvas
@@ -1106,7 +1116,17 @@ def main():
     app = QApplication.instance() or QApplication(sys.argv)
     
     # Create and show the proper splash screen
-    splash_pix = QPixmap(":/Szaidel Logo/imgs/logoszaidel-transparent-big.png")
+    logo_pix = QPixmap(":/Szaidel Logo/imgs/logoszaidel-transparent-big.png")
+    
+    # Create a white background pixmap of the same size
+    splash_pix = QPixmap(logo_pix.size())
+    splash_pix.fill(QColor(255, 255, 255))  # Fill with white
+    
+    # Paint the logo onto the white background
+    painter = QPainter(splash_pix)
+    painter.drawPixmap(0, 0, logo_pix)
+    painter.end()
+    
     splash = QSplashScreen(splash_pix)
     
     # Add a progress bar to the splash screen
@@ -1122,7 +1142,7 @@ def main():
             background-color: #f0f0f0;
         }
         QProgressBar::chunk {
-            background-color: #4CAF50;
+            background-color:rgb(54, 71, 228);
             width: 10px;
             margin: 0.5px;
         }

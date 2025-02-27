@@ -1192,6 +1192,22 @@
         "documentation": {}
     },
     {
+        "label": "QPainter",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QColor",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
         "label": "Optional",
         "importPath": "typing",
         "description": "typing",
@@ -2633,7 +2649,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def show_instant_splash():\n    \"\"\"Show an instant splash screen before any initialization.\"\"\"\n    import sys\n    from PySide6.QtWidgets import QApplication, QSplashScreen, QLabel\n    from PySide6.QtGui import QPixmap\n    from PySide6.QtCore import Qt\n    # Create minimal QApplication instance just for the splash\n    if not QApplication.instance():\n        temp_app = QApplication(sys.argv)\n    else:",
+        "peekOfCode": "def show_instant_splash():\n    \"\"\"Show an instant splash screen before any initialization.\"\"\"\n    import sys\n    from PySide6.QtWidgets import QApplication, QSplashScreen, QLabel\n    from PySide6.QtGui import QPixmap, QPainter, QColor\n    from PySide6.QtCore import Qt\n    # Create minimal QApplication instance just for the splash\n    if not QApplication.instance():\n        temp_app = QApplication(sys.argv)\n    else:",
         "detail": "main",
         "documentation": {}
     },
@@ -2993,7 +3009,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    global main_window\n    # Initialize the application\n    app = QApplication.instance() or QApplication(sys.argv)\n    # Create and show the proper splash screen\n    splash_pix = QPixmap(\":/Szaidel Logo/imgs/logoszaidel-transparent-big.png\")",
+        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    global main_window\n    # Initialize the application\n    app = QApplication.instance() or QApplication(sys.argv)\n    # Create and show the proper splash screen\n    logo_pix = QPixmap(\":/Szaidel Logo/imgs/logoszaidel-transparent-big.png\")",
         "detail": "main",
         "documentation": {}
     },
