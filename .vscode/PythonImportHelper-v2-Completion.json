@@ -1716,6 +1716,14 @@
         "documentation": {}
     },
     {
+        "label": "MainWindowResources_rc",
+        "importPath": "ui_files",
+        "description": "ui_files",
+        "isExtraImport": true,
+        "detail": "ui_files",
+        "documentation": {}
+    },
+    {
         "label": "argparse",
         "kind": 6,
         "isExtraImport": true,
@@ -1781,14 +1789,6 @@
         "description": "ui_files.ui_main_window",
         "isExtraImport": true,
         "detail": "ui_files.ui_main_window",
-        "documentation": {}
-    },
-    {
-        "label": "MainWindowResources_rc",
-        "importPath": "ui_files",
-        "description": "ui_files",
-        "isExtraImport": true,
-        "detail": "ui_files",
         "documentation": {}
     },
     {
@@ -2629,6 +2629,15 @@
         "documentation": {}
     },
     {
+        "label": "show_instant_splash",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def show_instant_splash():\n    \"\"\"Show an instant splash screen before any initialization.\"\"\"\n    import sys\n    from PySide6.QtWidgets import QApplication, QSplashScreen, QLabel\n    from PySide6.QtGui import QPixmap\n    from PySide6.QtCore import Qt\n    # Create minimal QApplication instance just for the splash\n    if not QApplication.instance():\n        temp_app = QApplication(sys.argv)\n    else:",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
         "label": "server_start",
         "kind": 2,
         "importPath": "main",
@@ -2980,20 +2989,11 @@
         "documentation": {}
     },
     {
-        "label": "show_instant_splash",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def show_instant_splash():\n    \"\"\"Show an instant splash screen before any initialization.\"\"\"\n    import sys\n    from PySide6.QtWidgets import QApplication, QSplashScreen, QLabel\n    from PySide6.QtGui import QPixmap\n    from PySide6.QtCore import Qt, QTimer\n    # Create minimal QApplication instance just for the splash\n    if not QApplication.instance():\n        temp_app = QApplication(sys.argv)\n    else:",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
         "label": "main",
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    global main_window\n    # Show instant splash before any initialization\n    temp_splash = show_instant_splash()\n    # Initialize the application\n    app = QApplication.instance() or QApplication(sys.argv)",
+        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    global main_window\n    # Initialize the application\n    app = QApplication.instance() or QApplication(sys.argv)\n    # Create and show the proper splash screen\n    splash_pix = QPixmap(\":/Szaidel Logo/imgs/logoszaidel-transparent-big.png\")",
         "detail": "main",
         "documentation": {}
     },
@@ -3030,6 +3030,15 @@
         "importPath": "main",
         "description": "main",
         "peekOfCode": "__license__ = '''\n    Multipack Parser Application - to parse the data from the Multipack Robot to an UR Robot\n    Copyright (C) 2024  Yann-Luca Näher\n    This program is free software: you can redistribute it and/or modify\n    it under the terms of the GNU General Public License as published by\n    the Free Software Foundation, either version 3 of the License, or\n    (at your option) any later version.\n    This program is distributed in the hope that it will be useful,\n    but WITHOUT ANY WARRANTY; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "temp_splash",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "temp_splash = show_instant_splash()\n#TODO: After starting the program, ask the user to confirm each palette if it is empty or not. and if it is not empty ask the user to confirm if the user wants to continue anyways and ask for the current layer.\n#TODO: Implement option for UR10e or UR20 robot. If UR20 is selected robot will have 2 pallets. else only it is like the old code.\n#TODO: Implement seemless palletizing with 2 pallets for UR20 robot.\nimport sys\nimport subprocess\nimport argparse\nimport hashlib\nimport os\nimport shutil",
         "detail": "main",
         "documentation": {}
     },

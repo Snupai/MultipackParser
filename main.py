@@ -16,6 +16,43 @@ __license__ = '''
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
+from ui_files import MainWindowResources_rc
+
+def show_instant_splash():
+    """Show an instant splash screen before any initialization."""
+    import sys
+    from PySide6.QtWidgets import QApplication, QSplashScreen, QLabel
+    from PySide6.QtGui import QPixmap
+    from PySide6.QtCore import Qt
+
+    # Create minimal QApplication instance just for the splash
+    if not QApplication.instance():
+        temp_app = QApplication(sys.argv)
+    else:
+        temp_app = QApplication.instance()
+
+    # Create a simple splash screen with just the logo
+    splash_pix = QPixmap(":/Szaidel Logo/imgs/logoszaidel-transparent-big.png")
+    temp_splash = QSplashScreen(splash_pix)
+    
+    # Add a "Loading..." label
+    loading_label = QLabel(temp_splash)
+    loading_label.setGeometry(splash_pix.width()/4, splash_pix.height() - 50,
+                            splash_pix.width()/2, 30)
+    loading_label.setAlignment(Qt.AlignCenter)
+    loading_label.setStyleSheet("color: #333333; font-size: 14px;")
+    loading_label.setText("Loading...")
+    
+    # Show splash immediately
+    temp_splash.show()
+    temp_app.processEvents()
+    
+    return temp_splash
+    
+# Show instant splash before any initialization
+temp_splash = show_instant_splash()
+
+
 #TODO: After starting the program, ask the user to confirm each palette if it is empty or not. and if it is not empty ask the user to confirm if the user wants to continue anyways and ask for the current layer.
 #TODO: Implement option for UR10e or UR20 robot. If UR20 is selected robot will have 2 pallets. else only it is like the old code.
 #TODO: Implement seemless palletizing with 2 pallets for UR20 robot.
@@ -44,7 +81,6 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox,
 from PySide6.QtCore import Qt, QFileSystemWatcher, QProcess, QRegularExpression, QLocale, QStringListModel, QTimer
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QIcon, QPixmap
 from ui_files.ui_main_window import Ui_Form
-from ui_files import MainWindowResources_rc
 from ui_files.BlinkingLabel import BlinkingLabel
 from ui_files.visualization_3d import initialize_3d_view, clear_canvas, display_pallet_3d, MatplotlibCanvas
 from utils.settings import Settings
@@ -1056,36 +1092,7 @@ def setup_logging(verbose: bool) -> None:
         handler.setLevel(log_level)
     logger.info(f"Logging level set to: {log_level}")
 
-def show_instant_splash():
-    """Show an instant splash screen before any initialization."""
-    import sys
-    from PySide6.QtWidgets import QApplication, QSplashScreen, QLabel
-    from PySide6.QtGui import QPixmap
-    from PySide6.QtCore import Qt, QTimer
 
-    # Create minimal QApplication instance just for the splash
-    if not QApplication.instance():
-        temp_app = QApplication(sys.argv)
-    else:
-        temp_app = QApplication.instance()
-
-    # Create a simple splash screen with just the logo
-    splash_pix = QPixmap(":/Szaidel Logo/imgs/logoszaidel-transparent-big.png")
-    temp_splash = QSplashScreen(splash_pix)
-    
-    # Add a "Loading..." label
-    loading_label = QLabel(temp_splash)
-    loading_label.setGeometry(splash_pix.width()/4, splash_pix.height() - 50,
-                            splash_pix.width()/2, 30)
-    loading_label.setAlignment(Qt.AlignCenter)
-    loading_label.setStyleSheet("color: #333333; font-size: 14px;")
-    loading_label.setText("Loading...")
-    
-    # Show splash immediately
-    temp_splash.show()
-    temp_app.processEvents()
-    
-    return temp_splash
 
 def main():
     """Main function to run the application.
@@ -1094,9 +1101,6 @@ def main():
         int: The exit code of the application.
     """
     global main_window
-    
-    # Show instant splash before any initialization
-    temp_splash = show_instant_splash()
     
     # Initialize the application
     app = QApplication.instance() or QApplication(sys.argv)
