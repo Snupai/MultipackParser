@@ -1152,6 +1152,14 @@
         "documentation": {}
     },
     {
+        "label": "QPixmap",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
         "label": "QIntValidator",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
@@ -2208,7 +2216,7 @@
         "kind": 6,
         "importPath": "utils.startup_dialogs",
         "description": "utils.startup_dialogs",
-        "peekOfCode": "class PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(600)  # Increased width\n        self.setMinimumHeight(500)  # Added minimum height\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Main layout\n        layout = QVBoxLayout(self)",
+        "peekOfCode": "class PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(800)  # Increased width for images\n        self.setMinimumHeight(600)  # Increased height for images\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Main layout\n        layout = QVBoxLayout(self)",
         "detail": "utils.startup_dialogs",
         "documentation": {}
     },
@@ -2226,7 +2234,7 @@
         "kind": 5,
         "importPath": "utils.startup_dialogs",
         "description": "utils.startup_dialogs",
-        "peekOfCode": "logger = logging.getLogger(__name__)\nclass PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(600)  # Increased width\n        self.setMinimumHeight(500)  # Added minimum height\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Main layout",
+        "peekOfCode": "logger = logging.getLogger(__name__)\nclass PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(800)  # Increased width for images\n        self.setMinimumHeight(600)  # Increased height for images\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Main layout",
         "detail": "utils.startup_dialogs",
         "documentation": {}
     },
