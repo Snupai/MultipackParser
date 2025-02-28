@@ -18,6 +18,9 @@ from utils.startup_dialogs import show_palette_config_dialog
 from utils.message_manager import MessageManager
 from utils.ui_helpers import update_status_label
 
+# Add a logger for this module
+logger = logging.getLogger(__name__)
+
 def parse_arguments():
     """Parse command line arguments.
     
@@ -135,7 +138,30 @@ def initialize_app():
     QLocale.setDefault(QLocale(QLocale.Language.German, QLocale.Country.Germany))
     sys.excepthook = exception_handler
     QtCore.qInstallMessageHandler(qt_message_handler)
-    os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
+    
+    # Disable Qt virtual keyboard for compiled applications or ARM64 platforms
+    # as it can cause black screen issues when clicking on line edits
+    is_arm_platform = False
+    if sys.platform.startswith('linux'):
+        try:
+            is_arm_platform = 'arm' in os.uname().machine
+        except AttributeError:
+            # os.uname() not available on all platforms
+            import platform
+            is_arm_platform = 'arm' in platform.machine().lower()
+
+    is_pyinstaller = getattr(sys, 'frozen', False)
+    
+    if not is_pyinstaller and not is_arm_platform:
+        os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
+    else:
+        # Clear any existing QT_IM_MODULE setting
+        if "QT_IM_MODULE" in os.environ:
+            del os.environ["QT_IM_MODULE"]
+        # Use a simpler input method that's more compatible with various platforms
+        if sys.platform.startswith('linux'):
+            os.environ["QT_IM_MODULE"] = "compose"
+        logger.info("Qt virtual keyboard disabled for this platform/environment")
     
     return app, splash, progress, loading_label
 
@@ -157,10 +183,10 @@ def setup_initial_app_state():
 
     # Show palette configuration dialog for UR20 robot
     if global_vars.settings.settings['info']['UR_Model'] == 'UR20':
-        global_vars.logger.info("UR20 robot detected, showing palette configuration dialog")
+        logger.info("UR20 robot detected, showing palette configuration dialog")
         show_palette_config_dialog(global_vars.main_window)
     else:
-        global_vars.logger.info(f"Robot model is {global_vars.settings.settings['info']['UR_Model']}, skipping palette configuration")
+        logger.info(f"Robot model is {global_vars.settings.settings['info']['UR_Model']}, skipping palette configuration")
         global_vars.UR20_active_palette = 0
         global_vars.UR20_palette1_empty = False
         global_vars.UR20_palette2_empty = False 

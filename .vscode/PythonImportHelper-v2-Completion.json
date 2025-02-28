@@ -2714,6 +2714,15 @@
         "documentation": {}
     },
     {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.app_initialization",
+        "description": "utils.app_initialization",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef parse_arguments():\n    \"\"\"Parse command line arguments.\n    Returns:\n        argparse.Namespace: Parsed arguments\n    \"\"\"\n    parser = argparse.ArgumentParser(\n        description=\"Multipack Parser Application\",\n        formatter_class=argparse.RawDescriptionHelpFormatter,\n        epilog=\"\"\"",
+        "detail": "utils.app_initialization",
+        "documentation": {}
+    },
+    {
         "label": "spawn_play_stepback_warning_thread",
         "kind": 2,
         "importPath": "utils.audio",
