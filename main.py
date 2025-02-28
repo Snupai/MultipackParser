@@ -18,8 +18,10 @@ __license__ = '''
 
 import os
 from ui_files import MainWindowResources_rc
-# import the needed qml modules for the virtual keyboard to work
-#from PySide6.QtQml import QQmlApplicationEngine
+################################################################
+# DONT REMOVE these imports
+# This is needed for the virtual keyboard to work
+from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickView
 ################################################################
 #TODO: After starting the program, ask the user to confirm each palette if it is empty or not. and if it is not empty ask the user to confirm if the user wants to continue anyways and ask for the current layer.
