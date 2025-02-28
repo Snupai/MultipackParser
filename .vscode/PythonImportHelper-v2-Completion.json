@@ -1352,6 +1352,22 @@
         "documentation": {}
     },
     {
+        "label": "Union",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Literal",
         "importPath": "typing",
         "description": "typing",
@@ -1644,6 +1660,14 @@
         "documentation": {}
     },
     {
+        "label": "Enum",
+        "importPath": "enum",
+        "description": "enum",
+        "isExtraImport": true,
+        "detail": "enum",
+        "documentation": {}
+    },
+    {
         "label": "matplotlib",
         "kind": 6,
         "isExtraImport": true,
@@ -1683,6 +1707,14 @@
         "importPath": "time",
         "description": "time",
         "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "*",
+        "importPath": "utils.pallet_data",
+        "description": "utils.pallet_data",
+        "isExtraImport": true,
+        "detail": "utils.pallet_data",
         "documentation": {}
     },
     {
@@ -2350,69 +2382,6 @@
         "documentation": {}
     },
     {
-        "label": "Side",
-        "kind": 6,
-        "importPath": "ui_files.visualization_3d",
-        "description": "ui_files.visualization_3d",
-        "peekOfCode": "class Side(Enum):\n    top = 1\n    right = 2\n    bottom = 3\n    left = 4\nclass Corner(Enum):\n    top_right = 1\n    bottom_right = 2\n    bottom_left = 3\n    top_left = 4",
-        "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
-        "label": "Corner",
-        "kind": 6,
-        "importPath": "ui_files.visualization_3d",
-        "description": "ui_files.visualization_3d",
-        "peekOfCode": "class Corner(Enum):\n    top_right = 1\n    bottom_right = 2\n    bottom_left = 3\n    top_left = 4\nclass Rotation(Enum):\n    zero = 0\n    ninety = 90\n    one_eighty = 180\n    two_seventy = 270",
-        "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
-        "label": "Rotation",
-        "kind": 6,
-        "importPath": "ui_files.visualization_3d",
-        "description": "ui_files.visualization_3d",
-        "peekOfCode": "class Rotation(Enum):\n    zero = 0\n    ninety = 90\n    one_eighty = 180\n    two_seventy = 270\nclass Rectangle:\n    def __init__(self, width: int, length: int, x: int, y: int):\n        self.width = width\n        self.length = length\n        self.x = x",
-        "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
-        "label": "Rectangle",
-        "kind": 6,
-        "importPath": "ui_files.visualization_3d",
-        "description": "ui_files.visualization_3d",
-        "peekOfCode": "class Rectangle:\n    def __init__(self, width: int, length: int, x: int, y: int):\n        self.width = width\n        self.length = length\n        self.x = x\n        self.y = y\nclass Box:\n    def __init__(self, blueNumber: int, blueLine: Union[Side, Corner, None], rotation: Rotation, rect: Rectangle, height: int):\n        self.blueNumber = blueNumber\n        self.blueLine = blueLine",
-        "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
-        "label": "Box",
-        "kind": 6,
-        "importPath": "ui_files.visualization_3d",
-        "description": "ui_files.visualization_3d",
-        "peekOfCode": "class Box:\n    def __init__(self, blueNumber: int, blueLine: Union[Side, Corner, None], rotation: Rotation, rect: Rectangle, height: int):\n        self.blueNumber = blueNumber\n        self.blueLine = blueLine\n        self.rotation = rotation\n        self.rect = rect\n        self.height = height\nclass Layer:\n    def __init__(self, unique_layer_id: int, boxes: List[Box]):\n        self.unique_layer_id = unique_layer_id",
-        "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
-        "label": "Layer",
-        "kind": 6,
-        "importPath": "ui_files.visualization_3d",
-        "description": "ui_files.visualization_3d",
-        "peekOfCode": "class Layer:\n    def __init__(self, unique_layer_id: int, boxes: List[Box]):\n        self.unique_layer_id = unique_layer_id\n        self.boxes = boxes\nclass Pallet:\n    def __init__(self, layers: List[Layer]):\n        self.layers = layers\n        self.layer_count = len(layers)\n        self.total_boxes = sum(map(lambda layer: len(layer.boxes), layers))\nclass MatplotlibCanvas(FigureCanvas):",
-        "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
-        "label": "Pallet",
-        "kind": 6,
-        "importPath": "ui_files.visualization_3d",
-        "description": "ui_files.visualization_3d",
-        "peekOfCode": "class Pallet:\n    def __init__(self, layers: List[Layer]):\n        self.layers = layers\n        self.layer_count = len(layers)\n        self.total_boxes = sum(map(lambda layer: len(layer.boxes), layers))\nclass MatplotlibCanvas(FigureCanvas):\n    def __init__(self, parent=None, width=6, height=4, dpi=100):\n        fig = Figure(figsize=(width, height), dpi=dpi)\n        self.ax = fig.add_subplot(111, projection='3d')\n        super().__init__(fig)",
-        "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
         "label": "MatplotlibCanvas",
         "kind": 6,
         "importPath": "ui_files.visualization_3d",
@@ -2471,7 +2440,7 @@
         "kind": 5,
         "importPath": "ui_files.visualization_3d",
         "description": "ui_files.visualization_3d",
-        "peekOfCode": "logger = global_vars.logger\nclass Side(Enum):\n    top = 1\n    right = 2\n    bottom = 3\n    left = 4\nclass Corner(Enum):\n    top_right = 1\n    bottom_right = 2\n    bottom_left = 3",
+        "peekOfCode": "logger = global_vars.logger\nclass MatplotlibCanvas(FigureCanvas):\n    def __init__(self, parent=None, width=6, height=4, dpi=100):\n        fig = Figure(figsize=(width, height), dpi=dpi)\n        self.ax = fig.add_subplot(111, projection='3d')\n        super().__init__(fig)\n        self.setParent(parent)\n        self.ax.mouse_init(rotate_btn=None, zoom_btn=None)\ndef initialize_3d_view(frame):\n    \"\"\"Initialize the 3D view in the given frame.",
         "detail": "ui_files.visualization_3d",
         "documentation": {}
     },
@@ -2662,6 +2631,69 @@
         "description": "utils.message_manager",
         "peekOfCode": "class MessageManager:\n    \"\"\"Manager for messages.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the message manager.\n        \"\"\"\n        logger.debug(\"Initializing MessageManager\")\n        self._messages: List[Message] = []\n        self._active_messages: List[Message] = []\n        self._blocked_messages: Set[str] = set()",
         "detail": "utils.message_manager",
+        "documentation": {}
+    },
+    {
+        "label": "Side",
+        "kind": 6,
+        "importPath": "utils.pallet_data",
+        "description": "utils.pallet_data",
+        "peekOfCode": "class Side(Enum):\n    top = 1\n    right = 2\n    bottom = 3\n    left = 4\nclass Corner(Enum):\n    top_right = 1\n    bottom_right = 2\n    bottom_left = 3\n    top_left = 4",
+        "detail": "utils.pallet_data",
+        "documentation": {}
+    },
+    {
+        "label": "Corner",
+        "kind": 6,
+        "importPath": "utils.pallet_data",
+        "description": "utils.pallet_data",
+        "peekOfCode": "class Corner(Enum):\n    top_right = 1\n    bottom_right = 2\n    bottom_left = 3\n    top_left = 4\nclass Rotation(Enum):\n    zero = 0\n    ninety = 90\n    one_eighty = 180\n    two_seventy = 270",
+        "detail": "utils.pallet_data",
+        "documentation": {}
+    },
+    {
+        "label": "Rotation",
+        "kind": 6,
+        "importPath": "utils.pallet_data",
+        "description": "utils.pallet_data",
+        "peekOfCode": "class Rotation(Enum):\n    zero = 0\n    ninety = 90\n    one_eighty = 180\n    two_seventy = 270\nclass Rectangle:\n    def __init__(self, width: int, length: int, x: int, y: int) -> None:\n        self.width: int = width\n        self.length: int = length\n        self.x: int = x",
+        "detail": "utils.pallet_data",
+        "documentation": {}
+    },
+    {
+        "label": "Rectangle",
+        "kind": 6,
+        "importPath": "utils.pallet_data",
+        "description": "utils.pallet_data",
+        "peekOfCode": "class Rectangle:\n    def __init__(self, width: int, length: int, x: int, y: int) -> None:\n        self.width: int = width\n        self.length: int = length\n        self.x: int = x\n        self.y: int = y\nclass Box:\n    def __init__(self, blueNumber: int, blueLine: Union[Side, Corner, None], rotation: Rotation, rect: Rectangle, height: int) -> None:\n        self.blueNumber: int = blueNumber\n        self.blueLine: Union[Side, Corner, None] = blueLine",
+        "detail": "utils.pallet_data",
+        "documentation": {}
+    },
+    {
+        "label": "Box",
+        "kind": 6,
+        "importPath": "utils.pallet_data",
+        "description": "utils.pallet_data",
+        "peekOfCode": "class Box:\n    def __init__(self, blueNumber: int, blueLine: Union[Side, Corner, None], rotation: Rotation, rect: Rectangle, height: int) -> None:\n        self.blueNumber: int = blueNumber\n        self.blueLine: Union[Side, Corner, None] = blueLine\n        self.rotation: Rotation = rotation\n        self.rect: Rectangle = rect\n        self.height: int = height\nclass Layer:\n    def __init__(self, unique_layer_id: int, boxes: List[Box]) -> None:\n        self.unique_layer_id: int = unique_layer_id",
+        "detail": "utils.pallet_data",
+        "documentation": {}
+    },
+    {
+        "label": "Layer",
+        "kind": 6,
+        "importPath": "utils.pallet_data",
+        "description": "utils.pallet_data",
+        "peekOfCode": "class Layer:\n    def __init__(self, unique_layer_id: int, boxes: List[Box]) -> None:\n        self.unique_layer_id: int = unique_layer_id\n        self.boxes: List[Box] = boxes\nclass Pallet:\n    def __init__(self, layers: List[Layer]):\n        self.layers: List[Layer] = layers\n        self.layer_count: int = len(layers)\n        self.total_boxes: int = sum(map(lambda layer: len(layer.boxes), layers))",
+        "detail": "utils.pallet_data",
+        "documentation": {}
+    },
+    {
+        "label": "Pallet",
+        "kind": 6,
+        "importPath": "utils.pallet_data",
+        "description": "utils.pallet_data",
+        "peekOfCode": "class Pallet:\n    def __init__(self, layers: List[Layer]):\n        self.layers: List[Layer] = layers\n        self.layer_count: int = len(layers)\n        self.total_boxes: int = sum(map(lambda layer: len(layer.boxes), layers))",
+        "detail": "utils.pallet_data",
         "documentation": {}
     },
     {
