@@ -6,6 +6,7 @@ from enum import Enum
 from PySide6.QtWidgets import QMessageBox, QFileDialog, QCompleter
 from PySide6.QtCore import Qt, QProcess, QFileSystemWatcher, QStringListModel
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator
+from typing import Optional
 
 from utils import global_vars
 from ui_files.BlinkingLabel import BlinkingLabel
@@ -25,14 +26,14 @@ class Page(Enum):
     SETTINGS_PAGE = 2
     EXPERIMENTAL_PAGE = 3
 
-def update_status_label(text: str, color: str, blink: bool = False, second_color: str | None = None, instant_acknowledge: bool = False, block: bool = False) -> None:
+def update_status_label(text: str, color: str, blink: bool = False, second_color: Optional[str] = None, instant_acknowledge: bool = False, block: bool = False) -> None:
     """Update the status label with the given text and color.
 
     Args:
         text (str): The text to be displayed in the status label.
         color (str): The color of the status label.
         blink (bool, optional): Whether the status label should blink. Defaults to False.
-        second_color (str | None, optional): The second color of the status label. Defaults to None.
+        second_color (Optional[str], optional): The second color of the status label. Defaults to None.
         instant_acknowledge (bool, optional): Whether the status label should be acknowledged immediately. Defaults to False.
         block (bool, optional): Whether the status label should be blocked. Defaults to False.
     """

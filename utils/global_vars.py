@@ -21,6 +21,9 @@ from .logging_config import logger
 process: Optional[multiprocessing.Process] = None
 settings: Optional['Settings'] = None
 message_manager: Optional['MessageManager'] = None
+main_window = None
+canvas = None
+allow_close = False
 
 # Variables
 settings_file: str = 'MultipackParser.conf'

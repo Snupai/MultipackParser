@@ -31,9 +31,9 @@ class BlinkingLabel(QLabel):
         super().__init__(text, parent)
         self.setGeometry(geometry)
         self.setStyleSheet(f"color: {color};")
-        self.base_color = color
-        self.second_color: str | None = second_color if second_color is not None else None  # Use base color if no second color
-        self.is_blinking = False
+        self.blink: bool = False
+        self.base_color: str = color
+        self.second_color: Optional[str] = second_color if second_color is not None else None  # Use base color if no second color
         self.timer = None
         
         if font:
@@ -53,7 +53,7 @@ class BlinkingLabel(QLabel):
                 self.timer.timeout.connect(lambda: self.change_color([self.base_color, self.second_color]))
             
         self.timer.start(500)  # Blink every 500 ms
-        self.is_blinking = True
+        self.blink = True
         self.show()
 
     def stop_blinking(self) -> None:
@@ -62,7 +62,7 @@ class BlinkingLabel(QLabel):
         logger.debug("Stopping blink animation")
         if self.timer:
             self.timer.stop()
-        self.is_blinking = False
+        self.blink = False
         self.setStyleSheet(f"color: {self.base_color};")
         self.show()
 
