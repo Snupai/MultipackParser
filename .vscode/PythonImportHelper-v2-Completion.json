@@ -1,5 +1,39 @@
 [
     {
+        "label": "collect_data_files",
+        "importPath": "PyInstaller.utils.hooks",
+        "description": "PyInstaller.utils.hooks",
+        "isExtraImport": true,
+        "detail": "PyInstaller.utils.hooks",
+        "documentation": {}
+    },
+    {
+        "label": "collect_submodules",
+        "importPath": "PyInstaller.utils.hooks",
+        "description": "PyInstaller.utils.hooks",
+        "isExtraImport": true,
+        "detail": "PyInstaller.utils.hooks",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
         "label": "QLabel",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -1673,24 +1707,6 @@
         "documentation": {}
     },
     {
-        "label": "sys",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "sys",
-        "description": "sys",
-        "detail": "sys",
-        "documentation": {}
-    },
-    {
-        "label": "os",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "os",
-        "description": "os",
-        "detail": "os",
-        "documentation": {}
-    },
-    {
         "label": "hashlib",
         "kind": 6,
         "isExtraImport": true,
@@ -2408,6 +2424,33 @@
         "documentation": {}
     },
     {
+        "label": "datas",
+        "kind": 5,
+        "importPath": "hooks.hook-PySide6.QtVirtualKeyboard",
+        "description": "hooks.hook-PySide6.QtVirtualKeyboard",
+        "peekOfCode": "datas = collect_data_files('PySide6', subdir='QtVirtualKeyboard')\n# Include all submodules from QtVirtualKeyboard\nhiddenimports = collect_submodules('PySide6.QtVirtualKeyboard')",
+        "detail": "hooks.hook-PySide6.QtVirtualKeyboard",
+        "documentation": {}
+    },
+    {
+        "label": "hiddenimports",
+        "kind": 5,
+        "importPath": "hooks.hook-PySide6.QtVirtualKeyboard",
+        "description": "hooks.hook-PySide6.QtVirtualKeyboard",
+        "peekOfCode": "hiddenimports = collect_submodules('PySide6.QtVirtualKeyboard')",
+        "detail": "hooks.hook-PySide6.QtVirtualKeyboard",
+        "documentation": {}
+    },
+    {
+        "label": "is_arm_platform",
+        "kind": 5,
+        "importPath": "hooks.runtime_hook",
+        "description": "hooks.runtime_hook",
+        "peekOfCode": "is_arm_platform = False\nif sys.platform.startswith('linux'):\n    try:\n        is_arm_platform = 'arm' in os.uname().machine\n    except AttributeError:\n        # os.uname() not available on all platforms\n        import platform\n        is_arm_platform = 'arm' in platform.machine().lower()\n# Set QT_IM_MODULE for the right input method\nif sys.platform.startswith('linux') and is_arm_platform:",
+        "detail": "hooks.runtime_hook",
+        "documentation": {}
+    },
+    {
         "label": "BlinkingLabel",
         "kind": 6,
         "importPath": "ui_files.BlinkingLabel",
@@ -2494,15 +2537,6 @@
         "importPath": "ui_files.PasswordDialog",
         "description": "ui_files.PasswordDialog",
         "peekOfCode": "class PasswordEntryDialog(QDialog):\n    \"\"\"Password entry dialog.\n    Args:\n        QDialog (QDialog): The parent class of the password entry dialog.\n    Returns:\n        bool: True if the password was accepted, False otherwise.\n    \"\"\"\n    password_accepted: bool = False\n    ui: Ui_Dialog\n    def __init__(self, parent_window=None) -> None:",
-        "detail": "ui_files.PasswordDialog",
-        "documentation": {}
-    },
-    {
-        "label": "os.environ[\"QT_IM_MODULE\"]",
-        "kind": 5,
-        "importPath": "ui_files.PasswordDialog",
-        "description": "ui_files.PasswordDialog",
-        "peekOfCode": "os.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\nlogger = global_vars.logger\n# Define the password entry dialog class\nclass PasswordEntryDialog(QDialog):\n    \"\"\"Password entry dialog.\n    Args:\n        QDialog (QDialog): The parent class of the password entry dialog.\n    Returns:\n        bool: True if the password was accepted, False otherwise.\n    \"\"\"",
         "detail": "ui_files.PasswordDialog",
         "documentation": {}
     },
@@ -3763,15 +3797,6 @@
         "importPath": "main",
         "description": "main",
         "peekOfCode": "__license__ = '''\n    Multipack Parser Application - to parse the data from the Multipack Robot to an UR Robot\n    Copyright (C) 2024  Yann-Luca Näher\n    This program is free software: you can redistribute it and/or modify\n    it under the terms of the GNU General Public License as published by\n    the Free Software Foundation, either version 3 of the License, or\n    (at your option) any later version.\n    This program is distributed in the hope that it will be useful,\n    but WITHOUT ANY WARRANTY; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "os.environ[\"QT_IM_MODULE\"]",
-        "kind": 5,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "os.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\nimport sys\nimport logging\nimport matplotlib\nfrom utils import global_vars\nfrom utils.app_control import setup_logging, init_settings\nfrom utils.app_initialization import parse_arguments, initialize_app, setup_initial_app_state\nfrom utils.ui_setup import (initialize_main_window, setup_input_validation, connect_signal_handlers,\n                          setup_password_handling, setup_components, start_background_tasks,\n                          setup_window_handling)",
         "detail": "main",
         "documentation": {}
     },
