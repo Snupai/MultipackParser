@@ -16,12 +16,13 @@ __license__ = '''
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
+import os
 from ui_files import MainWindowResources_rc
 
 #TODO: After starting the program, ask the user to confirm each palette if it is empty or not. and if it is not empty ask the user to confirm if the user wants to continue anyways and ask for the current layer.
 #TODO: Implement option for UR10e or UR20 robot. If UR20 is selected robot will have 2 pallets. else only it is like the old code.
 #TODO: Implement seemless palletizing with 2 pallets for UR20 robot.
-
+os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 import sys
 import logging
 import matplotlib

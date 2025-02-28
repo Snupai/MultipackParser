@@ -3767,6 +3767,15 @@
         "documentation": {}
     },
     {
+        "label": "os.environ[\"QT_IM_MODULE\"]",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "os.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\nimport sys\nimport logging\nimport matplotlib\nfrom utils import global_vars\nfrom utils.app_control import setup_logging, init_settings\nfrom utils.app_initialization import parse_arguments, initialize_app, setup_initial_app_state\nfrom utils.ui_setup import (initialize_main_window, setup_input_validation, connect_signal_handlers,\n                          setup_password_handling, setup_components, start_background_tasks,\n                          setup_window_handling)",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
         "label": "logger",
         "kind": 5,
         "importPath": "main",
