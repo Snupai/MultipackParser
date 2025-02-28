@@ -2344,6 +2344,14 @@
         "documentation": {}
     },
     {
+        "label": "QQmlApplicationEngine",
+        "importPath": "PySide6.QtQml",
+        "description": "PySide6.QtQml",
+        "isExtraImport": true,
+        "detail": "PySide6.QtQml",
+        "documentation": {}
+    },
+    {
         "label": "parse_arguments",
         "importPath": "utils.app_initialization",
         "description": "utils.app_initialization",
