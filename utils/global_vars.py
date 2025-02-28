@@ -2,6 +2,7 @@
 
 import logging
 from logging.handlers import RotatingFileHandler
+import threading
 from typing import Union, Optional, List, TYPE_CHECKING
 import multiprocessing
 from datetime import datetime
@@ -97,3 +98,5 @@ blinking_label: Optional['BlinkingLabel'] = None  # Initialize as None, will be 
 
 # Initialize logger
 logger.info("Global variables module initialized")
+
+audio_thread: Optional[threading.Thread] = None

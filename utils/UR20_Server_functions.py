@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QMessageBox, QLabel
 from PySide6.QtGui import QPixmap
 from . import global_vars
 import time
-from main import update_status_label
+from utils.ui_helpers import update_status_label
 from typing import Literal, cast
 from PySide6.QtCore import Qt, QObject, Signal
 import logging

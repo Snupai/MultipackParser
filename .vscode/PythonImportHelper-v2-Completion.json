@@ -328,6 +328,14 @@
         "documentation": {}
     },
     {
+        "label": "QMessageBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QDialog",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -408,6 +416,38 @@
         "documentation": {}
     },
     {
+        "label": "QFileDialog",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QCompleter",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMessageBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMessageBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QLabel",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -440,30 +480,6 @@
         "documentation": {}
     },
     {
-        "label": "QCompleter",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QFileDialog",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QMessageBox",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
         "label": "QLabel",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -472,7 +488,7 @@
         "documentation": {}
     },
     {
-        "label": "QVBoxLayout",
+        "label": "QProgressBar",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
         "isExtraImport": true,
@@ -481,14 +497,6 @@
     },
     {
         "label": "QSplashScreen",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QProgressBar",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
         "isExtraImport": true,
@@ -721,6 +729,14 @@
     },
     {
         "label": "QUrl",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
         "isExtraImport": true,
@@ -768,6 +784,38 @@
         "documentation": {}
     },
     {
+        "label": "QProcess",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QFileSystemWatcher",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QStringListModel",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
         "label": "QObject",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
@@ -792,15 +840,7 @@
         "documentation": {}
     },
     {
-        "label": "QFileSystemWatcher",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
-        "label": "QProcess",
+        "label": "QLocale",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
         "isExtraImport": true,
@@ -816,30 +856,6 @@
         "documentation": {}
     },
     {
-        "label": "QLocale",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
-        "label": "QStringListModel",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
-        "label": "QTimer",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
         "label": "QFont",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
@@ -1136,15 +1152,7 @@
         "documentation": {}
     },
     {
-        "label": "QPixmap",
-        "importPath": "PySide6.QtGui",
-        "description": "PySide6.QtGui",
-        "isExtraImport": true,
-        "detail": "PySide6.QtGui",
-        "documentation": {}
-    },
-    {
-        "label": "QPixmap",
+        "label": "QIcon",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
         "isExtraImport": true,
@@ -1184,7 +1192,15 @@
         "documentation": {}
     },
     {
-        "label": "QIcon",
+        "label": "QPixmap",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPixmap",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
         "isExtraImport": true,
@@ -1209,6 +1225,22 @@
     },
     {
         "label": "QColor",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QRegularExpressionValidator",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QIntValidator",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
         "isExtraImport": true,
@@ -1328,6 +1360,14 @@
         "documentation": {}
     },
     {
+        "label": "Literal",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "cast",
         "importPath": "typing",
         "description": "typing",
@@ -1352,22 +1392,6 @@
         "documentation": {}
     },
     {
-        "label": "Literal",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "cast",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
         "label": "MessageType",
         "importPath": "utils.message",
         "description": "utils.message",
@@ -1377,6 +1401,14 @@
     },
     {
         "label": "Message",
+        "importPath": "utils.message",
+        "description": "utils.message",
+        "isExtraImport": true,
+        "detail": "utils.message",
+        "documentation": {}
+    },
+    {
+        "label": "MessageType",
         "importPath": "utils.message",
         "description": "utils.message",
         "isExtraImport": true,
@@ -1456,6 +1488,30 @@
         "documentation": {}
     },
     {
+        "label": "global_vars",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "global_vars",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "global_vars",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
         "label": "UR_Common_functions",
         "importPath": "utils",
         "description": "utils",
@@ -1473,6 +1529,30 @@
     },
     {
         "label": "UR20_Server_functions",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "global_vars",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "global_vars",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "global_vars",
         "importPath": "utils",
         "description": "utils",
         "isExtraImport": true,
@@ -1589,22 +1669,6 @@
         "documentation": {}
     },
     {
-        "label": "Figure",
-        "importPath": "matplotlib.figure",
-        "description": "matplotlib.figure",
-        "isExtraImport": true,
-        "detail": "matplotlib.figure",
-        "documentation": {}
-    },
-    {
-        "label": "Poly3DCollection",
-        "importPath": "mpl_toolkits.mplot3d.art3d",
-        "description": "mpl_toolkits.mplot3d.art3d",
-        "isExtraImport": true,
-        "detail": "mpl_toolkits.mplot3d.art3d",
-        "documentation": {}
-    },
-    {
         "label": "Poly3DCollection",
         "importPath": "mpl_toolkits.mplot3d.art3d",
         "description": "mpl_toolkits.mplot3d.art3d",
@@ -1619,6 +1683,200 @@
         "importPath": "time",
         "description": "time",
         "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
+        "documentation": {}
+    },
+    {
+        "label": "set_settings_line_edits",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "CustomDoubleValidator",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "handle_scanner_status",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "set_wordlist",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_page",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "Page",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_password_dialog",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "leave_settings_page",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_file",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "save_open_file",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "execute_command",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_folder_dialog",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_file_dialog",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "set_settings_line_edits",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "threading",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "threading",
+        "description": "threading",
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
         "documentation": {}
     },
     {
@@ -1647,52 +1905,44 @@
         "documentation": {}
     },
     {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "subprocess",
+        "label": "socket",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "subprocess",
-        "description": "subprocess",
-        "detail": "subprocess",
+        "importPath": "socket",
+        "description": "socket",
+        "detail": "socket",
+        "documentation": {}
+    },
+    {
+        "label": "SimpleXMLRPCServer",
+        "importPath": "xmlrpc.server",
+        "description": "xmlrpc.server",
+        "isExtraImport": true,
+        "detail": "xmlrpc.server",
+        "documentation": {}
+    },
+    {
+        "label": "MessageManager",
+        "importPath": "utils.message_manager",
+        "description": "utils.message_manager",
+        "isExtraImport": true,
+        "detail": "utils.message_manager",
+        "documentation": {}
+    },
+    {
+        "label": "MessageManager",
+        "importPath": "utils.message_manager",
+        "description": "utils.message_manager",
+        "isExtraImport": true,
+        "detail": "utils.message_manager",
+        "documentation": {}
+    },
+    {
+        "label": "MessageManager",
+        "importPath": "utils.message_manager",
+        "description": "utils.message_manager",
+        "isExtraImport": true,
+        "detail": "utils.message_manager",
         "documentation": {}
     },
     {
@@ -1723,11 +1973,20 @@
         "documentation": {}
     },
     {
-        "label": "update_status_label",
-        "importPath": "main",
-        "description": "main",
+        "label": "BlinkingLabel",
+        "importPath": "ui_files.BlinkingLabel",
+        "description": "ui_files.BlinkingLabel",
         "isExtraImport": true,
-        "detail": "main",
+        "detail": "ui_files.BlinkingLabel",
+        "documentation": {}
+    },
+    {
+        "label": "shutil",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "shutil",
+        "description": "shutil",
+        "detail": "shutil",
         "documentation": {}
     },
     {
@@ -1757,41 +2016,6 @@
         "documentation": {}
     },
     {
-        "label": "shutil",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "shutil",
-        "description": "shutil",
-        "detail": "shutil",
-        "documentation": {}
-    },
-    {
-        "label": "threading",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "threading",
-        "description": "threading",
-        "detail": "threading",
-        "documentation": {}
-    },
-    {
-        "label": "socket",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "socket",
-        "description": "socket",
-        "detail": "socket",
-        "documentation": {}
-    },
-    {
-        "label": "SimpleXMLRPCServer",
-        "importPath": "xmlrpc.server",
-        "description": "xmlrpc.server",
-        "isExtraImport": true,
-        "detail": "xmlrpc.server",
-        "documentation": {}
-    },
-    {
         "label": "QQmlApplicationEngine",
         "importPath": "PySide6.QtQml",
         "description": "PySide6.QtQml",
@@ -1816,14 +2040,6 @@
         "documentation": {}
     },
     {
-        "label": "BlinkingLabel",
-        "importPath": "ui_files.BlinkingLabel",
-        "description": "ui_files.BlinkingLabel",
-        "isExtraImport": true,
-        "detail": "ui_files.BlinkingLabel",
-        "documentation": {}
-    },
-    {
         "label": "initialize_3d_view",
         "importPath": "ui_files.visualization_3d",
         "description": "ui_files.visualization_3d",
@@ -1840,47 +2056,6 @@
         "documentation": {}
     },
     {
-        "label": "display_pallet_3d",
-        "importPath": "ui_files.visualization_3d",
-        "description": "ui_files.visualization_3d",
-        "isExtraImport": true,
-        "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
-        "label": "MatplotlibCanvas",
-        "importPath": "ui_files.visualization_3d",
-        "description": "ui_files.visualization_3d",
-        "isExtraImport": true,
-        "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
-        "label": "Settings",
-        "importPath": "utils.settings",
-        "description": "utils.settings",
-        "isExtraImport": true,
-        "detail": "utils.settings",
-        "documentation": {}
-    },
-    {
-        "label": "MessageManager",
-        "importPath": "utils.message_manager",
-        "description": "utils.message_manager",
-        "isExtraImport": true,
-        "detail": "utils.message_manager",
-        "documentation": {}
-    },
-    {
-        "label": "traceback",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "traceback",
-        "description": "traceback",
-        "detail": "traceback",
-        "documentation": {}
-    },
-    {
         "label": "show_palette_config_dialog",
         "importPath": "utils.startup_dialogs",
         "description": "utils.startup_dialogs",
@@ -1889,11 +2064,163 @@
         "documentation": {}
     },
     {
-        "label": "FigureCanvasQTAgg",
-        "importPath": "matplotlib.backends.backend_qt5agg",
-        "description": "matplotlib.backends.backend_qt5agg",
+        "label": "show_instant_splash",
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
         "isExtraImport": true,
-        "detail": "matplotlib.backends.backend_qt5agg",
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "setup_logging",
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "isExtraImport": true,
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "exception_handler",
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "isExtraImport": true,
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "qt_message_handler",
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "isExtraImport": true,
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "init_settings",
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "isExtraImport": true,
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "restart_app",
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "isExtraImport": true,
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "exit_app",
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "isExtraImport": true,
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "load_rob_files",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "display_selected_file",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "load",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "send_cmd_play",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "send_cmd_pause",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "send_cmd_stop",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "server_thread",
+        "importPath": "utils.server",
+        "description": "utils.server",
+        "isExtraImport": true,
+        "detail": "utils.server",
+        "documentation": {}
+    },
+    {
+        "label": "server_stop",
+        "importPath": "utils.server",
+        "description": "utils.server",
+        "isExtraImport": true,
+        "detail": "utils.server",
+        "documentation": {}
+    },
+    {
+        "label": "spawn_play_stepback_warning_thread",
+        "importPath": "utils.audio",
+        "description": "utils.audio",
+        "isExtraImport": true,
+        "detail": "utils.audio",
+        "documentation": {}
+    },
+    {
+        "label": "kill_play_stepback_warning_thread",
+        "importPath": "utils.audio",
+        "description": "utils.audio",
+        "isExtraImport": true,
+        "detail": "utils.audio",
+        "documentation": {}
+    },
+    {
+        "label": "set_audio_volume",
+        "importPath": "utils.audio",
+        "description": "utils.audio",
+        "isExtraImport": true,
+        "detail": "utils.audio",
+        "documentation": {}
+    },
+    {
+        "label": "delay_warning_sound",
+        "importPath": "utils.audio",
+        "description": "utils.audio",
+        "isExtraImport": true,
+        "detail": "utils.audio",
+        "documentation": {}
+    },
+    {
+        "label": "check_for_updates",
+        "importPath": "utils.updater",
+        "description": "utils.updater",
+        "isExtraImport": true,
+        "detail": "utils.updater",
         "documentation": {}
     },
     {
@@ -2149,6 +2476,141 @@
         "documentation": {}
     },
     {
+        "label": "restart_app",
+        "kind": 2,
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "peekOfCode": "def restart_app():\n    \"\"\"Restart the application.\n    \"\"\"\n    try:\n        global_vars.settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        response = QMessageBox.question(global_vars.main_window, \"Verwerfen oder Speichern\", \n                                            \"Möchten Sie die neuen Daten verwerfen oder speichern?\",\n                                            QMessageBox.StandardButton.Discard | ",
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "save_and_exit_app",
+        "kind": 2,
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "peekOfCode": "def save_and_exit_app():\n    \"\"\"Save and exit the application.\n    \"\"\"\n    try:\n        global_vars.settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        # If settings do not match, ask whether to discard or save the new data\n        response = QMessageBox.question(global_vars.main_window, \"Verwerfen oder Speichern\", \n                                            \"Möchten Sie die neuen Daten verwerfen oder speichern?\",",
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "exit_app",
+        "kind": 2,
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "peekOfCode": "def exit_app():\n    \"\"\"Exit the application.\n    \"\"\"\n    if hasattr(global_vars, 'server') and global_vars.server:\n        from utils.server import server_stop\n        server_stop()\n    sys.exit(0)\ndef init_settings():\n    \"\"\"Initialize the settings\n    \"\"\"",
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "init_settings",
+        "kind": 2,
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "peekOfCode": "def init_settings():\n    \"\"\"Initialize the settings\n    \"\"\"\n    from utils.settings import Settings\n    settings = Settings()\n    global_vars.settings = settings\n    global_vars.PATH_USB_STICK = settings.settings['admin']['path']\n    logger.debug(f\"Settings initialized: {settings}\")\ndef exception_handler(exc_type, exc_value, exc_traceback):\n    \"\"\"Global exception handler to log unhandled exceptions",
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "exception_handler",
+        "kind": 2,
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "peekOfCode": "def exception_handler(exc_type, exc_value, exc_traceback):\n    \"\"\"Global exception handler to log unhandled exceptions\n    Args:\n        exc_type (type): The type of the exception.\n        exc_value (Exception): The exception value.\n        exc_traceback (traceback): The traceback of the exception.\n    \"\"\"\n    if issubclass(exc_type, KeyboardInterrupt):\n        # Don't log keyboard interrupt\n        sys.__excepthook__(exc_type, exc_value, exc_traceback)",
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "qt_message_handler",
+        "kind": 2,
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "peekOfCode": "def qt_message_handler(mode, context, message):\n    \"\"\"Handler for Qt messages\n    Args:\n        mode (QtCore.QtMsgType): The mode of the message.\n        context (QtCore.QtMsgType): The context of the message.\n        message (str): The message to be logged.\n    \"\"\"\n    from PySide6 import QtCore\n    if mode == QtCore.QtMsgType.QtFatalMsg:\n        logger.critical(f\"Qt Fatal: {message}\")",
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "setup_logging",
+        "kind": 2,
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "peekOfCode": "def setup_logging(verbose: bool) -> None:\n    \"\"\"Configure logging level based on verbose flag\n    Args:\n        verbose (bool): Whether to enable verbose (DEBUG) logging\n    \"\"\"\n    log_level = logging.DEBUG if verbose else logging.INFO\n    logger.setLevel(log_level)\n    for handler in logger.handlers:\n        handler.setLevel(log_level)\n    logger.info(f\"Logging level set to: {log_level}\")",
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "show_instant_splash",
+        "kind": 2,
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "peekOfCode": "def show_instant_splash():\n    \"\"\"Show an instant splash screen before any initialization.\"\"\"\n    import sys\n    from PySide6.QtWidgets import QApplication, QSplashScreen, QLabel\n    from PySide6.QtGui import QPixmap, QPainter, QColor\n    from PySide6.QtCore import Qt\n    # Create minimal QApplication instance just for the splash\n    if not QApplication.instance():\n        temp_app = QApplication(sys.argv)\n    else:",
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef restart_app():\n    \"\"\"Restart the application.\n    \"\"\"\n    try:\n        global_vars.settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        response = QMessageBox.question(global_vars.main_window, \"Verwerfen oder Speichern\", \n                                            \"Möchten Sie die neuen Daten verwerfen oder speichern?\",",
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "spawn_play_stepback_warning_thread",
+        "kind": 2,
+        "importPath": "utils.audio",
+        "description": "utils.audio",
+        "peekOfCode": "def spawn_play_stepback_warning_thread():\n    \"\"\"Spawn a thread to play the stepback warning.\n    \"\"\"\n    global audio_thread\n    logger.info(\"Starting stepback warning audio thread\")\n    global_vars.audio_thread_running = True\n    audio_thread = threading.Thread(target=play_stepback_warning)\n    audio_thread.daemon = True\n    audio_thread.start()\n    global_vars.audio_thread = audio_thread",
+        "detail": "utils.audio",
+        "documentation": {}
+    },
+    {
+        "label": "kill_play_stepback_warning_thread",
+        "kind": 2,
+        "importPath": "utils.audio",
+        "description": "utils.audio",
+        "peekOfCode": "def kill_play_stepback_warning_thread():\n    \"\"\"Kill the thread playing the stepback warning.\n    \"\"\"\n    logger.info(\"Stopping stepback warning audio thread\")\n    global_vars.audio_thread_running = False\n    if global_vars.audio_thread:\n        global_vars.audio_thread = None\ndef play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.\n    \"\"\"",
+        "detail": "utils.audio",
+        "documentation": {}
+    },
+    {
+        "label": "play_stepback_warning",
+        "kind": 2,
+        "importPath": "utils.audio",
+        "description": "utils.audio",
+        "peekOfCode": "def play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.\n    \"\"\"\n    logger.debug(\"Starting stepback warning playback loop\")\n    try:\n        while global_vars.audio_thread_running:\n            try:\n                # Use aplay to play the audio file\n                logger.debug(f\"Playing audio file: {global_vars.settings.settings['admin']['alarm_sound_file']}\")\n                subprocess.run(['aplay', global_vars.settings.settings['admin']['alarm_sound_file']], ",
+        "detail": "utils.audio",
+        "documentation": {}
+    },
+    {
+        "label": "set_audio_volume",
+        "kind": 2,
+        "importPath": "utils.audio",
+        "description": "utils.audio",
+        "peekOfCode": "def set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = '0%' if not global_vars.audio_muted else '100%'\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"\n    logger.info(f\"Setting audio volume to {volume}\")\n    try:",
+        "detail": "utils.audio",
+        "documentation": {}
+    },
+    {
+        "label": "delay_warning_sound",
+        "kind": 2,
+        "importPath": "utils.audio",
+        "description": "utils.audio",
+        "peekOfCode": "def delay_warning_sound():\n    \"\"\"Delay the warning sound start by 40 seconds.\n    \"\"\"\n    logger.debug(\"Starting delay warning sound monitor\")\n    while True:\n        try:\n            if global_vars.timestamp_scanner_fault:\n                delay = (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds()\n                if delay >= 40:\n                    logger.info(\"40-second delay reached, starting warning sound\")",
+        "detail": "utils.audio",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.audio",
+        "description": "utils.audio",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef spawn_play_stepback_warning_thread():\n    \"\"\"Spawn a thread to play the stepback warning.\n    \"\"\"\n    global audio_thread\n    logger.info(\"Starting stepback warning audio thread\")\n    global_vars.audio_thread_running = True\n    audio_thread = threading.Thread(target=play_stepback_warning)\n    audio_thread.daemon = True\n    audio_thread.start()",
+        "detail": "utils.audio",
+        "documentation": {}
+    },
+    {
         "label": "get_log_path",
         "kind": 2,
         "importPath": "utils.logging_config",
@@ -2203,6 +2665,132 @@
         "documentation": {}
     },
     {
+        "label": "send_cmd_play",
+        "kind": 2,
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "peekOfCode": "def send_cmd_play() -> None:\n    \"\"\"Send a command to the robot to start.\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))\n        sock.connect(server_address)\n        # Send data",
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "send_cmd_pause",
+        "kind": 2,
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "peekOfCode": "def send_cmd_pause() -> None:\n    \"\"\"Send a command to the robot to pause.\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))\n        sock.connect(server_address)\n        # Send data",
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "send_cmd_stop",
+        "kind": 2,
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "peekOfCode": "def send_cmd_stop() -> None:\n    \"\"\"Send a command to the robot to stop.\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))\n        sock.connect(server_address)\n        # Send data",
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "load",
+        "kind": 2,
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "peekOfCode": "def load() -> None:\n    \"\"\"Load the pallet plan from file.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):\n        logger.error(\"UI not initialized\")\n        return\n    from utils.ui_helpers import update_status_label\n    from utils import UR_Common_functions as UR\n    Artikelnummer = global_vars.ui.EingabePallettenplan.text()\n    UR.UR_SetFileName(Artikelnummer)",
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "load_wordlist",
+        "kind": 2,
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "peekOfCode": "def load_wordlist() -> list:\n    \"\"\"Load the wordlist from the USB stick.\n    Returns:\n        list: A list of wordlist items.\n    \"\"\"\n    import os\n    wordlist = []\n    count = 0\n    for file in os.listdir(global_vars.PATH_USB_STICK):\n        if file.endswith(\".rob\"):",
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "load_rob_files",
+        "kind": 2,
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "peekOfCode": "def load_rob_files():\n    \"\"\"Load .rob files into the list widget.\"\"\"\n    import os\n    if not global_vars.ui:\n        return\n    global_vars.ui.robFilesListWidget.clear()\n    rob_files = []\n    for file in os.listdir(global_vars.PATH_USB_STICK):\n        if file.endswith(\".rob\"):\n            rob_files.append(file[:-4])",
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "display_selected_file",
+        "kind": 2,
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "peekOfCode": "def display_selected_file(item):\n    \"\"\"Display the selected file in 3D.\n    Args:\n        item (QListWidgetItem): The selected item.\n    \"\"\"\n    if not global_vars.ui:\n        return\n    from ui_files.visualization_3d import MatplotlibCanvas, display_pallet_3d\n    # Get the canvas from the frame\n    canvas = global_vars.ui.MatplotLibCanvasFrame.findChild(MatplotlibCanvas)",
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef send_cmd_play() -> None:\n    \"\"\"Send a command to the robot to start.\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))\n        sock.connect(server_address)",
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "server_start",
+        "kind": 2,
+        "importPath": "utils.server",
+        "description": "utils.server",
+        "peekOfCode": "def server_start() -> Literal[0]:\n    \"\"\"Start the XMLRPC server.\n    Returns:\n        Literal[0]: The exit code of the application.\n    \"\"\"\n    global server\n    server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)\n    logger.debug(\"Start Server\")\n    try:\n        # Get settings from global vars",
+        "detail": "utils.server",
+        "documentation": {}
+    },
+    {
+        "label": "server_stop",
+        "kind": 2,
+        "importPath": "utils.server",
+        "description": "utils.server",
+        "peekOfCode": "def server_stop() -> None:\n    \"\"\"Stop the XMLRPC server.\n    \"\"\"\n    global server\n    if server:\n        if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n            global_vars.ui.ButtonStopRPCServer.setEnabled(False)\n        server.shutdown()\n        logger.debug(\"Server stopped\")\n        datensenden_manipulation(True, \"Server starten\", \"\")",
+        "detail": "utils.server",
+        "documentation": {}
+    },
+    {
+        "label": "server_thread",
+        "kind": 2,
+        "importPath": "utils.server",
+        "description": "utils.server",
+        "peekOfCode": "def server_thread() -> None:\n    \"\"\"Start the XMLRPC server in a separate thread.\n    \"\"\"\n    logger.debug(\"Starting server thread\")\n    xServerThread = threading.Thread(target=server_start)\n    xServerThread.start()\n    if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n        global_vars.ui.ButtonStopRPCServer.setEnabled(True)\n    datensenden_manipulation(False, \"Server läuft\", \"green\")\n    if global_vars.message_manager is None:",
+        "detail": "utils.server",
+        "documentation": {}
+    },
+    {
+        "label": "datensenden_manipulation",
+        "kind": 2,
+        "importPath": "utils.server",
+        "description": "utils.server",
+        "peekOfCode": "def datensenden_manipulation(visibility: bool, display_text: str, display_colour: str) -> None:\n    \"\"\"Manipulate the visibility of the \"Daten Senden\" button and the display text.\n    Args:\n        visibility (bool): Whether the \"Daten Senden\" button should be visible.\n        display_text (str): The text to be displayed in the \"Daten Senden\" button.\n        display_colour (str): The colour of the \"Daten Senden\" button.\n    \"\"\"\n    if global_vars.ui:\n        buttons = []\n        if hasattr(global_vars.ui, 'ButtonDatenSenden'):",
+        "detail": "utils.server",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.server",
+        "description": "utils.server",
+        "peekOfCode": "logger = logging.getLogger(__name__)\n# Global server instance\nserver = None\ndef server_start() -> Literal[0]:\n    \"\"\"Start the XMLRPC server.\n    Returns:\n        Literal[0]: The exit code of the application.\n    \"\"\"\n    global server\n    server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)",
+        "detail": "utils.server",
+        "documentation": {}
+    },
+    {
+        "label": "server",
+        "kind": 5,
+        "importPath": "utils.server",
+        "description": "utils.server",
+        "peekOfCode": "server = None\ndef server_start() -> Literal[0]:\n    \"\"\"Start the XMLRPC server.\n    Returns:\n        Literal[0]: The exit code of the application.\n    \"\"\"\n    global server\n    server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)\n    logger.debug(\"Start Server\")\n    try:",
+        "detail": "utils.server",
+        "documentation": {}
+    },
+    {
         "label": "Settings",
         "kind": 6,
         "importPath": "utils.settings",
@@ -2236,6 +2824,204 @@
         "description": "utils.startup_dialogs",
         "peekOfCode": "logger = logging.getLogger(__name__)\nclass PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(600)  # Reduced width\n        self.setMaximumHeight(680)  # Set maximum height for RPi display\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Store pixmaps as class variables",
         "detail": "utils.startup_dialogs",
+        "documentation": {}
+    },
+    {
+        "label": "Page",
+        "kind": 6,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "class Page(Enum):\n    \"\"\"Enum for the pages.\n    Args:\n        Enum (Enum): The enum for the pages.\n    \"\"\"\n    MAIN_PAGE = 0\n    PARAMETER_PAGE = 1\n    SETTINGS_PAGE = 2\n    EXPERIMENTAL_PAGE = 3\ndef update_status_label(text: str, color: str, blink: bool = False, second_color: str | None = None, instant_acknowledge: bool = False, block: bool = False) -> None:",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "CustomDoubleValidator",
+        "kind": 6,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "class CustomDoubleValidator(QDoubleValidator):\n    \"\"\"Custom double validator that allows commas to be used as decimal separators.\n    Args:\n        QDoubleValidator (QDoubleValidator): The double validator to be used.\n    \"\"\"\n    def validate(self, arg__1: str, arg__2: int) -> object:\n        \"\"\"Validate the input.\n        Args:\n            arg__1 (str): The input to be validated.\n            arg__2 (int): The position of the input.",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def update_status_label(text: str, color: str, blink: bool = False, second_color: str | None = None, instant_acknowledge: bool = False, block: bool = False) -> None:\n    \"\"\"Update the status label with the given text and color.\n    Args:\n        text (str): The text to be displayed in the status label.\n        color (str): The color of the status label.\n        blink (bool, optional): Whether the status label should blink. Defaults to False.\n        second_color (str | None, optional): The second color of the status label. Defaults to None.\n        instant_acknowledge (bool, optional): Whether the status label should be acknowledged immediately. Defaults to False.\n        block (bool, optional): Whether the status label should be blocked. Defaults to False.\n    \"\"\"",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_password_dialog",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def open_password_dialog() -> None:\n    \"\"\"Open the password dialog.\n    \"\"\"\n    from ui_files.PasswordDialog import PasswordEntryDialog\n    dialog = PasswordEntryDialog(parent_window=global_vars.main_window)\n    if hasattr(dialog, 'ui') and dialog.ui is not None:\n        dialog.show()\n        dialog.ui.lineEdit.setFocus()\n        dialog.exec()\n        if dialog.password_accepted:",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_page",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def open_page(page: Page) -> None:\n    \"\"\"Open the specified page.\n    Args:\n        page (Page): The page to be opened.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.stackedWidget:\n        if page == Page.SETTINGS_PAGE:\n            global_vars.settings.reset_unsaved_changes()\n        global_vars.ui.tabWidget.setCurrentIndex(0)            \n        global_vars.ui.stackedWidget.setCurrentIndex(page.value)",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_explorer",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def open_explorer() -> None:\n    \"\"\"Open the explorer.\n    \"\"\"\n    logger.info(\"Opening explorer\")\n    try:\n        if sys.platform == \"win32\":\n            subprocess.Popen([\"explorer.exe\"])\n        elif sys.platform == \"linux\":\n            # Try different file managers in order of preference\n            file_managers = [\"nautilus\", \"dolphin\", \"thunar\", \"pcmanfm\"]",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_terminal",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def open_terminal() -> None:\n    \"\"\"Open the terminal.\n    \"\"\"\n    logger.info(\"Opening terminal\")\n    try:\n        if sys.platform == \"win32\":\n            subprocess.Popen([\"start\", \"cmd.exe\"], shell=True)\n        elif sys.platform == \"linux\":\n            # Try different terminals in order of preference\n            terminals = [\"gnome-terminal\", \"konsole\", \"xfce4-terminal\", \"xterm\"]",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_file",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def open_file() -> None:\n    \"\"\"Open a file.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path, _ = QFileDialog.getOpenFileName(parent=global_vars.main_window, caption=\"Open File\")\n    if not file_path:\n        return\n    global_vars.ui.lineEditFilePath.setText(file_path)",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "save_open_file",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def save_open_file() -> None:\n    \"\"\"Save or open a file.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path = global_vars.ui.lineEditFilePath.text()\n    if not file_path:\n        logger.debug(\"No file path specified\")\n        QMessageBox.warning(global_vars.main_window, \"Error\", \"Please select a file to save.\")",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "execute_command",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def execute_command() -> None:\n    \"\"\"Execute a command in the console.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    command = global_vars.ui.lineEditCommand.text().strip()\n    # Check if the command starts with \">\"\n    if command.startswith(\"> \"):\n        command = command[2:].strip()",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "handle_stdout",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def handle_stdout() -> None:\n    \"\"\"Handle standard output.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'textEditConsole'):\n        logger.error(\"UI not initialized\")\n        return\n    if not isinstance(global_vars.process, QProcess):\n        logger.error(\"Process not initialized or wrong type\")\n        return\n    data = global_vars.process.readAll()  # Use readAll() instead of readAllStandardOutput()",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "handle_stderr",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def handle_stderr() -> None:\n    \"\"\"Handle standard error output.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'textEditConsole'):\n        logger.error(\"UI not initialized\")\n        return\n    if not isinstance(global_vars.process, QProcess):\n        logger.error(\"Process not initialized or wrong type\")\n        return\n    data = global_vars.process.readAll()",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "set_settings_line_edits",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def set_settings_line_edits() -> None:\n    \"\"\"Set the line edits in the settings page to the current settings.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    settings = global_vars.settings\n    global_vars.ui.lineEditDisplayHeight.setText(str(settings.settings['display']['specs']['height']))\n    global_vars.ui.lineEditDisplayWidth.setText(str(settings.settings['display']['specs']['width']))\n    global_vars.ui.lineEditDisplayRefreshRate.setText(str(int(float(settings.settings['display']['specs']['refresh_rate']))))",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "leave_settings_page",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def leave_settings_page():\n    \"\"\"Leave the settings page.\n    \"\"\"\n    try:\n        global_vars.settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        # If settings do not match, ask whether to discard or save the new data\n        response = QMessageBox.question(\n            global_vars.main_window, ",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_folder_dialog",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def open_folder_dialog():\n    \"\"\"Open the folder dialog.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    # show warning dialog if the user wants to set the path\n    # only if the user acknowledges the warning dialog and the risks then continue with choosing the folder else cancel asap\n    response = QMessageBox.warning(global_vars.main_window, \"Warnung! - Mögliche Risiken!\", \"<b>Möchten Sie den Pfad wirklich ändern?</b><br>Dies könnte zu Problemen führen, wenn bereits ein Palettenplan geladen ist und nach dem Setzen des Pfades nicht ein neuer geladen wird.\", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)\n    global_vars.main_window.setWindowState(global_vars.main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_file_dialog",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def open_file_dialog() -> None:\n    \"\"\"Open the file dialog.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path = QFileDialog.getOpenFileName(global_vars.main_window, \"Open Audio File\", \"\", \"Audio Files (*.wav)\")\n    if file_path:\n        global_vars.ui.audioPathEdit.setText(file_path[0])\ndef set_wordlist() -> None:",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "set_wordlist",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def set_wordlist() -> None:\n    \"\"\"Set the wordlist.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    from utils.robot_control import load_wordlist\n    # Declare completer as global\n    wordlist = load_wordlist()\n    completer = QCompleter(wordlist, global_vars.main_window)",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "update_wordlist",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def update_wordlist() -> None:\n    \"\"\"Update the wordlist.\n    \"\"\"\n    from utils.robot_control import load_wordlist\n    new_wordlist = load_wordlist()\n    model = global_vars.completer.model()\n    if not isinstance(model, QStringListModel):\n        global_vars.completer.setModel(QStringListModel(new_wordlist))\n    else:\n        model.setStringList(new_wordlist)",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "handle_scanner_status",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def handle_scanner_status(message: str, image_path: str):\n    \"\"\"Handle scanner status updates from server thread\n    Args:\n        message (str): The message from the scanner.\n        image_path (str): The path to the image from the scanner.\n    \"\"\"\n    from PySide6.QtGui import QPixmap\n    logger.debug(f\"Received scanner status - Message: {message}, Image: {image_path}\")\n    if message != \"True,True,True\":\n        logger.warning(\"Scanner detected safety violation\")",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "logger = logging.getLogger(__name__)\nclass Page(Enum):\n    \"\"\"Enum for the pages.\n    Args:\n        Enum (Enum): The enum for the pages.\n    \"\"\"\n    MAIN_PAGE = 0\n    PARAMETER_PAGE = 1\n    SETTINGS_PAGE = 2\n    EXPERIMENTAL_PAGE = 3",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "check_for_updates",
+        "kind": 2,
+        "importPath": "utils.updater",
+        "description": "utils.updater",
+        "peekOfCode": "def check_for_updates():\n    \"\"\"Check for updates.\n    \"\"\"    \n    # TODO: Add visual feedback to the user so that they know that the application is checking for updates\n    # disable the main window for interaction\n    global_vars.main_window.setDisabled(True)\n    msg_box = QMessageBox()\n    msg_box.setWindowTitle(\"Update suchen\")\n    msg_box.setText(\"Es wird nach einem Update gesucht.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.\")\n    msg_box.setIcon(QMessageBox.Icon.Information)",
+        "detail": "utils.updater",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.updater",
+        "description": "utils.updater",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef check_for_updates():\n    \"\"\"Check for updates.\n    \"\"\"    \n    # TODO: Add visual feedback to the user so that they know that the application is checking for updates\n    # disable the main window for interaction\n    global_vars.main_window.setDisabled(True)\n    msg_box = QMessageBox()\n    msg_box.setWindowTitle(\"Update suchen\")\n    msg_box.setText(\"Es wird nach einem Update gesucht.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.\")",
+        "detail": "utils.updater",
         "documentation": {}
     },
     {
@@ -2635,416 +3421,11 @@
         "documentation": {}
     },
     {
-        "label": "Page",
-        "kind": 6,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "class Page(Enum):\n    \"\"\"Enum for the pages.\n    Args:\n        Enum (Enum): The enum for the pages.\n    \"\"\"\n    MAIN_PAGE = 0\n    PARAMETER_PAGE = 1\n    SETTINGS_PAGE = 2\n    EXPERIMENTAL_PAGE = 3\ndef open_password_dialog() -> None:",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "CustomDoubleValidator",
-        "kind": 6,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "class CustomDoubleValidator(QDoubleValidator):\n    \"\"\"Custom double validator that allows commas to be used as decimal separators.\n    Args:\n        QDoubleValidator (QDoubleValidator): The double validator to be used.\n    \"\"\"\n    def validate(self, arg__1: str, arg__2: int) -> object:\n        \"\"\"Validate the input.\n        Args:\n            arg__1 (str): The input to be validated.\n            arg__2 (int): The position of the input.",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "show_instant_splash",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def show_instant_splash():\n    \"\"\"Show an instant splash screen before any initialization.\"\"\"\n    import sys\n    from PySide6.QtWidgets import QApplication, QSplashScreen, QLabel\n    from PySide6.QtGui import QPixmap, QPainter, QColor\n    from PySide6.QtCore import Qt\n    # Create minimal QApplication instance just for the splash\n    if not QApplication.instance():\n        temp_app = QApplication(sys.argv)\n    else:",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "server_start",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def server_start() -> Literal[0]:\n    \"\"\"Start the XMLRPC server.\n    Returns:\n        Literal[0]: The exit code of the application.\n    \"\"\"\n    global server\n    server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)\n    logger.debug(\"Start Server\")\n    try:\n        robot_type = settings.settings['info']['UR_Model']  # Use the global settings object instead",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "server_stop",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def server_stop() -> None:\n    \"\"\"Stop the XMLRPC server.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n        global_vars.ui.ButtonStopRPCServer.setEnabled(False)\n    server.shutdown()\n    logger.debug(\"Server stopped\")\n    datensenden_manipulation(True, \"Server starten\", \"\")\n    if global_vars.message_manager is None:\n        global_vars.message_manager = MessageManager()",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "server_thread",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def server_thread() -> None:\n    \"\"\"Start the XMLRPC server in a separate thread.\n    \"\"\"\n    logger.debug(\"Starting server thread\")\n    xServerThread = threading.Thread(target=server_start)\n    xServerThread.start()\n    if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n        global_vars.ui.ButtonStopRPCServer.setEnabled(True)\n    datensenden_manipulation(False, \"Server läuft\", \"green\")\n    if global_vars.message_manager is None:",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "datensenden_manipulation",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def datensenden_manipulation(visibility: bool, display_text: str, display_colour: str) -> None:\n    \"\"\"Manipulate the visibility of the \"Daten Senden\" button and the display text.\n    Args:\n        visibility (bool): Whether the \"Daten Senden\" button should be visible.\n        display_text (str): The text to be displayed in the \"Daten Senden\" button.\n        display_colour (str): The colour of the \"Daten Senden\" button.\n    \"\"\"\n    if global_vars.ui:\n        buttons = []\n        if hasattr(global_vars.ui, 'ButtonDatenSenden'):",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "send_cmd_play",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def send_cmd_play() -> None:\n    \"\"\"Send a command to the robot to start.\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))\n        sock.connect(server_address)\n        # Send data",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "send_cmd_pause",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def send_cmd_pause() -> None:\n    \"\"\"Send a command to the robot to pause.\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))\n        sock.connect(server_address)\n        # Send data",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "send_cmd_stop",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def send_cmd_stop() -> None:\n    \"\"\"Send a command to the robot to stop.\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))\n        sock.connect(server_address)\n        # Send data",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "update_status_label",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def update_status_label(text: str, color: str, blink: bool = False, second_color: str | None = None, instant_acknowledge: bool = False, block: bool = False) -> None:\n    \"\"\"Update the status label with the given text and color.\n    Args:\n        text (str): The text to be displayed in the status label.\n        color (str): The color of the status label.\n        blink (bool, optional): Whether the status label should blink. Defaults to False.\n        second_color (str | None, optional): The second color of the status label. Defaults to None.\n        instant_acknowledge (bool, optional): Whether the status label should be acknowledged immediately. Defaults to False.\n        block (bool, optional): Whether the status label should be blocked. Defaults to False.\n    \"\"\"",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "open_password_dialog",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def open_password_dialog() -> None:\n    \"\"\"Open the password dialog.\n    \"\"\"\n    from ui_files.PasswordDialog import PasswordEntryDialog\n    dialog = PasswordEntryDialog(parent_window=main_window)\n    if hasattr(dialog, 'ui') and dialog.ui is not None:\n        dialog.show()\n        dialog.ui.lineEdit.setFocus()\n        dialog.exec()\n        if dialog.password_accepted:",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "open_page",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def open_page(page: Page) -> None:\n    \"\"\"Open the specified page.\n    Args:\n        page (Page): The page to be opened.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.stackedWidget:\n        if page == Page.SETTINGS_PAGE:\n            settings.reset_unsaved_changes()\n        global_vars.ui.tabWidget.setCurrentIndex(0)            \n        global_vars.ui.stackedWidget.setCurrentIndex(page.value)",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "open_explorer",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def open_explorer() -> None:\n    \"\"\"Open the explorer.\n    \"\"\"\n    logger.info(\"Opening explorer\")\n    try:\n        if sys.platform == \"win32\":\n            subprocess.Popen([\"explorer.exe\"])\n        elif sys.platform == \"linux\":\n            # Try different file managers in order of preference\n            file_managers = [\"nautilus\", \"dolphin\", \"thunar\", \"pcmanfm\"]",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "open_terminal",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def open_terminal() -> None:\n    \"\"\"Open the terminal.\n    \"\"\"\n    logger.info(\"Opening terminal\")\n    try:\n        if sys.platform == \"win32\":\n            subprocess.Popen([\"start\", \"cmd.exe\"], shell=True)\n        elif sys.platform == \"linux\":\n            # Try different terminals in order of preference\n            terminals = [\"gnome-terminal\", \"konsole\", \"xfce4-terminal\", \"xterm\"]",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "load",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def load() -> None:\n    \"\"\"Load the pallet plan from file.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):\n        logger.error(\"UI not initialized\")\n        return\n    Artikelnummer = global_vars.ui.EingabePallettenplan.text()\n    UR.UR_SetFileName(Artikelnummer)\n    errorReadDataFromUsbStick = UR.UR_ReadDataFromUsbStick()\n    if errorReadDataFromUsbStick:",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "send_data",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def send_data() -> None:\n    \"\"\"Send the data to the robot.\n    \"\"\"\n    logger.debug(\"Button Daten Senden clicked\")\n    server_thread()\ndef load_wordlist() -> list:\n    \"\"\"Load the wordlist from the USB stick.\n    Returns:\n        list: A list of wordlist items.\n    \"\"\"",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "load_wordlist",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def load_wordlist() -> list:\n    \"\"\"Load the wordlist from the USB stick.\n    Returns:\n        list: A list of wordlist items.\n    \"\"\"\n    wordlist = []\n    count = 0\n    for file in os.listdir(global_vars.PATH_USB_STICK):\n        if file.endswith(\".rob\"):\n            wordlist.append(file[:-4])",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "init_settings",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def init_settings():\n    \"\"\"Initialize the settings\n    \"\"\"\n    global settings\n    settings = Settings()\n    global_vars.PATH_USB_STICK = settings.settings['admin']['path']\n    logger.debug(f\"Settings initialized: {settings}\")\ndef leave_settings_page():\n    \"\"\"Leave the settings page.\n    \"\"\"",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "leave_settings_page",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def leave_settings_page():\n    \"\"\"Leave the settings page.\n    \"\"\"\n    try:\n        settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        # If settings do not match, ask whether to discard or save the new data\n        response = QMessageBox.question(\n            main_window, ",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "open_file",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def open_file() -> None:\n    \"\"\"Open a file.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path, _ = QFileDialog.getOpenFileName(parent=main_window, caption=\"Open File\")\n    if not file_path:\n        return\n    global_vars.ui.lineEditFilePath.setText(file_path)",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "save_open_file",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def save_open_file() -> None:\n    \"\"\"Save or open a file.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path = global_vars.ui.lineEditFilePath.text()\n    if not file_path:\n        logger.debug(\"No file path specified\")\n        QMessageBox.warning(main_window, \"Error\", \"Please select a file to save.\")",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "execute_command",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def execute_command() -> None:\n    \"\"\"Execute a command in the console.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    command = global_vars.ui.lineEditCommand.text().strip()\n    # Check if the command starts with \">\"\n    if command.startswith(\"> \"):\n        command = command[2:].strip()",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "handle_stdout",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def handle_stdout() -> None:\n    \"\"\"Handle standard output.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'textEditConsole'):\n        logger.error(\"UI not initialized\")\n        return\n    if not isinstance(global_vars.process, QProcess):\n        logger.error(\"Process not initialized or wrong type\")\n        return\n    data = global_vars.process.readAll()  # Use readAll() instead of readAllStandardOutput()",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "handle_stderr",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def handle_stderr() -> None:\n    \"\"\"Handle standard error output.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'textEditConsole'):\n        logger.error(\"UI not initialized\")\n        return\n    if not isinstance(global_vars.process, QProcess):\n        logger.error(\"Process not initialized or wrong type\")\n        return\n    data = global_vars.process.readAll()",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "set_settings_line_edits",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def set_settings_line_edits() -> None:\n    \"\"\"Set the line edits in the settings page to the current settings.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    global_vars.ui.lineEditDisplayHeight.setText(str(settings.settings['display']['specs']['height']))\n    global_vars.ui.lineEditDisplayWidth.setText(str(settings.settings['display']['specs']['width']))\n    global_vars.ui.lineEditDisplayRefreshRate.setText(str(int(float(settings.settings['display']['specs']['refresh_rate']))))\n    global_vars.ui.lineEditDisplayModel.setText(settings.settings['display']['specs']['model'])",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "restart_app",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def restart_app():\n    \"\"\"Restart the application.\n    \"\"\"\n    try:\n        settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        response = QMessageBox.question(main_window, \"Verwerfen oder Speichern\", \n                                            \"Möchten Sie die neuen Daten verwerfen oder speichern?\",\n                                            QMessageBox.StandardButton.Discard | ",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "save_and_exit_app",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def save_and_exit_app():\n    \"\"\"Save and exit the application.\n    \"\"\"\n    try:\n        settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        # If settings do not match, ask whether to discard or save the new data\n        response = QMessageBox.question(main_window, \"Verwerfen oder Speichern\", \n                                            \"Möchten Sie die neuen Daten verwerfen oder speichern?\",",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "exit_app",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def exit_app():\n    \"\"\"Exit the application.\n    \"\"\"\n    if 'server' in globals():\n        server_stop()\n    sys.exit(0)\ndef set_wordlist() -> None:\n    \"\"\"Set the wordlist.\n    \"\"\"\n    if not global_vars.ui:",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "set_wordlist",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def set_wordlist() -> None:\n    \"\"\"Set the wordlist.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    global completer  # Declare completer as global\n    wordlist = load_wordlist()\n    completer = QCompleter(wordlist, main_window)\n    global_vars.ui.EingabePallettenplan.setCompleter(completer)",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "open_folder_dialog",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def open_folder_dialog():\n    \"\"\"Open the folder dialog.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    # show warning dialog if the user wants to set the path\n    # only if the user acknowledges the warning dialog and the risks then continue with choosing the folder else cancel asap\n    response = QMessageBox.warning(main_window, \"Warnung! - Mögliche Risiken!\", \"<b>Möchten Sie den Pfad wirklich ändern?</b><br>Dies könnte zu Problemen führen, wenn bereits ein Palettenplan geladen ist und nach dem Setzen des Pfades nicht ein neuer geladen wird.\", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)\n    main_window.setWindowState(main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "open_file_dialog",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def open_file_dialog() -> None:\n    \"\"\"Open the file dialog.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path = QFileDialog.getOpenFileName(main_window, \"Open Audio File\", \"\", \"Audio Files (*.wav)\")\n    if file_path:\n        global_vars.ui.audioPathEdit.setText(file_path[0])\ndef update_wordlist() -> None:",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "update_wordlist",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def update_wordlist() -> None:\n    \"\"\"Update the wordlist.\n    \"\"\"\n    new_wordlist = load_wordlist()\n    model = completer.model()\n    if not isinstance(model, QStringListModel):\n        completer.setModel(QStringListModel(new_wordlist))\n    else:\n        model.setStringList(new_wordlist)\ndef check_for_updates():",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "check_for_updates",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def check_for_updates():\n    \"\"\"Check for updates.\n    \"\"\"    \n    # TODO: Add visual feedback to the user so that they know that the application is checking for updates\n    # disable the main window for interaction\n    main_window.setDisabled(True)\n    msg_box = QMessageBox()\n    msg_box.setWindowTitle(\"Update suchen\")\n    msg_box.setText(\"Es wird nach einem Update gesucht.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.\")\n    msg_box.setIcon(QMessageBox.Icon.Information)",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "spawn_play_stepback_warning_thread",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def spawn_play_stepback_warning_thread():\n    \"\"\"Spawn a thread to play the stepback warning.\n    \"\"\"\n    global audio_thread, audio_thread_running\n    logger.info(\"Starting stepback warning audio thread\")\n    audio_thread_running = True\n    audio_thread = threading.Thread(target=play_stepback_warning)\n    audio_thread.daemon = True\n    audio_thread.start()\ndef kill_play_stepback_warning_thread():",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "kill_play_stepback_warning_thread",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def kill_play_stepback_warning_thread():\n    \"\"\"Kill the thread playing the stepback warning.\n    \"\"\"\n    global audio_thread, audio_thread_running\n    logger.info(\"Stopping stepback warning audio thread\")\n    audio_thread_running = False\n    if audio_thread:\n        audio_thread = None\ndef play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "play_stepback_warning",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.\n    \"\"\"\n    global audio_thread_running\n    logger.debug(\"Starting stepback warning playback loop\")\n    try:\n        while audio_thread_running:\n            try:\n                # Use aplay to play the audio file\n                logger.debug(f\"Playing audio file: {settings.settings['admin']['alarm_sound_file']}\")",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "set_audio_volume",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = '0%' if not global_vars.audio_muted else '100%'\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"\n    logger.info(f\"Setting audio volume to {volume}\")\n    try:",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "delay_warning_sound",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def delay_warning_sound():\n    \"\"\"Delay the warning sound start by 40 seconds.\n    \"\"\"\n    logger.debug(\"Starting delay warning sound monitor\")\n    while True:\n        try:\n            if global_vars.timestamp_scanner_fault:\n                delay = (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds()\n                if delay >= 40:\n                    logger.info(\"40-second delay reached, starting warning sound\")",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "exception_handler",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def exception_handler(exc_type, exc_value, exc_traceback):\n    \"\"\"Global exception handler to log unhandled exceptions\n    Args:\n        exc_type (type): The type of the exception.\n        exc_value (Exception): The exception value.\n        exc_traceback (traceback): The traceback of the exception.\n    \"\"\"\n    if issubclass(exc_type, KeyboardInterrupt):\n        # Don't log keyboard interrupt\n        sys.__excepthook__(exc_type, exc_value, exc_traceback)",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "qt_message_handler",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def qt_message_handler(mode, context, message):\n    \"\"\"Handler for Qt messages\n    Args:\n        mode (QtCore.QtMsgType): The mode of the message.\n        context (QtCore.QtMsgType): The context of the message.\n        message (str): The message to be logged.\n    \"\"\"\n    if mode == QtCore.QtMsgType.QtFatalMsg:\n        logger.critical(f\"Qt Fatal: {message}\")\n    elif mode == QtCore.QtMsgType.QtCriticalMsg:",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "setup_logging",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def setup_logging(verbose: bool) -> None:\n    \"\"\"Configure logging level based on verbose flag\n    Args:\n        verbose (bool): Whether to enable verbose (DEBUG) logging\n    \"\"\"\n    log_level = logging.DEBUG if verbose else logging.INFO\n    logger.setLevel(log_level)\n    for handler in logger.handlers:\n        handler.setLevel(log_level)\n    logger.info(f\"Logging level set to: {log_level}\")",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
         "label": "main",
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    global main_window\n    # Initialize the application\n    app = QApplication.instance() or QApplication(sys.argv)\n    # Create and show the proper splash screen\n    logo_pix = QPixmap(\":/Szaidel Logo/imgs/logoszaidel-transparent-big.png\")",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "handle_scanner_status",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def handle_scanner_status(message: str, image_path: str):\n    \"\"\"Handle scanner status updates from server thread\n    Args:\n        message (str): The message from the scanner.\n        image_path (str): The path to the image from the scanner.\n    \"\"\"\n    logger.debug(f\"Received scanner status - Message: {message}, Image: {image_path}\")\n    if message != \"True,True,True\":\n        logger.warning(\"Scanner detected safety violation\")\n        # Update existing blinking label instead of creating new one",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "load_rob_files",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def load_rob_files():\n    \"\"\"Load .rob files into the list widget.\"\"\"\n    if not global_vars.ui:\n        return\n    global_vars.ui.robFilesListWidget.clear()\n    rob_files = []\n    for file in os.listdir(global_vars.PATH_USB_STICK):\n        if file.endswith(\".rob\"):\n            rob_files.append(file[:-4])\n    # Sort the list alphabetically",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "display_selected_file",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def display_selected_file(item):\n    \"\"\"Display the selected file in 3D.\n    Args:\n        item (QListWidgetItem): The selected item.\n    \"\"\"\n    if not global_vars.ui:\n        return\n    # Get the canvas from the frame\n    canvas = global_vars.ui.MatplotLibCanvasFrame.findChild(MatplotlibCanvas)\n    if not canvas:",
+        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    # Initialize the application\n    app = QApplication.instance() or QApplication(sys.argv)\n    # Create and show the proper splash screen\n    temp_splash = show_instant_splash()\n    logo_pix = QPixmap(\":/Szaidel Logo/imgs/logoszaidel-transparent-big.png\")",
         "detail": "main",
         "documentation": {}
     },
@@ -3058,38 +3439,11 @@
         "documentation": {}
     },
     {
-        "label": "temp_splash",
-        "kind": 5,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "temp_splash = show_instant_splash()\n#TODO: After starting the program, ask the user to confirm each palette if it is empty or not. and if it is not empty ask the user to confirm if the user wants to continue anyways and ask for the current layer.\n#TODO: Implement option for UR10e or UR20 robot. If UR20 is selected robot will have 2 pallets. else only it is like the old code.\n#TODO: Implement seemless palletizing with 2 pallets for UR20 robot.\nimport sys\nimport subprocess\nimport argparse\nimport hashlib\nimport os\nimport shutil",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
         "label": "logger",
         "kind": 5,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "logger = global_vars.logger\naudio_thread = None\naudio_thread_running = False\nos.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\n# global_vars.PATH_USB_STICK = 'E:\\' # Pfad zu den .rob Dateien nur auskommentieren zum testen\nif global_vars.PATH_USB_STICK == '..':\n    # Bekomme CWD und setze den Pfad auf den Überordner\n    logger.debug(os.path.dirname(os.getcwd()))\n    global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' \n####################",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "audio_thread",
-        "kind": 5,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "audio_thread = None\naudio_thread_running = False\nos.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\n# global_vars.PATH_USB_STICK = 'E:\\' # Pfad zu den .rob Dateien nur auskommentieren zum testen\nif global_vars.PATH_USB_STICK == '..':\n    # Bekomme CWD und setze den Pfad auf den Überordner\n    logger.debug(os.path.dirname(os.getcwd()))\n    global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' \n####################\n# Server functions #",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "audio_thread_running",
-        "kind": 5,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "audio_thread_running = False\nos.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\n# global_vars.PATH_USB_STICK = 'E:\\' # Pfad zu den .rob Dateien nur auskommentieren zum testen\nif global_vars.PATH_USB_STICK == '..':\n    # Bekomme CWD und setze den Pfad auf den Überordner\n    logger.debug(os.path.dirname(os.getcwd()))\n    global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' \n####################\n# Server functions #\n####################",
+        "peekOfCode": "logger = global_vars.logger\nos.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\ndef main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    # Initialize the application\n    app = QApplication.instance() or QApplication(sys.argv)\n    # Create and show the proper splash screen",
         "detail": "main",
         "documentation": {}
     },
@@ -3098,7 +3452,7 @@
         "kind": 5,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "os.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\n# global_vars.PATH_USB_STICK = 'E:\\' # Pfad zu den .rob Dateien nur auskommentieren zum testen\nif global_vars.PATH_USB_STICK == '..':\n    # Bekomme CWD und setze den Pfad auf den Überordner\n    logger.debug(os.path.dirname(os.getcwd()))\n    global_vars.PATH_USB_STICK = f'{os.path.dirname(os.getcwd())}/' \n####################\n# Server functions #\n####################\ndef server_start() -> Literal[0]:",
+        "peekOfCode": "os.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\ndef main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    # Initialize the application\n    app = QApplication.instance() or QApplication(sys.argv)\n    # Create and show the proper splash screen\n    temp_splash = show_instant_splash()",
         "detail": "main",
         "documentation": {}
     }
