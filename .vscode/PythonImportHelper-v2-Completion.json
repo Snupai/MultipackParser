@@ -2344,11 +2344,11 @@
         "documentation": {}
     },
     {
-        "label": "QQmlApplicationEngine",
-        "importPath": "PySide6.QtQml",
-        "description": "PySide6.QtQml",
+        "label": "QQuickView",
+        "importPath": "PySide6.QtQuick",
+        "description": "PySide6.QtQuick",
         "isExtraImport": true,
-        "detail": "PySide6.QtQml",
+        "detail": "PySide6.QtQuick",
         "documentation": {}
     },
     {
