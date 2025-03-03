@@ -370,12 +370,23 @@ def set_wordlist() -> None:
     
     from utils.robot_control import load_wordlist
         
-    # Declare completer as global
+    # Load wordlist and create completer
     wordlist = load_wordlist()
     completer = QCompleter(wordlist, global_vars.main_window)
+    
+    # Configure completer
+    completer.setCompletionMode(QCompleter.PopupCompletion)  # Use popup mode instead of inline completion
+    completer.setCaseSensitivity(Qt.CaseInsensitive)
+    completer.setFilterMode(Qt.MatchContains)  # Match anywhere in the text
+    
+    # Connect a slot to handle completer activation to prevent losing keyboard focus
+    completer.activated.connect(lambda: global_vars.ui.EingabePallettenplan.setFocus())
+    
+    # Set the completer
     global_vars.ui.EingabePallettenplan.setCompleter(completer)
     global_vars.completer = completer  # Store in global_vars
 
+    # Setup file watcher to update wordlist when USB contents change
     file_watcher = QFileSystemWatcher([global_vars.PATH_USB_STICK], global_vars.main_window)
     file_watcher.directoryChanged.connect(update_wordlist)
 
@@ -386,10 +397,19 @@ def update_wordlist() -> None:
     
     new_wordlist = load_wordlist()
     model = global_vars.completer.model()
+    
     if not isinstance(model, QStringListModel):
-        global_vars.completer.setModel(QStringListModel(new_wordlist))
+        # Create new model if current isn't a QStringListModel
+        string_model = QStringListModel(new_wordlist)
+        global_vars.completer.setModel(string_model)
     else:
+        # Update existing model
         model.setStringList(new_wordlist)
+    
+    # Ensure settings are maintained after update
+    global_vars.completer.setCompletionMode(QCompleter.PopupCompletion)
+    global_vars.completer.setCaseSensitivity(Qt.CaseInsensitive)
+    global_vars.completer.setFilterMode(Qt.MatchContains)
 
 def handle_scanner_status(message: str, image_path: str):
     """Handle scanner status updates from server thread

@@ -1,21 +1,5 @@
 [
     {
-        "label": "collect_data_files",
-        "importPath": "PyInstaller.utils.hooks",
-        "description": "PyInstaller.utils.hooks",
-        "isExtraImport": true,
-        "detail": "PyInstaller.utils.hooks",
-        "documentation": {}
-    },
-    {
-        "label": "collect_submodules",
-        "importPath": "PyInstaller.utils.hooks",
-        "description": "PyInstaller.utils.hooks",
-        "isExtraImport": true,
-        "detail": "PyInstaller.utils.hooks",
-        "documentation": {}
-    },
-    {
         "label": "os",
         "kind": 6,
         "isExtraImport": true,
@@ -2440,24 +2424,6 @@
         "documentation": {}
     },
     {
-        "label": "datas",
-        "kind": 5,
-        "importPath": "hooks.hook-PySide6.QtVirtualKeyboard",
-        "description": "hooks.hook-PySide6.QtVirtualKeyboard",
-        "peekOfCode": "datas = collect_data_files('PySide6', subdir='QtVirtualKeyboard')\n# Include all submodules from QtVirtualKeyboard\nhiddenimports = collect_submodules('PySide6.QtVirtualKeyboard')",
-        "detail": "hooks.hook-PySide6.QtVirtualKeyboard",
-        "documentation": {}
-    },
-    {
-        "label": "hiddenimports",
-        "kind": 5,
-        "importPath": "hooks.hook-PySide6.QtVirtualKeyboard",
-        "description": "hooks.hook-PySide6.QtVirtualKeyboard",
-        "peekOfCode": "hiddenimports = collect_submodules('PySide6.QtVirtualKeyboard')",
-        "detail": "hooks.hook-PySide6.QtVirtualKeyboard",
-        "documentation": {}
-    },
-    {
         "label": "is_arm_platform",
         "kind": 5,
         "importPath": "hooks.runtime_hook",
@@ -3002,7 +2968,7 @@
         "kind": 2,
         "importPath": "utils.robot_control",
         "description": "utils.robot_control",
-        "peekOfCode": "def load() -> None:\n    \"\"\"Load the pallet plan from file.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):\n        logger.error(\"UI not initialized\")\n        return\n    from utils.ui_helpers import update_status_label\n    from utils import UR_Common_functions as UR\n    Artikelnummer = global_vars.ui.EingabePallettenplan.text()\n    UR.UR_SetFileName(Artikelnummer)",
+        "peekOfCode": "def load() -> None:\n    \"\"\"Load the pallet plan from file.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):\n        logger.error(\"UI not initialized\")\n        return\n    from utils.ui_helpers import update_status_label\n    from utils import UR_Common_functions as UR\n    # Store the text first, then manually clear focus to avoid keyboard issues\n    Artikelnummer = global_vars.ui.EingabePallettenplan.text()",
         "detail": "utils.robot_control",
         "documentation": {}
     },
@@ -3281,7 +3247,7 @@
         "kind": 2,
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
-        "peekOfCode": "def set_wordlist() -> None:\n    \"\"\"Set the wordlist.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    from utils.robot_control import load_wordlist\n    # Declare completer as global\n    wordlist = load_wordlist()\n    completer = QCompleter(wordlist, global_vars.main_window)",
+        "peekOfCode": "def set_wordlist() -> None:\n    \"\"\"Set the wordlist.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    from utils.robot_control import load_wordlist\n    # Load wordlist and create completer\n    wordlist = load_wordlist()\n    completer = QCompleter(wordlist, global_vars.main_window)",
         "detail": "utils.ui_helpers",
         "documentation": {}
     },
@@ -3290,7 +3256,7 @@
         "kind": 2,
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
-        "peekOfCode": "def update_wordlist() -> None:\n    \"\"\"Update the wordlist.\n    \"\"\"\n    from utils.robot_control import load_wordlist\n    new_wordlist = load_wordlist()\n    model = global_vars.completer.model()\n    if not isinstance(model, QStringListModel):\n        global_vars.completer.setModel(QStringListModel(new_wordlist))\n    else:\n        model.setStringList(new_wordlist)",
+        "peekOfCode": "def update_wordlist() -> None:\n    \"\"\"Update the wordlist.\n    \"\"\"\n    from utils.robot_control import load_wordlist\n    new_wordlist = load_wordlist()\n    model = global_vars.completer.model()\n    if not isinstance(model, QStringListModel):\n        # Create new model if current isn't a QStringListModel\n        string_model = QStringListModel(new_wordlist)\n        global_vars.completer.setModel(string_model)",
         "detail": "utils.ui_helpers",
         "documentation": {}
     },
@@ -3326,7 +3292,7 @@
         "kind": 2,
         "importPath": "utils.ui_setup",
         "description": "utils.ui_setup",
-        "peekOfCode": "def setup_input_validation():\n    \"\"\"Set up input validation for UI elements.\"\"\"\n    # Set up input validation\n    regex = QRegularExpression(r\"^[0-9\\-_]*$\")\n    validator = QRegularExpressionValidator(regex)\n    global_vars.ui.EingabePallettenplan.setValidator(validator)\n    int_validator = QIntValidator()\n    global_vars.ui.EingabeKartonhoehe.setValidator(int_validator)\n    float_validator = CustomDoubleValidator()\n    float_validator.setNotation(CustomDoubleValidator.Notation.StandardNotation)",
+        "peekOfCode": "def setup_input_validation():\n    \"\"\"Set up input validation for UI elements.\"\"\"\n    # Set up input validation\n    regex = QRegularExpression(r\"^[0-9\\-_]*$\")\n    validator = QRegularExpressionValidator(regex)\n    global_vars.ui.EingabePallettenplan.setValidator(validator)\n    # Ensure the input field focuses properly with the virtual keyboard\n    global_vars.ui.EingabePallettenplan.setInputMethodHints(Qt.ImhNone)\n    int_validator = QIntValidator()\n    global_vars.ui.EingabeKartonhoehe.setValidator(int_validator)",
         "detail": "utils.ui_setup",
         "documentation": {}
     },

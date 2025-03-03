@@ -50,14 +50,19 @@ def setup_input_validation():
     regex = QRegularExpression(r"^[0-9\-_]*$")
     validator = QRegularExpressionValidator(regex)
     global_vars.ui.EingabePallettenplan.setValidator(validator)
+    
+    # Ensure the input field focuses properly with the virtual keyboard
+    global_vars.ui.EingabePallettenplan.setInputMethodHints(Qt.ImhNone)
 
     int_validator = QIntValidator()
     global_vars.ui.EingabeKartonhoehe.setValidator(int_validator)
+    global_vars.ui.EingabeKartonhoehe.setInputMethodHints(Qt.ImhDigitsOnly)
 
     float_validator = CustomDoubleValidator()
     float_validator.setNotation(CustomDoubleValidator.Notation.StandardNotation)
     float_validator.setDecimals(2)
     global_vars.ui.EingabeKartonGewicht.setValidator(float_validator)
+    global_vars.ui.EingabeKartonGewicht.setInputMethodHints(Qt.ImhFormattedNumbersOnly)
     
     # Set up spinbox limits
     global_vars.ui.EingabeStartlage.setMinimum(1)

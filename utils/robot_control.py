@@ -83,7 +83,10 @@ def load() -> None:
     from utils.ui_helpers import update_status_label
     from utils import UR_Common_functions as UR
 
+    # Store the text first, then manually clear focus to avoid keyboard issues
     Artikelnummer = global_vars.ui.EingabePallettenplan.text()
+    global_vars.ui.EingabePallettenplan.clearFocus()
+    
     UR.UR_SetFileName(Artikelnummer)
     
     errorReadDataFromUsbStick = UR.UR_ReadDataFromUsbStick()
@@ -94,7 +97,6 @@ def load() -> None:
 
     # Enable UI elements and update values only if UI exists
     if global_vars.ui:
-        global_vars.ui.EingabePallettenplan.clearFocus()
         logger.debug(f"File for {Artikelnummer=} found")
         if global_vars.message_manager:
             message_strings = ["Kein Pallettenplan geladen", "Kein Plan gefunden"]
@@ -104,6 +106,8 @@ def load() -> None:
                     global_vars.message_manager.unblock_message(message_string)
                 global_vars.message_manager.acknowledge_message(message_string)
         update_status_label("Plan erfolgreich geladen", "green", instant_acknowledge=True)
+        
+        # Enable buttons and input fields
         global_vars.ui.ButtonOpenParameterRoboter.setEnabled(True)
         global_vars.ui.ButtonDatenSenden.setEnabled(True)
         global_vars.ui.EingabeKartonGewicht.setEnabled(True)
