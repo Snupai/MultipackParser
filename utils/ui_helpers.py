@@ -379,8 +379,21 @@ def set_wordlist() -> None:
     completer.setCaseSensitivity(Qt.CaseInsensitive)
     completer.setFilterMode(Qt.MatchContains)  # Match anywhere in the text
     
-    # Connect a slot to handle completer activation to prevent losing keyboard focus
-    completer.activated.connect(lambda: global_vars.ui.EingabePallettenplan.setFocus())
+    # Set the completer widget to be a child of the main window
+    completer.setWidget(global_vars.main_window)
+    
+    # Connect signals to handle focus and keyboard interaction
+    def handle_completer_activated(text):
+        global_vars.ui.EingabePallettenplan.setText(text)
+        global_vars.ui.EingabePallettenplan.setFocus()
+        global_vars.ui.EingabePallettenplan.selectAll()  # Select all text for easy replacement
+    
+    def handle_completer_highlighted(text):
+        # Keep focus on the input field while browsing suggestions
+        global_vars.ui.EingabePallettenplan.setFocus()
+    
+    completer.activated.connect(handle_completer_activated)
+    completer.highlighted.connect(handle_completer_highlighted)
     
     # Set the completer
     global_vars.ui.EingabePallettenplan.setCompleter(completer)
@@ -410,6 +423,20 @@ def update_wordlist() -> None:
     global_vars.completer.setCompletionMode(QCompleter.PopupCompletion)
     global_vars.completer.setCaseSensitivity(Qt.CaseInsensitive)
     global_vars.completer.setFilterMode(Qt.MatchContains)
+    global_vars.completer.setWidget(global_vars.main_window)
+    
+    # Reconnect signals if they were lost during update
+    if not global_vars.completer.receivers(global_vars.completer.activated) > 0:
+        def handle_completer_activated(text):
+            global_vars.ui.EingabePallettenplan.setText(text)
+            global_vars.ui.EingabePallettenplan.setFocus()
+            global_vars.ui.EingabePallettenplan.selectAll()
+        
+        def handle_completer_highlighted(text):
+            global_vars.ui.EingabePallettenplan.setFocus()
+        
+        global_vars.completer.activated.connect(handle_completer_activated)
+        global_vars.completer.highlighted.connect(handle_completer_highlighted)
 
 def handle_scanner_status(message: str, image_path: str):
     """Handle scanner status updates from server thread

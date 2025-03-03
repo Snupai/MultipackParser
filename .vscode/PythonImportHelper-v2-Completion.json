@@ -3292,7 +3292,7 @@
         "kind": 2,
         "importPath": "utils.ui_setup",
         "description": "utils.ui_setup",
-        "peekOfCode": "def setup_input_validation():\n    \"\"\"Set up input validation for UI elements.\"\"\"\n    # Set up input validation\n    regex = QRegularExpression(r\"^[0-9\\-_]*$\")\n    validator = QRegularExpressionValidator(regex)\n    global_vars.ui.EingabePallettenplan.setValidator(validator)\n    # Ensure the input field focuses properly with the virtual keyboard\n    global_vars.ui.EingabePallettenplan.setInputMethodHints(Qt.ImhNone)\n    int_validator = QIntValidator()\n    global_vars.ui.EingabeKartonhoehe.setValidator(int_validator)",
+        "peekOfCode": "def setup_input_validation():\n    \"\"\"Set up input validation for UI elements.\"\"\"\n    # Set up input validation\n    regex = QRegularExpression(r\"^[0-9\\-_]*$\")\n    validator = QRegularExpressionValidator(regex)\n    global_vars.ui.EingabePallettenplan.setValidator(validator)\n    # Set input method hints to show numeric keyboard and prevent text input\n    global_vars.ui.EingabePallettenplan.setInputMethodHints(\n        Qt.ImhDigitsOnly |  # Only allow digits\n        Qt.ImhNoPredictiveText |  # Disable predictive text",
         "detail": "utils.ui_setup",
         "documentation": {}
     },

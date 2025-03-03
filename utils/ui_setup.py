@@ -51,8 +51,12 @@ def setup_input_validation():
     validator = QRegularExpressionValidator(regex)
     global_vars.ui.EingabePallettenplan.setValidator(validator)
     
-    # Ensure the input field focuses properly with the virtual keyboard
-    global_vars.ui.EingabePallettenplan.setInputMethodHints(Qt.ImhNone)
+    # Set input method hints to show numeric keyboard and prevent text input
+    global_vars.ui.EingabePallettenplan.setInputMethodHints(
+        Qt.ImhDigitsOnly |  # Only allow digits
+        Qt.ImhNoPredictiveText |  # Disable predictive text
+        Qt.ImhNoAutoUppercase  # Disable auto uppercase
+    )
 
     int_validator = QIntValidator()
     global_vars.ui.EingabeKartonhoehe.setValidator(int_validator)
