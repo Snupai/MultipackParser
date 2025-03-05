@@ -51,9 +51,9 @@ def setup_input_validation():
     validator = QRegularExpressionValidator(regex)
     global_vars.ui.EingabePallettenplan.setValidator(validator)
     
-    # Set input method hints to show numeric keyboard and prevent text input
+    # Set input method hints to show numeric keyboard but allow minus sign
     global_vars.ui.EingabePallettenplan.setInputMethodHints(
-        Qt.ImhDigitsOnly |  # Only allow digits
+        Qt.ImhNone |  # Reset any previous hints
         Qt.ImhNoPredictiveText |  # Disable predictive text
         Qt.ImhNoAutoUppercase  # Disable auto uppercase
     )

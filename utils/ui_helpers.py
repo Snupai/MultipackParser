@@ -392,8 +392,13 @@ def set_wordlist() -> None:
         # Keep focus on the input field while browsing suggestions
         global_vars.ui.EingabePallettenplan.setFocus()
     
+    def handle_completer_popup_shown():
+        # Ensure the input field keeps focus when popup appears
+        global_vars.ui.EingabePallettenplan.setFocus()
+    
     completer.activated.connect(handle_completer_activated)
     completer.highlighted.connect(handle_completer_highlighted)
+    completer.popup().showEvent = lambda e: handle_completer_popup_shown()
     
     # Set the completer
     global_vars.ui.EingabePallettenplan.setCompleter(completer)
@@ -435,8 +440,12 @@ def update_wordlist() -> None:
         def handle_completer_highlighted(text):
             global_vars.ui.EingabePallettenplan.setFocus()
         
+        def handle_completer_popup_shown():
+            global_vars.ui.EingabePallettenplan.setFocus()
+        
         global_vars.completer.activated.connect(handle_completer_activated)
         global_vars.completer.highlighted.connect(handle_completer_highlighted)
+        global_vars.completer.popup().showEvent = lambda e: handle_completer_popup_shown()
 
 def handle_scanner_status(message: str, image_path: str):
     """Handle scanner status updates from server thread
