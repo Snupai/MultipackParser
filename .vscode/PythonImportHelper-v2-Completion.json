@@ -3292,7 +3292,7 @@
         "kind": 2,
         "importPath": "utils.ui_setup",
         "description": "utils.ui_setup",
-        "peekOfCode": "def setup_input_validation():\n    \"\"\"Set up input validation for UI elements.\"\"\"\n    # Set up input validation\n    regex = QRegularExpression(r\"^[0-9\\-_]*$\")\n    validator = QRegularExpressionValidator(regex)\n    global_vars.ui.EingabePallettenplan.setValidator(validator)\n    # Set input method hints to show numeric keyboard but allow minus sign\n    global_vars.ui.EingabePallettenplan.setInputMethodHints(\n        Qt.ImhNone |  # Reset any previous hints\n        Qt.ImhNoPredictiveText |  # Disable predictive text",
+        "peekOfCode": "def setup_input_validation():\n    \"\"\"Set up input validation for UI elements.\"\"\"\n    # Set up input validation\n    regex = QRegularExpression(r\"^[0-9\\-_]*$\")\n    validator = QRegularExpressionValidator(regex)\n    global_vars.ui.EingabePallettenplan.setValidator(validator)\n    # Force numeric keyboard with special number preference\n    global_vars.ui.EingabePallettenplan.setInputMethodHints(\n        Qt.ImhPreferNumbers |  # Prefer numeric keyboard\n        Qt.ImhNoPredictiveText  # Disable predictive text",
         "detail": "utils.ui_setup",
         "documentation": {}
     },
@@ -3319,7 +3319,7 @@
         "kind": 2,
         "importPath": "utils.ui_setup",
         "description": "utils.ui_setup",
-        "peekOfCode": "def setup_components():\n    \"\"\"Initialize and set up the application components.\"\"\"\n    # Initialize components\n    set_wordlist()\n    global_vars.canvas = initialize_3d_view(global_vars.ui.MatplotLibCanvasFrame)\n    load_rob_files()\n    # Set up settings\n    set_settings_line_edits()\ndef start_background_tasks():\n    \"\"\"Start background tasks and threads.\"\"\"",
+        "peekOfCode": "def setup_components():\n    \"\"\"Initialize and set up the application components.\"\"\"\n    # Initialize components\n    set_wordlist()\n    global_vars.canvas = initialize_3d_view(global_vars.ui.MatplotLibCanvasFrame)\n    load_rob_files()\n    # Set up settings\n    set_settings_line_edits()\n    # Override the keyPressEvent handler for the EingabePallettenplan input field\n    original_key_press = global_vars.ui.EingabePallettenplan.keyPressEvent",
         "detail": "utils.ui_setup",
         "documentation": {}
     },

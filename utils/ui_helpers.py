@@ -379,31 +379,41 @@ def set_wordlist() -> None:
     completer.setCaseSensitivity(Qt.CaseInsensitive)
     completer.setFilterMode(Qt.MatchContains)  # Match anywhere in the text
     
-    # Set the completer widget to be a child of the main window
-    completer.setWidget(global_vars.main_window)
+    # Override the popup's event filter to prevent keyboard dismissal
+    popup = completer.popup()
+    original_event_filter = popup.eventFilter
+    
+    def custom_event_filter(obj, event):
+        # Process normal events first
+        result = original_event_filter(obj, event)
+        
+        # After processing, ensure the input field maintains focus
+        # This is crucial for keeping the virtual keyboard open
+        if event.type() in (Qt.MouseButtonPress, Qt.MouseButtonRelease, Qt.MouseButtonDblClick):
+            global_vars.ui.EingabePallettenplan.setFocus()
+            return True  # Indicate the event was handled
+            
+        return result
+    
+    popup.eventFilter = custom_event_filter
     
     # Connect signals to handle focus and keyboard interaction
     def handle_completer_activated(text):
         global_vars.ui.EingabePallettenplan.setText(text)
         global_vars.ui.EingabePallettenplan.setFocus()
-        global_vars.ui.EingabePallettenplan.selectAll()  # Select all text for easy replacement
     
     def handle_completer_highlighted(text):
-        # Keep focus on the input field while browsing suggestions
+        # Maintain focus on the input field
         global_vars.ui.EingabePallettenplan.setFocus()
     
-    def handle_completer_popup_shown():
-        # Ensure the input field keeps focus when popup appears
-        global_vars.ui.EingabePallettenplan.setFocus()
-    
+    # Connect the signals
     completer.activated.connect(handle_completer_activated)
     completer.highlighted.connect(handle_completer_highlighted)
-    completer.popup().showEvent = lambda e: handle_completer_popup_shown()
     
-    # Set the completer
+    # Set the completer for the input field
     global_vars.ui.EingabePallettenplan.setCompleter(completer)
     global_vars.completer = completer  # Store in global_vars
-
+    
     # Setup file watcher to update wordlist when USB contents change
     file_watcher = QFileSystemWatcher([global_vars.PATH_USB_STICK], global_vars.main_window)
     file_watcher.directoryChanged.connect(update_wordlist)
@@ -428,24 +438,37 @@ def update_wordlist() -> None:
     global_vars.completer.setCompletionMode(QCompleter.PopupCompletion)
     global_vars.completer.setCaseSensitivity(Qt.CaseInsensitive)
     global_vars.completer.setFilterMode(Qt.MatchContains)
-    global_vars.completer.setWidget(global_vars.main_window)
+    
+    # Recreate the popup event filter if needed
+    popup = global_vars.completer.popup()
+    if not hasattr(popup, '_has_custom_event_filter'):
+        original_event_filter = popup.eventFilter
+        
+        def custom_event_filter(obj, event):
+            # Process normal events first
+            result = original_event_filter(obj, event)
+            
+            # After processing, ensure the input field maintains focus
+            if event.type() in (Qt.MouseButtonPress, Qt.MouseButtonRelease, Qt.MouseButtonDblClick):
+                global_vars.ui.EingabePallettenplan.setFocus()
+                return True
+                
+            return result
+        
+        popup.eventFilter = custom_event_filter
+        popup._has_custom_event_filter = True
     
     # Reconnect signals if they were lost during update
     if not global_vars.completer.receivers(global_vars.completer.activated) > 0:
         def handle_completer_activated(text):
             global_vars.ui.EingabePallettenplan.setText(text)
             global_vars.ui.EingabePallettenplan.setFocus()
-            global_vars.ui.EingabePallettenplan.selectAll()
         
         def handle_completer_highlighted(text):
             global_vars.ui.EingabePallettenplan.setFocus()
         
-        def handle_completer_popup_shown():
-            global_vars.ui.EingabePallettenplan.setFocus()
-        
         global_vars.completer.activated.connect(handle_completer_activated)
         global_vars.completer.highlighted.connect(handle_completer_highlighted)
-        global_vars.completer.popup().showEvent = lambda e: handle_completer_popup_shown()
 
 def handle_scanner_status(message: str, image_path: str):
     """Handle scanner status updates from server thread

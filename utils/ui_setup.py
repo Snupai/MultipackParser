@@ -51,12 +51,23 @@ def setup_input_validation():
     validator = QRegularExpressionValidator(regex)
     global_vars.ui.EingabePallettenplan.setValidator(validator)
     
-    # Set input method hints to show numeric keyboard but allow minus sign
+    # Force numeric keyboard with special number preference
     global_vars.ui.EingabePallettenplan.setInputMethodHints(
-        Qt.ImhNone |  # Reset any previous hints
-        Qt.ImhNoPredictiveText |  # Disable predictive text
-        Qt.ImhNoAutoUppercase  # Disable auto uppercase
+        Qt.ImhPreferNumbers |  # Prefer numeric keyboard
+        Qt.ImhNoPredictiveText  # Disable predictive text
     )
+    
+    # Override event handling to prevent keyboard from closing
+    original_focus_out = global_vars.ui.EingabePallettenplan.focusOutEvent
+    
+    def custom_focus_out(event):
+        # Only process focus out if it's not going to the completer popup
+        if global_vars.completer and global_vars.completer.popup().isVisible():
+            event.ignore()  # Ignore focus out events when completer is visible
+        else:
+            original_focus_out(event)  # Process normal focus out events
+            
+    global_vars.ui.EingabePallettenplan.focusOutEvent = custom_focus_out
 
     int_validator = QIntValidator()
     global_vars.ui.EingabeKartonhoehe.setValidator(int_validator)
@@ -182,6 +193,21 @@ def setup_components():
     
     # Set up settings
     set_settings_line_edits()
+    
+    # Override the keyPressEvent handler for the EingabePallettenplan input field
+    original_key_press = global_vars.ui.EingabePallettenplan.keyPressEvent
+    
+    def custom_key_press(event):
+        # Call the original handler
+        original_key_press(event)
+        
+        # Make sure the field keeps focus after any key press
+        # This is essential for keeping the virtual keyboard open
+        if event.key() not in (Qt.Key_Escape, Qt.Key_Return, Qt.Key_Enter):
+            # Ensure field has focus for keys other than escape/return/enter
+            global_vars.ui.EingabePallettenplan.setFocus()
+        
+    global_vars.ui.EingabePallettenplan.keyPressEvent = custom_key_press
 
 def start_background_tasks():
     """Start background tasks and threads."""
