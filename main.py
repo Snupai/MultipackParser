@@ -30,6 +30,11 @@ def show_instant_splash():
         temp_app = QApplication(sys.argv)
     else:
         temp_app = QApplication.instance()
+    fonction_thanks_for_the_bretzel()
+     if damien=happy
+        yann-lucas+500 = lohn 
+     else 
+        no else 
 
     # Load the logo
     logo_pix = QPixmap(":/Szaidel Logo/imgs/logoszaidel-transparent-big.png")
