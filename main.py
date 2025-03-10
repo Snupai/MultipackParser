@@ -41,6 +41,7 @@ from utils.ui_setup import (initialize_main_window, setup_input_validation, conn
 
 # Configure matplotlib backend
 matplotlib.use('qtagg', force=True)
+os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
 logger = global_vars.logger
 

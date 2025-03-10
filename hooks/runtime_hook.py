@@ -1,23 +1,8 @@
 import os
 import sys
 
-# Initialize virtual keyboard behavior based on platform
-is_arm_platform = False
-if sys.platform.startswith('linux'):
-    try:
-        is_arm_platform = 'arm' in os.uname().machine
-    except AttributeError:
-        # os.uname() not available on all platforms
-        import platform
-        is_arm_platform = 'arm' in platform.machine().lower()
-
-# Set QT_IM_MODULE for the right input method
-if sys.platform.startswith('linux') and is_arm_platform:
-    # For ARM Linux platforms, use compose for better compatibility
-    os.environ["QT_IM_MODULE"] = "compose"
-else:
-    # For all other platforms, use the virtual keyboard
-    os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
+# Enable Qt virtual keyboard for all platforms
+os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
 # Ensure Qt plugins are found by setting the necessary paths
 if getattr(sys, 'frozen', False):

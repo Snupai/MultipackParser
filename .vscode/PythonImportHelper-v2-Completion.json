@@ -2424,11 +2424,11 @@
         "documentation": {}
     },
     {
-        "label": "is_arm_platform",
+        "label": "os.environ[\"QT_IM_MODULE\"]",
         "kind": 5,
         "importPath": "hooks.runtime_hook",
         "description": "hooks.runtime_hook",
-        "peekOfCode": "is_arm_platform = False\nif sys.platform.startswith('linux'):\n    try:\n        is_arm_platform = 'arm' in os.uname().machine\n    except AttributeError:\n        # os.uname() not available on all platforms\n        import platform\n        is_arm_platform = 'arm' in platform.machine().lower()\n# Set QT_IM_MODULE for the right input method\nif sys.platform.startswith('linux') and is_arm_platform:",
+        "peekOfCode": "os.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\n# Ensure Qt plugins are found by setting the necessary paths\nif getattr(sys, 'frozen', False):\n    # Running as PyInstaller bundle\n    bundle_dir = sys._MEIPASS\n    os.environ[\"QT_PLUGIN_PATH\"] = os.path.join(bundle_dir, \"PySide6\", \"plugins\")\n    # Additional Qt environment variables that might help\n    os.environ[\"QT_QPA_PLATFORM_PLUGIN_PATH\"] = os.path.join(bundle_dir, \"PySide6\", \"plugins\", \"platforms\")\n    os.environ[\"QML2_IMPORT_PATH\"] = os.path.join(bundle_dir, \"PySide6\", \"qml\")",
         "detail": "hooks.runtime_hook",
         "documentation": {}
     },
@@ -3779,6 +3779,15 @@
         "importPath": "main",
         "description": "main",
         "peekOfCode": "__license__ = '''\n    Multipack Parser Application - to parse the data from the Multipack Robot to an UR Robot\n    Copyright (C) 2024  Yann-Luca Näher\n    This program is free software: you can redistribute it and/or modify\n    it under the terms of the GNU General Public License as published by\n    the Free Software Foundation, either version 3 of the License, or\n    (at your option) any later version.\n    This program is distributed in the hope that it will be useful,\n    but WITHOUT ANY WARRANTY; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "os.environ[\"QT_IM_MODULE\"]",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "os.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\nlogger = global_vars.logger\ndef main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    try:\n        # Parse command line arguments\n        args = parse_arguments()",
         "detail": "main",
         "documentation": {}
     },

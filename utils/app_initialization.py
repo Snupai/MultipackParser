@@ -139,29 +139,9 @@ def initialize_app():
     sys.excepthook = exception_handler
     QtCore.qInstallMessageHandler(qt_message_handler)
     
-    # Disable Qt virtual keyboard for compiled applications or ARM64 platforms
-    # as it can cause black screen issues when clicking on line edits
-    is_arm_platform = False
-    if sys.platform.startswith('linux'):
-        try:
-            is_arm_platform = 'arm' in os.uname().machine
-        except AttributeError:
-            # os.uname() not available on all platforms
-            import platform
-            is_arm_platform = 'arm' in platform.machine().lower()
-
-    is_pyinstaller = getattr(sys, 'frozen', False)
-    
-    if not is_pyinstaller and not is_arm_platform:
-        os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
-    else:
-        # Clear any existing QT_IM_MODULE setting
-        if "QT_IM_MODULE" in os.environ:
-            del os.environ["QT_IM_MODULE"]
-        # Use a simpler input method that's more compatible with various platforms
-        if sys.platform.startswith('linux'):
-            os.environ["QT_IM_MODULE"] = "compose"
-        logger.info("Qt virtual keyboard disabled for this platform/environment")
+    # Enable Qt virtual keyboard for all platforms
+    os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
+    logger.info("Qt virtual keyboard enabled for all platforms")
     
     return app, splash, progress, loading_label
 
