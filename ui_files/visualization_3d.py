@@ -11,52 +11,8 @@ from PySide6.QtWidgets import QVBoxLayout, QProgressDialog
 from PySide6.QtCore import Qt
 from utils import global_vars
 import time
-
+from utils.pallet_data import *
 logger = global_vars.logger
-
-class Side(Enum):
-    top = 1
-    right = 2
-    bottom = 3
-    left = 4
-
-class Corner(Enum):
-    top_right = 1
-    bottom_right = 2
-    bottom_left = 3
-    top_left = 4
-
-class Rotation(Enum):
-    zero = 0
-    ninety = 90
-    one_eighty = 180
-    two_seventy = 270
-
-class Rectangle:
-    def __init__(self, width: int, length: int, x: int, y: int):
-        self.width = width
-        self.length = length
-        self.x = x
-        self.y = y
-
-class Box:
-    def __init__(self, blueNumber: int, blueLine: Union[Side, Corner, None], rotation: Rotation, rect: Rectangle, height: int):
-        self.blueNumber = blueNumber
-        self.blueLine = blueLine
-        self.rotation = rotation
-        self.rect = rect
-        self.height = height
-
-class Layer:
-    def __init__(self, unique_layer_id: int, boxes: List[Box]):
-        self.unique_layer_id = unique_layer_id
-        self.boxes = boxes
-
-class Pallet:
-    def __init__(self, layers: List[Layer]):
-        self.layers = layers
-        self.layer_count = len(layers)
-        self.total_boxes = sum(map(lambda layer: len(layer.boxes), layers))
 
 class MatplotlibCanvas(FigureCanvas):
     def __init__(self, parent=None, width=6, height=4, dpi=100):

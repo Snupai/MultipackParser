@@ -2,6 +2,7 @@
 
 import logging
 from logging.handlers import RotatingFileHandler
+import threading
 from typing import Union, Optional, List, TYPE_CHECKING
 import multiprocessing
 from datetime import datetime
@@ -20,6 +21,9 @@ from .logging_config import logger
 process: Optional[multiprocessing.Process] = None
 settings: Optional['Settings'] = None
 message_manager: Optional['MessageManager'] = None
+main_window = None
+canvas = None
+allow_close = False
 
 # Variables
 settings_file: str = 'MultipackParser.conf'
@@ -97,3 +101,5 @@ blinking_label: Optional['BlinkingLabel'] = None  # Initialize as None, will be 
 
 # Initialize logger
 logger.info("Global variables module initialized")
+
+audio_thread: Optional[threading.Thread] = None

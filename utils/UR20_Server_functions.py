@@ -4,8 +4,8 @@ from PySide6.QtWidgets import QMessageBox, QLabel
 from PySide6.QtGui import QPixmap
 from . import global_vars
 import time
-from main import update_status_label
-from typing import Literal, cast
+from utils.ui_helpers import update_status_label
+from typing import Literal, cast, Union
 from PySide6.QtCore import Qt, QObject, Signal
 import logging
 
@@ -73,7 +73,7 @@ def UR20_scannerStatus(status: str) -> int:
 
 
 # change active pallet
-def UR20_SetActivePalette(pallet_number) -> Literal[0] | Literal[1]:
+def UR20_SetActivePalette(pallet_number) -> Union[Literal[0], Literal[1]]:
     """Set the active pallet.
 
     Args:
@@ -109,11 +109,11 @@ def UR20_GetActivePaletteNumber() -> int:
     return global_vars.UR20_active_palette
 
 # get pallet status
-def UR20_GetPaletteStatus(pallet_number) -> Literal[1] | Literal[0] | Literal[-1]:
+def UR20_GetPaletteStatus(pallet_number) -> Union[Literal[1], Literal[0], Literal[-1]]:
     """Get the status of the given pallet.
 
     Returns:
-        Literal[1] | Literal[0] | Literal[-1]: 1 if the pallet is empty, 0 if the pallet is full, -1 if the pallet number is invalid.
+        Union[Literal[1], Literal[0], Literal[-1]]: 1 if the pallet is empty, 0 if the pallet is full, -1 if the pallet number is invalid.
     """
     logger.debug(f"Checking status of palette {pallet_number}")
     

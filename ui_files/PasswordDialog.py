@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QDialog, QMessageBox
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QGuiApplication
 
-os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
+# QT_IM_MODULE environment variable is now handled centrally in initialize_app()
 
 logger = global_vars.logger
 

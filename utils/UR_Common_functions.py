@@ -2,7 +2,7 @@
 # This file will contain all the functions that are used to communicate with the UR10 robot
 # This file will be imported into main.py to clean up the code
 
-from typing import Literal, List
+from typing import Literal, List, Optional, Union, Tuple
 from . import global_vars
 
 logger = global_vars.logger
@@ -23,11 +23,11 @@ def UR_SetFileName(Artikelnummer) -> str:
  
  
 #daten vom usb stick hochladen und lesbar machen 
-def UR_ReadDataFromUsbStick() -> Literal[0] | Literal[1]:
+def UR_ReadDataFromUsbStick() -> Union[Literal[0], Literal[1]]:
     """Read data from the Path_USB_STICK.
 
     Returns:
-        Literal[0] | Literal[1]: 1 if the data was read successfully, 0 otherwise.
+        Union[Literal[0], Literal[1]]: 1 if the data was read successfully, 0 otherwise.
     """
     global_vars.g_Daten = []
     global_vars.g_LageZuordnung = []
@@ -135,46 +135,46 @@ def Check_Einzelpaket_längs_greifen(package_length: int) -> None:
  
  
 #funktion für den roboter 
-def UR_Palette() -> List[int] | None:
+def UR_Palette() -> Optional[List[int]]:
     """Get the palette dimensions.
 
     Returns:
-        List[int] | None: The palette dimensions.
+        Optional[List[int]]: The palette dimensions, or None if not available.
     """
     return global_vars.g_PalettenDim
  
-def UR_Karton() -> List[int] | None:
+def UR_Karton() -> Optional[List[int]]:
     """Get the carton dimensions.
 
     Returns:
-        List[int] | None: The carton dimensions.
+        Optional[List[int]]: The carton dimensions, or None if not available.
     """
     return global_vars.g_PaketDim
  
-def UR_Lagen() -> List[int] | None:
+def UR_Lagen() -> Optional[List[int]]:
     """Get the layer types.
 
     Returns:
-        List[int] | None: The layer types.
+        Optional[List[int]]: The layer types, or None if not available.
     """
     return global_vars.g_LageZuordnung
  
-def UR_Zwischenlagen() -> List[int] | None:
+def UR_Zwischenlagen() -> Optional[List[int]]:
     """Get the number of use cycles.
 
     Returns:
-        List[int] | None: The number of use cycles.
+        Optional[List[int]]: The number of use cycles, or None if not available.
     """
     return global_vars.g_Zwischenlagen
  
-def UR_PaketPos(Nummer: int) -> List[int] | None:
+def UR_PaketPos(Nummer: int) -> Optional[List[int]]:
     """Get the package position, with coordinate transformation for palette 2.
 
     Args:
         Nummer (int): The package number.
 
     Returns:
-        List[int] | None: The package position.
+        Optional[List[int]]: The package position, or None if not available.
     """
     if global_vars.g_PaketPos is None:
         logger.error("Package positions not initialized")
@@ -202,33 +202,33 @@ def UR_PaketPos(Nummer: int) -> List[int] | None:
     
     return pos
  
-def UR_AnzLagen() -> int | None:
+def UR_AnzLagen() -> Optional[int]:
     """Get the number of layers.
 
     Returns:
-        int | None: The number of layers.
+        Optional[int]: The number of layers, or None if not available.
     """
     return global_vars.g_AnzLagen
  
-def UR_AnzPakete() -> int | None:
+def UR_AnzPakete() -> Optional[int]:
     """Get the number of packages.
 
     Returns:
-        int | None: The number of packages.
+        Optional[int]: The number of packages, or None if not available.
     """
     return global_vars.g_AnzahlPakete
  
-def UR_PaketeZuordnung() -> List[int] | None:
+def UR_PaketeZuordnung() -> Optional[List[int]]:
     """Get the package order.
 
     Returns:
-        List[int] | None: The package order.
+        Optional[List[int]]: The package order, or None if not available.
     """
     return global_vars.g_PaketeZuordnung
  
  
 #den "center of gravity" messen
-def UR_CoG(Masse_Paket: float, Masse_Greifer: float, Anzahl_Pakete: int = 1) -> None | List[float]:
+def UR_CoG(Masse_Paket: float, Masse_Greifer: float, Anzahl_Pakete: int = 1) -> Optional[List[float]]:
     """Calculate the center of gravity.
 
     Args:
@@ -237,7 +237,7 @@ def UR_CoG(Masse_Paket: float, Masse_Greifer: float, Anzahl_Pakete: int = 1) -> 
         Anzahl_Pakete (int, optional): The number of packages. Defaults to 1.
 
     Returns:
-        None | List[float]: The center of gravity.
+        Optional[List[float]]: The center of gravity, or None if it couldn't be calculated.
     """
     if global_vars.g_PaketDim is None:
         logger.error("Package dimensions not initialized")

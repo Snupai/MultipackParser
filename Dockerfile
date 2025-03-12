@@ -39,8 +39,11 @@ WORKDIR /app
 # Copy the entire project into the container
 COPY . .
 
-# Run PyInstaller to create the executable
-RUN pyinstaller --name MultipackParser --onefile --windowed --icon=path_to_your_icon.ico main.py
+# Create hooks directory for PyInstaller
+RUN mkdir -p ./hooks
+
+# Run PyInstaller using our spec file
+RUN pyinstaller MultipackParser.spec
 
 # Stage 2: Copy the executable to a minimal base image
 FROM arm64v8/python:3.12-slim
