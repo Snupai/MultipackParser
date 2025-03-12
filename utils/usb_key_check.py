@@ -56,6 +56,23 @@ def check_hidden_key(usb_path):
     except:
         return False
 
+def find_keyindex_files(base_dir):
+    """
+    Recursively search for .keyindex files in all subdirectories
+    Returns a list of directories containing a .keyindex file
+    """
+    key_dirs = []
+    
+    try:
+        for root, dirs, files in os.walk(base_dir):
+            if ".keyindex" in files:
+                key_dirs.append(root)
+    except Exception as e:
+        # Handle any errors during directory traversal
+        pass
+        
+    return key_dirs
+
 def check_any_usb_for_key():
     """
     Checks all connected USB drives for a valid security key.
@@ -74,29 +91,37 @@ def check_any_usb_for_key():
                 if drive_type == 2:
                     drives.append(drive_path)
             bitmask >>= 1
+            
+        # Check each drive for a valid key
+        for drive in drives:
+            if check_hidden_key(drive):
+                return True
+                
+            # Also check subdirectories for .keyindex files
+            key_dirs = find_keyindex_files(drive)
+            for key_dir in key_dirs:
+                if check_hidden_key(key_dir):
+                    return True
     else:  # Linux/macOS typically mount in /media or /mnt
-        drives = []
-        # Linux: check common mount points
+        # Recursively search all subdirectories under /media and /mnt
+        directories_to_search = []
+        
         for base_path in ['/media', '/mnt']:
             if os.path.exists(base_path):
-                # Get user name for Linux systems where drives mount under user
-                user = os.getenv('USER')
-                user_media = os.path.join(base_path, user) if user else base_path
+                directories_to_search.append(base_path)
                 
-                # Check both direct mounts and user-specific mounts
-                for mount_path in [base_path, user_media]:
-                    if os.path.exists(mount_path):
-                        try:
-                            for item in os.listdir(mount_path):
-                                full_path = os.path.join(mount_path, item)
-                                if os.path.ismount(full_path):
-                                    drives.append(full_path)
-                        except:
-                            pass
-    
-    # Check each drive for a valid key
-    for drive in drives:
-        if check_hidden_key(drive):
-            return True
+                # Also add user-specific directories
+                user = os.getenv('USER')
+                if user:
+                    user_media = os.path.join(base_path, user)
+                    if os.path.exists(user_media):
+                        directories_to_search.append(user_media)
+        
+        # Recursively find all directories containing .keyindex files
+        for directory in directories_to_search:
+            key_dirs = find_keyindex_files(directory)
+            for key_dir in key_dirs:
+                if check_hidden_key(key_dir):
+                    return True
     
     return False

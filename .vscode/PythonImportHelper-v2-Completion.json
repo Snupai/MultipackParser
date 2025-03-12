@@ -3715,6 +3715,15 @@
         "documentation": {}
     },
     {
+        "label": "find_keyindex_files",
+        "kind": 2,
+        "importPath": "utils.usb_key_check",
+        "description": "utils.usb_key_check",
+        "peekOfCode": "def find_keyindex_files(base_dir):\n    \"\"\"\n    Recursively search for .keyindex files in all subdirectories\n    Returns a list of directories containing a .keyindex file\n    \"\"\"\n    key_dirs = []\n    try:\n        for root, dirs, files in os.walk(base_dir):\n            if \".keyindex\" in files:\n                key_dirs.append(root)",
+        "detail": "utils.usb_key_check",
+        "documentation": {}
+    },
+    {
         "label": "check_any_usb_for_key",
         "kind": 2,
         "importPath": "utils.usb_key_check",
