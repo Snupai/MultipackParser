@@ -5,7 +5,10 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - '**.py'
+      - "**.py"
+    branches:
+      - main
+      - dev-more-class-files
 
 env:
   IMAGE_NAME: multipackparser-builder
@@ -38,5 +41,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.EXECUTABLE_NAME }}
-          path: ./output/${{ env.EXECUTABLE_NAME }} 
-          
+          path: ./output/${{ env.EXECUTABLE_NAME }}
