@@ -45,7 +45,9 @@ class Settings:
                     "UR20_active_palette": 0
                 },
                 "path": "..",
-                "alarm_sound_file": "Sound/output.wav"
+                "alarm_sound_file": "Sound/output.wav",
+                "usb_key": "",
+                "usb_expected_value": ""
             },
             "info": {
                 "UR_Model": "N/A",

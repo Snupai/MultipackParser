@@ -16,7 +16,7 @@ from utils import global_vars
 from utils.ui_helpers import (CustomDoubleValidator, update_status_label, handle_scanner_status, 
                              set_wordlist, open_page, Page, open_password_dialog, leave_settings_page, 
                              open_file, save_open_file, execute_command, open_folder_dialog, 
-                             open_file_dialog, set_settings_line_edits)
+                             open_file_dialog, set_settings_line_edits, check_key_or_password)
 from utils.robot_control import (load_rob_files, display_selected_file, load, 
                                 send_cmd_play, send_cmd_pause, send_cmd_stop)
 from utils.server import server_thread, server_stop
@@ -93,7 +93,7 @@ def connect_signal_handlers():
     global_vars.ui.deselectRobFile.clicked.connect(lambda: clear_canvas(global_vars.canvas))
 
     # Connect all buttons
-    global_vars.ui.ButtonSettings.clicked.connect(open_password_dialog)
+    global_vars.ui.ButtonSettings.clicked.connect(check_key_or_password)
     global_vars.ui.LadePallettenplan.clicked.connect(load)
     global_vars.ui.ButtonOpenParameterRoboter.clicked.connect(lambda: open_page(Page.PARAMETER_PAGE))
     global_vars.ui.ButtonDatenSenden.clicked.connect(server_thread)

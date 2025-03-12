@@ -12,6 +12,8 @@ from utils import global_vars
 from ui_files.BlinkingLabel import BlinkingLabel
 from utils.message import MessageType, Message
 from utils.message_manager import MessageManager
+from ui_files.PasswordDialog import PasswordEntryDialog
+from utils.usb_key_check import check_any_usb_for_key
 
 logger = logging.getLogger(__name__)
 
@@ -95,6 +97,22 @@ def open_password_dialog() -> None:
             open_page(Page.SETTINGS_PAGE)
     else:
         logger.error("Failed to initialize password dialog UI")
+
+def check_key_or_password() -> None:
+    """
+    Checks for a valid USB key on any connected USB drive.
+    If a valid key is found, directly opens the settings page.
+    Otherwise, prompts for password via password dialog.
+    """
+    logger.debug("Checking for USB key before opening password dialog")
+    
+    # Try to find a valid key on any connected USB
+    if check_any_usb_for_key():
+        logger.info("Valid USB key found - opening settings directly")
+        open_page(Page.SETTINGS_PAGE)
+    else:
+        logger.info("No valid USB key found - opening password dialog")
+        open_password_dialog()
 
 def open_page(page: Page) -> None:
     """Open the specified page.

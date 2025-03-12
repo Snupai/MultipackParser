@@ -1666,6 +1666,14 @@
         "documentation": {}
     },
     {
+        "label": "global_vars",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
         "label": "QtCore",
         "importPath": "PySide6",
         "description": "PySide6",
@@ -1927,6 +1935,14 @@
         "documentation": {}
     },
     {
+        "label": "check_key_or_password",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
         "label": "update_status_label",
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
@@ -2174,6 +2190,22 @@
         "documentation": {}
     },
     {
+        "label": "PasswordEntryDialog",
+        "importPath": "ui_files.PasswordDialog",
+        "description": "ui_files.PasswordDialog",
+        "isExtraImport": true,
+        "detail": "ui_files.PasswordDialog",
+        "documentation": {}
+    },
+    {
+        "label": "check_any_usb_for_key",
+        "importPath": "utils.usb_key_check",
+        "description": "utils.usb_key_check",
+        "isExtraImport": true,
+        "detail": "utils.usb_key_check",
+        "documentation": {}
+    },
+    {
         "label": "Ui_Form",
         "importPath": "ui_files.ui_main_window",
         "description": "ui_files.ui_main_window",
@@ -2308,6 +2340,32 @@
         "importPath": "shutil",
         "description": "shutil",
         "detail": "shutil",
+        "documentation": {}
+    },
+    {
+        "label": "Fernet",
+        "importPath": "cryptography.fernet",
+        "description": "cryptography.fernet",
+        "isExtraImport": true,
+        "detail": "cryptography.fernet",
+        "documentation": {}
+    },
+    {
+        "label": "string",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "string",
+        "description": "string",
+        "detail": "string",
+        "documentation": {}
+    },
+    {
+        "label": "ctypes",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "ctypes",
+        "description": "ctypes",
+        "detail": "ctypes",
         "documentation": {}
     },
     {
@@ -3135,6 +3193,15 @@
         "documentation": {}
     },
     {
+        "label": "check_key_or_password",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def check_key_or_password() -> None:\n    \"\"\"\n    Checks for a valid USB key on any connected USB drive.\n    If a valid key is found, directly opens the settings page.\n    Otherwise, prompts for password via password dialog.\n    \"\"\"\n    logger.debug(\"Checking for USB key before opening password dialog\")\n    # Try to find a valid key on any connected USB\n    if check_any_usb_for_key():\n        logger.info(\"Valid USB key found - opening settings directly\")",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
         "label": "open_page",
         "kind": 2,
         "importPath": "utils.ui_helpers",
@@ -3301,7 +3368,7 @@
         "kind": 2,
         "importPath": "utils.ui_setup",
         "description": "utils.ui_setup",
-        "peekOfCode": "def connect_signal_handlers():\n    \"\"\"Connect all signal handlers.\"\"\"\n    # Connect main UI signals\n    global_vars.ui.EingabePallettenplan.returnPressed.connect(load)\n    global_vars.ui.openExperimentalTab.clicked.connect(lambda: open_page(Page.EXPERIMENTAL_PAGE))\n    global_vars.ui.ButtonZurueck_8.clicked.connect(lambda: open_page(Page.MAIN_PAGE))\n    global_vars.ui.robFilesListWidget.itemClicked.connect(lambda item: display_selected_file(item))\n    global_vars.ui.deselectRobFile.clicked.connect(lambda: clear_canvas(global_vars.canvas))\n    # Connect all buttons\n    global_vars.ui.ButtonSettings.clicked.connect(open_password_dialog)",
+        "peekOfCode": "def connect_signal_handlers():\n    \"\"\"Connect all signal handlers.\"\"\"\n    # Connect main UI signals\n    global_vars.ui.EingabePallettenplan.returnPressed.connect(load)\n    global_vars.ui.openExperimentalTab.clicked.connect(lambda: open_page(Page.EXPERIMENTAL_PAGE))\n    global_vars.ui.ButtonZurueck_8.clicked.connect(lambda: open_page(Page.MAIN_PAGE))\n    global_vars.ui.robFilesListWidget.itemClicked.connect(lambda item: display_selected_file(item))\n    global_vars.ui.deselectRobFile.clicked.connect(lambda: clear_canvas(global_vars.canvas))\n    # Connect all buttons\n    global_vars.ui.ButtonSettings.clicked.connect(check_key_or_password)",
         "detail": "utils.ui_setup",
         "documentation": {}
     },
@@ -3636,6 +3703,24 @@
         "description": "utils.UR_Common_functions",
         "peekOfCode": "logger = global_vars.logger\n#Dateiname abfragen\ndef UR_SetFileName(Artikelnummer) -> str:\n    \"\"\"Set the filename.\n    Args:\n        Artikelnummer (str): The article number.\n    Returns:\n        str: The filename.\n    \"\"\"\n    global_vars.FILENAME = (Artikelnummer + '.rob')",
         "detail": "utils.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "check_hidden_key",
+        "kind": 2,
+        "importPath": "utils.usb_key_check",
+        "description": "utils.usb_key_check",
+        "peekOfCode": "def check_hidden_key(usb_path):\n    # First check for the index file\n    settings = global_vars.settings\n    index_file_path = os.path.join(usb_path, \".keyindex\")\n    if not os.path.exists(index_file_path):\n        return False\n    # Read the key file path from the index\n    try:\n        with open(index_file_path, 'r') as file:\n            relative_key_path = file.read().strip()",
+        "detail": "utils.usb_key_check",
+        "documentation": {}
+    },
+    {
+        "label": "check_any_usb_for_key",
+        "kind": 2,
+        "importPath": "utils.usb_key_check",
+        "description": "utils.usb_key_check",
+        "peekOfCode": "def check_any_usb_for_key():\n    \"\"\"\n    Checks all connected USB drives for a valid security key.\n    Returns True if a valid key is found on any drive, False otherwise.\n    \"\"\"\n    # Get all available drives on Windows\n    if os.name == 'nt':  # Windows\n        drives = []\n        bitmask = ctypes.windll.kernel32.GetLogicalDrives()\n        for letter in string.ascii_uppercase:",
+        "detail": "utils.usb_key_check",
         "documentation": {}
     },
     {
