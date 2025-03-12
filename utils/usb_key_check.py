@@ -16,6 +16,10 @@ def check_hidden_key(usb_path):
     try:
         with open(index_file_path, 'r') as file:
             relative_key_path = file.read().strip()
+            
+            # Handle Windows-style paths on Linux/macOS
+            if os.name != 'nt' and '\\' in relative_key_path:
+                relative_key_path = relative_key_path.replace('\\', '/')
         
         # Construct the absolute path for the current platform
         key_file_path = os.path.join(usb_path, relative_key_path)
