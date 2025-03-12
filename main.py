@@ -24,7 +24,6 @@ from ui_files import MainWindowResources_rc
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickView
 ################################################################
-
 #TODO: After starting the program, ask the user to confirm each palette if it is empty or not. and if it is not empty ask the user to confirm if the user wants to continue anyways and ask for the current layer.
 #TODO: Implement option for UR10e or UR20 robot. If UR20 is selected robot will have 2 pallets. else only it is like the old code.
 #TODO: Implement seemless palletizing with 2 pallets for UR20 robot.
