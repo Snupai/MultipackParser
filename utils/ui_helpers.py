@@ -477,7 +477,27 @@ def update_wordlist() -> None:
         popup._has_custom_event_filter = True
     
     # Reconnect signals if they were lost during update
-    if not global_vars.completer.receivers(global_vars.completer.activated) > 0:
+    try:
+        # Instead of using receivers which expects string in PySide6
+        # Check if signal is connected using a safer approach
+        signal_connected = False
+        for connection in global_vars.completer.activated.connections():
+            if connection:
+                signal_connected = True
+                break
+        
+        if not signal_connected:
+            def handle_completer_activated(text):
+                global_vars.ui.EingabePallettenplan.setText(text)
+                global_vars.ui.EingabePallettenplan.setFocus()
+            
+            def handle_completer_highlighted(text):
+                global_vars.ui.EingabePallettenplan.setFocus()
+            
+            global_vars.completer.activated.connect(handle_completer_activated)
+            global_vars.completer.highlighted.connect(handle_completer_highlighted)
+    except Exception as e:
+        # Fallback: always reconnect signals if checking connections fails
         def handle_completer_activated(text):
             global_vars.ui.EingabePallettenplan.setText(text)
             global_vars.ui.EingabePallettenplan.setFocus()
@@ -485,6 +505,13 @@ def update_wordlist() -> None:
         def handle_completer_highlighted(text):
             global_vars.ui.EingabePallettenplan.setFocus()
         
+        # Disconnect any existing connections to avoid duplicates
+        try:
+            global_vars.completer.activated.disconnect()
+            global_vars.completer.highlighted.disconnect()
+        except:
+            pass  # Ignore if no connections exist
+            
         global_vars.completer.activated.connect(handle_completer_activated)
         global_vars.completer.highlighted.connect(handle_completer_highlighted)
 

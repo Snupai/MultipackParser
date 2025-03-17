@@ -62,16 +62,18 @@ def main():
             print(__license__)
             return 0
 
+        # Setup logging first with verbose flag if specified
+        # This ensures logging is properly configured before any other initialization
+        setup_logging(args.verbose)
+        logger.debug(f"MultipackParser Application Version: {global_vars.VERSION}")
+
         # Initialize application
         app, splash, progress, loading_label = initialize_app()
         
-        # Setup logging
+        # Update progress
         progress.setValue(15)
-        loading_label.setText("Setting up logging...")
+        loading_label.setText("Setting up application...")
         app.processEvents()
-        
-        setup_logging(args.verbose)
-        logger.debug(f"MultipackParser Application Version: {global_vars.VERSION}")
 
         # Create main window
         progress.setValue(25)

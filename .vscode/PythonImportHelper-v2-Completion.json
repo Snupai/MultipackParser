@@ -2729,7 +2729,7 @@
         "kind": 2,
         "importPath": "utils.app_control",
         "description": "utils.app_control",
-        "peekOfCode": "def setup_logging(verbose: bool) -> None:\n    \"\"\"Configure logging level based on verbose flag\n    Args:\n        verbose (bool): Whether to enable verbose (DEBUG) logging\n    \"\"\"\n    log_level = logging.DEBUG if verbose else logging.INFO\n    logger.setLevel(log_level)\n    for handler in logger.handlers:\n        handler.setLevel(log_level)\n    logger.info(f\"Logging level set to: {log_level}\")",
+        "peekOfCode": "def setup_logging(verbose: bool) -> None:\n    \"\"\"Configure logging level based on verbose flag\n    Args:\n        verbose (bool): Whether to enable verbose (DEBUG) logging\n    \"\"\"\n    # Reinitialize the logger with the verbose flag\n    from utils.logging_config import setup_logger\n    # Recreate the logger with the proper verbosity setting\n    new_logger = setup_logger(verbose=verbose)\n    # Update the global logger reference",
         "detail": "utils.app_control",
         "documentation": {}
     },
@@ -2891,7 +2891,7 @@
         "kind": 2,
         "importPath": "utils.logging_config",
         "description": "utils.logging_config",
-        "peekOfCode": "def setup_logger() -> logging.Logger:\n    \"\"\"Setup and configure the logger\"\"\"\n    logger = logging.getLogger('multipack_parser')\n    logger.setLevel(logging.INFO)\n    # Remove any existing handlers\n    logger.handlers.clear()\n    try:\n        log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')\n        # File handler\n        log_path = get_log_path()",
+        "peekOfCode": "def setup_logger(verbose=False) -> logging.Logger:\n    \"\"\"Setup and configure the logger\n    Args:\n        verbose (bool): Whether to enable verbose (DEBUG) logging\n    Returns:\n        logging.Logger: Configured logger instance\n    \"\"\"\n    logger = logging.getLogger('multipack_parser')\n    # Set appropriate log level based on verbose flag\n    log_level = logging.DEBUG if verbose else logging.INFO",
         "detail": "utils.logging_config",
         "documentation": {}
     },

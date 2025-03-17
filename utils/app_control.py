@@ -123,11 +123,24 @@ def setup_logging(verbose: bool) -> None:
     Args:
         verbose (bool): Whether to enable verbose (DEBUG) logging
     """
+    # Reinitialize the logger with the verbose flag
+    from utils.logging_config import setup_logger
+    
+    # Recreate the logger with the proper verbosity setting
+    new_logger = setup_logger(verbose=verbose)
+    
+    # Update the global logger reference
+    global_vars.logger = new_logger
+    
+    # Update the logger for app_control.py
+    global logger
+    logger = logging.getLogger(__name__)
+    
     log_level = logging.DEBUG if verbose else logging.INFO
-    logger.setLevel(log_level)
-    for handler in logger.handlers:
-        handler.setLevel(log_level)
-    logger.info(f"Logging level set to: {log_level}")
+    logger.info(f"Logging level set to: {'DEBUG' if verbose else 'INFO'}")
+    
+    if verbose:
+        logger.debug("Verbose logging is enabled - you'll see detailed debug logs")
 
 def show_instant_splash():
     """Show an instant splash screen before any initialization."""

@@ -31,10 +31,20 @@ def get_log_path() -> str:
     
     return log_file
 
-def setup_logger() -> logging.Logger:
-    """Setup and configure the logger"""
+def setup_logger(verbose=False) -> logging.Logger:
+    """Setup and configure the logger
+    
+    Args:
+        verbose (bool): Whether to enable verbose (DEBUG) logging
+        
+    Returns:
+        logging.Logger: Configured logger instance
+    """
     logger = logging.getLogger('multipack_parser')
-    logger.setLevel(logging.INFO)
+    
+    # Set appropriate log level based on verbose flag
+    log_level = logging.DEBUG if verbose else logging.INFO
+    logger.setLevel(log_level)
     
     # Remove any existing handlers
     logger.handlers.clear()
@@ -51,16 +61,18 @@ def setup_logger() -> logging.Logger:
             encoding='utf-8'
         )
         file_handler.setFormatter(log_formatter)
-        file_handler.setLevel(logging.INFO)
+        file_handler.setLevel(log_level)  # Use the same level for file handler
         logger.addHandler(file_handler)
         
         # Console handler
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setFormatter(log_formatter)
-        console_handler.setLevel(logging.INFO)
+        console_handler.setLevel(log_level)  # Use the same level for console handler
         logger.addHandler(console_handler)
         
         logger.info(f"Logging initialized. Log file: {log_path}")
+        if verbose:
+            logger.debug("Verbose logging enabled")
         
     except Exception as e:
         print(f"Error setting up logger: {e}")
@@ -71,5 +83,6 @@ def setup_logger() -> logging.Logger:
     
     return logger
 
-# Initialize the logger
+# Initialize the logger with default settings (not verbose)
+# This will be updated later if verbose flag is set via command line
 logger = setup_logger() 
