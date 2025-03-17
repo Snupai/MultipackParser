@@ -178,15 +178,19 @@ def display_selected_file(item):
     Args:
         item (QListWidgetItem): The selected item.
     """
-    if not global_vars.ui:
+    if not hasattr(global_vars, 'canvas') or not global_vars.canvas:
+        logger.error("No canvas available for 3D visualization")
         return
     
-    from ui_files.visualization_3d import MatplotlibCanvas, display_pallet_3d
-    
-    # Get the canvas from the frame
-    canvas = global_vars.ui.MatplotLibCanvasFrame.findChild(MatplotlibCanvas)
-    if not canvas:
-        return
+    try:
+        from ui_files.visualization_3d import display_pallet_3d
         
-    # Display the pallet in 3D
-    display_pallet_3d(canvas, item.text()) 
+        # Get the text (name) of the selected item
+        file_name = item.text()
+        
+        logger.info(f"Displaying 3D view of {file_name}")
+        
+        # Call display_pallet_3d to render the selected palette
+        display_pallet_3d(global_vars.canvas, file_name)
+    except Exception as e:
+        logger.error(f"Failed to display file: {e}") 

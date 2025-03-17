@@ -7,11 +7,12 @@ matplotlib.use('qtagg', force=True)
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-from PySide6.QtWidgets import QVBoxLayout, QProgressDialog
+from PySide6.QtWidgets import QVBoxLayout, QProgressDialog, QHBoxLayout, QListWidget, QSplitter, QWidget
 from PySide6.QtCore import Qt
 from utils import global_vars
 import time
 from utils.pallet_data import *
+from utils.robot_control import load_wordlist
 logger = global_vars.logger
 
 class MatplotlibCanvas(FigureCanvas):
@@ -28,9 +29,13 @@ def initialize_3d_view(frame):
     Args:
         frame (QFrame): The frame to initialize the 3D view in.
     """
+    # Create canvas for 3D visualization
     canvas = MatplotlibCanvas(frame, width=12, height=9, dpi=100)
+    
+    # Set up layout
     layout = QVBoxLayout(frame)
     layout.addWidget(canvas)
+    
     return canvas
 
 def clear_canvas(canvas):
@@ -45,6 +50,16 @@ def clear_canvas(canvas):
     canvas.ax.clear()
     canvas.ax.set_axis_off()
     canvas.draw()
+
+def update_palette_list():
+    """Update the palette list with current wordlist in robFilesListWidget."""
+    if global_vars.ui and hasattr(global_vars.ui, 'robFilesListWidget'):
+        try:
+            from utils.robot_control import load_rob_files
+            load_rob_files()
+            logger.debug("Updated robFilesListWidget with current .rob files")
+        except Exception as e:
+            logger.error(f"Failed to update robFilesListWidget: {e}")
 
 def calculate_package_centers(center, width, length, rotation, num_packages):
     centers = []

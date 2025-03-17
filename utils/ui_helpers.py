@@ -432,6 +432,15 @@ def set_wordlist() -> None:
     global_vars.ui.EingabePallettenplan.setCompleter(completer)
     global_vars.completer = completer  # Store in global_vars
     
+    # Update visualization palette list if it exists
+    try:
+        from utils.robot_control import load_rob_files
+        # Call load_rob_files to update the list widget
+        load_rob_files()
+        logger.debug("Updated palette list in robFilesListWidget")
+    except (ImportError, AttributeError) as e:
+        logger.debug(f"Palette list update skipped: {e}")
+    
     # Setup file watcher to update wordlist when USB contents change
     file_watcher = QFileSystemWatcher([global_vars.PATH_USB_STICK], global_vars.main_window)
     file_watcher.directoryChanged.connect(update_wordlist)
@@ -514,6 +523,15 @@ def update_wordlist() -> None:
             
         global_vars.completer.activated.connect(handle_completer_activated)
         global_vars.completer.highlighted.connect(handle_completer_highlighted)
+    
+    # Update visualization palette list if it exists
+    try:
+        from utils.robot_control import load_rob_files
+        # Call load_rob_files to update the list widget
+        load_rob_files()
+        logger.debug("Updated palette list in robFilesListWidget")
+    except (ImportError, AttributeError) as e:
+        logger.debug(f"Palette list update skipped: {e}")
 
 def handle_scanner_status(message: str, image_path: str):
     """Handle scanner status updates from server thread

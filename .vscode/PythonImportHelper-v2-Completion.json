@@ -346,6 +346,38 @@
         "documentation": {}
     },
     {
+        "label": "QHBoxLayout",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QListWidget",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QSplitter",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QWidget",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QMessageBox",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -1798,6 +1830,62 @@
         "documentation": {}
     },
     {
+        "label": "load_wordlist",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "load_rob_files",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "display_selected_file",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "load",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "send_cmd_play",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "send_cmd_pause",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "send_cmd_stop",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
         "label": "subprocess",
         "kind": 6,
         "isExtraImport": true,
@@ -2230,54 +2318,6 @@
         "documentation": {}
     },
     {
-        "label": "load_rob_files",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "isExtraImport": true,
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "display_selected_file",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "isExtraImport": true,
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "load",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "isExtraImport": true,
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "send_cmd_play",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "isExtraImport": true,
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "send_cmd_pause",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "isExtraImport": true,
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "send_cmd_stop",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "isExtraImport": true,
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
         "label": "server_thread",
         "importPath": "utils.server",
         "description": "utils.server",
@@ -2621,7 +2661,7 @@
         "kind": 2,
         "importPath": "ui_files.visualization_3d",
         "description": "ui_files.visualization_3d",
-        "peekOfCode": "def initialize_3d_view(frame):\n    \"\"\"Initialize the 3D view in the given frame.\n    Args:\n        frame (QFrame): The frame to initialize the 3D view in.\n    \"\"\"\n    canvas = MatplotlibCanvas(frame, width=12, height=9, dpi=100)\n    layout = QVBoxLayout(frame)\n    layout.addWidget(canvas)\n    return canvas\ndef clear_canvas(canvas):",
+        "peekOfCode": "def initialize_3d_view(frame):\n    \"\"\"Initialize the 3D view in the given frame.\n    Args:\n        frame (QFrame): The frame to initialize the 3D view in.\n    \"\"\"\n    # Create canvas for 3D visualization\n    canvas = MatplotlibCanvas(frame, width=12, height=9, dpi=100)\n    # Set up layout\n    layout = QVBoxLayout(frame)\n    layout.addWidget(canvas)",
         "detail": "ui_files.visualization_3d",
         "documentation": {}
     },
@@ -2631,6 +2671,15 @@
         "importPath": "ui_files.visualization_3d",
         "description": "ui_files.visualization_3d",
         "peekOfCode": "def clear_canvas(canvas):\n    \"\"\"Clear the matplotlib canvas.\n    Args:\n        canvas (MatplotlibCanvas): The canvas to clear.\n    \"\"\"\n    if not isinstance(canvas, MatplotlibCanvas):\n        return\n    canvas.ax.clear()\n    canvas.ax.set_axis_off()\n    canvas.draw()",
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "update_palette_list",
+        "kind": 2,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "def update_palette_list():\n    \"\"\"Update the palette list with current wordlist in robFilesListWidget.\"\"\"\n    if global_vars.ui and hasattr(global_vars.ui, 'robFilesListWidget'):\n        try:\n            from utils.robot_control import load_rob_files\n            load_rob_files()\n            logger.debug(\"Updated robFilesListWidget with current .rob files\")\n        except Exception as e:\n            logger.error(f\"Failed to update robFilesListWidget: {e}\")\ndef calculate_package_centers(center, width, length, rotation, num_packages):",
         "detail": "ui_files.visualization_3d",
         "documentation": {}
     },
@@ -3053,7 +3102,7 @@
         "kind": 2,
         "importPath": "utils.robot_control",
         "description": "utils.robot_control",
-        "peekOfCode": "def display_selected_file(item):\n    \"\"\"Display the selected file in 3D.\n    Args:\n        item (QListWidgetItem): The selected item.\n    \"\"\"\n    if not global_vars.ui:\n        return\n    from ui_files.visualization_3d import MatplotlibCanvas, display_pallet_3d\n    # Get the canvas from the frame\n    canvas = global_vars.ui.MatplotLibCanvasFrame.findChild(MatplotlibCanvas)",
+        "peekOfCode": "def display_selected_file(item):\n    \"\"\"Display the selected file in 3D.\n    Args:\n        item (QListWidgetItem): The selected item.\n    \"\"\"\n    if not hasattr(global_vars, 'canvas') or not global_vars.canvas:\n        logger.error(\"No canvas available for 3D visualization\")\n        return\n    try:\n        from ui_files.visualization_3d import display_pallet_3d",
         "detail": "utils.robot_control",
         "documentation": {}
     },
