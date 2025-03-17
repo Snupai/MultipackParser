@@ -1,7 +1,7 @@
 # Ideas
 
 - [x] keyfile on usb for passwordless settings entry
-- [ ] invert label position
+- [x] invert label position
 - [ ] Klemmung an aus via HMI
 - [ ] generate report
 - [ ] database
