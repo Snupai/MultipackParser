@@ -1,7 +1,8 @@
 # Ideas
 
-- [ ] keyfile on usb for passwordless settings entry
+- [x] keyfile on usb for passwordless settings entry
 - [ ] invert label position
+- [ ] Klemmung an aus via HMI
 - [ ] generate report
 - [ ] database
   - [ ] saving palette data into db
