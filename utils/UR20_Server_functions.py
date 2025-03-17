@@ -140,8 +140,5 @@ def UR20_SetZwischenLageLegen(aktiv: bool):
         1: Zwischenlage aktiv legen
     """
     logger.debug("Setting zwischenlage")
-    if aktiv:
-        global_vars.UR20_zwischenlage = True
-    else:
-        global_vars.UR20_zwischenlage = False
+    global_vars.UR20_zwischenlage = aktiv
     return 1
