@@ -426,6 +426,38 @@
         "documentation": {}
     },
     {
+        "label": "QLabel",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QWidget",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QHBoxLayout",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QApplication",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QDialog",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -834,6 +866,38 @@
         "documentation": {}
     },
     {
+        "label": "Qt",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QTimer",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QPoint",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QSize",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
         "label": "QSettings",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
@@ -891,6 +955,14 @@
     },
     {
         "label": "QRegularExpression",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QTimer",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
         "isExtraImport": true,
@@ -1250,6 +1322,38 @@
         "documentation": {}
     },
     {
+        "label": "QPainter",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QColor",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPen",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPolygon",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
         "label": "QPixmap",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
@@ -1587,6 +1691,14 @@
     },
     {
         "label": "Settings",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "global_vars",
         "importPath": "utils",
         "description": "utils",
         "isExtraImport": true,
@@ -2989,6 +3101,42 @@
         "documentation": {}
     },
     {
+        "label": "ArrowPopup",
+        "kind": 6,
+        "importPath": "utils.notification_popup",
+        "description": "utils.notification_popup",
+        "peekOfCode": "class ArrowPopup(QWidget):\n    \"\"\"\n    A popup widget that displays at the bottom right of the screen with a right-pointing arrow.\n    \"\"\"\n    def __init__(self, parent=None, message=\"\", timeout=0):\n        \"\"\"\n        Initialize the popup with a message and optional timeout.\n        Args:\n            parent: Parent widget\n            message: Message to display in the popup",
+        "detail": "utils.notification_popup",
+        "documentation": {}
+    },
+    {
+        "label": "check_zwischenlage_status",
+        "kind": 2,
+        "importPath": "utils.notification_popup",
+        "description": "utils.notification_popup",
+        "peekOfCode": "def check_zwischenlage_status():\n    \"\"\"\n    Check the zwischenlage status and show/hide popup accordingly.\n    \"\"\"\n    global zwischenlage_popup\n    if global_vars.UR20_zwischenlage is True:\n        if zwischenlage_popup is None or not zwischenlage_popup.isVisible():\n            logger.debug(\"Showing zwischenlage popup\")\n            zwischenlage_popup = ArrowPopup(\n                message=\"Zwischenlage legen und mit Reset bestätigen.\"",
+        "detail": "utils.notification_popup",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.notification_popup",
+        "description": "utils.notification_popup",
+        "peekOfCode": "logger = logging.getLogger(__name__)\nclass ArrowPopup(QWidget):\n    \"\"\"\n    A popup widget that displays at the bottom right of the screen with a right-pointing arrow.\n    \"\"\"\n    def __init__(self, parent=None, message=\"\", timeout=0):\n        \"\"\"\n        Initialize the popup with a message and optional timeout.\n        Args:\n            parent: Parent widget",
+        "detail": "utils.notification_popup",
+        "documentation": {}
+    },
+    {
+        "label": "zwischenlage_popup",
+        "kind": 5,
+        "importPath": "utils.notification_popup",
+        "description": "utils.notification_popup",
+        "peekOfCode": "zwischenlage_popup = None\ndef check_zwischenlage_status():\n    \"\"\"\n    Check the zwischenlage status and show/hide popup accordingly.\n    \"\"\"\n    global zwischenlage_popup\n    if global_vars.UR20_zwischenlage is True:\n        if zwischenlage_popup is None or not zwischenlage_popup.isVisible():\n            logger.debug(\"Showing zwischenlage popup\")\n            zwischenlage_popup = ArrowPopup(",
+        "detail": "utils.notification_popup",
+        "documentation": {}
+    },
+    {
         "label": "Side",
         "kind": 6,
         "importPath": "utils.pallet_data",
@@ -3461,7 +3609,7 @@
         "kind": 2,
         "importPath": "utils.ui_setup",
         "description": "utils.ui_setup",
-        "peekOfCode": "def start_background_tasks():\n    \"\"\"Start background tasks and threads.\"\"\"\n    # Start delay warning sound monitor thread\n    warning_sound_thread = threading.Thread(target=delay_warning_sound)\n    warning_sound_thread.daemon = True\n    warning_sound_thread.start()\ndef setup_window_handling():\n    \"\"\"Set up window close handling and key press events.\"\"\"\n    # Set up window close handling\n    global_vars.allow_close = False",
+        "peekOfCode": "def start_background_tasks():\n    \"\"\"Start background tasks and threads.\"\"\"\n    # Start delay warning sound monitor thread\n    warning_sound_thread = threading.Thread(target=delay_warning_sound)\n    warning_sound_thread.daemon = True\n    warning_sound_thread.start()\n    # Start zwischenlage popup monitor\n    from utils.notification_popup import check_zwischenlage_status\n    # Create a timer to check zwischenlage status every 500ms\n    zwischenlage_timer = QTimer(global_vars.main_window)",
         "detail": "utils.ui_setup",
         "documentation": {}
     },
@@ -3587,7 +3735,7 @@
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_SetZwischenLageLegen(aktiv: bool):\n    \"\"\"Set the zwischenlage.\n    Args:\n        aktiv (bool): Zwischenlage aktiv legen\n    Returns:\n        1: Zwischenlage aktiv legen\n    \"\"\"\n    logger.debug(\"Setting zwischenlage\")\n    global_vars.UR20_zwischenlage = aktiv\n    return 1",
+        "peekOfCode": "def UR20_SetZwischenLageLegen(aktiv: bool):\n    \"\"\"Set the zwischenlage.\n    Args:\n        aktiv (bool): Zwischenlage aktiv legen\n    Returns:\n        1: Zwischenlage aktiv legen\n    \"\"\"\n    logger.info(f\"Setting zwischenlage to {aktiv}\")\n    global_vars.UR20_zwischenlage = bool(aktiv)  # Ensure it's a boolean value\n    # Log additional info for UI state",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },

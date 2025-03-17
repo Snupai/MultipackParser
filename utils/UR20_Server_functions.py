@@ -139,6 +139,13 @@ def UR20_SetZwischenLageLegen(aktiv: bool):
     Returns:
         1: Zwischenlage aktiv legen
     """
-    logger.debug("Setting zwischenlage")
-    global_vars.UR20_zwischenlage = aktiv
+    logger.info(f"Setting zwischenlage to {aktiv}")
+    global_vars.UR20_zwischenlage = bool(aktiv)  # Ensure it's a boolean value
+    
+    # Log additional info for UI state
+    if aktiv:
+        logger.warning("Zwischenlage legen und mit Reset bestätigen.")
+    else:
+        logger.info("Zwischenlage reset confirmed.")
+        
     return 1

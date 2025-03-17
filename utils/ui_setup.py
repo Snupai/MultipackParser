@@ -7,7 +7,7 @@ import hashlib
 import threading
 import logging
 from PySide6.QtWidgets import QMainWindow, QMessageBox
-from PySide6.QtCore import Qt, QRegularExpression
+from PySide6.QtCore import Qt, QRegularExpression, QTimer
 from PySide6.QtGui import QRegularExpressionValidator, QIntValidator
 
 from ui_files.ui_main_window import Ui_Form
@@ -216,6 +216,14 @@ def start_background_tasks():
     warning_sound_thread = threading.Thread(target=delay_warning_sound)
     warning_sound_thread.daemon = True
     warning_sound_thread.start()
+    
+    # Start zwischenlage popup monitor
+    from utils.notification_popup import check_zwischenlage_status
+    
+    # Create a timer to check zwischenlage status every 500ms
+    zwischenlage_timer = QTimer(global_vars.main_window)
+    zwischenlage_timer.timeout.connect(check_zwischenlage_status)
+    zwischenlage_timer.start(500)  # Check every 500ms
 
 def setup_window_handling():
     """Set up window close handling and key press events."""
