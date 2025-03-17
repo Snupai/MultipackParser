@@ -3583,6 +3583,15 @@
         "documentation": {}
     },
     {
+        "label": "UR20_SetZwischenLageLegen",
+        "kind": 2,
+        "importPath": "utils.UR20_Server_functions",
+        "description": "utils.UR20_Server_functions",
+        "peekOfCode": "def UR20_SetZwischenLageLegen(aktiv: bool):\n    \"\"\"Set the zwischenlage.\n    Args:\n        aktiv (bool): Zwischenlage aktiv legen\n    Returns:\n        1: Zwischenlage aktiv legen\n    \"\"\"\n    logger.debug(\"Setting zwischenlage\")\n    if aktiv:\n        global_vars.UR20_zwischenlage = True",
+        "detail": "utils.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
         "label": "logger",
         "kind": 5,
         "importPath": "utils.UR20_Server_functions",

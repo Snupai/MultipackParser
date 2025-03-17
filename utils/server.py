@@ -71,7 +71,9 @@ def server_start() -> Literal[0]:
         server.register_function(UR20.UR20_SetActivePalette, "UR_SetActivePalette")
         server.register_function(UR20.UR20_GetActivePaletteNumber, "UR_GetActivePaletteNumber")
         server.register_function(UR20.UR20_GetPaletteStatus, "UR_GetPaletteStatus")
+        server.register_function(UR20.UR20_SetZwischenLageLegen, "UR_SetZwischenLageLegen")
         
+
     logger.debug(f"Successfully registered functions for {robot_type}")
     
     server.serve_forever()

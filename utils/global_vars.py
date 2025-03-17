@@ -37,6 +37,9 @@ UR20_active_palette: int = 0
 UR20_palette1_empty: bool = False
 UR20_palette2_empty: bool = False
 
+# UR20 zwischenlage
+UR20_zwischenlage: Optional[bool] = None
+
 # Audio
 audio_muted: bool = False
 

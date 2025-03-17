@@ -129,3 +129,19 @@ def UR20_GetPaletteStatus(pallet_number) -> Union[Literal[1], Literal[0], Litera
         case _:
             logger.error(f"Invalid palette number: {pallet_number}")
             return -1
+        
+def UR20_SetZwischenLageLegen(aktiv: bool):
+    """Set the zwischenlage.
+
+    Args:
+        aktiv (bool): Zwischenlage aktiv legen
+
+    Returns:
+        1: Zwischenlage aktiv legen
+    """
+    logger.debug("Setting zwischenlage")
+    if aktiv:
+        global_vars.UR20_zwischenlage = True
+    else:
+        global_vars.UR20_zwischenlage = False
+    return 1
