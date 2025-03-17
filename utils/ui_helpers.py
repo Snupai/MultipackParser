@@ -600,4 +600,25 @@ class CustomDoubleValidator(QDoubleValidator):
         Returns:
             str: The fixed input.
         """
-        return input.replace(',', '.') 
+        return input.replace(',', '.')
+
+def test_zwischenlage_popup(enable: bool = True):
+    """
+    Test function to show or hide the zwischenlage popup.
+    
+    Args:
+        enable (bool): Whether to show (True) or hide (False) the popup
+    """
+    from utils import global_vars
+    # Set the global variable
+    global_vars.UR20_zwischenlage = enable
+    
+    # Force an immediate check without waiting for the timer
+    from utils.notification_popup import check_zwischenlage_status
+    check_zwischenlage_status()
+    
+    # Log the action
+    logger.debug(f"Test zwischenlage popup: set to {enable}")
+    
+    # Return a confirmation message that can be shown to the user
+    return f"Zwischenlage popup {'enabled' if enable else 'disabled'}" 

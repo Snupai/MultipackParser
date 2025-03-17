@@ -3024,7 +3024,7 @@
         "kind": 5,
         "importPath": "utils.global_vars",
         "description": "utils.global_vars",
-        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nsettings_file: str = 'MultipackParser.conf'\nVERSION: str = '1.5.8'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0",
+        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nsettings_file: str = 'MultipackParser.conf'\nVERSION: str = '1.5.8'\n# Network settings\nrobot_ip: str = 'localhost' # '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0",
         "detail": "utils.global_vars",
         "documentation": {}
     },
@@ -3033,7 +3033,7 @@
         "kind": 5,
         "importPath": "utils.global_vars",
         "description": "utils.global_vars",
-        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nsettings_file: str = 'MultipackParser.conf'\nVERSION: str = '1.5.8'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False",
+        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nsettings_file: str = 'MultipackParser.conf'\nVERSION: str = '1.5.8'\n# Network settings\nrobot_ip: str = 'localhost' # '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False",
         "detail": "utils.global_vars",
         "documentation": {}
     },
@@ -3042,7 +3042,7 @@
         "kind": 5,
         "importPath": "utils.global_vars",
         "description": "utils.global_vars",
-        "peekOfCode": "allow_close = False\n# Variables\nsettings_file: str = 'MultipackParser.conf'\nVERSION: str = '1.5.8'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False\nUR20_palette2_empty: bool = False",
+        "peekOfCode": "allow_close = False\n# Variables\nsettings_file: str = 'MultipackParser.conf'\nVERSION: str = '1.5.8'\n# Network settings\nrobot_ip: str = 'localhost' # '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False\nUR20_palette2_empty: bool = False",
         "detail": "utils.global_vars",
         "documentation": {}
     },
@@ -3114,7 +3114,7 @@
         "kind": 2,
         "importPath": "utils.notification_popup",
         "description": "utils.notification_popup",
-        "peekOfCode": "def check_zwischenlage_status():\n    \"\"\"\n    Check the zwischenlage status and show/hide popup accordingly.\n    \"\"\"\n    global zwischenlage_popup\n    if global_vars.UR20_zwischenlage is True:\n        if zwischenlage_popup is None or not zwischenlage_popup.isVisible():\n            logger.debug(\"Showing zwischenlage popup\")\n            zwischenlage_popup = ArrowPopup(\n                message=\"Zwischenlage legen und mit Reset bestätigen.\"",
+        "peekOfCode": "def check_zwischenlage_status():\n    \"\"\"\n    Check the zwischenlage status and show/hide popup accordingly.\n    \"\"\"\n    global zwischenlage_popup\n    if global_vars.UR20_zwischenlage is True:\n        if zwischenlage_popup is None or not zwischenlage_popup.isVisible():\n            logger.debug(\"Showing zwischenlage popup\")\n            # Create popup with main window as parent\n            zwischenlage_popup = ArrowPopup(",
         "detail": "utils.notification_popup",
         "documentation": {}
     },
@@ -3132,7 +3132,7 @@
         "kind": 5,
         "importPath": "utils.notification_popup",
         "description": "utils.notification_popup",
-        "peekOfCode": "zwischenlage_popup = None\ndef check_zwischenlage_status():\n    \"\"\"\n    Check the zwischenlage status and show/hide popup accordingly.\n    \"\"\"\n    global zwischenlage_popup\n    if global_vars.UR20_zwischenlage is True:\n        if zwischenlage_popup is None or not zwischenlage_popup.isVisible():\n            logger.debug(\"Showing zwischenlage popup\")\n            zwischenlage_popup = ArrowPopup(",
+        "peekOfCode": "zwischenlage_popup = None\ndef check_zwischenlage_status():\n    \"\"\"\n    Check the zwischenlage status and show/hide popup accordingly.\n    \"\"\"\n    global zwischenlage_popup\n    if global_vars.UR20_zwischenlage is True:\n        if zwischenlage_popup is None or not zwischenlage_popup.isVisible():\n            logger.debug(\"Showing zwischenlage popup\")\n            # Create popup with main window as parent",
         "detail": "utils.notification_popup",
         "documentation": {}
     },
@@ -3547,6 +3547,15 @@
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
         "peekOfCode": "def handle_scanner_status(message: str, image_path: str):\n    \"\"\"Handle scanner status updates from server thread\n    Args:\n        message (str): The message from the scanner.\n        image_path (str): The path to the image from the scanner.\n    \"\"\"\n    from PySide6.QtGui import QPixmap\n    logger.debug(f\"Received scanner status - Message: {message}, Image: {image_path}\")\n    if message != \"True,True,True\":\n        logger.warning(\"Scanner detected safety violation\")",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "test_zwischenlage_popup",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def test_zwischenlage_popup(enable: bool = True):\n    \"\"\"\n    Test function to show or hide the zwischenlage popup.\n    Args:\n        enable (bool): Whether to show (True) or hide (False) the popup\n    \"\"\"\n    from utils import global_vars\n    # Set the global variable\n    global_vars.UR20_zwischenlage = enable\n    # Force an immediate check without waiting for the timer",
         "detail": "utils.ui_helpers",
         "documentation": {}
     },

@@ -25,13 +25,22 @@ class ArrowPopup(QWidget):
             message: Message to display in the popup
             timeout: Time in milliseconds before the popup disappears (0 = no timeout)
         """
+        # Set global_vars.main_window as parent if no parent is provided
+        if parent is None and global_vars.main_window is not None:
+            parent = global_vars.main_window
+        
         super().__init__(parent)
         
+        # Set window flags to ensure it stays on top
         self.setWindowFlags(
             Qt.WindowType.Tool |
             Qt.WindowType.FramelessWindowHint |
-            Qt.WindowType.WindowStaysOnTopHint
+            Qt.WindowType.WindowStaysOnTopHint |
+            Qt.WindowType.X11BypassWindowManagerHint
         )
+        
+        # Set attribute to ensure it stays on top
+        self.setAttribute(Qt.WidgetAttribute.WA_ShowWithoutActivating)
         
         # Set background color to a semi-transparent red to indicate an error
         self.setStyleSheet("""
@@ -46,6 +55,8 @@ class ArrowPopup(QWidget):
         
         self.message = message
         self.arrow_size = 20
+        self.is_blinking = False
+        self.blink_state = True
         
         # Create layout
         self.layout = QHBoxLayout(self)
@@ -63,6 +74,70 @@ class ArrowPopup(QWidget):
         
         # Position the widget at the bottom right of the screen
         self.reposition()
+        
+        # Create blink timer
+        self.blink_timer = QTimer(self)
+        self.blink_timer.timeout.connect(self.blink)
+        self.start_blinking()
+    
+    def start_blinking(self):
+        """Start the blinking effect."""
+        if not self.is_blinking:
+            self.is_blinking = True
+            self.blink_timer.start(500)  # Blink every 500ms
+    
+    def stop_blinking(self):
+        """Stop the blinking effect."""
+        if self.is_blinking:
+            self.is_blinking = False
+            self.blink_timer.stop()
+            self.setStyleSheet("""
+                QWidget {
+                    background-color: rgba(200, 50, 50, 220);
+                    border-radius: 10px;
+                    color: white;
+                    font-weight: bold;
+                    padding: 12px;
+                }
+            """)
+    
+    def blink(self):
+        """Toggle the blink state."""
+        self.blink_state = not self.blink_state
+        if self.blink_state:
+            self.setStyleSheet("""
+                QWidget {
+                    background-color: rgba(200, 50, 50, 220);
+                    border-radius: 10px;
+                    color: white;
+                    font-weight: bold;
+                    padding: 12px;
+                }
+            """)
+        else:
+            self.setStyleSheet("""
+                QWidget {
+                    background-color: rgba(255, 100, 100, 220);
+                    border-radius: 10px;
+                    color: white;
+                    font-weight: bold;
+                    padding: 12px;
+                }
+            """)
+        # Make sure it stays on top during blinking
+        self.raise_()
+    
+    def showEvent(self, event):
+        """Custom show event to ensure the widget is raised to the top."""
+        super().showEvent(event)
+        # Make sure it's at the front
+        self.raise_()
+        self.activateWindow()
+    
+    def closeEvent(self, event):
+        """Custom close event to ensure the blink timer is stopped."""
+        self.stop_blinking()
+        super().closeEvent(event)
     
     def reposition(self):
         """Position the popup at the bottom right of the screen."""
@@ -121,10 +196,19 @@ def check_zwischenlage_status():
     if global_vars.UR20_zwischenlage is True:
         if zwischenlage_popup is None or not zwischenlage_popup.isVisible():
             logger.debug("Showing zwischenlage popup")
+            # Create popup with main window as parent
             zwischenlage_popup = ArrowPopup(
+                parent=global_vars.main_window,
                 message="Zwischenlage legen und mit Reset bestätigen."
             )
             zwischenlage_popup.show()
+            # Ensure it's shown on top
+            zwischenlage_popup.raise_()
+            zwischenlage_popup.activateWindow()
+        else:
+            # Ensure existing popup is visible and on top
+            zwischenlage_popup.raise_()
+            zwischenlage_popup.activateWindow()
     elif zwischenlage_popup is not None and zwischenlage_popup.isVisible():
         logger.debug("Hiding zwischenlage popup")
         zwischenlage_popup.close()

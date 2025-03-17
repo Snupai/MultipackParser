@@ -30,7 +30,7 @@ settings_file: str = 'MultipackParser.conf'
 VERSION: str = '1.5.8'
 
 # Network settings
-robot_ip: str = '192.168.0.1'  # DO NOT CHANGE
+robot_ip: str = 'localhost' # '192.168.0.1'  # DO NOT CHANGE
 
 # UR20 palette place
 UR20_active_palette: int = 0

@@ -224,6 +224,9 @@ def start_background_tasks():
     zwischenlage_timer = QTimer(global_vars.main_window)
     zwischenlage_timer.timeout.connect(check_zwischenlage_status)
     zwischenlage_timer.start(500)  # Check every 500ms
+    
+    # Check zwischenlage status immediately (don't wait for timer)
+    check_zwischenlage_status()
 
 def setup_window_handling():
     """Set up window close handling and key press events."""
