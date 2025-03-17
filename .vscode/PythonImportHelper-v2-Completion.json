@@ -2534,7 +2534,7 @@
         "kind": 5,
         "importPath": "hooks.runtime_hook",
         "description": "hooks.runtime_hook",
-        "peekOfCode": "os.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\n# Ensure Qt plugins are found by setting the necessary paths\nif getattr(sys, 'frozen', False):\n    # Running as PyInstaller bundle\n    bundle_dir = sys._MEIPASS\n    os.environ[\"QT_PLUGIN_PATH\"] = os.path.join(bundle_dir, \"PySide6\", \"plugins\")\n    # Additional Qt environment variables that might help\n    os.environ[\"QT_QPA_PLATFORM_PLUGIN_PATH\"] = os.path.join(bundle_dir, \"PySide6\", \"plugins\", \"platforms\")\n    os.environ[\"QML2_IMPORT_PATH\"] = os.path.join(bundle_dir, \"PySide6\", \"qml\")",
+        "peekOfCode": "os.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\n# Inform the user about the environment setup\nprint(\"PyInstaller runtime hook: Setting QT_IM_MODULE=qtvirtualkeyboard\")\n# Ensure Qt plugins are found by setting the necessary paths\nif getattr(sys, 'frozen', False):\n    try:\n        # Running as PyInstaller bundled app\n        bundle_dir = sys._MEIPASS\n        # Set up PySide6 plugin paths\n        plugins_dir = os.path.join(bundle_dir, 'PySide6', 'plugins')",
         "detail": "hooks.runtime_hook",
         "documentation": {}
     },
