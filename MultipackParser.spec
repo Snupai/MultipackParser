@@ -12,28 +12,10 @@ qt_plugins = [
     ('PySide6/plugins/virtualkeyboard', '.'),
 ]
 
-# Collect all PySide6 dependencies needed for the application
-qt_data_files = []
-qt_binaries = []
-qt_hiddenimports = []
-
-# Collect essential Qt modules
-for module in ['PySide6.QtCore', 'PySide6.QtGui', 'PySide6.QtWidgets', 'PySide6.QtQml', 'PySide6.QtQuick']:
-    imports, datas, binaries = collect_all(module)
-    qt_hiddenimports.extend(imports)
-    qt_data_files.extend(datas)
-    qt_binaries.extend(binaries)
-
-# Try to collect QtVirtualKeyboard related files, but don't fail if not found
-try:
-    vkb_imports, vkb_datas, vkb_binaries = collect_all('PySide6.QtVirtualKeyboard')
-    qt_hiddenimports.extend(vkb_imports)
-    qt_data_files.extend(vkb_datas)
-    qt_binaries.extend(vkb_binaries)
-except ImportError:
-    print("INFO: PySide6.QtVirtualKeyboard not found, but we'll continue without it")
-    # The virtual keyboard will be enabled via QT_IM_MODULE environment variable
-    # in the runtime hook
+# Collect all Qt virtual keyboard modules and data
+qt_virtual_keyboard_binaries = []
+qt_virtual_keyboard_datas = []
+qt_virtual_keyboard_hiddenimports = []
 
 # Check if we're on Linux ARM platform
 is_arm_linux = False
@@ -44,16 +26,19 @@ if sys.platform.startswith('linux'):
         import platform
         is_arm_linux = 'arm' in platform.machine().lower()
 
+# Collect all QtVirtualKeyboard related files and modules
+vkb_imports, vkb_datas, vkb_binaries = collect_all('PySide6.QtVirtualKeyboard')
+qt_virtual_keyboard_hiddenimports.extend(vkb_imports)
+qt_virtual_keyboard_datas.extend(vkb_datas)
+qt_virtual_keyboard_binaries.extend(vkb_binaries)
+
 # Create the analysis object with all our collected data
 a = Analysis(
     ['main.py'],
     pathex=[],
-    binaries=qt_binaries,
-    datas=qt_data_files,
-    hiddenimports=qt_hiddenimports + [
-        'matplotlib',
-        'matplotlib.backends.backend_qtagg',
-    ],
+    binaries=qt_virtual_keyboard_binaries,
+    datas=qt_virtual_keyboard_datas,
+    hiddenimports=['PySide6.QtVirtualKeyboard'] + qt_virtual_keyboard_hiddenimports,
     hookspath=['hooks'],
     hooksconfig={},
     runtime_hooks=['hooks/runtime_hook.py'],
