@@ -38,7 +38,7 @@ a = Analysis(
     pathex=[],
     binaries=qt_virtual_keyboard_binaries,
     datas=qt_virtual_keyboard_datas,
-    hiddenimports=['PySide6.QtVirtualKeyboard'] + qt_virtual_keyboard_hiddenimports,
+    hiddenimports=qt_virtual_keyboard_hiddenimports,
     hookspath=['hooks'],
     hooksconfig={},
     runtime_hooks=['hooks/runtime_hook.py'],
@@ -73,5 +73,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='path_to_your_icon.ico',
+    icon=,
 ) 
