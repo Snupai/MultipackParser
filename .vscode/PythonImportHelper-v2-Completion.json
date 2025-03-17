@@ -1886,6 +1886,14 @@
         "documentation": {}
     },
     {
+        "label": "load_selected_file",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
         "label": "subprocess",
         "kind": 6,
         "isExtraImport": true,
@@ -3107,6 +3115,15 @@
         "documentation": {}
     },
     {
+        "label": "load_selected_file",
+        "kind": 2,
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "peekOfCode": "def load_selected_file():\n    \"\"\"Load the currently selected file from the robFilesListWidget.\n    This function gets the currently selected item from the robFilesListWidget,\n    sets its text as the value of the EingabePallettenplan input field,\n    and then calls the load() function to load the palette plan.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    # Get the selected item from the list widget",
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
         "label": "logger",
         "kind": 5,
         "importPath": "utils.robot_control",
@@ -3417,7 +3434,7 @@
         "kind": 2,
         "importPath": "utils.ui_setup",
         "description": "utils.ui_setup",
-        "peekOfCode": "def connect_signal_handlers():\n    \"\"\"Connect all signal handlers.\"\"\"\n    # Connect main UI signals\n    global_vars.ui.EingabePallettenplan.returnPressed.connect(load)\n    global_vars.ui.openExperimentalTab.clicked.connect(lambda: open_page(Page.EXPERIMENTAL_PAGE))\n    global_vars.ui.ButtonZurueck_8.clicked.connect(lambda: open_page(Page.MAIN_PAGE))\n    global_vars.ui.robFilesListWidget.itemClicked.connect(lambda item: display_selected_file(item))\n    global_vars.ui.deselectRobFile.clicked.connect(lambda: clear_canvas(global_vars.canvas))\n    # Connect all buttons\n    global_vars.ui.ButtonSettings.clicked.connect(check_key_or_password)",
+        "peekOfCode": "def connect_signal_handlers():\n    \"\"\"Connect all signal handlers.\"\"\"\n    # Connect main UI signals\n    global_vars.ui.EingabePallettenplan.returnPressed.connect(load)\n    global_vars.ui.openExperimentalTab.clicked.connect(lambda: open_page(Page.EXPERIMENTAL_PAGE))\n    global_vars.ui.ButtonZurueck_8.clicked.connect(lambda: open_page(Page.MAIN_PAGE))\n    global_vars.ui.robFilesListWidget.itemClicked.connect(lambda item: display_selected_file(item))\n    global_vars.ui.deselectRobFile.clicked.connect(lambda: clear_canvas(global_vars.canvas))\n    global_vars.ui.LadePallettenplan_2.clicked.connect(load_selected_file)\n    # Connect all buttons",
         "detail": "utils.ui_setup",
         "documentation": {}
     },

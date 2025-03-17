@@ -679,14 +679,26 @@ class Ui_Form(object):
         self.robFilesListWidget = QListWidget(self.Experimental)
         self.robFilesListWidget.setObjectName(u"robFilesListWidget")
         self.robFilesListWidget.setGeometry(QRect(100, 30, 181, 641))
+        
         self.deselectRobFile = QPushButton(self.Experimental)
         self.deselectRobFile.setObjectName(u"deselectRobFile")
         self.deselectRobFile.setGeometry(QRect(100, 680, 181, 24))
+        
         self.MatplotLibCanvasFrame = QFrame(self.Experimental)
         self.MatplotLibCanvasFrame.setObjectName(u"MatplotLibCanvasFrame")
         self.MatplotLibCanvasFrame.setGeometry(QRect(290, 30, 971, 671))
         self.MatplotLibCanvasFrame.setFrameShape(QFrame.StyledPanel)
         self.MatplotLibCanvasFrame.setFrameShadow(QFrame.Raised)
+        self.LadePallettenplan_2 = QPushButton(self.Experimental)
+        self.LadePallettenplan_2.setObjectName(u"LadePallettenplan_2")
+        self.LadePallettenplan_2.setGeometry(QRect(20, 30, 60, 60))
+        sizePolicy1.setHeightForWidth(self.LadePallettenplan_2.sizePolicy().hasHeightForWidth())
+        self.LadePallettenplan_2.setSizePolicy(sizePolicy1)
+        self.LadePallettenplan_2.setCursor(QCursor(Qt.PointingHandCursor))
+        self.LadePallettenplan_2.setFocusPolicy(Qt.StrongFocus)
+        self.LadePallettenplan_2.setIcon(icon1)
+        self.LadePallettenplan_2.setIconSize(QSize(60, 60))
+        self.LadePallettenplan_2.setFlat(True)
         self.stackedWidget.addWidget(self.Experimental)
 
         self.retranslateUi(Form)
@@ -789,5 +801,6 @@ class Ui_Form(object):
         self.availableRobFiles.setText(QCoreApplication.translate("Form", u"Available .rob files", None))
         self.ButtonZurueck_8.setText("")
         self.deselectRobFile.setText(QCoreApplication.translate("Form", u"Deselect", None))
+        self.LadePallettenplan_2.setText("")
     # retranslateUi
 

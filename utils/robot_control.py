@@ -194,3 +194,30 @@ def display_selected_file(item):
         display_pallet_3d(global_vars.canvas, file_name)
     except Exception as e:
         logger.error(f"Failed to display file: {e}") 
+
+def load_selected_file():
+    """Load the currently selected file from the robFilesListWidget.
+    
+    This function gets the currently selected item from the robFilesListWidget,
+    sets its text as the value of the EingabePallettenplan input field,
+    and then calls the load() function to load the palette plan.
+    """
+    if not global_vars.ui:
+        logger.error("UI not initialized")
+        return
+        
+    # Get the selected item from the list widget
+    selected_items = global_vars.ui.robFilesListWidget.selectedItems()
+    if not selected_items:
+        logger.warning("No palette plan selected in the list")
+        return
+        
+    # Get the text (name) of the selected item
+    file_name = selected_items[0].text()
+    logger.info(f"Loading palette plan: {file_name}")
+    
+    # Set the value in the input field
+    global_vars.ui.EingabePallettenplan.setText(file_name)
+    
+    # Call the load function to load the palette plan
+    load() 

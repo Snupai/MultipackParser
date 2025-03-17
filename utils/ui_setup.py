@@ -18,7 +18,7 @@ from utils.ui_helpers import (CustomDoubleValidator, update_status_label, handle
                              open_file, save_open_file, execute_command, open_folder_dialog, 
                              open_file_dialog, set_settings_line_edits, check_key_or_password)
 from utils.robot_control import (load_rob_files, display_selected_file, load, 
-                                send_cmd_play, send_cmd_pause, send_cmd_stop)
+                                send_cmd_play, send_cmd_pause, send_cmd_stop, load_selected_file)
 from utils.server import server_thread, server_stop
 from utils.audio import (spawn_play_stepback_warning_thread, kill_play_stepback_warning_thread, 
                         set_audio_volume, delay_warning_sound)
@@ -91,6 +91,7 @@ def connect_signal_handlers():
     global_vars.ui.ButtonZurueck_8.clicked.connect(lambda: open_page(Page.MAIN_PAGE))
     global_vars.ui.robFilesListWidget.itemClicked.connect(lambda item: display_selected_file(item))
     global_vars.ui.deselectRobFile.clicked.connect(lambda: clear_canvas(global_vars.canvas))
+    global_vars.ui.LadePallettenplan_2.clicked.connect(load_selected_file)
 
     # Connect all buttons
     global_vars.ui.ButtonSettings.clicked.connect(check_key_or_password)
