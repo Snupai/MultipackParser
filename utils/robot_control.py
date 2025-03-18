@@ -95,7 +95,6 @@ def load() -> None:
         logger.error(f"Error reading file for {Artikelnummer=} no file found")
         update_status_label("Kein Plan gefunden", "red", True)
     else:
-
         # Enable UI elements and update values only if UI exists
         if global_vars.ui:
             logger.debug(f"File for {Artikelnummer=} found")
