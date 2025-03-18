@@ -3231,7 +3231,7 @@
         "kind": 2,
         "importPath": "utils.robot_control",
         "description": "utils.robot_control",
-        "peekOfCode": "def load() -> None:\n    \"\"\"Load the pallet plan from file.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):\n        logger.error(\"UI not initialized\")\n        return\n    from utils.ui_helpers import update_status_label\n    from utils import UR_Common_functions as UR\n    # Store the text first, then manually clear focus to avoid keyboard issues\n    Artikelnummer = global_vars.ui.EingabePallettenplan.text()",
+        "peekOfCode": "def load() -> None:\n    \"\"\"Load the pallet plan from file.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):\n        logger.error(\"UI not initialized\")\n        return\n    interface_enabled = False\n    from utils.ui_helpers import update_status_label\n    from utils import UR_Common_functions as UR\n    # Store the text first, then manually clear focus to avoid keyboard issues",
         "detail": "utils.robot_control",
         "documentation": {}
     },
@@ -3745,6 +3745,15 @@
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
         "peekOfCode": "def UR20_SetZwischenLageLegen(aktiv: bool):\n    \"\"\"Set the zwischenlage.\n    Args:\n        aktiv (bool): Zwischenlage aktiv legen\n    Returns:\n        1: Zwischenlage aktiv legen\n    \"\"\"\n    logger.info(f\"Setting zwischenlage to {aktiv}\")\n    global_vars.UR20_zwischenlage = bool(aktiv)  # Ensure it's a boolean value\n    # Log additional info for UI state",
+        "detail": "utils.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_GetKlemmungStatus",
+        "kind": 2,
+        "importPath": "utils.UR20_Server_functions",
+        "description": "utils.UR20_Server_functions",
+        "peekOfCode": "def UR20_GetKlemmungStatus() -> bool:\n    \"\"\"Get the klemmung status.\n    Returns:\n        bool: The status of the klemmung.\n    \"\"\"\n    return global_vars.ui.checkBoxKlemmung.isChecked()",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },

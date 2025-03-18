@@ -149,3 +149,11 @@ def UR20_SetZwischenLageLegen(aktiv: bool):
         logger.info("Zwischenlage reset confirmed.")
         
     return 1
+
+def UR20_GetKlemmungStatus() -> bool:
+    """Get the klemmung status.
+
+    Returns:
+        bool: The status of the klemmung.
+    """
+    return global_vars.ui.checkBoxKlemmung.isChecked()

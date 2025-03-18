@@ -317,7 +317,10 @@
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
-    <widget class="QLabel" name="label_9">
+    <widget class="QLabel" name="label_Kartonhoehe_mm">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>790</x>
@@ -339,7 +342,10 @@
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;mm&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_10">
+    <widget class="QLabel" name="label_Gewicht_kg">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>790</x>
@@ -395,7 +401,10 @@
       <string>z.B: 699-00120</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_4">
+    <widget class="QLabel" name="label_Gewicht">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>80</x>
@@ -480,7 +489,10 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="label_Startlage">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>80</x>
@@ -548,7 +560,10 @@
       <number>1</number>
      </property>
     </widget>
-    <widget class="QLabel" name="label_3">
+    <widget class="QLabel" name="label_Kartonhoehe">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>80</x>
@@ -730,9 +745,9 @@
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>360</y>
+       <y>370</y>
        <width>251</width>
-       <height>61</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="font">
@@ -751,20 +766,51 @@
       <string>Invert Label</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="checkBoxKlemmung">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>410</y>
+       <width>251</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>RobotoMono Nerd Font</family>
+       <pointsize>16</pointsize>
+      </font>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text">
+      <string>Klemmung aktiv</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
     <zorder>checkBoxEinzelpaket</zorder>
     <zorder>ButtonDatenSenden</zorder>
     <zorder>ButtonOpenParameterRoboter</zorder>
     <zorder>label_7</zorder>
     <zorder>LabelPalletenplanInfo</zorder>
-    <zorder>label_9</zorder>
-    <zorder>label_10</zorder>
+    <zorder>label_Kartonhoehe_mm</zorder>
+    <zorder>label_Gewicht_kg</zorder>
     <zorder>EingabePallettenplan</zorder>
-    <zorder>label_4</zorder>
+    <zorder>label_Gewicht</zorder>
     <zorder>label</zorder>
     <zorder>LadePallettenplan</zorder>
-    <zorder>label_2</zorder>
+    <zorder>label_Startlage</zorder>
     <zorder>EingabeStartlage</zorder>
-    <zorder>label_3</zorder>
+    <zorder>label_Kartonhoehe</zorder>
     <zorder>EingabeKartonGewicht</zorder>
     <zorder>EingabeKartonhoehe</zorder>
     <zorder>line</zorder>
@@ -774,6 +820,7 @@
     <zorder>pushButtonVolumeOnOff</zorder>
     <zorder>openExperimentalTab</zorder>
     <zorder>checkBoxLabelInvert</zorder>
+    <zorder>checkBoxKlemmung</zorder>
    </widget>
    <widget class="QWidget" name="RoboParameter">
     <widget class="QTabWidget" name="tabWidget">

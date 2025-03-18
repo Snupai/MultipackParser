@@ -72,7 +72,7 @@ def server_start() -> Literal[0]:
         server.register_function(UR20.UR20_GetActivePaletteNumber, "UR_GetActivePaletteNumber")
         server.register_function(UR20.UR20_GetPaletteStatus, "UR_GetPaletteStatus")
         server.register_function(UR20.UR20_SetZwischenLageLegen, "UR_SetZwischenLageLegen")
-        
+        server.register_function(UR20.UR20_GetKlemmungStatus, "UR_GetKlemmungStatus")
 
     logger.debug(f"Successfully registered functions for {robot_type}")
     
