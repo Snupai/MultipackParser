@@ -1,6 +1,8 @@
 import socket
 import logging
+import os
 from utils import global_vars
+from utils.database import save_to_database, find_file_in_database
 
 logger = logging.getLogger(__name__)
 
@@ -142,19 +144,53 @@ def load() -> None:
     global_vars.ui.label_Gewicht_kg.setEnabled(interface_enabled)
     global_vars.ui.label_Kartonhoehe_mm.setEnabled(interface_enabled)
 
+def update_database_from_usb() -> None:
+    """Update the database with any new or modified palette plans from the USB stick.
+    """
+    if not os.path.exists(global_vars.PATH_USB_STICK):
+        logger.error(f"USB stick path {global_vars.PATH_USB_STICK} does not exist")
+        return
+        
+    for file in os.listdir(global_vars.PATH_USB_STICK):
+        if file.endswith(".rob"):
+            file_path = os.path.join(global_vars.PATH_USB_STICK, file)
+            file_timestamp = os.path.getmtime(file_path)
+            
+            # Check if file exists in database and if it's newer
+            file_info = find_file_in_database(file)
+            if not file_info or file_info["timestamp"] < file_timestamp:
+                logger.info(f"Updating database with {file}")
+                try:
+                    # Load the file data first
+                    from utils import UR_Common_functions as UR
+                    UR.UR_SetFileName(file[:-4])  # Remove .rob extension
+                    if UR.UR_ReadDataFromUsbStick() == 0:
+                        # Save to database if loading was successful
+                        save_to_database(file_path=file_path, file_timestamp=file_timestamp)
+                        logger.info(f"Successfully updated database with {file}")
+                    else:
+                        logger.error(f"Failed to load {file} for database update")
+                except Exception as e:
+                    logger.error(f"Error updating database with {file}: {e}")
+
 def load_wordlist() -> list:
-    """Load the wordlist from the USB stick.
+    """Load the wordlist from the USB stick and update the database.
 
     Returns:
         list: A list of wordlist items.
     """
-    import os
     wordlist = []
     count = 0
+    
+    # First update the database with any new or modified files
+    update_database_from_usb()
+    
+    # Then load the wordlist
     for file in os.listdir(global_vars.PATH_USB_STICK):
         if file.endswith(".rob"):
             wordlist.append(file[:-4])
             count = count + 1
+            
     logger.debug(f"Wordlist {count=}")
     if hasattr(global_vars, 'settings'):
         global_vars.settings.settings['info']['number_of_plans'] = count

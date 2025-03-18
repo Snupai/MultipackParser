@@ -3,6 +3,8 @@
 # This file will be imported into main.py to clean up the code
 
 from typing import Literal, List, Optional, Union, Tuple
+
+from utils.database import load_from_database
 from . import global_vars
 
 logger = global_vars.logger
@@ -29,6 +31,7 @@ def UR_ReadDataFromUsbStick() -> Union[Literal[0], Literal[1]]:
     Returns:
         Union[Literal[0], Literal[1]]: 1 if the data was read successfully, 0 otherwise.
     """
+    
     global_vars.g_Daten = []
     global_vars.g_LageZuordnung = []
     global_vars.g_PaketPos = []
@@ -40,86 +43,81 @@ def UR_ReadDataFromUsbStick() -> Union[Literal[0], Literal[1]]:
     if global_vars.FILENAME is None:
         logger.error("No filename set")
         return 0
-        
-    file_path = global_vars.PATH_USB_STICK + global_vars.FILENAME
-    logger.debug(f"Trying to read file {file_path}")
+    logger.debug(f"Trying to read file {global_vars.FILENAME}")
     
     try:
-        with open(file_path) as file:
-            for line in file:
-                tmpList = [int(x) for x in line.strip().split('\t')]
-                global_vars.g_Daten.append(tmpList)
- 
- 
-            pl = global_vars.g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_LENGTH]
-            pw = global_vars.g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_WIDTH]
-            ph = global_vars.g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_HEIGHT]
-            global_vars.g_PalettenDim = [pl, pw, ph]
-            
-            #Kartondaten
-            pl = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_LENGTH]
-            pw = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_WIDTH]
-            ph = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_HEIGHT]
-            pr = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_GAP]
-            global_vars.g_PaketDim = [pl, pw, ph, pr]
-            
-            Check_Einzelpaket_längs_greifen(pl)
+        global_vars.g_Daten, *_ = load_from_database(file_name=global_vars.FILENAME)
+    
+    
+        pl = global_vars.g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_LENGTH]
+        pw = global_vars.g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_WIDTH]
+        ph = global_vars.g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_HEIGHT]
+        global_vars.g_PalettenDim = [pl, pw, ph]
+        
+        #Kartondaten
+        pl = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_LENGTH]
+        pw = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_WIDTH]
+        ph = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_HEIGHT]
+        pr = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_GAP]
+        global_vars.g_PaketDim = [pl, pw, ph, pr]
+        
+        Check_Einzelpaket_längs_greifen(pl)
 
-            #Lagearten
-            global_vars.g_LageArten = global_vars.g_Daten[global_vars.LI_LAYERTYPES][0]
+        #Lagearten
+        global_vars.g_LageArten = global_vars.g_Daten[global_vars.LI_LAYERTYPES][0]
+        
+        #Lagenzuordnung
+        anzLagen = global_vars.g_Daten[global_vars.LI_NUMBER_OF_LAYERS][0]
+        global_vars.g_AnzLagen = anzLagen
+
+
+        index       = global_vars.LI_NUMBER_OF_LAYERS + 2
+        end_index   = index + anzLagen
+
+
+        while index < end_index:
             
-            #Lagenzuordnung
-            anzLagen = global_vars.g_Daten[global_vars.LI_NUMBER_OF_LAYERS][0]
-            global_vars.g_AnzLagen = anzLagen
- 
- 
-            index       = global_vars.LI_NUMBER_OF_LAYERS + 2
-            end_index   = index + anzLagen
- 
- 
-            while index < end_index:
-                
-                lagenart = global_vars.g_Daten[index][0]
-                zwischenlagen = global_vars.g_Daten[index][1]
- 
-                global_vars.g_LageZuordnung.append(lagenart)
-                global_vars.g_Zwischenlagen.append(zwischenlagen)
+            lagenart = global_vars.g_Daten[index][0]
+            zwischenlagen = global_vars.g_Daten[index][1]
+
+            global_vars.g_LageZuordnung.append(lagenart)
+            global_vars.g_Zwischenlagen.append(zwischenlagen)
+        
+            index = index +1
+        
+        #Paketpositionen
+        ersteLage   = 4 + (anzLagen + 1)
+        index       = ersteLage
+        anzahlPaket = global_vars.g_Daten[index][0]
+        global_vars.g_AnzahlPakete = anzahlPaket #Achtung veraltet - Anzahl der Picks bei Multipick
+        index_paketZuordnung = index
+        
+        for i in range(global_vars.g_LageArten):
             
-                index = index +1
+            anzahlPick = global_vars.g_Daten[index_paketZuordnung][0]
+            global_vars.g_PaketeZuordnung.append(anzahlPick)
+            index_paketZuordnung = index_paketZuordnung + anzahlPick + 1
             
-            #Paketpositionen
-            ersteLage   = 4 + (anzLagen + 1)
-            index       = ersteLage
-            anzahlPaket = global_vars.g_Daten[index][0]
-            global_vars.g_AnzahlPakete = anzahlPaket #Achtung veraltet - Anzahl der Picks bei Multipick
-            index_paketZuordnung = index
+        
+        for i in range(global_vars.g_LageArten):            
+            index = index + 1 #Überspringe die Zeile mit der Anzahl der Pakete
+            anzahlPaket = global_vars.g_PaketeZuordnung[i]
             
-            for i in range(global_vars.g_LageArten):
-                
-                anzahlPick = global_vars.g_Daten[index_paketZuordnung][0]
-                global_vars.g_PaketeZuordnung.append(anzahlPick)
-                index_paketZuordnung = index_paketZuordnung + anzahlPick + 1
-                
-            
-            for i in range(global_vars.g_LageArten):            
-                index = index + 1 #Überspringe die Zeile mit der Anzahl der Pakete
-                anzahlPaket = global_vars.g_PaketeZuordnung[i]
-                
-                for j in range(anzahlPaket):
-                    xp = global_vars.g_Daten[index][global_vars.LI_POSITION_XP]
-                    yp = global_vars.g_Daten[index][global_vars.LI_POSITION_YP]
-                    ap = global_vars.g_Daten[index][global_vars.LI_POSITION_AP]
-                    xd = global_vars.g_Daten[index][global_vars.LI_POSITION_XD]
-                    yd = global_vars.g_Daten[index][global_vars.LI_POSITION_YD]
-                    ad = global_vars.g_Daten[index][global_vars.LI_POSITION_AD]
-                    nop = global_vars.g_Daten[index][global_vars.LI_POSITION_NOP]
-                    xvec = global_vars.g_Daten[index][global_vars.LI_POSITION_XVEC]
-                    yvec = global_vars.g_Daten[index][global_vars.LI_POSITION_YVEC]
-                    packagePos = [xp, yp, ap, xd, yd, ad, nop, xvec, yvec]
-                    global_vars.g_PaketPos.append(packagePos)
-                    index = index + 1
- 
-            return 0                
+            for j in range(anzahlPaket):
+                xp = global_vars.g_Daten[index][global_vars.LI_POSITION_XP]
+                yp = global_vars.g_Daten[index][global_vars.LI_POSITION_YP]
+                ap = global_vars.g_Daten[index][global_vars.LI_POSITION_AP]
+                xd = global_vars.g_Daten[index][global_vars.LI_POSITION_XD]
+                yd = global_vars.g_Daten[index][global_vars.LI_POSITION_YD]
+                ad = global_vars.g_Daten[index][global_vars.LI_POSITION_AD]
+                nop = global_vars.g_Daten[index][global_vars.LI_POSITION_NOP]
+                xvec = global_vars.g_Daten[index][global_vars.LI_POSITION_XVEC]
+                yvec = global_vars.g_Daten[index][global_vars.LI_POSITION_YVEC]
+                packagePos = [xp, yp, ap, xd, yd, ad, nop, xvec, yvec]
+                global_vars.g_PaketPos.append(packagePos)
+                index = index + 1
+
+        return 0                
     except:
         logger.error(f"Error reading file {global_vars.FILENAME}")
     return 1

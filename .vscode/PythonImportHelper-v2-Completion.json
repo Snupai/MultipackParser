@@ -1458,6 +1458,62 @@
         "documentation": {}
     },
     {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Literal",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Union",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Optional",
         "importPath": "typing",
         "description": "typing",
@@ -1754,6 +1810,14 @@
         "documentation": {}
     },
     {
+        "label": "global_vars",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
         "label": "UR_Common_functions",
         "importPath": "utils",
         "description": "utils",
@@ -1898,6 +1962,38 @@
         "importPath": "matplotlib",
         "description": "matplotlib",
         "detail": "matplotlib",
+        "documentation": {}
+    },
+    {
+        "label": "load_from_database",
+        "importPath": "utils.database",
+        "description": "utils.database",
+        "isExtraImport": true,
+        "detail": "utils.database",
+        "documentation": {}
+    },
+    {
+        "label": "save_to_database",
+        "importPath": "utils.database",
+        "description": "utils.database",
+        "isExtraImport": true,
+        "detail": "utils.database",
+        "documentation": {}
+    },
+    {
+        "label": "find_file_in_database",
+        "importPath": "utils.database",
+        "description": "utils.database",
+        "isExtraImport": true,
+        "detail": "utils.database",
+        "documentation": {}
+    },
+    {
+        "label": "load_from_database",
+        "importPath": "utils.database",
+        "description": "utils.database",
+        "isExtraImport": true,
+        "detail": "utils.database",
         "documentation": {}
     },
     {
@@ -2169,6 +2265,15 @@
     },
     {
         "label": "datetime",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "datetime",
+        "description": "datetime",
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
         "importPath": "datetime",
         "description": "datetime",
         "isExtraImport": true,
@@ -2318,6 +2423,15 @@
         "importPath": "threading",
         "description": "threading",
         "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "sqlite3",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlite3",
+        "description": "sqlite3",
+        "detail": "sqlite3",
         "documentation": {}
     },
     {
@@ -2817,7 +2931,7 @@
         "kind": 2,
         "importPath": "ui_files.visualization_3d",
         "description": "ui_files.visualization_3d",
-        "peekOfCode": "def parse_rob_file(file_path) -> Pallet:\n    start_time = time.time()\n    with open(file_path, 'r') as file:\n        lines = file.readlines()\n    package_dimensions = list(map(int, lines[1].strip().split()))\n    package_width, package_length, package_height = package_dimensions[0:3]\n    num_unique_layers = int(lines[2].strip())\n    num_layers = int(lines[3].strip())\n    layer_order = []\n    current_line = 5",
+        "peekOfCode": "def parse_rob_file(file_path) -> Pallet:\n    start_time = time.time()\n    lines, *_ = load_from_database(file_name=file_path)\n    package_width, package_length, package_height = lines[1][0:3]\n    num_unique_layers = lines[2][0]\n    num_layers = lines[3][0]\n    layer_order = []\n    current_line = 5\n    for _ in range(num_layers):\n        unique_layer_id = lines[current_line][0]",
         "detail": "ui_files.visualization_3d",
         "documentation": {}
     },
@@ -3017,6 +3131,60 @@
         "description": "utils.audio",
         "peekOfCode": "logger = logging.getLogger(__name__)\ndef spawn_play_stepback_warning_thread():\n    \"\"\"Spawn a thread to play the stepback warning.\n    \"\"\"\n    global audio_thread\n    logger.info(\"Starting stepback warning audio thread\")\n    global_vars.audio_thread_running = True\n    audio_thread = threading.Thread(target=play_stepback_warning)\n    audio_thread.daemon = True\n    audio_thread.start()",
         "detail": "utils.audio",
+        "documentation": {}
+    },
+    {
+        "label": "create_database",
+        "kind": 2,
+        "importPath": "utils.database",
+        "description": "utils.database",
+        "peekOfCode": "def create_database(db_path=\"paletten.db\"):\n    \"\"\"Create the database and tables if they don't exist.\"\"\"\n    conn = sqlite3.connect(db_path)\n    cursor = conn.cursor()\n    # Create tables for all the global data structures\n    cursor.execute('''\n    CREATE TABLE IF NOT EXISTS paletten_metadata (\n        id INTEGER PRIMARY KEY AUTOINCREMENT,\n        paket_quer INTEGER,\n        center_of_gravity_x REAL,",
+        "detail": "utils.database",
+        "documentation": {}
+    },
+    {
+        "label": "save_to_database",
+        "kind": 2,
+        "importPath": "utils.database",
+        "description": "utils.database",
+        "peekOfCode": "def save_to_database(db_path=\"paletten.db\", file_path=None, file_timestamp=None) -> bool:\n    \"\"\"Save all global data to the database.\n    Args:\n        db_path (str): Path to the database\n        file_path (str): Path to the source .rob file that was parsed\n        file_timestamp (float): Timestamp of when the source file was last modified\n    Returns:\n        bool: True if data was saved, False if skipped due to older timestamp\n    \"\"\"\n    # Create database tables if they don't exist",
+        "detail": "utils.database",
+        "documentation": {}
+    },
+    {
+        "label": "load_from_database",
+        "kind": 2,
+        "importPath": "utils.database",
+        "description": "utils.database",
+        "peekOfCode": "def load_from_database(db_path=\"paletten.db\", file_name=None, metadata_id=None) -> Union[Literal[0], Literal[1]]:\n    \"\"\"Load all data from the database to global variables.\n    Args:\n        db_path (str): Path to the database\n        file_name (str, optional): Specific .rob filename to load. If None, loads the most recent entry.\n        metadata_id (int, optional): Specific metadata ID to load. Takes precedence over file_name.\n    Returns:\n        Union[Literal[0], Literal[1]]: 0 if successful, 1 otherwise.\n    \"\"\"\n    try:",
+        "detail": "utils.database",
+        "documentation": {}
+    },
+    {
+        "label": "list_available_files",
+        "kind": 2,
+        "importPath": "utils.database",
+        "description": "utils.database",
+        "peekOfCode": "def list_available_files(db_path=\"paletten.db\") -> List[Dict[str, Any]]:\n    \"\"\"List all .rob files stored in the database.\n    Returns:\n        List[Dict[str, Any]]: A list of dictionaries containing file info (name, timestamp)\n    \"\"\"\n    try:\n        conn = sqlite3.connect(db_path)\n        cursor = conn.cursor()\n        cursor.execute('''\n        SELECT id, file_name, file_timestamp FROM paletten_metadata ",
+        "detail": "utils.database",
+        "documentation": {}
+    },
+    {
+        "label": "find_file_in_database",
+        "kind": 2,
+        "importPath": "utils.database",
+        "description": "utils.database",
+        "peekOfCode": "def find_file_in_database(file_name: str, db_path=\"paletten.db\") -> Optional[Dict[str, Any]]:\n    \"\"\"Find a specific .rob file in the database.\n    Args:\n        file_name (str): Name of the file to find\n        db_path (str): Path to the database\n    Returns:\n        Optional[Dict[str, Any]]: File info or None if not found\n    \"\"\"\n    try:\n        conn = sqlite3.connect(db_path)",
+        "detail": "utils.database",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.database",
+        "description": "utils.database",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef create_database(db_path=\"paletten.db\"):\n    \"\"\"Create the database and tables if they don't exist.\"\"\"\n    conn = sqlite3.connect(db_path)\n    cursor = conn.cursor()\n    # Create tables for all the global data structures\n    cursor.execute('''\n    CREATE TABLE IF NOT EXISTS paletten_metadata (\n        id INTEGER PRIMARY KEY AUTOINCREMENT,\n        paket_quer INTEGER,",
+        "detail": "utils.database",
         "documentation": {}
     },
     {
@@ -3236,11 +3404,20 @@
         "documentation": {}
     },
     {
+        "label": "update_database_from_usb",
+        "kind": 2,
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "peekOfCode": "def update_database_from_usb() -> None:\n    \"\"\"Update the database with any new or modified palette plans from the USB stick.\n    \"\"\"\n    if not os.path.exists(global_vars.PATH_USB_STICK):\n        logger.error(f\"USB stick path {global_vars.PATH_USB_STICK} does not exist\")\n        return\n    for file in os.listdir(global_vars.PATH_USB_STICK):\n        if file.endswith(\".rob\"):\n            file_path = os.path.join(global_vars.PATH_USB_STICK, file)\n            file_timestamp = os.path.getmtime(file_path)",
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
         "label": "load_wordlist",
         "kind": 2,
         "importPath": "utils.robot_control",
         "description": "utils.robot_control",
-        "peekOfCode": "def load_wordlist() -> list:\n    \"\"\"Load the wordlist from the USB stick.\n    Returns:\n        list: A list of wordlist items.\n    \"\"\"\n    import os\n    wordlist = []\n    count = 0\n    for file in os.listdir(global_vars.PATH_USB_STICK):\n        if file.endswith(\".rob\"):",
+        "peekOfCode": "def load_wordlist() -> list:\n    \"\"\"Load the wordlist from the USB stick and update the database.\n    Returns:\n        list: A list of wordlist items.\n    \"\"\"\n    wordlist = []\n    count = 0\n    # First update the database with any new or modified files\n    update_database_from_usb()\n    # Then load the wordlist",
         "detail": "utils.robot_control",
         "documentation": {}
     },

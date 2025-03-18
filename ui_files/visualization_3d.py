@@ -3,6 +3,8 @@ import sys
 from typing import Union, List
 from enum import Enum
 import matplotlib
+
+from utils.database import load_from_database
 matplotlib.use('qtagg', force=True)
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -87,99 +89,59 @@ def calculate_package_centers(center, width, length, rotation, num_packages):
 def parse_rob_file(file_path) -> Pallet:
     
     start_time = time.time()
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
+    lines, *_ = load_from_database(file_name=file_path)
 
-    package_dimensions = list(map(int, lines[1].strip().split()))
-    package_width, package_length, package_height = package_dimensions[0:3]
+    package_width, package_length, package_height = lines[1][0:3]
 
-    num_unique_layers = int(lines[2].strip())
-    num_layers = int(lines[3].strip())
+    num_unique_layers = lines[2][0]
+    num_layers = lines[3][0]
 
     layer_order = []
     current_line = 5
     for _ in range(num_layers):
-        unique_layer_id = int(lines[current_line].strip().split()[0])
+        unique_layer_id = lines[current_line][0]
         layer_order.append(unique_layer_id)
         current_line += 1
-
-    num_coordinates = int(lines[current_line].strip())
-    current_line += 1
-    layer_data = []
-    BoxCount = 1
-    for _ in range(num_coordinates):
-        coord_line = list(map(int, lines[current_line].strip().split()))
-        x, y, rotation, num_packages, dx, dy = coord_line[3:9]
-        blue_line = None
-        if dx != 0 or dy != 0:
-            if dx == 0 and dy > 0:
-                blue_line = Side.bottom
-            elif dx == 0 and dy < 0:
-                blue_line = Side.top
-            elif dx > 0 and dy == 0:
-                blue_line = Side.left
-            elif dx < 0 and dy == 0:
-                blue_line = Side.right
-            elif dx > 0 and dy > 0:
-                blue_line = Corner.bottom_left
-            elif dx > 0 and dy < 0:
-                blue_line = Corner.top_right
-            elif dx < 0 and dy > 0:
-                blue_line = Corner.bottom_right
-            elif dx < 0 and dy < 0:
-                blue_line = Corner.top_left
-
-        if num_packages == 1:
-            rect = Rectangle(width=package_length, length=package_width, x=x, y=y)
-            layer_data.append(Box(blueNumber=BoxCount, blueLine=blue_line, rotation=rotation, rect=rect, height=package_height))
-        else:
-            boxes_centers = calculate_package_centers((x, y), package_width, package_length, rotation, num_packages)
-            for box_center in boxes_centers:
-                rect = Rectangle(width=package_length, length=package_width, x=box_center[0], y=box_center[1])
-                layer_data.append(Box(blueNumber=BoxCount, blueLine=blue_line, rotation=rotation, rect=rect, height=package_height))
-        BoxCount += 1
-        current_line += 1
-
     unique_layers = []
-    unique_layers.append(Layer(unique_layer_id=1, boxes=layer_data))
-    layer_data_2 = []
-    BoxCount = 1
-    num_coordinates = int(lines[current_line].strip())
-    current_line += 1
-    for _ in range(num_coordinates):
-        coord_line = list(map(int, lines[current_line].strip().split()))
-        x, y, rotation, num_packages, dx, dy = coord_line[3:9]
-        blue_line = None
-        if dx != 0 or dy != 0:
-            if dx == 0 and dy > 0:
-                blue_line = Side.bottom
-            elif dx == 0 and dy < 0:
-                blue_line = Side.top
-            elif dx > 0 and dy == 0:
-                blue_line = Side.left
-            elif dx < 0 and dy == 0:
-                blue_line = Side.right
-            elif dx > 0 and dy > 0:
-                blue_line = Corner.bottom_left
-            elif dx > 0 and dy < 0:
-                blue_line = Corner.top_right
-            elif dx < 0 and dy > 0:
-                blue_line = Corner.bottom_right
-            elif dx < 0 and dy < 0:
-                blue_line = Corner.top_left
 
-        if num_packages == 1:
-            rect = Rectangle(width=package_length, length=package_width, x=x, y=y)
-            layer_data_2.append(Box(blueNumber=BoxCount, blueLine=blue_line, rotation=rotation, rect=rect, height=package_height))
-        else:
-            boxes_centers = calculate_package_centers((x, y), package_width, package_length, rotation, num_packages)
-            for box_center in boxes_centers:
-                rect = Rectangle(width=package_length, length=package_width, x=box_center[0], y=box_center[1])
-                layer_data_2.append(Box(blueNumber=BoxCount, blueLine=blue_line, rotation=rotation, rect=rect, height=package_height))
-        BoxCount += 1
+    for unique_layer_id in range(num_unique_layers):
+        num_coordinates = lines[current_line][0]
         current_line += 1
+        layer_data = []
+        BoxCount = 1
+        for _ in range(num_coordinates):
+            x, y, rotation, num_packages, dx, dy = lines[current_line][3:9]
+            blue_line = None
+            if dx != 0 or dy != 0:
+                if dx == 0 and dy > 0:
+                    blue_line = Side.bottom
+                elif dx == 0 and dy < 0:
+                    blue_line = Side.top
+                elif dx > 0 and dy == 0:
+                    blue_line = Side.left
+                elif dx < 0 and dy == 0:
+                    blue_line = Side.right
+                elif dx > 0 and dy > 0:
+                    blue_line = Corner.bottom_left
+                elif dx > 0 and dy < 0:
+                    blue_line = Corner.top_right
+                elif dx < 0 and dy > 0:
+                    blue_line = Corner.bottom_right
+                elif dx < 0 and dy < 0:
+                    blue_line = Corner.top_left
 
-    unique_layers.append(Layer(unique_layer_id=2, boxes=layer_data_2))
+            if num_packages == 1:
+                rect = Rectangle(width=package_length, length=package_width, x=x, y=y)
+                layer_data.append(Box(blueNumber=BoxCount, blueLine=blue_line, rotation=rotation, rect=rect, height=package_height))
+            else:
+                boxes_centers = calculate_package_centers((x, y), package_width, package_length, rotation, num_packages)
+                for box_center in boxes_centers:
+                    rect = Rectangle(width=package_length, length=package_width, x=box_center[0], y=box_center[1])
+                    layer_data.append(Box(blueNumber=BoxCount, blueLine=blue_line, rotation=rotation, rect=rect, height=package_height))
+            BoxCount += 1
+            current_line += 1
+        unique_layers.append(Layer(unique_layer_id=unique_layer_id, boxes=layer_data))
+
     layers = []
     for num in layer_order:
         layers.append(Layer(unique_layer_id=num, boxes=unique_layers[num - 1].boxes))
@@ -206,7 +168,7 @@ def display_pallet_3d(canvas, pallet_name):
     # Parse file
     progress.setValue(10)
     progress.setLabelText("Parsing .rob file...")
-    pallet = parse_rob_file(global_vars.PATH_USB_STICK + pallet_name + ".rob")
+    pallet = parse_rob_file(pallet_name + ".rob")
     
     start_time = time.time()
     canvas.ax.clear()
