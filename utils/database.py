@@ -123,7 +123,122 @@ def create_database(db_path="paletten.db"):
     conn.commit()
     conn.close()
 
-def save_to_database(db_path="paletten.db", file_path=None, file_timestamp=None) -> bool:
+def UR_ReadDataFromUsbStick(filename: str, path_usb_stick: str) -> Union[Literal[0], Literal[1]]:
+    """Read data from a .rob file on the USB stick and parse it into global variables.
+    
+    The .rob file contains data about pallet and package dimensions, layer types and positions.
+    File format is tab-separated values with the following structure:
+    - Line 1: Pallet dimensions (length, width, height)
+    - Line 2: Package dimensions (length, width, height, gap)
+    - Line 3: Number of layer types
+    - Line 4: Number of layers
+    - Lines 5+: Layer assignments and intermediate layers
+    - Remaining lines: Package positions for each layer type
+    
+    Args:
+        filename (str): Name of the .rob file to read
+        path_usb_stick (str): Path to the USB stick directory
+        
+    Returns:
+        Union[Literal[0], Literal[1]]: 0 if successful, 1 if error
+        str: File path if successful, None if error
+        float: File timestamp if successful, None if error
+    """
+    # Initialize all global variables used to store the parsed data
+    
+    # Reset all globals to initial state
+    g_Daten = []
+    g_LageZuordnung = []
+    g_PaketPos = []
+    g_PaketeZuordnung = []
+    g_Zwischenlagen = []
+    g_paket_quer = 1
+    g_CenterOfGravity = [0,0,0]
+        
+    file_path = path_usb_stick + filename
+    
+    try:
+        # Get file modification time for database tracking
+        file_timestamp = os.path.getmtime(file_path)
+        
+        # Read and parse the file line by line
+        with open(file_path) as file:
+            for line in file:
+                # Convert each line to list of integers
+                tmpList = [int(x) for x in line.strip().split('\t')]
+                g_Daten.append(tmpList)
+ 
+            # Parse pallet dimensions from first line
+            pl = g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_LENGTH]  # Length
+            pw = g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_WIDTH]   # Width
+            ph = g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_HEIGHT]  # Height
+            g_PalettenDim = [pl, pw, ph]
+            
+            # Parse package dimensions from second line
+            pl = g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_LENGTH]  # Length
+            pw = g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_WIDTH]   # Width
+            ph = g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_HEIGHT]  # Height
+            pr = g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_GAP]     # Gap between packages
+            g_PaketDim = [pl, pw, ph, pr]
+
+            # Get number of layer types from third line
+            g_LageArten = g_Daten[global_vars.LI_LAYERTYPES][0]
+            
+            # Get number of layers from fourth line
+            anzLagen = g_Daten[global_vars.LI_NUMBER_OF_LAYERS][0]
+            g_AnzLagen = anzLagen
+ 
+            # Parse layer assignments and intermediate layers
+            index = global_vars.LI_NUMBER_OF_LAYERS + 2  # Skip header lines
+            end_index = index + anzLagen
+ 
+            while index < end_index:
+                lagenart = g_Daten[index][0]  # Layer type
+                zwischenlagen = g_Daten[index][1]  # Intermediate layer flag
+ 
+                g_LageZuordnung.append(lagenart)
+                g_Zwischenlagen.append(zwischenlagen)
+                index = index + 1
+            
+            # Parse package positions
+            ersteLage = 4 + (anzLagen + 1)  # Skip layer data
+            index = ersteLage
+            anzahlPaket = g_Daten[index][0]  # Total packages
+            g_AnzahlPakete = anzahlPaket  # Note: Deprecated - now number of picks for multipick
+            index_paketZuordnung = index
+            
+            # Get number of packages per layer type
+            for i in range(g_LageArten):
+                anzahlPick = g_Daten[index_paketZuordnung][0]
+                g_PaketeZuordnung.append(anzahlPick)
+                index_paketZuordnung = index_paketZuordnung + anzahlPick + 1
+                
+            # Parse individual package positions for each layer type
+            for i in range(g_LageArten):            
+                index = index + 1  # Skip count line
+                anzahlPaket = g_PaketeZuordnung[i]
+                
+                for j in range(anzahlPaket):
+                    # Extract position data:
+                    xp = g_Daten[index][global_vars.LI_POSITION_XP]    # X pick position
+                    yp = g_Daten[index][global_vars.LI_POSITION_YP]    # Y pick position
+                    ap = g_Daten[index][global_vars.LI_POSITION_AP]    # Pick angle
+                    xd = g_Daten[index][global_vars.LI_POSITION_XD]    # X drop position
+                    yd = g_Daten[index][global_vars.LI_POSITION_YD]    # Y drop position
+                    ad = g_Daten[index][global_vars.LI_POSITION_AD]    # Drop angle
+                    nop = g_Daten[index][global_vars.LI_POSITION_NOP]  # Number of packages
+                    xvec = g_Daten[index][global_vars.LI_POSITION_XVEC]  # X vector
+                    yvec = g_Daten[index][global_vars.LI_POSITION_YVEC]  # Y vector
+                    packagePos = [xp, yp, ap, xd, yd, ad, nop, xvec, yvec]
+                    g_PaketPos.append(packagePos)
+                    index = index + 1
+            
+            return file_path, file_timestamp, g_Daten, g_LageZuordnung, g_PaketPos, g_PaketeZuordnung, g_Zwischenlagen, g_paket_quer, g_CenterOfGravity, g_PalettenDim, g_PaketDim, g_LageArten, g_AnzLagen, g_AnzahlPakete
+    except Exception as e:
+        print(f"Error reading file {filename}: {e}")
+    return 1, None, None
+
+def save_to_database(file_name, db_path="paletten.db") -> bool:
     """Save all global data to the database.
     
     Args:
@@ -137,14 +252,13 @@ def save_to_database(db_path="paletten.db", file_path=None, file_timestamp=None)
     # Create database tables if they don't exist
     create_database(db_path)
     
+    _, file_timestamp, g_Daten, g_LageZuordnung, g_PaketPos, g_PaketeZuordnung, g_Zwischenlagen, g_paket_quer, g_CenterOfGravity, g_PalettenDim, g_PaketDim, g_LageArten, g_AnzLagen, g_AnzahlPakete = UR_ReadDataFromUsbStick(file_name, global_vars.PATH_USB_STICK)
+    
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     
     # Enable foreign key support for data integrity
     cursor.execute("PRAGMA foreign_keys = ON")
-    
-    # Extract just the filename from the path
-    file_name = os.path.basename(file_path) if file_path else None
     
     # Check if this file already exists in database by matching file name
     existing_metadata_id = None
@@ -172,21 +286,23 @@ def save_to_database(db_path="paletten.db", file_path=None, file_timestamp=None)
         logger.info(f"Updating existing file data (ID: {existing_metadata_id})")
         cursor.execute("DELETE FROM paletten_metadata WHERE id = ?", (existing_metadata_id,))
     
+    
+    
     # Insert main metadata record with core parameters
     cursor.execute('''
     INSERT INTO paletten_metadata (
         paket_quer, center_of_gravity_x, center_of_gravity_y, center_of_gravity_z, 
         lage_arten, anz_lagen, anzahl_pakete, file_timestamp, file_name
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (global_vars.g_paket_quer, global_vars.g_CenterOfGravity[0], global_vars.g_CenterOfGravity[1], 
-          global_vars.g_CenterOfGravity[2], global_vars.g_LageArten, global_vars.g_AnzLagen, 
-          global_vars.g_AnzahlPakete, file_timestamp, file_name))
+    ''', (g_paket_quer, g_CenterOfGravity[0], g_CenterOfGravity[1], 
+          g_CenterOfGravity[2], g_LageArten, g_AnzLagen, 
+          g_AnzahlPakete, file_timestamp, file_name))
     
     # Get ID of new metadata record for linking related data
     metadata_id = cursor.lastrowid
     
     # Save raw data array from .rob file
-    for i, row in enumerate(global_vars.g_Daten):
+    for i, row in enumerate(g_Daten):
         for j, value in enumerate(row):
             cursor.execute('''
             INSERT INTO daten (metadata_id, row_index, col_index, value) 
@@ -194,44 +310,44 @@ def save_to_database(db_path="paletten.db", file_path=None, file_timestamp=None)
             ''', (metadata_id, i, j, value))
     
     # Save pallet dimensions if available
-    if global_vars.g_PalettenDim:
+    if g_PalettenDim:
         cursor.execute('''
         INSERT INTO paletten_dim (metadata_id, length, width, height) 
         VALUES (?, ?, ?, ?)
-        ''', (metadata_id, global_vars.g_PalettenDim[0], global_vars.g_PalettenDim[1], 
-              global_vars.g_PalettenDim[2]))
+        ''', (metadata_id, g_PalettenDim[0], g_PalettenDim[1], 
+              g_PalettenDim[2]))
     
     # Save package dimensions if available
-    if global_vars.g_PaketDim:
+    if g_PaketDim:
         cursor.execute('''
         INSERT INTO paket_dim (metadata_id, length, width, height, gap) 
         VALUES (?, ?, ?, ?, ?)
-        ''', (metadata_id, global_vars.g_PaketDim[0], global_vars.g_PaketDim[1], 
-              global_vars.g_PaketDim[2], global_vars.g_PaketDim[3]))
+        ''', (metadata_id, g_PaketDim[0], g_PaketDim[1], 
+              g_PaketDim[2], g_PaketDim[3]))
     
     # Save layer type assignments (which type is each layer)
-    for i, value in enumerate(global_vars.g_LageZuordnung):
+    for i, value in enumerate(g_LageZuordnung):
         cursor.execute('''
         INSERT INTO lage_zuordnung (metadata_id, lage_index, value) 
         VALUES (?, ?, ?)
         ''', (metadata_id, i, value))
     
     # Save intermediate layer flags (whether each layer has separator)
-    for i, value in enumerate(global_vars.g_Zwischenlagen):
+    for i, value in enumerate(g_Zwischenlagen):
         cursor.execute('''
         INSERT INTO zwischenlagen (metadata_id, lage_index, value) 
         VALUES (?, ?, ?)
         ''', (metadata_id, i, value))
     
     # Save number of packages per layer type
-    for i, value in enumerate(global_vars.g_PaketeZuordnung):
+    for i, value in enumerate(g_PaketeZuordnung):
         cursor.execute('''
         INSERT INTO pakete_zuordnung (metadata_id, lage_index, value) 
         VALUES (?, ?, ?)
         ''', (metadata_id, i, value))
     
     # Save package positions with pick/place coordinates and angles
-    for i, pos in enumerate(global_vars.g_PaketPos):
+    for i, pos in enumerate(g_PaketPos):
         cursor.execute('''
         INSERT INTO paket_pos (metadata_id, paket_index, xp, yp, ap, xd, yd, ad, nop, xvec, yvec) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

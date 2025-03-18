@@ -35,6 +35,8 @@ import matplotlib
 from utils import global_vars
 from utils.app_control import setup_logging, init_settings
 from utils.app_initialization import parse_arguments, initialize_app, setup_initial_app_state
+from utils.database import create_database
+from utils.robot_control import update_database_from_usb
 from utils.ui_setup import (initialize_main_window, setup_input_validation, connect_signal_handlers,
                           setup_password_handling, setup_components, start_background_tasks,
                           setup_window_handling)
@@ -74,6 +76,12 @@ def main():
         progress.setValue(15)
         loading_label.setText("Setting up application...")
         app.processEvents()
+        
+        # create database
+        progress.setValue(20)
+        loading_label.setText("Creating database...")
+        app.processEvents()
+        create_database()
 
         # Create main window
         progress.setValue(25)
@@ -89,6 +97,12 @@ def main():
         
         init_settings()
         setup_initial_app_state()
+        
+        # update database
+        progress.setValue(60)
+        loading_label.setText("Updating database...")
+        app.processEvents()
+        update_database_from_usb()
 
         # Setup UI components
         progress.setValue(75)

@@ -1997,6 +1997,14 @@
         "documentation": {}
     },
     {
+        "label": "create_database",
+        "importPath": "utils.database",
+        "description": "utils.database",
+        "isExtraImport": true,
+        "detail": "utils.database",
+        "documentation": {}
+    },
+    {
         "label": "FigureCanvasQTAgg",
         "importPath": "matplotlib.backends.backend_qtagg",
         "description": "matplotlib.backends.backend_qtagg",
@@ -2095,6 +2103,14 @@
     },
     {
         "label": "load_selected_file",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "update_database_from_usb",
         "importPath": "utils.robot_control",
         "description": "utils.robot_control",
         "isExtraImport": true,
@@ -3143,11 +3159,20 @@
         "documentation": {}
     },
     {
+        "label": "UR_ReadDataFromUsbStick",
+        "kind": 2,
+        "importPath": "utils.database",
+        "description": "utils.database",
+        "peekOfCode": "def UR_ReadDataFromUsbStick(filename: str, path_usb_stick: str) -> Union[Literal[0], Literal[1]]:\n    \"\"\"Read data from a .rob file on the USB stick and parse it into global variables.\n    The .rob file contains data about pallet and package dimensions, layer types and positions.\n    File format is tab-separated values with the following structure:\n    - Line 1: Pallet dimensions (length, width, height)\n    - Line 2: Package dimensions (length, width, height, gap)\n    - Line 3: Number of layer types\n    - Line 4: Number of layers\n    - Lines 5+: Layer assignments and intermediate layers\n    - Remaining lines: Package positions for each layer type",
+        "detail": "utils.database",
+        "documentation": {}
+    },
+    {
         "label": "save_to_database",
         "kind": 2,
         "importPath": "utils.database",
         "description": "utils.database",
-        "peekOfCode": "def save_to_database(db_path=\"paletten.db\", file_path=None, file_timestamp=None) -> bool:\n    \"\"\"Save all global data to the database.\n    Args:\n        db_path (str): Path to the database\n        file_path (str): Path to the source .rob file that was parsed\n        file_timestamp (float): Timestamp of when the source file was last modified\n    Returns:\n        bool: True if data was saved, False if skipped due to older timestamp\n    \"\"\"\n    # Create database tables if they don't exist",
+        "peekOfCode": "def save_to_database(file_name, db_path=\"paletten.db\") -> bool:\n    \"\"\"Save all global data to the database.\n    Args:\n        db_path (str): Path to the database\n        file_path (str): Path to the source .rob file that was parsed\n        file_timestamp (float): Timestamp of when the source file was last modified\n    Returns:\n        bool: True if data was saved, False if skipped due to older timestamp\n    \"\"\"\n    # Create database tables if they don't exist",
         "detail": "utils.database",
         "documentation": {}
     },
@@ -3408,7 +3433,7 @@
         "kind": 2,
         "importPath": "utils.robot_control",
         "description": "utils.robot_control",
-        "peekOfCode": "def update_database_from_usb() -> None:\n    \"\"\"Update the database with any new or modified palette plans from the USB stick.\n    \"\"\"\n    if not os.path.exists(global_vars.PATH_USB_STICK):\n        logger.error(f\"USB stick path {global_vars.PATH_USB_STICK} does not exist\")\n        return\n    for file in os.listdir(global_vars.PATH_USB_STICK):\n        if file.endswith(\".rob\"):\n            file_path = os.path.join(global_vars.PATH_USB_STICK, file)\n            file_timestamp = os.path.getmtime(file_path)",
+        "peekOfCode": "def update_database_from_usb() -> None:\n    \"\"\"Update the database with any new or modified palette plans from the USB stick.\n    \"\"\"\n    if not os.path.exists(global_vars.PATH_USB_STICK):\n        logger.error(f\"USB stick path {global_vars.PATH_USB_STICK} does not exist\")\n        return\n    # Get all .rob files\n    rob_files = [f for f in os.listdir(global_vars.PATH_USB_STICK) if f.endswith(\".rob\")]\n    logger.info(f\"Found {len(rob_files)} .rob files to process\")\n    for file in rob_files:",
         "detail": "utils.robot_control",
         "documentation": {}
     },

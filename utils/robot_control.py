@@ -151,27 +151,20 @@ def update_database_from_usb() -> None:
         logger.error(f"USB stick path {global_vars.PATH_USB_STICK} does not exist")
         return
         
-    for file in os.listdir(global_vars.PATH_USB_STICK):
-        if file.endswith(".rob"):
-            file_path = os.path.join(global_vars.PATH_USB_STICK, file)
-            file_timestamp = os.path.getmtime(file_path)
-            
-            # Check if file exists in database and if it's newer
-            file_info = find_file_in_database(file)
-            if not file_info or file_info["timestamp"] < file_timestamp:
-                logger.info(f"Updating database with {file}")
-                try:
-                    # Load the file data first
-                    from utils import UR_Common_functions as UR
-                    UR.UR_SetFileName(file[:-4])  # Remove .rob extension
-                    if UR.UR_ReadDataFromUsbStick() == 0:
-                        # Save to database if loading was successful
-                        save_to_database(file_path=file_path, file_timestamp=file_timestamp)
-                        logger.info(f"Successfully updated database with {file}")
-                    else:
-                        logger.error(f"Failed to load {file} for database update")
-                except Exception as e:
-                    logger.error(f"Error updating database with {file}: {e}")
+    # Get all .rob files
+    rob_files = [f for f in os.listdir(global_vars.PATH_USB_STICK) if f.endswith(".rob")]
+    logger.info(f"Found {len(rob_files)} .rob files to process")
+    
+    for file in rob_files:
+        file_path = os.path.join(global_vars.PATH_USB_STICK, file)
+        file_timestamp = os.path.getmtime(file_path)
+        
+        # Always try to load and save to ensure database is up to date
+        logger.info(f"Processing file: {file}")
+        try:
+            save_to_database(file)
+        except Exception as e:
+            logger.error(f"Error processing {file}: {e}")
 
 def load_wordlist() -> list:
     """Load the wordlist from the USB stick and update the database.
