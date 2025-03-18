@@ -236,10 +236,34 @@ class Settings:
                     stored_settings[group][key] = {}
                     self.qsettings.beginGroup(key)
                     for subkey, subvalue in value.items():
-                        stored_settings[group][key][subkey] = self.qsettings.value(subkey, subvalue)
+                        # Get the value and ensure correct type conversion
+                        loaded_value = self.qsettings.value(subkey, subvalue)
+                        if isinstance(subvalue, bool):
+                            # Convert string 'true'/'false' to bool
+                            if isinstance(loaded_value, str):
+                                loaded_value = loaded_value.lower() == 'true'
+                            else:
+                                loaded_value = bool(loaded_value)
+                        elif isinstance(subvalue, int):
+                            loaded_value = int(str(loaded_value))  # Convert to str first
+                        elif isinstance(subvalue, float):
+                            loaded_value = float(str(loaded_value))  # Convert to str first
+                        stored_settings[group][key][subkey] = loaded_value
                     self.qsettings.endGroup()
                 else:
-                    stored_settings[group][key] = self.qsettings.value(key, value)
+                    # Get the value and ensure correct type conversion
+                    loaded_value = self.qsettings.value(key, value)
+                    if isinstance(value, bool):
+                        # Convert string 'true'/'false' to bool
+                        if isinstance(loaded_value, str):
+                            loaded_value = loaded_value.lower() == 'true'
+                        else:
+                            loaded_value = bool(loaded_value)
+                    elif isinstance(value, int):
+                        loaded_value = int(str(loaded_value))  # Convert to str first
+                    elif isinstance(value, float):
+                        loaded_value = float(str(loaded_value))  # Convert to str first
+                    stored_settings[group][key] = loaded_value
             self.qsettings.endGroup()
         
         if stored_settings != self.settings:

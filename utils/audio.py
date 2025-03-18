@@ -83,7 +83,15 @@ def delay_warning_sound():
     while True:
         try:
             if global_vars.timestamp_scanner_fault:
-                delay = (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds()
+                # Handle the case where timestamp_scanner_fault might be a float
+                if isinstance(global_vars.timestamp_scanner_fault, float):
+                    # If it's a float, assume it's a timestamp and calculate the difference directly
+                    current_time = datetime.now().timestamp()
+                    delay = current_time - global_vars.timestamp_scanner_fault
+                else:
+                    # Otherwise, assume it's a datetime object as originally intended
+                    delay = (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds()
+                    
                 if delay >= 40:
                     logger.info("40-second delay reached, starting warning sound")
                     if not global_vars.audio_thread_running:

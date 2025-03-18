@@ -2862,7 +2862,7 @@
         "kind": 2,
         "importPath": "utils.app_control",
         "description": "utils.app_control",
-        "peekOfCode": "def exit_app():\n    \"\"\"Exit the application.\n    \"\"\"\n    if hasattr(global_vars, 'server') and global_vars.server:\n        from utils.server import server_stop\n        server_stop()\n    sys.exit(0)\ndef init_settings():\n    \"\"\"Initialize the settings\n    \"\"\"",
+        "peekOfCode": "def exit_app():\n    \"\"\"Exit the application.\n    \"\"\"\n    logger.info(\"Exiting application\")\n    # First stop the server if it's running\n    if hasattr(global_vars, 'server') and global_vars.server:\n        from utils.server import server_stop\n        server_stop()\n    # Stop any running audio threads\n    if hasattr(global_vars, 'audio_thread_running') and global_vars.audio_thread_running:",
         "detail": "utils.app_control",
         "documentation": {}
     },
@@ -3006,7 +3006,7 @@
         "kind": 2,
         "importPath": "utils.audio",
         "description": "utils.audio",
-        "peekOfCode": "def delay_warning_sound():\n    \"\"\"Delay the warning sound start by 40 seconds.\n    \"\"\"\n    logger.debug(\"Starting delay warning sound monitor\")\n    while True:\n        try:\n            if global_vars.timestamp_scanner_fault:\n                delay = (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds()\n                if delay >= 40:\n                    logger.info(\"40-second delay reached, starting warning sound\")",
+        "peekOfCode": "def delay_warning_sound():\n    \"\"\"Delay the warning sound start by 40 seconds.\n    \"\"\"\n    logger.debug(\"Starting delay warning sound monitor\")\n    while True:\n        try:\n            if global_vars.timestamp_scanner_fault:\n                # Handle the case where timestamp_scanner_fault might be a float\n                if isinstance(global_vars.timestamp_scanner_fault, float):\n                    # If it's a float, assume it's a timestamp and calculate the difference directly",
         "detail": "utils.audio",
         "documentation": {}
     },

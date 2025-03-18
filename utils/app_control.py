@@ -69,10 +69,27 @@ def save_and_exit_app():
 def exit_app():
     """Exit the application.
     """
+    logger.info("Exiting application")
+    
+    # First stop the server if it's running
     if hasattr(global_vars, 'server') and global_vars.server:
         from utils.server import server_stop
         server_stop()
-    sys.exit(0)
+    
+    # Stop any running audio threads
+    if hasattr(global_vars, 'audio_thread_running') and global_vars.audio_thread_running:
+        from utils.audio import kill_play_stepback_warning_thread
+        kill_play_stepback_warning_thread()
+    
+    # Use Qt's application exit mechanism for proper cleanup
+    from PySide6.QtWidgets import QApplication
+    app = QApplication.instance()
+    if app:
+        # Schedule the application to exit after processing current events
+        app.exit(0)
+    else:
+        # Fallback to sys.exit if there's no Qt application instance
+        sys.exit(0)
 
 def init_settings():
     """Initialize the settings
