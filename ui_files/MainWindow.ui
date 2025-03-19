@@ -1860,7 +1860,7 @@ Application</string>
     <widget class="QLabel" name="availableRobFiles">
      <property name="geometry">
       <rect>
-       <x>100</x>
+       <x>210</x>
        <y>0</y>
        <width>201</width>
        <height>31</height>
@@ -1902,7 +1902,7 @@ Application</string>
     <widget class="QListWidget" name="robFilesListWidget">
      <property name="geometry">
       <rect>
-       <x>100</x>
+       <x>210</x>
        <y>30</y>
        <width>181</width>
        <height>641</height>
@@ -1912,7 +1912,7 @@ Application</string>
     <widget class="QPushButton" name="deselectRobFile">
      <property name="geometry">
       <rect>
-       <x>100</x>
+       <x>210</x>
        <y>680</y>
        <width>181</width>
        <height>24</height>
@@ -1925,9 +1925,9 @@ Application</string>
     <widget class="QFrame" name="MatplotLibCanvasFrame">
      <property name="geometry">
       <rect>
-       <x>290</x>
+       <x>410</x>
        <y>30</y>
-       <width>971</width>
+       <width>851</width>
        <height>671</height>
       </rect>
      </property>
@@ -1941,8 +1941,8 @@ Application</string>
     <widget class="QPushButton" name="LadePallettenplan_2">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>30</y>
+       <x>120</x>
+       <y>280</y>
        <width>60</width>
        <height>60</height>
       </rect>
@@ -1976,6 +1976,136 @@ Application</string>
       <bool>true</bool>
      </property>
     </widget>
+    <widget class="QGroupBox" name="groupBoxFilters">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>194</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <widget class="QWidget" name="gridLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>191</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>mm</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>mm</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="lineEditFilterWidth">
+         <property name="inputMethodHints">
+          <set>Qt::ImhDigitsOnly</set>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Breite</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Länge</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="lineEditFilterLength">
+         <property name="inputMethodHints">
+          <set>Qt::ImhDigitsOnly</set>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Höhe</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLabel" name="label_26">
+         <property name="text">
+          <string>mm</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="lineEditFilterHeight">
+         <property name="inputMethodHints">
+          <set>Qt::ImhDigitsOnly</set>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QPushButton" name="pushButtonClearFilters">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>140</y>
+       <width>191</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Clear Filter</string>
+     </property>
+    </widget>
+    <zorder>MatplotLibCanvasFrame</zorder>
+    <zorder>availableRobFiles</zorder>
+    <zorder>ButtonZurueck_8</zorder>
+    <zorder>robFilesListWidget</zorder>
+    <zorder>deselectRobFile</zorder>
+    <zorder>LadePallettenplan_2</zorder>
+    <zorder>groupBoxFilters</zorder>
+    <zorder>pushButtonClearFilters</zorder>
    </widget>
   </widget>
  </widget>

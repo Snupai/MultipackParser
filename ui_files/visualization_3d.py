@@ -53,11 +53,46 @@ def clear_canvas(canvas):
     canvas.ax.set_axis_off()
     canvas.draw()
 
+def load_rob_files():
+    """Load .rob files into the list widget with optional filtering by package dimensions."""
+    if not global_vars.ui:
+        return
+        
+    global_vars.ui.robFilesListWidget.clear()
+    
+    # If any dimension is provided, use find_palettplan to get filtered list
+    if global_vars.filter_length > 0 or global_vars.filter_width > 0 or global_vars.filter_height > 0:
+        from utils.database import find_palettplan
+        filtered_files = find_palettplan(global_vars.filter_length, global_vars.filter_width, global_vars.filter_height)
+        if filtered_files:
+            # Sort the filtered list alphabetically
+            filtered_files.sort()
+            # Add sorted items to the list widget
+            for file in filtered_files:
+                global_vars.ui.robFilesListWidget.addItem(file)
+            logger.info(f"Loaded {len(filtered_files)} filtered palette plans")
+        else:
+            logger.info("No matching palette plans found for the given dimensions")
+    else:
+        # If no dimensions provided, load all files from database
+        from utils.database import list_available_files
+        files = list_available_files()
+        if files:
+            # Extract file names without .rob extension and sort them
+            rob_files = [file['file_name'].replace('.rob', '') for file in files]
+            rob_files.sort()
+            
+            # Add sorted items to the list widget
+            for file in rob_files:
+                global_vars.ui.robFilesListWidget.addItem(file)
+            logger.info(f"Loaded {len(rob_files)} palette plans")
+        else:
+            logger.info("No palette plans found in database")
+
 def update_palette_list():
     """Update the palette list with current wordlist in robFilesListWidget."""
     if global_vars.ui and hasattr(global_vars.ui, 'robFilesListWidget'):
         try:
-            from utils.robot_control import load_rob_files
             load_rob_files()
             logger.debug("Updated robFilesListWidget with current .rob files")
         except Exception as e:

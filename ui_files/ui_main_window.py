@@ -16,10 +16,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFormLayout,
-    QFrame, QHBoxLayout, QHeaderView, QLabel,
-    QLineEdit, QListWidget, QListWidgetItem, QPushButton,
-    QSizePolicy, QSpinBox, QStackedWidget, QTabWidget,
-    QTextEdit, QToolButton, QTreeView, QWidget)
+    QFrame, QGridLayout, QGroupBox, QHBoxLayout,
+    QHeaderView, QLabel, QLineEdit, QListWidget,
+    QListWidgetItem, QPushButton, QSizePolicy, QSpinBox,
+    QStackedWidget, QTabWidget, QTextEdit, QToolButton,
+    QTreeView, QWidget)
 from . import MainWindowResources_rc
 
 class Ui_Form(object):
@@ -690,7 +691,7 @@ class Ui_Form(object):
         self.Experimental.setObjectName(u"Experimental")
         self.availableRobFiles = QLabel(self.Experimental)
         self.availableRobFiles.setObjectName(u"availableRobFiles")
-        self.availableRobFiles.setGeometry(QRect(100, 0, 201, 31))
+        self.availableRobFiles.setGeometry(QRect(210, 0, 201, 31))
         self.ButtonZurueck_8 = QPushButton(self.Experimental)
         self.ButtonZurueck_8.setObjectName(u"ButtonZurueck_8")
         self.ButtonZurueck_8.setGeometry(QRect(0, 270, 81, 81))
@@ -700,18 +701,18 @@ class Ui_Form(object):
         self.ButtonZurueck_8.setFlat(True)
         self.robFilesListWidget = QListWidget(self.Experimental)
         self.robFilesListWidget.setObjectName(u"robFilesListWidget")
-        self.robFilesListWidget.setGeometry(QRect(100, 30, 181, 641))
+        self.robFilesListWidget.setGeometry(QRect(210, 30, 181, 641))
         self.deselectRobFile = QPushButton(self.Experimental)
         self.deselectRobFile.setObjectName(u"deselectRobFile")
-        self.deselectRobFile.setGeometry(QRect(100, 680, 181, 24))
+        self.deselectRobFile.setGeometry(QRect(210, 680, 181, 24))
         self.MatplotLibCanvasFrame = QFrame(self.Experimental)
         self.MatplotLibCanvasFrame.setObjectName(u"MatplotLibCanvasFrame")
-        self.MatplotLibCanvasFrame.setGeometry(QRect(290, 30, 971, 671))
+        self.MatplotLibCanvasFrame.setGeometry(QRect(410, 30, 851, 671))
         self.MatplotLibCanvasFrame.setFrameShape(QFrame.StyledPanel)
         self.MatplotLibCanvasFrame.setFrameShadow(QFrame.Raised)
         self.LadePallettenplan_2 = QPushButton(self.Experimental)
         self.LadePallettenplan_2.setObjectName(u"LadePallettenplan_2")
-        self.LadePallettenplan_2.setGeometry(QRect(20, 30, 60, 60))
+        self.LadePallettenplan_2.setGeometry(QRect(120, 280, 60, 60))
         sizePolicy1.setHeightForWidth(self.LadePallettenplan_2.sizePolicy().hasHeightForWidth())
         self.LadePallettenplan_2.setSizePolicy(sizePolicy1)
         self.LadePallettenplan_2.setCursor(QCursor(Qt.PointingHandCursor))
@@ -719,7 +720,76 @@ class Ui_Form(object):
         self.LadePallettenplan_2.setIcon(icon1)
         self.LadePallettenplan_2.setIconSize(QSize(60, 60))
         self.LadePallettenplan_2.setFlat(True)
+        self.groupBoxFilters = QGroupBox(self.Experimental)
+        self.groupBoxFilters.setObjectName(u"groupBoxFilters")
+        self.groupBoxFilters.setGeometry(QRect(10, 30, 194, 101))
+        self.groupBoxFilters.setAutoFillBackground(False)
+        self.gridLayoutWidget = QWidget(self.groupBoxFilters)
+        self.gridLayoutWidget.setObjectName(u"gridLayoutWidget")
+        self.gridLayoutWidget.setGeometry(QRect(0, 0, 191, 101))
+        self.gridLayout = QGridLayout(self.gridLayoutWidget)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.label_3 = QLabel(self.gridLayoutWidget)
+        self.label_3.setObjectName(u"label_3")
+
+        self.gridLayout.addWidget(self.label_3, 0, 2, 1, 1)
+
+        self.label_9 = QLabel(self.gridLayoutWidget)
+        self.label_9.setObjectName(u"label_9")
+
+        self.gridLayout.addWidget(self.label_9, 1, 2, 1, 1)
+
+        self.lineEditFilterWidth = QLineEdit(self.gridLayoutWidget)
+        self.lineEditFilterWidth.setObjectName(u"lineEditFilterWidth")
+        self.lineEditFilterWidth.setInputMethodHints(Qt.ImhDigitsOnly)
+
+        self.gridLayout.addWidget(self.lineEditFilterWidth, 1, 1, 1, 1)
+
+        self.label_4 = QLabel(self.gridLayoutWidget)
+        self.label_4.setObjectName(u"label_4")
+
+        self.gridLayout.addWidget(self.label_4, 1, 0, 1, 1)
+
+        self.label_2 = QLabel(self.gridLayoutWidget)
+        self.label_2.setObjectName(u"label_2")
+
+        self.gridLayout.addWidget(self.label_2, 0, 0, 1, 1)
+
+        self.lineEditFilterLength = QLineEdit(self.gridLayoutWidget)
+        self.lineEditFilterLength.setObjectName(u"lineEditFilterLength")
+        self.lineEditFilterLength.setInputMethodHints(Qt.ImhDigitsOnly)
+
+        self.gridLayout.addWidget(self.lineEditFilterLength, 0, 1, 1, 1)
+
+        self.label_10 = QLabel(self.gridLayoutWidget)
+        self.label_10.setObjectName(u"label_10")
+
+        self.gridLayout.addWidget(self.label_10, 2, 0, 1, 1)
+
+        self.label_26 = QLabel(self.gridLayoutWidget)
+        self.label_26.setObjectName(u"label_26")
+
+        self.gridLayout.addWidget(self.label_26, 2, 2, 1, 1)
+
+        self.lineEditFilterHeight = QLineEdit(self.gridLayoutWidget)
+        self.lineEditFilterHeight.setObjectName(u"lineEditFilterHeight")
+        self.lineEditFilterHeight.setInputMethodHints(Qt.ImhDigitsOnly)
+
+        self.gridLayout.addWidget(self.lineEditFilterHeight, 2, 1, 1, 1)
+
+        self.pushButtonClearFilters = QPushButton(self.Experimental)
+        self.pushButtonClearFilters.setObjectName(u"pushButtonClearFilters")
+        self.pushButtonClearFilters.setGeometry(QRect(10, 140, 191, 41))
         self.stackedWidget.addWidget(self.Experimental)
+        self.MatplotLibCanvasFrame.raise_()
+        self.availableRobFiles.raise_()
+        self.ButtonZurueck_8.raise_()
+        self.robFilesListWidget.raise_()
+        self.deselectRobFile.raise_()
+        self.LadePallettenplan_2.raise_()
+        self.groupBoxFilters.raise_()
+        self.pushButtonClearFilters.raise_()
 
         self.retranslateUi(Form)
 
@@ -824,5 +894,19 @@ class Ui_Form(object):
         self.ButtonZurueck_8.setText("")
         self.deselectRobFile.setText(QCoreApplication.translate("Form", u"Deselect", None))
         self.LadePallettenplan_2.setText("")
+        self.groupBoxFilters.setTitle("")
+        self.label_3.setText(QCoreApplication.translate("Form", u"mm", None))
+        self.label_9.setText(QCoreApplication.translate("Form", u"mm", None))
+        self.lineEditFilterWidth.setText("")
+        self.lineEditFilterWidth.setPlaceholderText(QCoreApplication.translate("Form", u"0", None))
+        self.label_4.setText(QCoreApplication.translate("Form", u"Breite", None))
+        self.label_2.setText(QCoreApplication.translate("Form", u"L\u00e4nge", None))
+        self.lineEditFilterLength.setText("")
+        self.lineEditFilterLength.setPlaceholderText(QCoreApplication.translate("Form", u"0", None))
+        self.label_10.setText(QCoreApplication.translate("Form", u"H\u00f6he", None))
+        self.label_26.setText(QCoreApplication.translate("Form", u"mm", None))
+        self.lineEditFilterHeight.setText("")
+        self.lineEditFilterHeight.setPlaceholderText(QCoreApplication.translate("Form", u"0", None))
+        self.pushButtonClearFilters.setText(QCoreApplication.translate("Form", u"Clear Filter", None))
     # retranslateUi
 

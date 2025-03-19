@@ -11,13 +11,13 @@ from PySide6.QtCore import Qt, QRegularExpression, QTimer
 from PySide6.QtGui import QRegularExpressionValidator, QIntValidator
 
 from ui_files.ui_main_window import Ui_Form
-from ui_files.visualization_3d import initialize_3d_view, clear_canvas
+from ui_files.visualization_3d import initialize_3d_view, clear_canvas, load_rob_files
 from utils import global_vars
 from utils.ui_helpers import (CustomDoubleValidator, update_status_label, handle_scanner_status, 
                              set_wordlist, open_page, Page, open_password_dialog, leave_settings_page, 
                              open_file, save_open_file, execute_command, open_folder_dialog, 
-                             open_file_dialog, set_settings_line_edits, check_key_or_password)
-from utils.robot_control import (load_rob_files, display_selected_file, load, 
+                             open_file_dialog, set_settings_line_edits, check_key_or_password, clear_filters)
+from utils.robot_control import (display_selected_file, load, 
                                 send_cmd_play, send_cmd_pause, send_cmd_stop, load_selected_file)
 from utils.server import server_thread, server_stop
 from utils.audio import (spawn_play_stepback_warning_thread, kill_play_stepback_warning_thread, 
@@ -92,6 +92,19 @@ def connect_signal_handlers():
     global_vars.ui.robFilesListWidget.itemClicked.connect(lambda item: display_selected_file(item))
     global_vars.ui.deselectRobFile.clicked.connect(lambda: clear_canvas(global_vars.canvas))
     global_vars.ui.LadePallettenplan_2.clicked.connect(load_selected_file)
+    def update_filter_length(text_value):
+        global_vars.filter_length = int(text_value) if text_value else 0
+        load_rob_files()
+    global_vars.ui.lineEditFilterLength.textChanged.connect(update_filter_length)
+    def update_filter_width(text_value):
+        global_vars.filter_width = int(text_value) if text_value else 0
+        load_rob_files()
+    global_vars.ui.lineEditFilterWidth.textChanged.connect(update_filter_width)
+    def update_filter_height(text_value):
+        global_vars.filter_height = int(text_value) if text_value else 0
+        load_rob_files()
+    global_vars.ui.lineEditFilterHeight.textChanged.connect(update_filter_height)
+    global_vars.ui.pushButtonClearFilters.clicked.connect(clear_filters)
 
     # Connect all buttons
     global_vars.ui.ButtonSettings.clicked.connect(check_key_or_password)

@@ -13,6 +13,7 @@ from ui_files.BlinkingLabel import BlinkingLabel
 from utils.message import MessageType, Message
 from utils.message_manager import MessageManager
 from ui_files.PasswordDialog import PasswordEntryDialog
+from utils.robot_control import load_rob_files
 from utils.usb_key_check import check_any_usb_for_key
 
 logger = logging.getLogger(__name__)
@@ -622,3 +623,13 @@ def test_zwischenlage_popup(enable: bool = True):
     
     # Return a confirmation message that can be shown to the user
     return f"Zwischenlage popup {'enabled' if enable else 'disabled'}" 
+
+def clear_filters():
+    """Clear the filters.
+    """
+    global_vars.filter_length = 0
+    global_vars.filter_width = 0
+    global_vars.filter_height = 0
+    global_vars.ui.lineEditFilterLength.setText("")
+    global_vars.ui.lineEditFilterWidth.setText("")
+    global_vars.ui.lineEditFilterHeight.setText("")

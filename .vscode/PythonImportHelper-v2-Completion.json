@@ -154,6 +154,22 @@
         "documentation": {}
     },
     {
+        "label": "QGridLayout",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QGroupBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QHBoxLayout",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -2263,6 +2279,14 @@
         "documentation": {}
     },
     {
+        "label": "clear_filters",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
         "label": "update_status_label",
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
@@ -2561,6 +2585,14 @@
     },
     {
         "label": "clear_canvas",
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "isExtraImport": true,
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "load_rob_files",
         "importPath": "ui_files.visualization_3d",
         "description": "ui_files.visualization_3d",
         "isExtraImport": true,
@@ -2925,11 +2957,20 @@
         "documentation": {}
     },
     {
+        "label": "load_rob_files",
+        "kind": 2,
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "peekOfCode": "def load_rob_files():\n    \"\"\"Load .rob files into the list widget with optional filtering by package dimensions.\"\"\"\n    if not global_vars.ui:\n        return\n    global_vars.ui.robFilesListWidget.clear()\n    # If any dimension is provided, use find_palettplan to get filtered list\n    if global_vars.filter_length > 0 or global_vars.filter_width > 0 or global_vars.filter_height > 0:\n        from utils.database import find_palettplan\n        filtered_files = find_palettplan(global_vars.filter_length, global_vars.filter_width, global_vars.filter_height)\n        if filtered_files:",
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
         "label": "update_palette_list",
         "kind": 2,
         "importPath": "ui_files.visualization_3d",
         "description": "ui_files.visualization_3d",
-        "peekOfCode": "def update_palette_list():\n    \"\"\"Update the palette list with current wordlist in robFilesListWidget.\"\"\"\n    if global_vars.ui and hasattr(global_vars.ui, 'robFilesListWidget'):\n        try:\n            from utils.robot_control import load_rob_files\n            load_rob_files()\n            logger.debug(\"Updated robFilesListWidget with current .rob files\")\n        except Exception as e:\n            logger.error(f\"Failed to update robFilesListWidget: {e}\")\ndef calculate_package_centers(center, width, length, rotation, num_packages):",
+        "peekOfCode": "def update_palette_list():\n    \"\"\"Update the palette list with current wordlist in robFilesListWidget.\"\"\"\n    if global_vars.ui and hasattr(global_vars.ui, 'robFilesListWidget'):\n        try:\n            load_rob_files()\n            logger.debug(\"Updated robFilesListWidget with current .rob files\")\n        except Exception as e:\n            logger.error(f\"Failed to update robFilesListWidget: {e}\")\ndef calculate_package_centers(center, width, length, rotation, num_packages):\n    centers = []",
         "detail": "ui_files.visualization_3d",
         "documentation": {}
     },
@@ -3200,6 +3241,15 @@
         "importPath": "utils.database",
         "description": "utils.database",
         "peekOfCode": "def find_file_in_database(file_name: str, db_path=\"paletten.db\") -> Optional[Dict[str, Any]]:\n    \"\"\"Find a specific .rob file in the database.\n    Args:\n        file_name (str): Name of the file to find\n        db_path (str): Path to the database\n    Returns:\n        Optional[Dict[str, Any]]: File info or None if not found\n    \"\"\"\n    try:\n        conn = sqlite3.connect(db_path)",
+        "detail": "utils.database",
+        "documentation": {}
+    },
+    {
+        "label": "find_palettplan",
+        "kind": 2,
+        "importPath": "utils.database",
+        "description": "utils.database",
+        "peekOfCode": "def find_palettplan(package_length=0, package_width=0, package_height=0, db_path=\"paletten.db\") -> Optional[List[str]]:\n    \"\"\"Find a palettplan that matches the given package dimensions.\n    Args:\n        package_length (float): Length of the package\n        package_width (float): Width of the package\n        package_height (float): Height of the package\n        db_path (str): Path to the database\n    Returns:\n        Optional[List[str]]: List of file names or None if not found\n    \"\"\"",
         "detail": "utils.database",
         "documentation": {}
     },
@@ -3762,6 +3812,15 @@
         "documentation": {}
     },
     {
+        "label": "clear_filters",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def clear_filters():\n    \"\"\"Clear the filters.\n    \"\"\"\n    global_vars.filter_length = 0\n    global_vars.filter_width = 0\n    global_vars.filter_height = 0\n    global_vars.ui.lineEditFilterLength.setText(\"\")\n    global_vars.ui.lineEditFilterWidth.setText(\"\")\n    global_vars.ui.lineEditFilterHeight.setText(\"\")",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
         "label": "logger",
         "kind": 5,
         "importPath": "utils.ui_helpers",
@@ -3793,7 +3852,7 @@
         "kind": 2,
         "importPath": "utils.ui_setup",
         "description": "utils.ui_setup",
-        "peekOfCode": "def connect_signal_handlers():\n    \"\"\"Connect all signal handlers.\"\"\"\n    # Connect main UI signals\n    global_vars.ui.EingabePallettenplan.returnPressed.connect(load)\n    global_vars.ui.openExperimentalTab.clicked.connect(lambda: open_page(Page.EXPERIMENTAL_PAGE))\n    global_vars.ui.ButtonZurueck_8.clicked.connect(lambda: open_page(Page.MAIN_PAGE))\n    global_vars.ui.robFilesListWidget.itemClicked.connect(lambda item: display_selected_file(item))\n    global_vars.ui.deselectRobFile.clicked.connect(lambda: clear_canvas(global_vars.canvas))\n    global_vars.ui.LadePallettenplan_2.clicked.connect(load_selected_file)\n    # Connect all buttons",
+        "peekOfCode": "def connect_signal_handlers():\n    \"\"\"Connect all signal handlers.\"\"\"\n    # Connect main UI signals\n    global_vars.ui.EingabePallettenplan.returnPressed.connect(load)\n    global_vars.ui.openExperimentalTab.clicked.connect(lambda: open_page(Page.EXPERIMENTAL_PAGE))\n    global_vars.ui.ButtonZurueck_8.clicked.connect(lambda: open_page(Page.MAIN_PAGE))\n    global_vars.ui.robFilesListWidget.itemClicked.connect(lambda item: display_selected_file(item))\n    global_vars.ui.deselectRobFile.clicked.connect(lambda: clear_canvas(global_vars.canvas))\n    global_vars.ui.LadePallettenplan_2.clicked.connect(load_selected_file)\n    def update_filter_length(text_value):",
         "detail": "utils.ui_setup",
         "documentation": {}
     },

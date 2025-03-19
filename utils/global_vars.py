@@ -105,4 +105,9 @@ blinking_label: Optional['BlinkingLabel'] = None  # Initialize as None, will be 
 # Initialize logger
 logger.info("Global variables module initialized")
 
+# Filter dimensions for palette list
+filter_length: int = 0
+filter_width: int = 0
+filter_height: int = 0
+
 audio_thread: Optional[threading.Thread] = None

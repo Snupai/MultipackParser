@@ -592,3 +592,62 @@ def find_file_in_database(file_name: str, db_path="paletten.db") -> Optional[Dic
     except Exception as e:
         logger.error(f"Error searching for file in database: {e}")
         return None 
+    
+def find_palettplan(package_length=0, package_width=0, package_height=0, db_path="paletten.db") -> Optional[List[str]]:
+    """Find a palettplan that matches the given package dimensions.
+    
+    Args:
+        package_length (float): Length of the package
+        package_width (float): Width of the package
+        package_height (float): Height of the package
+        db_path (str): Path to the database
+        
+    Returns:
+        Optional[List[str]]: List of file names or None if not found
+    """
+    # if all dimensions are 0, return None
+    if package_length == 0 and package_width == 0 and package_height == 0:
+        return None
+    
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        
+        # Build query dynamically based on which dimensions are non-zero
+        query = "SELECT metadata_id FROM paket_dim WHERE 1=1"
+        params = []
+        
+        if package_length != 0:
+            query += " AND length = ?"
+            params.append(package_length)
+            
+        if package_width != 0:
+            query += " AND width = ?"
+            params.append(package_width)
+            
+        if package_height != 0:
+            query += " AND height = ?"
+            params.append(package_height)
+            
+        cursor.execute(query, params)
+        results = cursor.fetchall()
+        # somehow the results look like this [(4,), (7,), (8,)] so we need to fix this to only have the idnum (idnums can be 2 or 3 digits or even more)
+        metadata_ids = []
+        for result in results:
+            id = result[0]  # Get first element of the tuple
+            metadata_ids.append(id)
+
+        # get name of file from metadata_id
+        file_names = []
+        for metadata_id in metadata_ids:
+            cursor.execute('''
+            SELECT file_name FROM paletten_metadata WHERE id = ?
+            ''', (metadata_id,))
+            file_name = cursor.fetchone()
+            file_names.append(file_name[0].replace('.rob', ''))
+        conn.close()
+        return file_names
+        
+    except Exception as e:
+        logger.error(f"Error finding palettplan in database: {e}")
+        return None
