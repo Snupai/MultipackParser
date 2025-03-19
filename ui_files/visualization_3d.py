@@ -227,9 +227,9 @@ def display_pallet_3d(canvas, pallet_name):
     # Get package dimensions from the first box
     if pallet.layers and pallet.layers[0].boxes:
         first_box = pallet.layers[0].boxes[0]
-        package_width, package_length = (first_box.rect.length, first_box.rect.width)
+        package_width, package_length = (first_box.rect.width, first_box.rect.length)
         if first_box.rotation == 90 or first_box.rotation == 270:
-            package_width, package_length = (first_box.rect.width, first_box.rect.length)
+            package_width, package_length = (first_box.rect.length, first_box.rect.width)
         package_height = first_box.height
     
     # Reverse layer order to draw from top to bottom
