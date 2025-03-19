@@ -631,7 +631,7 @@ def find_palettplan(package_length=0, package_width=0, package_height=0, db_path
             
         cursor.execute(query, params)
         results = cursor.fetchall()
-        # somehow the results look like this [(4,), (7,), (8,)] so we need to fix this to only have the idnum (idnums can be 2 or 3 digits or even more)
+        
         metadata_ids = []
         for result in results:
             id = result[0]  # Get first element of the tuple
