@@ -46,12 +46,12 @@ jobs:
       - name: Check if VERSION changed
         id: check_version_change
         run: |
-          # Fetch full history for comparison
-          git fetch --unshallow
+          # Fetch the current branch history
+          git fetch origin ${{ github.ref }}:refs/remotes/origin/${{ github.ref }}
 
           # Get the current and previous commit SHAs
           CURR_SHA=${{ github.sha }}
-          PREV_SHA=$(git rev-parse HEAD^ || echo "")
+          PREV_SHA=$(git rev-parse origin/${{ github.ref }}~1 || echo "")
 
           if [ -z "$PREV_SHA" ]; then
             # If this is the first commit, there's no previous version
