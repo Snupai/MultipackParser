@@ -630,7 +630,7 @@ def find_palettplan(package_length=0, package_width=0, package_height=0, db_path
             params.append(package_height)
             
         cursor.execute(query, params)
-        results = cursor.fetchall()
+        results = cursor.fetchall() # get all results as a list of tuples
         
         metadata_ids = []
         for result in results:
