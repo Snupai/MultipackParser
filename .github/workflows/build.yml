@@ -46,8 +46,11 @@ jobs:
       - name: Check if VERSION changed
         id: check_version_change
         run: |
-          # Fetch the previous commit for comparison
-          git fetch origin ${{ github.ref }}:refs/remotes/origin/${{ github.ref }}
+          # Fetch full history for comparison
+          git fetch --unshallow
+
+          # Get the current and previous commit SHAs
+          CURR_SHA=${{ github.sha }}
           PREV_SHA=$(git rev-parse HEAD^ || echo "")
 
           if [ -z "$PREV_SHA" ]; then
@@ -59,7 +62,7 @@ jobs:
 
           # Get versions from current and previous commit
           PREV_VERSION=$(git show $PREV_SHA:utils/global_vars.py | grep -m 1 "VERSION = " | cut -d "'" -f 2 || echo "")
-          CURR_VERSION=$(git show HEAD:utils/global_vars.py | grep -m 1 "VERSION = " | cut -d "'" -f 2)
+          CURR_VERSION=$(git show $CURR_SHA:utils/global_vars.py | grep -m 1 "VERSION = " | cut -d "'" -f 2)
 
           echo "Previous version: $PREV_VERSION"
           echo "Current version: $CURR_VERSION"
