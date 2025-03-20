@@ -9,47 +9,22 @@ RUN apt-get update -y && apt-get install -y \
     libffi-dev \
     libssl-dev \
     wget \
-    # X11 and GUI dependencies
-    libx11-xcb1 \
-    libxcb1 \
-    libxcb-glx0 \
-    libxcb-icccm4 \
-    libxcb-image0 \
-    libxcb-keysyms1 \
-    libxcb-randr0 \
-    libxcb-render-util0 \
-    libxcb-shape0 \
-    libxcb-sync1 \
-    libxcb-xfixes0 \
-    libxcb-xkb1 \
-    # Qt dependencies
+    libdbus-1-3 \
     libxkbcommon0 \
-    libxkbcommon-x11-0 \
-    libxkbfile1 \
-    # Multimedia dependencies
-    libasound2 \
-    libpulse0 \
-    libopus0 \
-    # Image format dependencies
-    libtiff6 \
-    libwebp7 \
-    # Additional X11 dependencies
-    libxcomposite1 \
-    libxdamage1 \
-    libxfixes3 \
-    libxtst6 \
-    libxrandr2 \
-    # WebEngine dependencies
-    libgbm1 \
-    libnspr4 \
-    libnss3 \
-    libnss3-tools \
-    # Wayland dependencies
     libwayland-client0 \
     libwayland-cursor0 \
     libwayland-egl1 \
-    # GTK dependencies
-    libgtk-3-0 \
+    libxcb-keysyms1 \
+    libxcb-shape0 \
+    libxcb-xfixes0 \
+    libxcb-xkb1 \
+    libxcb-sync1 \
+    libxcb-randr0 \
+    libxcb-render-util0 \
+    libxcb-cursor0 \
+    libxcb-icccm4 \
+    libxcb-image0 \
+    libxcb-glx0 \
     && apt-get clean
 
 # Install PyInstaller and required Python packages
@@ -70,17 +45,6 @@ RUN pyinstaller MultipackParser.spec
 
 # Stage 2: Copy the executable to a minimal base image
 FROM arm64v8/python:3.12-slim
-
-# Install runtime dependencies
-RUN apt-get update -y && apt-get install -y \
-    libxcb1 \
-    libxkbcommon0 \
-    libxkbcommon-x11-0 \
-    libwayland-client0 \
-    libwayland-cursor0 \
-    libwayland-egl1 \
-    libgtk-3-0 \
-    && apt-get clean
 
 WORKDIR /app
 
