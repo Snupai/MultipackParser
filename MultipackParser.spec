@@ -6,13 +6,13 @@ from PyInstaller.utils.hooks import collect_data_files, collect_submodules, coll
 
 block_cipher = None
 
-# Collect Qt plugins, especially for virtual keyboard
+# Collect only essential Qt plugins
 qt_plugins = [
     ('PySide6/plugins/platforminputcontexts', '.'),
     ('PySide6/plugins/virtualkeyboard', '.'),
 ]
 
-# Collect all Qt virtual keyboard modules and data
+# Collect only essential Qt virtual keyboard modules
 qt_virtual_keyboard_binaries = []
 qt_virtual_keyboard_datas = []
 qt_virtual_keyboard_hiddenimports = []
@@ -26,13 +26,13 @@ if sys.platform.startswith('linux'):
         import platform
         is_arm_linux = 'arm' in platform.machine().lower()
 
-# Collect all QtVirtualKeyboard related files and modules
+# Collect only essential QtVirtualKeyboard components
 vkb_imports, vkb_datas, vkb_binaries = collect_all('PySide6.QtVirtualKeyboard')
 qt_virtual_keyboard_hiddenimports.extend(vkb_imports)
 qt_virtual_keyboard_datas.extend(vkb_datas)
 qt_virtual_keyboard_binaries.extend(vkb_binaries)
 
-# Create the analysis object with all our collected data
+# Create the analysis object with optimized settings
 a = Analysis(
     ['main.py'],
     pathex=[],
@@ -42,7 +42,15 @@ a = Analysis(
     hookspath=['hooks'],
     hooksconfig={},
     runtime_hooks=['hooks/runtime_hook.py'],
-    excludes=[],
+    excludes=[
+        'tkinter', 'matplotlib.tests', 'numpy.random._examples',
+        'PIL.ImageQt', 'PySide6.QtNetwork', 'PySide6.QtPrintSupport',
+        'PySide6.QtSensors', 'PySide6.QtSerialPort', 'PySide6.QtSql',
+        'PySide6.QtTest', 'PySide6.QtWebChannel', 'PySide6.QtWebEngine',
+        'PySide6.QtWebEngineCore', 'PySide6.QtWebEngineWidgets',
+        'PySide6.QtWebKit', 'PySide6.QtWebKitWidgets', 'PySide6.QtWebSockets',
+        'PySide6.QtXml', 'PySide6.QtXmlPatterns'
+    ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
@@ -52,7 +60,7 @@ a = Analysis(
 # Create the PYZ object
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
-# Create the executable
+# Create the executable with optimized UPX settings
 exe = EXE(
     pyz,
     a.scripts,
@@ -63,7 +71,7 @@ exe = EXE(
     name='MultipackParser',
     debug=False,
     bootloader_ignore_signals=False,
-    strip=False,
+    strip=True,  # Enable stripping to reduce binary size; idk if this breaks the functionality.
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
