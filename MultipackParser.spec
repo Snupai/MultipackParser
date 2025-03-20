@@ -24,7 +24,7 @@ qt_modules = [
 a = Analysis(
     ['main.py'],
     pathex=[],
-    binaries=qt_binaries,
+    binaries=None,
     datas=qt_plugins_datas,
     hiddenimports=qt_modules,
     hookspath=['hooks'],
