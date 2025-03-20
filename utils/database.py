@@ -637,6 +637,8 @@ def find_palettplan(package_length=0, package_width=0, package_height=0, db_path
             id = result[0]  # Get first element of the tuple
             metadata_ids.append(id)
 
+        logger.info(f"Found {len(metadata_ids)} palettplans in database")
+
         # get name of file from metadata_id
         file_names = []
         for metadata_id in metadata_ids:

@@ -49,8 +49,7 @@ a = Analysis(
         'PySide6.QtWebEngineCore', 'PySide6.QtWebEngineWidgets',
         'PySide6.QtWebKit', 'PySide6.QtWebKitWidgets', 'PySide6.QtWebSockets',
         'PySide6.QtXml', 'PySide6.QtXmlPatterns', 'PySide6.QtMultimedia',
-        'PySide6.QtOpenGL', 'PySide6.QtPositioning', 'PySide6.QtQml',
-        'PySide6.QtQuick', 'PySide6.QtQuickWidgets'
+        'PySide6.QtOpenGL', 'PySide6.QtPositioning', 'PySide6.QtQuickWidgets'
     ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
