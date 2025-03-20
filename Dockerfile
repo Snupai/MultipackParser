@@ -50,6 +50,13 @@ RUN apt-get update -y && apt-get install -y \
     libwayland-client0 \
     libwayland-cursor0 \
     libwayland-egl1 \
+    libxcb1 \
+    libxkbcommon0 \
+    libxkbcommon-x11-0 \
+    libwayland-client0 \
+    libwayland-cursor0 \
+    libwayland-egl1 \
+    libgtk-3-0 \
     # GTK dependencies
     libgtk-3-0 \
     libgdk-3-0 \
@@ -75,17 +82,6 @@ RUN pyinstaller MultipackParser.spec
 
 # Stage 2: Copy the executable to a minimal base image
 FROM arm64v8/python:3.12-slim
-
-# Install runtime dependencies
-RUN apt-get update -y && apt-get install -y \
-    libxcb1 \
-    libxkbcommon0 \
-    libxkbcommon-x11-0 \
-    libwayland-client0 \
-    libwayland-cursor0 \
-    libwayland-egl1 \
-    libgtk-3-0 \
-    && apt-get clean
 
 WORKDIR /app
 
