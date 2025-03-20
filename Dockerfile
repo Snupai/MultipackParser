@@ -31,10 +31,9 @@ RUN apt-get update -y && apt-get install -y \
     libpulse0 \
     libopus0 \
     # Image format dependencies
-    libtiff5 \
-    libwebp6 \
+    libtiff6 \
+    libwebp7 \
     # Additional X11 dependencies
-    libx11-xcb1 \
     libxcomposite1 \
     libxdamage1 \
     libxfixes3 \
@@ -45,23 +44,12 @@ RUN apt-get update -y && apt-get install -y \
     libnspr4 \
     libnss3 \
     libnss3-tools \
-    libsmime3 \
     # Wayland dependencies
     libwayland-client0 \
     libwayland-cursor0 \
     libwayland-egl1 \
-    libxcb1 \
-    libxkbcommon0 \
-    libxkbcommon-x11-0 \
-    libwayland-client0 \
-    libwayland-cursor0 \
-    libwayland-egl1 \
-    libgtk-3-0 \
     # GTK dependencies
     libgtk-3-0 \
-    libgdk-3-0 \
-    # Compression dependencies
-    libminizip1 \
     && apt-get clean
 
 # Install PyInstaller and required Python packages
@@ -82,6 +70,17 @@ RUN pyinstaller MultipackParser.spec
 
 # Stage 2: Copy the executable to a minimal base image
 FROM arm64v8/python:3.12-slim
+
+# Install runtime dependencies
+RUN apt-get update -y && apt-get install -y \
+    libxcb1 \
+    libxkbcommon0 \
+    libxkbcommon-x11-0 \
+    libwayland-client0 \
+    libwayland-cursor0 \
+    libwayland-egl1 \
+    libgtk-3-0 \
+    && apt-get clean
 
 WORKDIR /app
 
