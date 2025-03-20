@@ -21,12 +21,6 @@ qt_modules = [
     'PySide6.QtVirtualKeyboard'
 ]
 
-# Collect Qt binaries
-qt_binaries = []
-for module in qt_modules:
-    module_binaries = collect_dynamic_libs(module)
-    qt_binaries.extend(module_binaries)
-
 a = Analysis(
     ['main.py'],
     pathex=[],
