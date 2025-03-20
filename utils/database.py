@@ -251,7 +251,7 @@ def save_to_database(file_name, db_path="paletten.db") -> bool:
     """
     # Create database tables if they don't exist
     create_database(db_path)
-    
+    logger.info(f"Handling file: {file_name}")
     _, file_timestamp, g_Daten, g_LageZuordnung, g_PaketPos, g_PaketeZuordnung, g_Zwischenlagen, g_paket_quer, g_CenterOfGravity, g_PalettenDim, g_PaketDim, g_LageArten, g_AnzLagen, g_AnzahlPakete = UR_ReadDataFromUsbStick(file_name, global_vars.PATH_USB_STICK)
     
     conn = sqlite3.connect(db_path)
@@ -353,6 +353,7 @@ def save_to_database(file_name, db_path="paletten.db") -> bool:
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (metadata_id, i, pos[0], pos[1], pos[2], pos[3], pos[4], pos[5], pos[6], pos[7], pos[8]))
     
+    logger.info(f"Saved file: {file_name} to database")
     conn.commit()
     conn.close()
     return True
