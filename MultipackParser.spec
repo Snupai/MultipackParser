@@ -2,18 +2,16 @@
 
 import os
 import sys
-from PyInstaller.utils.hooks import collect_data_files, collect_submodules
+from PyInstaller.utils.hooks import collect_data_files, collect_submodules, collect_dynamic_libs
 
 block_cipher = None
 
-# Only collect the specific Qt plugins we need
-qt_plugin_binaries = [
-    ('PySide6/plugins/platforms/libqwayland-egl.so', 'platforms'),
-    ('PySide6/plugins/platforms/libqwayland-generic.so', 'platforms'),
-    ('PySide6/plugins/platforms/libqwayland-xcomposite-egl.so', 'platforms'),
-    ('PySide6/plugins/platforminputcontexts/libqtvirtualkeyboardplugin.so', 'platforminputcontexts'),
-    ('PySide6/plugins/virtualkeyboard/libqtvirtualkeyboard_*.so', 'virtualkeyboard'),
-]
+# Collect Qt plugins using collect_data_files
+qt_plugins_datas = []
+for plugin in ['platforms', 'platforminputcontexts', 'virtualkeyboard']:
+    plugin_datas = collect_data_files('PySide6', include_py_files=False, 
+                                    subdir=os.path.join('Qt6', 'plugins', plugin))
+    qt_plugins_datas.extend(plugin_datas)
 
 # Minimal set of required Qt modules
 qt_modules = [
@@ -23,14 +21,17 @@ qt_modules = [
     'PySide6.QtVirtualKeyboard'
 ]
 
-# Collect only the essential virtual keyboard data
-vkb_datas = collect_data_files('PySide6.QtVirtualKeyboard', include_py_files=False)
+# Collect Qt binaries
+qt_binaries = []
+for module in qt_modules:
+    module_binaries = collect_dynamic_libs(module)
+    qt_binaries.extend(module_binaries)
 
 a = Analysis(
     ['main.py'],
     pathex=[],
-    binaries=qt_plugin_binaries,
-    datas=vkb_datas,
+    binaries=qt_binaries,
+    datas=qt_plugins_datas,
     hiddenimports=qt_modules,
     hookspath=['hooks'],
     hooksconfig={

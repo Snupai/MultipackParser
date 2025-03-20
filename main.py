@@ -24,7 +24,7 @@ from ui_files import MainWindowResources_rc
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickView
 ################################################################
-#TODO: After starting the program, ask the user to confirm each palette if it is empty or not. and if it is not empty ask the user to confirm if the user wants to continue anyways and ask for the current layer.
+#TODO: if start palette is not empty ask the user to confirm if the user wants to continue anyways and ask for the current layer.
 #TODO: Implement seemless palletizing with 2 pallets for UR20 robot.
 import sys
 import logging
@@ -100,6 +100,7 @@ def main():
         progress.setValue(60)
         loading_label.setText("Updating database...")
         app.processEvents()
+        
         update_database_from_usb()
 
         # Setup UI components
