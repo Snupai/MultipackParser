@@ -39,7 +39,7 @@ from utils.ui_setup import (initialize_main_window, setup_input_validation, conn
                           setup_password_handling, setup_components, start_background_tasks,
                           setup_window_handling)
 
-# Configure matplotlib backend
+# Configure matplotlib backend for 3d view
 matplotlib.use('qtagg', force=True)
 os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
