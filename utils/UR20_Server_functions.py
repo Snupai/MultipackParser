@@ -3,7 +3,7 @@
 from PySide6.QtWidgets import QMessageBox, QLabel
 from PySide6.QtGui import QPixmap
 from . import global_vars
-import time
+from datetime import datetime
 from utils.ui_helpers import update_status_label
 from typing import Literal, cast, Union
 from PySide6.QtCore import Qt, QObject, Signal
@@ -35,7 +35,7 @@ def UR20_scannerStatus(status: str) -> int:
     
     if not status == "True,True,True" and global_vars.timestamp_scanner_fault is None:
         logger.warning("Scanner fault detected")
-        global_vars.timestamp_scanner_fault = time.time()
+        global_vars.timestamp_scanner_fault = datetime.now().timestamp()
 
     image_path = None
     message = "Bitte Arbeitsbereich räumen."  # Default message for unsafe conditions
@@ -150,10 +150,21 @@ def UR20_SetZwischenLageLegen(aktiv: bool):
         
     return 1
 
-def UR20_GetKlemmungStatus() -> bool:
-    """Get the klemmung status.
+def UR20_GetKlemmungAktiv() -> bool:
+    """Check if the klemmung is active.
 
     Returns:
-        bool: The status of the klemmung.
+        bool: True if the klemmung is active, False otherwise.
     """
     return global_vars.ui.checkBoxKlemmung.isChecked()
+
+def UR20_GetScannerOverride() -> list[bool]:
+    """Get the scanner override.
+
+    Returns:
+        list[bool]: The status of the scanner override.
+    """
+    scanner_override: list[bool] = [global_vars.ui.checkBoxScanner1Override.isChecked(), global_vars.ui.checkBoxScanner2Override.isChecked(), global_vars.ui.checkBoxScanner3Override.isChecked()]
+    logger.debug(f"Checking scanner override: {scanner_override=}")
+    return scanner_override
+

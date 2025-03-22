@@ -43,7 +43,7 @@ UR20_zwischenlage: Optional[bool] = False
 # Audio
 audio_muted: bool = False
 
-timestamp_scanner_fault: Optional[datetime] = None
+timestamp_scanner_fault: Optional[float] = None
 
 ##########################
 

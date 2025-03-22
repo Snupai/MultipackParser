@@ -2361,6 +2361,14 @@
         "documentation": {}
     },
     {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
         "label": "show_instant_splash",
         "importPath": "utils.app_control",
         "description": "utils.app_control",
@@ -4010,11 +4018,20 @@
         "documentation": {}
     },
     {
-        "label": "UR20_GetKlemmungStatus",
+        "label": "UR20_GetKlemmungAktiv",
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_GetKlemmungStatus() -> bool:\n    \"\"\"Get the klemmung status.\n    Returns:\n        bool: The status of the klemmung.\n    \"\"\"\n    return global_vars.ui.checkBoxKlemmung.isChecked()",
+        "peekOfCode": "def UR20_GetKlemmungAktiv() -> bool:\n    \"\"\"Check if the klemmung is active.\n    Returns:\n        bool: True if the klemmung is active, False otherwise.\n    \"\"\"\n    return global_vars.ui.checkBoxKlemmung.isChecked()\ndef UR20_GetScannerOverride() -> list[bool]:\n    \"\"\"Get the scanner override.\n    Returns:\n        list[bool]: The status of the scanner override.",
+        "detail": "utils.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_GetScannerOverride",
+        "kind": 2,
+        "importPath": "utils.UR20_Server_functions",
+        "description": "utils.UR20_Server_functions",
+        "peekOfCode": "def UR20_GetScannerOverride() -> list[bool]:\n    \"\"\"Get the scanner override.\n    Returns:\n        list[bool]: The status of the scanner override.\n    \"\"\"\n    scanner_override: list[bool] = [global_vars.ui.checkBoxScanner1Override.isChecked(), global_vars.ui.checkBoxScanner2Override.isChecked(), global_vars.ui.checkBoxScanner3Override.isChecked()]\n    logger.debug(f\"Checking scanner override: {scanner_override=}\")\n    return scanner_override",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },

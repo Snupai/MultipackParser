@@ -39,16 +39,15 @@ def play_stepback_warning():
                 # Use aplay to play the audio file
                 logger.debug(f"Playing audio file: {global_vars.settings.settings['admin']['alarm_sound_file']}")
                 subprocess.run(['aplay', global_vars.settings.settings['admin']['alarm_sound_file']], 
-                             check=True,
-                             stdout=subprocess.DEVNULL,
-                             stderr=subprocess.DEVNULL)
+                                check=True,
+                                stdout=subprocess.DEVNULL,
+                                stderr=subprocess.DEVNULL)
                 logger.debug("Stepback warning played successfully")
                 time.sleep(0.1)  # Small delay between loops
                 
             except subprocess.CalledProcessError as e:
                 logger.error(f"Error during audio playback: {e}")
                 break
-                
     except Exception as e:
         logger.error(f"Fatal error in audio thread: {e}")
     finally:
@@ -67,9 +66,9 @@ def set_audio_volume() -> None:
     logger.info(f"Setting audio volume to {volume}")
     try:
         subprocess.run(['amixer', 'set', 'Master', volume], 
-                      stdout=subprocess.DEVNULL,
-                      stderr=subprocess.DEVNULL,
-                      check=True)
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                        check=True)
         global_vars.ui.pushButtonVolumeOnOff.setIcon(QIcon(icon_name))
         global_vars.audio_muted = not global_vars.audio_muted
         logger.debug("Audio volume set successfully")
@@ -87,12 +86,8 @@ def delay_warning_sound():
                 if isinstance(global_vars.timestamp_scanner_fault, float):
                     # If it's a float, assume it's a timestamp and calculate the difference directly
                     current_time = datetime.now().timestamp()
-                    delay = current_time - global_vars.timestamp_scanner_fault
-                else:
-                    # Otherwise, assume it's a datetime object as originally intended
-                    delay = (datetime.now() - global_vars.timestamp_scanner_fault).total_seconds()
-                    
-                if delay >= 40:
+                    delay = current_time - global_vars.timestamp_scanner_fault                    
+                if delay >= 40.0:
                     logger.info("40-second delay reached, starting warning sound")
                     if not global_vars.audio_thread_running:
                         spawn_play_stepback_warning_thread()
