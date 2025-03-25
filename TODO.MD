@@ -4,11 +4,15 @@
 - [x] keyfile on usb for passwordless settings entry
 - [x] invert label position
 - [x] Klemmung an aus via HMI
-- [ ] generate report
 - [x] database
   - [x] saving palette data into db
   - [x] dimension search palettes
   - [x] loading through database
+- [ ] fix [audio.py](./utils/audio.py)
+  - [ ] volume wont work
+  - [ ] after changing volume from 100 to 0 to 100 it stops playing
+  - [ ] add more signals (audio files) for certain alarm types
+- [ ] generate report
 - [ ] automatisch wechseln aus/an
 - [ ] palette fertig simulieren (palette ist fertig auch wenn nicht fertig)
 - [ ] Nur auf Palette1/2 palettieren
