@@ -1,4 +1,5 @@
 import logging
+import os
 import subprocess
 import threading
 import time
@@ -38,10 +39,11 @@ def play_stepback_warning():
             try:
                 # Use aplay to play the audio file
                 logger.debug(f"Playing audio file: {global_vars.settings.settings['admin']['alarm_sound_file']}")
-                subprocess.run(['aplay', global_vars.settings.settings['admin']['alarm_sound_file']], 
-                                check=True,
-                                stdout=subprocess.DEVNULL,
-                                stderr=subprocess.DEVNULL)
+                if os.name != 'nt':
+                    subprocess.run(['aplay', global_vars.settings.settings['admin']['alarm_sound_file']], 
+                                    check=True,
+                                    stdout=subprocess.DEVNULL,
+                                    stderr=subprocess.DEVNULL)
                 logger.debug("Stepback warning played successfully")
                 time.sleep(0.1)  # Small delay between loops
                 
@@ -60,15 +62,16 @@ def set_audio_volume() -> None:
         logger.error("UI not initialized, cannot set audio volume")
         return
         
-    volume = '0%' if not global_vars.audio_muted else '100%'
+    volume = '0' if not global_vars.audio_muted else '100'
     icon_name = ":/Sound/imgs/volume-off.png" if not global_vars.audio_muted else ":/Sound/imgs/volume-on.png"
     
     logger.info(f"Setting audio volume to {volume}")
     try:
-        subprocess.run(['amixer', 'set', 'Master', volume], 
-                        stdout=subprocess.DEVNULL,
-                        stderr=subprocess.DEVNULL,
-                        check=True)
+        if os.name != 'nt':
+            subprocess.run(['amixer', '-c', '3', 'cset', 'name=Max Overclock DAC', volume], 
+                            stdout=subprocess.DEVNULL,
+                            stderr=subprocess.DEVNULL,
+                            check=True)
         global_vars.ui.pushButtonVolumeOnOff.setIcon(QIcon(icon_name))
         global_vars.audio_muted = not global_vars.audio_muted
         logger.debug("Audio volume set successfully")
@@ -89,8 +92,10 @@ def delay_warning_sound():
                     delay = current_time - global_vars.timestamp_scanner_fault                    
                 if delay >= 40.0:
                     logger.info("40-second delay reached, starting warning sound")
-                    if not global_vars.audio_thread_running:
+                    if not global_vars.audio_thread_running and not global_vars.audio_muted:
                         spawn_play_stepback_warning_thread()
+                    elif global_vars.audio_muted:
+                        logger.debug("Warning sound not started - audio is muted")
             if global_vars.timestamp_scanner_fault is None:
                 logger.debug("Scanner fault cleared, stopping warning sound")
                 kill_play_stepback_warning_thread()

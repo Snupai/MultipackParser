@@ -3191,7 +3191,7 @@
         "kind": 2,
         "importPath": "utils.audio",
         "description": "utils.audio",
-        "peekOfCode": "def play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.\n    \"\"\"\n    logger.debug(\"Starting stepback warning playback loop\")\n    try:\n        while global_vars.audio_thread_running:\n            try:\n                # Use aplay to play the audio file\n                logger.debug(f\"Playing audio file: {global_vars.settings.settings['admin']['alarm_sound_file']}\")\n                subprocess.run(['aplay', global_vars.settings.settings['admin']['alarm_sound_file']], ",
+        "peekOfCode": "def play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.\n    \"\"\"\n    logger.debug(\"Starting stepback warning playback loop\")\n    try:\n        while global_vars.audio_thread_running:\n            try:\n                # Use aplay to play the audio file\n                logger.debug(f\"Playing audio file: {global_vars.settings.settings['admin']['alarm_sound_file']}\")\n                if os.name != 'nt':",
         "detail": "utils.audio",
         "documentation": {}
     },
@@ -3200,7 +3200,7 @@
         "kind": 2,
         "importPath": "utils.audio",
         "description": "utils.audio",
-        "peekOfCode": "def set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = '0%' if not global_vars.audio_muted else '100%'\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"\n    logger.info(f\"Setting audio volume to {volume}\")\n    try:",
+        "peekOfCode": "def set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = '0' if not global_vars.audio_muted else '100'\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"\n    logger.info(f\"Setting audio volume to {volume}\")\n    try:",
         "detail": "utils.audio",
         "documentation": {}
     },
@@ -4001,16 +4001,7 @@
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger.debug(f\"Scanner status update received: {status}\")\n    # Handle scanner fault detection and audio warning\n    if status != \"True,True,True\":",
-        "detail": "utils.UR20_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "check_and_play_warning",
-        "kind": 2,
-        "importPath": "utils.UR20_Server_functions",
-        "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def check_and_play_warning(status: str):\n    \"\"\"Check if warning should still be played and start it if needed.\n    Args:\n        status (str): Current scanner status\n    \"\"\"\n    if status != \"True,True,True\" and global_vars.timestamp_scanner_fault is not None:\n        spawn_play_stepback_warning_thread()\n# change active pallet\ndef UR20_SetActivePalette(pallet_number) -> Union[Literal[0], Literal[1]]:\n    \"\"\"Set the active pallet.",
+        "peekOfCode": "def UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger.debug(f\"Scanner status update received: {status}\")\n    # Handle scanner fault detection\n    if status != \"True,True,True\":",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -4082,7 +4073,7 @@
         "kind": 5,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "scanner_signals = ScannerSignals()\ndef UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger.debug(f\"Scanner status update received: {status}\")\n    # Handle scanner fault detection and audio warning",
+        "peekOfCode": "scanner_signals = ScannerSignals()\ndef UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger.debug(f\"Scanner status update received: {status}\")\n    # Handle scanner fault detection",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },

@@ -34,16 +34,11 @@ def UR20_scannerStatus(status: str) -> int:
     """
     logger.debug(f"Scanner status update received: {status}")
     
-    # Handle scanner fault detection and audio warning
+    # Handle scanner fault detection
     if status != "True,True,True":
         if global_vars.timestamp_scanner_fault is None:
             logger.warning("Scanner fault detected")
             global_vars.timestamp_scanner_fault = datetime.now().timestamp()
-            # Start a timer to check after 40 seconds
-            timer = QTimer()
-            timer.setSingleShot(True)
-            timer.timeout.connect(lambda: check_and_play_warning(status))
-            timer.start(40000)  # 40 seconds in milliseconds
     else:
         # Reset scanner fault timestamp when all scanners are safe
         if global_vars.timestamp_scanner_fault is not None:
@@ -85,15 +80,6 @@ def UR20_scannerStatus(status: str) -> int:
         except Exception as e:
             logger.error(f"Failed to update scanner image: {e}")
     return 0
-
-def check_and_play_warning(status: str):
-    """Check if warning should still be played and start it if needed.
-    
-    Args:
-        status (str): Current scanner status
-    """
-    if status != "True,True,True" and global_vars.timestamp_scanner_fault is not None:
-        spawn_play_stepback_warning_thread()
 
 # change active pallet
 def UR20_SetActivePalette(pallet_number) -> Union[Literal[0], Literal[1]]:
