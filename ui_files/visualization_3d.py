@@ -121,13 +121,14 @@ def calculate_package_centers(center, width, length, rotation, num_packages):
     return centers
 
 
-def parse_rob_file(file_path) -> Pallet:
+def parse_rob_file(file_path) -> tuple[Pallet, int]:
     
     start_time = time.time()
     lines, *_ = load_from_database(file_name=file_path)
 
-    package_width, package_length, package_height = lines[1][0:3]
-
+    package_width, package_length, package_height, einlauf_richtung = lines[1][0:4]
+    if einlauf_richtung == 1:
+        package_width, package_length = package_length, package_width
     num_unique_layers = lines[2][0]
     num_layers = lines[3][0]
 
@@ -183,7 +184,7 @@ def parse_rob_file(file_path) -> Pallet:
     pallet = Pallet(layers=layers)
     parse_time = time.time() - start_time
     logger.info(f"Parse time: {parse_time:.3f} seconds")
-    return pallet
+    return pallet, einlauf_richtung
 
 def display_pallet_3d(canvas, pallet_name):
     """Display a 3D visualization of the pallet.
@@ -203,7 +204,7 @@ def display_pallet_3d(canvas, pallet_name):
     # Parse file
     progress.setValue(10)
     progress.setLabelText("Parsing .rob file...")
-    pallet = parse_rob_file(pallet_name + ".rob")
+    pallet, einlauf_richtung = parse_rob_file(pallet_name + ".rob")
     
     start_time = time.time()
     canvas.ax.clear()
@@ -343,6 +344,7 @@ def display_pallet_3d(canvas, pallet_name):
     # Create title with dimensions and layer order
     title = f'3D View of Pallet ({total_boxes} boxes)\n'
     title += f'Package: {package_length}x{package_width}x{package_height}mm\n'
+    title += f'Einlauf Richtung: {"Quer" if einlauf_richtung == 1 else "Längs"}\n'
     canvas.ax.set_title(title)
 
     # Set aspect ratio based on actual dimensions

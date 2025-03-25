@@ -2996,7 +2996,7 @@
         "kind": 2,
         "importPath": "ui_files.visualization_3d",
         "description": "ui_files.visualization_3d",
-        "peekOfCode": "def parse_rob_file(file_path) -> Pallet:\n    start_time = time.time()\n    lines, *_ = load_from_database(file_name=file_path)\n    package_width, package_length, package_height = lines[1][0:3]\n    num_unique_layers = lines[2][0]\n    num_layers = lines[3][0]\n    layer_order = []\n    current_line = 5\n    for _ in range(num_layers):\n        unique_layer_id = lines[current_line][0]",
+        "peekOfCode": "def parse_rob_file(file_path) -> tuple[Pallet, int]:\n    start_time = time.time()\n    lines, *_ = load_from_database(file_name=file_path)\n    package_width, package_length, package_height, einlauf_richtung = lines[1][0:4]\n    if einlauf_richtung == 1:\n        package_width, package_length = package_length, package_width\n    num_unique_layers = lines[2][0]\n    num_layers = lines[3][0]\n    layer_order = []\n    current_line = 5",
         "detail": "ui_files.visualization_3d",
         "documentation": {}
     },
