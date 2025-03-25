@@ -1010,6 +1010,14 @@
         "documentation": {}
     },
     {
+        "label": "QTimer",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
         "label": "QFont",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
@@ -2656,6 +2664,22 @@
         "documentation": {}
     },
     {
+        "label": "kill_play_stepback_warning_thread",
+        "importPath": "utils.audio",
+        "description": "utils.audio",
+        "isExtraImport": true,
+        "detail": "utils.audio",
+        "documentation": {}
+    },
+    {
+        "label": "spawn_play_stepback_warning_thread",
+        "importPath": "utils.audio",
+        "description": "utils.audio",
+        "isExtraImport": true,
+        "detail": "utils.audio",
+        "documentation": {}
+    },
+    {
         "label": "check_for_updates",
         "importPath": "utils.updater",
         "description": "utils.updater",
@@ -3977,7 +4001,16 @@
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger.debug(f\"Scanner status update received: {status}\")\n    if not status == \"True,True,True\" and global_vars.timestamp_scanner_fault is None:\n        logger.warning(\"Scanner fault detected\")",
+        "peekOfCode": "def UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger.debug(f\"Scanner status update received: {status}\")\n    # Handle scanner fault detection and audio warning\n    if status != \"True,True,True\":",
+        "detail": "utils.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "check_and_play_warning",
+        "kind": 2,
+        "importPath": "utils.UR20_Server_functions",
+        "description": "utils.UR20_Server_functions",
+        "peekOfCode": "def check_and_play_warning(status: str):\n    \"\"\"Check if warning should still be played and start it if needed.\n    Args:\n        status (str): Current scanner status\n    \"\"\"\n    if status != \"True,True,True\" and global_vars.timestamp_scanner_fault is not None:\n        spawn_play_stepback_warning_thread()\n# change active pallet\ndef UR20_SetActivePalette(pallet_number) -> Union[Literal[0], Literal[1]]:\n    \"\"\"Set the active pallet.",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -4049,7 +4082,7 @@
         "kind": 5,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "scanner_signals = ScannerSignals()\ndef UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger.debug(f\"Scanner status update received: {status}\")\n    if not status == \"True,True,True\" and global_vars.timestamp_scanner_fault is None:",
+        "peekOfCode": "scanner_signals = ScannerSignals()\ndef UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger.debug(f\"Scanner status update received: {status}\")\n    # Handle scanner fault detection and audio warning",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },

@@ -342,10 +342,27 @@ def display_pallet_3d(canvas, pallet_name):
     canvas.ax.set_zlabel('Z')
     
     # Create title with dimensions and layer order
-    title = f'3D View of Pallet ({total_boxes} boxes)\n'
-    title += f'Package: {package_length}x{package_width}x{package_height}mm\n'
+    title = f'Pallet: {pallet_name}\n'
     title += f'Einlauf Richtung: {"Quer" if einlauf_richtung == 1 else "Längs"}\n'
     canvas.ax.set_title(title)
+
+    # Add legend box with dimensions
+    legend_text = (
+        f'Length: {package_length}mm\n'
+        f'Width: {package_width}mm\n'
+        f'Height: {package_height}mm\n'
+        f'Total Boxes: {total_boxes}\n'
+        f'Layers: {len(pallet.layers)}'
+    )
+    canvas.ax.text(
+        0.98, 0.02, 0,  # Position in axes coordinates (bottom right), adding z=0
+        legend_text,
+        transform=canvas.ax.transAxes,  # Use axes coordinates
+        bbox=dict(facecolor='white', alpha=0.8, edgecolor='black'),
+        verticalalignment='bottom',
+        horizontalalignment='right',
+        fontsize=9
+    )
 
     # Set aspect ratio based on actual dimensions
     x_range = max_x - min_x

@@ -6,8 +6,9 @@ from . import global_vars
 from datetime import datetime
 from utils.ui_helpers import update_status_label
 from typing import Literal, cast, Union
-from PySide6.QtCore import Qt, QObject, Signal
+from PySide6.QtCore import Qt, QObject, Signal, QTimer
 import logging
+from utils.audio import kill_play_stepback_warning_thread, spawn_play_stepback_warning_thread
 
 # Add logger at the top
 logger = global_vars.logger
@@ -33,9 +34,23 @@ def UR20_scannerStatus(status: str) -> int:
     """
     logger.debug(f"Scanner status update received: {status}")
     
-    if not status == "True,True,True" and global_vars.timestamp_scanner_fault is None:
-        logger.warning("Scanner fault detected")
-        global_vars.timestamp_scanner_fault = datetime.now().timestamp()
+    # Handle scanner fault detection and audio warning
+    if status != "True,True,True":
+        if global_vars.timestamp_scanner_fault is None:
+            logger.warning("Scanner fault detected")
+            global_vars.timestamp_scanner_fault = datetime.now().timestamp()
+            # Start a timer to check after 40 seconds
+            timer = QTimer()
+            timer.setSingleShot(True)
+            timer.timeout.connect(lambda: check_and_play_warning(status))
+            timer.start(40000)  # 40 seconds in milliseconds
+    else:
+        # Reset scanner fault timestamp when all scanners are safe
+        if global_vars.timestamp_scanner_fault is not None:
+            logger.info("Scanner fault cleared")
+            global_vars.timestamp_scanner_fault = None
+            # Stop any playing warning sound
+            kill_play_stepback_warning_thread()
 
     image_path = None
     message = "Bitte Arbeitsbereich räumen."  # Default message for unsafe conditions
@@ -71,6 +86,14 @@ def UR20_scannerStatus(status: str) -> int:
             logger.error(f"Failed to update scanner image: {e}")
     return 0
 
+def check_and_play_warning(status: str):
+    """Check if warning should still be played and start it if needed.
+    
+    Args:
+        status (str): Current scanner status
+    """
+    if status != "True,True,True" and global_vars.timestamp_scanner_fault is not None:
+        spawn_play_stepback_warning_thread()
 
 # change active pallet
 def UR20_SetActivePalette(pallet_number) -> Union[Literal[0], Literal[1]]:
