@@ -797,6 +797,56 @@
       <bool>true</bool>
      </property>
     </widget>
+    <widget class="QComboBox" name="comboBoxPalettierbarePaletten">
+     <property name="geometry">
+      <rect>
+       <x>320</x>
+       <y>400</y>
+       <width>291</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>RobotoMono Nerd Font</family>
+       <pointsize>16</pointsize>
+      </font>
+     </property>
+     <item>
+      <property name="text">
+       <string>beide Palettenplätze</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Palettenplatz 1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Palettenplatz 2</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QPushButton" name="pushButtonSimulatePaletteDone">
+     <property name="geometry">
+      <rect>
+       <x>610</x>
+       <y>380</y>
+       <width>291</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>RobotoMono Nerd Font</family>
+       <pointsize>16</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Simulate Palette done</string>
+     </property>
+    </widget>
     <zorder>checkBoxEinzelpaket</zorder>
     <zorder>ButtonDatenSenden</zorder>
     <zorder>ButtonOpenParameterRoboter</zorder>
@@ -821,6 +871,8 @@
     <zorder>openExperimentalTab</zorder>
     <zorder>checkBoxLabelInvert</zorder>
     <zorder>checkBoxKlemmung</zorder>
+    <zorder>comboBoxPalettierbarePaletten</zorder>
+    <zorder>pushButtonSimulatePaletteDone</zorder>
    </widget>
    <widget class="QWidget" name="RoboParameter">
     <widget class="QTabWidget" name="tabWidget">
@@ -1239,7 +1291,7 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="PallettiererSpezifisch">
       <attribute name="title">
@@ -1632,6 +1684,36 @@ Application</string>
            </widget>
           </item>
          </layout>
+        </item>
+        <item row="3" column="0" colspan="2">
+         <widget class="QCheckBox" name="checkBoxScanner1Overwrite">
+          <property name="layoutDirection">
+           <enum>Qt::RightToLeft</enum>
+          </property>
+          <property name="text">
+           <string>Overwrite Scanner 1</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0" colspan="2">
+         <widget class="QCheckBox" name="checkBoxScanner2Overwrite">
+          <property name="layoutDirection">
+           <enum>Qt::RightToLeft</enum>
+          </property>
+          <property name="text">
+           <string>Overwrite Scanner 2</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0" colspan="2">
+         <widget class="QCheckBox" name="checkBoxScanner3Overwrite">
+          <property name="layoutDirection">
+           <enum>Qt::RightToLeft</enum>
+          </property>
+          <property name="text">
+           <string>Overwrite Scanner 3</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

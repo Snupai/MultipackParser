@@ -173,7 +173,7 @@ def UR20_GetScannerOverride() -> list[bool]:
     Returns:
         list[bool]: The status of the scanner override.
     """
-    scanner_override: list[bool] = [global_vars.ui.checkBoxScanner1Override.isChecked(), global_vars.ui.checkBoxScanner2Override.isChecked(), global_vars.ui.checkBoxScanner3Override.isChecked()]
+    scanner_override: list[bool] = [global_vars.ui.checkBoxScanner1Overwrite.isChecked(), global_vars.ui.checkBoxScanner2Overwrite.isChecked(), global_vars.ui.checkBoxScanner3Overwrite.isChecked()]
     logger.debug(f"Checking scanner override: {scanner_override=}")
     return scanner_override
 

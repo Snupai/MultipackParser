@@ -239,6 +239,17 @@ class Ui_Form(object):
         self.checkBoxKlemmung.setCursor(QCursor(Qt.PointingHandCursor))
         self.checkBoxKlemmung.setLayoutDirection(Qt.RightToLeft)
         self.checkBoxKlemmung.setChecked(True)
+        self.comboBoxPalettierbarePaletten = QComboBox(self.MainMenu)
+        self.comboBoxPalettierbarePaletten.addItem("")
+        self.comboBoxPalettierbarePaletten.addItem("")
+        self.comboBoxPalettierbarePaletten.addItem("")
+        self.comboBoxPalettierbarePaletten.setObjectName(u"comboBoxPalettierbarePaletten")
+        self.comboBoxPalettierbarePaletten.setGeometry(QRect(320, 400, 291, 41))
+        self.comboBoxPalettierbarePaletten.setFont(font1)
+        self.pushButtonSimulatePaletteDone = QPushButton(self.MainMenu)
+        self.pushButtonSimulatePaletteDone.setObjectName(u"pushButtonSimulatePaletteDone")
+        self.pushButtonSimulatePaletteDone.setGeometry(QRect(610, 380, 291, 61))
+        self.pushButtonSimulatePaletteDone.setFont(font1)
         self.stackedWidget.addWidget(self.MainMenu)
         self.checkBoxEinzelpaket.raise_()
         self.ButtonDatenSenden.raise_()
@@ -264,6 +275,8 @@ class Ui_Form(object):
         self.openExperimentalTab.raise_()
         self.checkBoxLabelInvert.raise_()
         self.checkBoxKlemmung.raise_()
+        self.comboBoxPalettierbarePaletten.raise_()
+        self.pushButtonSimulatePaletteDone.raise_()
         self.RoboParameter = QWidget()
         self.RoboParameter.setObjectName(u"RoboParameter")
         self.tabWidget = QTabWidget(self.RoboParameter)
@@ -622,6 +635,24 @@ class Ui_Form(object):
 
         self.formLayout_3.setLayout(2, QFormLayout.FieldRole, self.horizontalLayout_2)
 
+        self.checkBoxScanner1Overwrite = QCheckBox(self.formLayoutWidget_3)
+        self.checkBoxScanner1Overwrite.setObjectName(u"checkBoxScanner1Overwrite")
+        self.checkBoxScanner1Overwrite.setLayoutDirection(Qt.RightToLeft)
+
+        self.formLayout_3.setWidget(3, QFormLayout.SpanningRole, self.checkBoxScanner1Overwrite)
+
+        self.checkBoxScanner2Overwrite = QCheckBox(self.formLayoutWidget_3)
+        self.checkBoxScanner2Overwrite.setObjectName(u"checkBoxScanner2Overwrite")
+        self.checkBoxScanner2Overwrite.setLayoutDirection(Qt.RightToLeft)
+
+        self.formLayout_3.setWidget(4, QFormLayout.SpanningRole, self.checkBoxScanner2Overwrite)
+
+        self.checkBoxScanner3Overwrite = QCheckBox(self.formLayoutWidget_3)
+        self.checkBoxScanner3Overwrite.setObjectName(u"checkBoxScanner3Overwrite")
+        self.checkBoxScanner3Overwrite.setLayoutDirection(Qt.RightToLeft)
+
+        self.formLayout_3.setWidget(5, QFormLayout.SpanningRole, self.checkBoxScanner3Overwrite)
+
         self.formLayoutWidget_4 = QWidget(self.adminSettingsTab)
         self.formLayoutWidget_4.setObjectName(u"formLayoutWidget_4")
         self.formLayoutWidget_4.setGeometry(QRect(690, 10, 551, 341))
@@ -797,7 +828,7 @@ class Ui_Form(object):
         self.ButtonSettings.setDefault(False)
         self.pushButtonVolumeOnOff.setDefault(False)
         self.tabWidget.setCurrentIndex(0)
-        self.tabWidget_2.setCurrentIndex(1)
+        self.tabWidget_2.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(Form)
@@ -825,6 +856,11 @@ class Ui_Form(object):
         self.openExperimentalTab.setText(QCoreApplication.translate("Form", u"Experimental", None))
         self.checkBoxLabelInvert.setText(QCoreApplication.translate("Form", u"Invert Label", None))
         self.checkBoxKlemmung.setText(QCoreApplication.translate("Form", u"Klemmung aktiv", None))
+        self.comboBoxPalettierbarePaletten.setItemText(0, QCoreApplication.translate("Form", u"beide Palettenpl\u00e4tze", None))
+        self.comboBoxPalettierbarePaletten.setItemText(1, QCoreApplication.translate("Form", u"Palettenplatz 1", None))
+        self.comboBoxPalettierbarePaletten.setItemText(2, QCoreApplication.translate("Form", u"Palettenplatz 2", None))
+
+        self.pushButtonSimulatePaletteDone.setText(QCoreApplication.translate("Form", u"Simulate Palette done", None))
         self.ButtonZurueck.setText("")
         self.ImageSzaidelLogoBig.setText("")
         self.ButtonRoboterStop.setText(QCoreApplication.translate("Form", u"Roboter Stop", None))
@@ -876,6 +912,9 @@ class Ui_Form(object):
         self.buttonSelectRobPath.setText(QCoreApplication.translate("Form", u"...", None))
         self.label_25.setText(QCoreApplication.translate("Form", u"Pfad Audio file", None))
         self.buttonSelectAudioFilePath.setText(QCoreApplication.translate("Form", u"...", None))
+        self.checkBoxScanner1Overwrite.setText(QCoreApplication.translate("Form", u"Overwrite Scanner 1", None))
+        self.checkBoxScanner2Overwrite.setText(QCoreApplication.translate("Form", u"Overwrite Scanner 2", None))
+        self.checkBoxScanner3Overwrite.setText(QCoreApplication.translate("Form", u"Overwrite Scanner 3", None))
         self.pushButtonSpeichern_2.setText(QCoreApplication.translate("Form", u"Speichern", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.adminSettingsTab), QCoreApplication.translate("Form", u"Admin", None))
         self.ButtonZurueck_5.setText("")
