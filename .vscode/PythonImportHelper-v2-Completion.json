@@ -3344,7 +3344,7 @@
         "kind": 5,
         "importPath": "utils.logging_config",
         "description": "utils.logging_config",
-        "peekOfCode": "logger = setup_logger()",
+        "peekOfCode": "logger = logging.getLogger('multipack_parser')",
         "detail": "utils.logging_config",
         "documentation": {}
     },

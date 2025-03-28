@@ -83,6 +83,5 @@ def setup_logger(verbose=False) -> logging.Logger:
     
     return logger
 
-# Initialize the logger with default settings (not verbose)
-# This will be updated later if verbose flag is set via command line
-logger = setup_logger() 
+# Get a reference to the logger
+logger = logging.getLogger('multipack_parser')
