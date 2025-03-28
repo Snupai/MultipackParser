@@ -104,20 +104,36 @@ def server_stop() -> None:
     if global_vars.server:
         if global_vars.ui and global_vars.ui.ButtonStopRPCServer:
             global_vars.ui.ButtonStopRPCServer.setEnabled(False)
-        global_vars.server.shutdown()
-        logger.debug("Server stopped")
-        datensenden_manipulation(True, "Server starten", "")
-        if global_vars.message_manager is None:
-            global_vars.message_manager = MessageManager()
-        message = global_vars.message_manager.add_message("XMLRPC Server gestoppt", MessageType.INFO)
-        global_vars.message_manager.acknowledge_message(message)
+        try:
+            # First shutdown the server
+            global_vars.server.shutdown()
+            # Close the socket connection
+            global_vars.server.server_close()
+            # Wait for server thread to complete if it exists
+            if hasattr(global_vars, 'server_thread') and global_vars.server_thread:
+                global_vars.server_thread.join(timeout=5)  # Wait up to 5 seconds for thread to finish
+                if global_vars.server_thread.is_alive():
+                    logger.warning("Server thread did not terminate within timeout")
+                global_vars.server_thread = None
+            # Set server to None to prevent further access
+            global_vars.server = None
+            logger.debug("Server stopped")
+            datensenden_manipulation(True, "Server starten", "")
+            if global_vars.message_manager is None:
+                global_vars.message_manager = MessageManager()
+            message = global_vars.message_manager.add_message("XMLRPC Server gestoppt", MessageType.INFO)
+            global_vars.message_manager.acknowledge_message(message)
+        except Exception as e:
+            logger.error(f"Error stopping server: {e}")
 
 def server_thread() -> None:
     """Start the XMLRPC server in a separate thread.
     """
     logger.debug("Starting server thread")
-    xServerThread = threading.Thread(target=server_start)
-    xServerThread.start()
+    # Store thread reference in global_vars
+    global_vars.server_thread = threading.Thread(target=server_start)
+    global_vars.server_thread.daemon = True  # Make thread daemon so it exits when main thread exits
+    global_vars.server_thread.start()
     if global_vars.ui and global_vars.ui.ButtonStopRPCServer:
         global_vars.ui.ButtonStopRPCServer.setEnabled(True)
     datensenden_manipulation(False, "Server läuft", "green")

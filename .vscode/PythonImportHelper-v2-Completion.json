@@ -3628,7 +3628,7 @@
         "kind": 2,
         "importPath": "utils.server",
         "description": "utils.server",
-        "peekOfCode": "def server_stop() -> None:\n    \"\"\"Stop the XMLRPC server.\n    \"\"\"\n    if global_vars.server:\n        if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n            global_vars.ui.ButtonStopRPCServer.setEnabled(False)\n        global_vars.server.shutdown()\n        logger.debug(\"Server stopped\")\n        datensenden_manipulation(True, \"Server starten\", \"\")\n        if global_vars.message_manager is None:",
+        "peekOfCode": "def server_stop() -> None:\n    \"\"\"Stop the XMLRPC server.\n    \"\"\"\n    if global_vars.server:\n        if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n            global_vars.ui.ButtonStopRPCServer.setEnabled(False)\n        try:\n            # First shutdown the server\n            global_vars.server.shutdown()\n            # Close the socket connection",
         "detail": "utils.server",
         "documentation": {}
     },
@@ -3637,7 +3637,7 @@
         "kind": 2,
         "importPath": "utils.server",
         "description": "utils.server",
-        "peekOfCode": "def server_thread() -> None:\n    \"\"\"Start the XMLRPC server in a separate thread.\n    \"\"\"\n    logger.debug(\"Starting server thread\")\n    xServerThread = threading.Thread(target=server_start)\n    xServerThread.start()\n    if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n        global_vars.ui.ButtonStopRPCServer.setEnabled(True)\n    datensenden_manipulation(False, \"Server läuft\", \"green\")\n    if global_vars.message_manager is None:",
+        "peekOfCode": "def server_thread() -> None:\n    \"\"\"Start the XMLRPC server in a separate thread.\n    \"\"\"\n    logger.debug(\"Starting server thread\")\n    # Store thread reference in global_vars\n    global_vars.server_thread = threading.Thread(target=server_start)\n    global_vars.server_thread.daemon = True  # Make thread daemon so it exits when main thread exits\n    global_vars.server_thread.start()\n    if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n        global_vars.ui.ButtonStopRPCServer.setEnabled(True)",
         "detail": "utils.server",
         "documentation": {}
     },
