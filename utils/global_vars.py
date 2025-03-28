@@ -111,3 +111,6 @@ filter_width: int = 0
 filter_height: int = 0
 
 audio_thread: Optional[threading.Thread] = None
+
+# XMLRPC Server instance
+server = None

@@ -2385,14 +2385,6 @@
         "documentation": {}
     },
     {
-        "label": "setup_logging",
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "isExtraImport": true,
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
         "label": "exception_handler",
         "importPath": "utils.app_control",
         "description": "utils.app_control",
@@ -2425,7 +2417,7 @@
         "documentation": {}
     },
     {
-        "label": "setup_logging",
+        "label": "init_settings",
         "importPath": "utils.app_control",
         "description": "utils.app_control",
         "isExtraImport": true,
@@ -2433,11 +2425,19 @@
         "documentation": {}
     },
     {
-        "label": "init_settings",
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
+        "label": "setup_logger",
+        "importPath": "utils.logging_config",
+        "description": "utils.logging_config",
         "isExtraImport": true,
-        "detail": "utils.app_control",
+        "detail": "utils.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_logger",
+        "importPath": "utils.logging_config",
+        "description": "utils.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.logging_config",
         "documentation": {}
     },
     {
@@ -3097,15 +3097,6 @@
         "documentation": {}
     },
     {
-        "label": "setup_logging",
-        "kind": 2,
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "peekOfCode": "def setup_logging(verbose: bool) -> None:\n    \"\"\"Configure logging level based on verbose flag\n    Args:\n        verbose (bool): Whether to enable verbose (DEBUG) logging\n    \"\"\"\n    # Reinitialize the logger with the verbose flag\n    from utils.logging_config import setup_logger\n    # Recreate the logger with the proper verbosity setting\n    new_logger = setup_logger(verbose=verbose)\n    # Update the global logger reference",
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
         "label": "show_instant_splash",
         "kind": 2,
         "importPath": "utils.app_control",
@@ -3322,6 +3313,15 @@
         "documentation": {}
     },
     {
+        "label": "server",
+        "kind": 5,
+        "importPath": "utils.global_vars",
+        "description": "utils.global_vars",
+        "peekOfCode": "server = None",
+        "detail": "utils.global_vars",
+        "documentation": {}
+    },
+    {
         "label": "get_log_path",
         "kind": 2,
         "importPath": "utils.logging_config",
@@ -3335,7 +3335,7 @@
         "kind": 2,
         "importPath": "utils.logging_config",
         "description": "utils.logging_config",
-        "peekOfCode": "def setup_logger(verbose=False) -> logging.Logger:\n    \"\"\"Setup and configure the logger\n    Args:\n        verbose (bool): Whether to enable verbose (DEBUG) logging\n    Returns:\n        logging.Logger: Configured logger instance\n    \"\"\"\n    logger = logging.getLogger('multipack_parser')\n    # Set appropriate log level based on verbose flag\n    log_level = logging.DEBUG if verbose else logging.INFO",
+        "peekOfCode": "def setup_logger(verbose=False) -> logging.Logger:\n    \"\"\"Setup and configure the logger\n    Args:\n        verbose (bool): Whether to enable verbose (DEBUG) logging\n    Returns:\n        logging.Logger: Configured logger instance\n    \"\"\"\n    logger = logging.getLogger('multipack_parser')\n    logger.setLevel(logging.DEBUG if verbose else logging.INFO)\n    # Remove any existing handlers",
         "detail": "utils.logging_config",
         "documentation": {}
     },
@@ -3569,7 +3569,7 @@
         "kind": 2,
         "importPath": "utils.server",
         "description": "utils.server",
-        "peekOfCode": "def server_start() -> Literal[0]:\n    \"\"\"Start the XMLRPC server.\n    Returns:\n        Literal[0]: The exit code of the application.\n    \"\"\"\n    global server\n    server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)\n    logger.debug(\"Start Server\")\n    try:\n        # Get settings from global vars",
+        "peekOfCode": "def server_start() -> Literal[0]:\n    \"\"\"Start the XMLRPC server.\n    Returns:\n        Literal[0]: The exit code of the application.\n    \"\"\"\n    try:\n        # Initialize server if not already initialized\n        if global_vars.server is None:\n            global_vars.server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)\n            logger.debug(\"Start Server\")",
         "detail": "utils.server",
         "documentation": {}
     },
@@ -3578,7 +3578,7 @@
         "kind": 2,
         "importPath": "utils.server",
         "description": "utils.server",
-        "peekOfCode": "def server_stop() -> None:\n    \"\"\"Stop the XMLRPC server.\n    \"\"\"\n    global server\n    if server:\n        if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n            global_vars.ui.ButtonStopRPCServer.setEnabled(False)\n        server.shutdown()\n        logger.debug(\"Server stopped\")\n        datensenden_manipulation(True, \"Server starten\", \"\")",
+        "peekOfCode": "def server_stop() -> None:\n    \"\"\"Stop the XMLRPC server.\n    \"\"\"\n    if global_vars.server:\n        if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n            global_vars.ui.ButtonStopRPCServer.setEnabled(False)\n        global_vars.server.shutdown()\n        logger.debug(\"Server stopped\")\n        datensenden_manipulation(True, \"Server starten\", \"\")\n        if global_vars.message_manager is None:",
         "detail": "utils.server",
         "documentation": {}
     },
@@ -3605,16 +3605,7 @@
         "kind": 5,
         "importPath": "utils.server",
         "description": "utils.server",
-        "peekOfCode": "logger = logging.getLogger(__name__)\n# Global server instance\nserver = None\ndef server_start() -> Literal[0]:\n    \"\"\"Start the XMLRPC server.\n    Returns:\n        Literal[0]: The exit code of the application.\n    \"\"\"\n    global server\n    server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)",
-        "detail": "utils.server",
-        "documentation": {}
-    },
-    {
-        "label": "server",
-        "kind": 5,
-        "importPath": "utils.server",
-        "description": "utils.server",
-        "peekOfCode": "server = None\ndef server_start() -> Literal[0]:\n    \"\"\"Start the XMLRPC server.\n    Returns:\n        Literal[0]: The exit code of the application.\n    \"\"\"\n    global server\n    server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)\n    logger.debug(\"Start Server\")\n    try:",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef server_start() -> Literal[0]:\n    \"\"\"Start the XMLRPC server.\n    Returns:\n        Literal[0]: The exit code of the application.\n    \"\"\"\n    try:\n        # Initialize server if not already initialized\n        if global_vars.server is None:\n            global_vars.server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)",
         "detail": "utils.server",
         "documentation": {}
     },

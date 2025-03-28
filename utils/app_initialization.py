@@ -13,7 +13,8 @@ from PySide6 import QtCore
 from PySide6.QtGui import QPixmap, QPainter, QColor
 
 from utils import global_vars
-from utils.app_control import show_instant_splash, setup_logging, exception_handler, qt_message_handler
+from utils.app_control import show_instant_splash, exception_handler, qt_message_handler
+from utils.logging_config import setup_logger
 from utils.startup_dialogs import show_palette_config_dialog
 from utils.message_manager import MessageManager
 from utils.ui_helpers import update_status_label
@@ -39,6 +40,12 @@ Examples:
     )
     
     info_group = parser.add_argument_group('Information')
+    debug_group = parser.add_argument_group('Debug Options')
+    debug_group.add_argument(
+        '-V', '--verbose',
+        action='store_true',
+        help='Enable verbose (debug) logging output'
+    )
     info_group.add_argument(
         '-v', '--version',
         action='store_true',
@@ -48,13 +55,6 @@ Examples:
         '-l', '--license',
         action='store_true', 
         help='Show license information and exit'
-    )
-    
-    debug_group = parser.add_argument_group('Debug Options') 
-    debug_group.add_argument(
-        '-V', '--verbose',
-        action='store_true',
-        help='Enable verbose (debug) logging output'
     )
     
     return parser.parse_args()
@@ -167,6 +167,3 @@ def setup_initial_app_state():
         show_palette_config_dialog(global_vars.main_window)
     else:
         logger.info(f"Robot model is {global_vars.settings.settings['info']['UR_Model']}, skipping palette configuration")
-        global_vars.UR20_active_palette = 0
-        global_vars.UR20_palette1_empty = False
-        global_vars.UR20_palette2_empty = False 

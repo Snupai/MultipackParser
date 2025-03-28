@@ -41,10 +41,7 @@ def setup_logger(verbose=False) -> logging.Logger:
         logging.Logger: Configured logger instance
     """
     logger = logging.getLogger('multipack_parser')
-    
-    # Set appropriate log level based on verbose flag
-    log_level = logging.DEBUG if verbose else logging.INFO
-    logger.setLevel(log_level)
+    logger.setLevel(logging.DEBUG if verbose else logging.INFO)
     
     # Remove any existing handlers
     logger.handlers.clear()
@@ -61,13 +58,14 @@ def setup_logger(verbose=False) -> logging.Logger:
             encoding='utf-8'
         )
         file_handler.setFormatter(log_formatter)
-        file_handler.setLevel(log_level)  # Use the same level for file handler
+        log_level = logging.DEBUG if verbose else logging.INFO
+        file_handler.setLevel(log_level)
         logger.addHandler(file_handler)
         
         # Console handler
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setFormatter(log_formatter)
-        console_handler.setLevel(log_level)  # Use the same level for console handler
+        console_handler.setLevel(log_level)
         logger.addHandler(console_handler)
         
         logger.info(f"Logging initialized. Log file: {log_path}")

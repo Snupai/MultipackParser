@@ -38,12 +38,6 @@ class Settings:
             },
             "admin": {
                 "password": "fc2f8726bb317b17a3cb322672818d2d$580c515fc8852dfd6e36faaaf46581c412683135b87dc8750c89efad4a38b54f",
-                "debug": False,
-                "debug_options": {
-                    "UR20_palette1_empty": False,
-                    "UR20_palette2_empty": False,
-                    "UR20_active_palette": 0
-                },
                 "path": "..",
                 "alarm_sound_file": "Sound/output.wav",
                 "usb_key": "",
@@ -140,17 +134,6 @@ class Settings:
         except Exception as e:
             return 60  # Return a default refresh rate on error
 
-    def _update_debug_globals(self):
-        """Update global debug variables."""
-        debug_options = self.settings["admin"]["debug_options"]
-        if debug_options["UR20_palette1_empty"]:
-            global_vars.UR20_palette1_empty = debug_options["UR20_palette1_empty"]
-        if debug_options["UR20_palette2_empty"]:
-            global_vars.UR20_palette2_empty = debug_options["UR20_palette2_empty"]
-        if debug_options["UR20_active_palette"] != 0:
-            global_vars.UR20_active_palette = debug_options["UR20_active_palette"]
-        logger.debug(f"Updated global debug variables: {debug_options}")
-
     def save_settings(self):
         """Save settings using QSettings.
         """
@@ -167,7 +150,6 @@ class Settings:
                     self.qsettings.setValue(key, value)
             self.qsettings.endGroup()
         self.qsettings.sync()
-        self._update_debug_globals()  # Update globals after saving settings
 
     def load_settings(self):
         """Load settings from QSettings, using defaults if not found.
@@ -210,7 +192,6 @@ class Settings:
                         loaded_value = float(str(loaded_value))  # Convert to str first
                     self.settings[group][key] = loaded_value
             self.qsettings.endGroup()
-        self._update_debug_globals()  # Update globals after loading settings
 
     def reset_unsaved_changes(self):
         """Reset unsaved changes.

@@ -134,31 +134,6 @@ def qt_message_handler(mode, context, message):
     elif mode == QtCore.QtMsgType.QtInfoMsg:
         logger.info(f"Qt Info: {message}")
 
-def setup_logging(verbose: bool) -> None:
-    """Configure logging level based on verbose flag
-    
-    Args:
-        verbose (bool): Whether to enable verbose (DEBUG) logging
-    """
-    # Reinitialize the logger with the verbose flag
-    from utils.logging_config import setup_logger
-    
-    # Recreate the logger with the proper verbosity setting
-    new_logger = setup_logger(verbose=verbose)
-    
-    # Update the global logger reference
-    global_vars.logger = new_logger
-    
-    # Update the logger for app_control.py
-    global logger
-    logger = logging.getLogger(__name__)
-    
-    log_level = logging.DEBUG if verbose else logging.INFO
-    logger.info(f"Logging level set to: {'DEBUG' if verbose else 'INFO'}")
-    
-    if verbose:
-        logger.debug("Verbose logging is enabled - you'll see detailed debug logs")
-
 def show_instant_splash():
     """Show an instant splash screen before any initialization."""
     import sys

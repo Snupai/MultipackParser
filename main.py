@@ -31,7 +31,8 @@ import logging
 import matplotlib
 
 from utils import global_vars
-from utils.app_control import setup_logging, init_settings
+from utils.app_control import init_settings
+from utils.logging_config import setup_logger
 from utils.app_initialization import parse_arguments, initialize_app, setup_initial_app_state
 from utils.database import create_database
 from utils.robot_control import update_database_from_usb
@@ -64,8 +65,8 @@ def main():
 
         # Setup logging first with verbose flag if specified
         # This ensures logging is properly configured before any other initialization
-        setup_logging(args.verbose)
-        logger.debug(f"MultipackParser Application Version: {global_vars.VERSION}")
+        setup_logger(args.verbose)
+        logger.debug(f"MultipackParser Application Version: {global_vars.VERSION}") if args.verbose else logger.info(f"MultipackParser Application Version: {global_vars.VERSION}")
 
         # Initialize application
         app, splash, progress, loading_label = initialize_app()
