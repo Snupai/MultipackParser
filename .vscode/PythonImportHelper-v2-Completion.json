@@ -3641,7 +3641,7 @@
         "kind": 5,
         "importPath": "utils.startup_dialogs",
         "description": "utils.startup_dialogs",
-        "peekOfCode": "logger = logging.getLogger(__name__)\nclass PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(600)  # Reduced width\n        self.setMaximumHeight(680)  # Set maximum height for RPi display\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Store pixmaps as class variables",
+        "peekOfCode": "logger = logging.getLogger('multipack_parser')\nclass PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(600)  # Reduced width\n        self.setMaximumHeight(680)  # Set maximum height for RPi display\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Store pixmaps as class variables",
         "detail": "utils.startup_dialogs",
         "documentation": {}
     },

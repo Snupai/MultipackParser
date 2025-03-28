@@ -6,7 +6,7 @@ from PySide6.QtGui import QPixmap
 from . import global_vars
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('multipack_parser')
 
 class PaletteConfigDialog(QDialog):
     """Dialog to configure palettes on startup."""
@@ -198,6 +198,11 @@ class PaletteConfigDialog(QDialog):
             active_palette = 2
         else:
             active_palette = 0
+            
+        # Log the user's choices when they click confirm
+        logger.info(f"User confirmed palette configuration - Palette 1: {'Empty' if palette1_empty else 'Not Empty'}, "
+                   f"Palette 2: {'Empty' if palette2_empty else 'Not Empty'}, "
+                   f"Selected active palette: {active_palette}")
             
         return {
             "palette1_empty": palette1_empty,
