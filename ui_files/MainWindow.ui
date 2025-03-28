@@ -1291,7 +1291,7 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="PallettiererSpezifisch">
       <attribute name="title">
@@ -1726,7 +1726,44 @@ Application</string>
          <height>341</height>
         </rect>
        </property>
-       <layout class="QFormLayout" name="formLayout_4"/>
+       <layout class="QFormLayout" name="formLayout_4">
+        <item row="0" column="0">
+         <widget class="QPushButton" name="pushButtonSendCommandRemoteControl">
+          <property name="text">
+           <string>Send</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="comboBoxCommandRemoteControl">
+          <item>
+           <property name="text">
+            <string>power on</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>brake release</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>play</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>stopj(5.0)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>movej([1.760289, -1.055588, 2.78382, -1.897801, 1.23872, 3.215636]), a=0.5, v=0.3</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
       </widget>
       <widget class="QPushButton" name="pushButtonSpeichern_2">
        <property name="geometry">
