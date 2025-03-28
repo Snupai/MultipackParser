@@ -2134,6 +2134,14 @@
         "documentation": {}
     },
     {
+        "label": "send_remote_control_command",
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
         "label": "update_database_from_usb",
         "importPath": "utils.robot_control",
         "description": "utils.robot_control",
@@ -2152,6 +2160,14 @@
     },
     {
         "label": "set_settings_line_edits",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
         "isExtraImport": true,
@@ -3322,7 +3338,7 @@
         "kind": 5,
         "importPath": "utils.global_vars",
         "description": "utils.global_vars",
-        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nsettings_file: str = 'MultipackParser.conf'\nVERSION: str = '1.5.9'\n# Network settings\nrobot_ip: str = 'localhost' # '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0",
+        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nsettings_file: str = 'MultipackParser.conf'\nVERSION: str = '1.5.10'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0",
         "detail": "utils.global_vars",
         "documentation": {}
     },
@@ -3331,7 +3347,7 @@
         "kind": 5,
         "importPath": "utils.global_vars",
         "description": "utils.global_vars",
-        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nsettings_file: str = 'MultipackParser.conf'\nVERSION: str = '1.5.9'\n# Network settings\nrobot_ip: str = 'localhost' # '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False",
+        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nsettings_file: str = 'MultipackParser.conf'\nVERSION: str = '1.5.10'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False",
         "detail": "utils.global_vars",
         "documentation": {}
     },
@@ -3340,7 +3356,7 @@
         "kind": 5,
         "importPath": "utils.global_vars",
         "description": "utils.global_vars",
-        "peekOfCode": "allow_close = False\n# Variables\nsettings_file: str = 'MultipackParser.conf'\nVERSION: str = '1.5.9'\n# Network settings\nrobot_ip: str = 'localhost' # '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False\nUR20_palette2_empty: bool = False",
+        "peekOfCode": "allow_close = False\n# Variables\nsettings_file: str = 'MultipackParser.conf'\nVERSION: str = '1.5.10'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False\nUR20_palette2_empty: bool = False",
         "detail": "utils.global_vars",
         "documentation": {}
     },
@@ -3525,11 +3541,29 @@
         "documentation": {}
     },
     {
+        "label": "is_in_remote_control",
+        "kind": 2,
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "peekOfCode": "def is_in_remote_control() -> bool:\n    \"\"\"Check if the robot is in remote control mode.\n    Returns:\n        bool: True if robot is in remote control mode, False otherwise\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect to the dashboard server\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))",
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "send_remote_control_command",
+        "kind": 2,
+        "importPath": "utils.robot_control",
+        "description": "utils.robot_control",
+        "peekOfCode": "def send_remote_control_command() -> None:\n    \"\"\"Send the selected remote control command to the robot.\n    First checks if robot is in remote control mode.\n    \"\"\"\n    if not is_in_remote_control():\n        logger.error(\"Cannot send command - robot not in remote control mode\")\n        update_status_label(\"Robot not in remote control mode\", \"red\", True)\n        return\n    command = global_vars.ui.comboBoxCommandRemoteControl.currentText()\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)",
+        "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
         "label": "send_cmd_play",
         "kind": 2,
         "importPath": "utils.robot_control",
         "description": "utils.robot_control",
-        "peekOfCode": "def send_cmd_play() -> None:\n    \"\"\"Send a command to the robot to start.\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))\n        sock.connect(server_address)\n        # Send data",
+        "peekOfCode": "def send_cmd_play() -> None:\n    \"\"\"Send a command to the robot to start.\n    \"\"\"\n    if not is_in_remote_control():\n        logger.error(\"Cannot send command - robot not in remote control mode\")\n        update_status_label(\"Robot not in remote control mode\", \"red\", True)\n        return\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening",
         "detail": "utils.robot_control",
         "documentation": {}
     },
@@ -3538,7 +3572,7 @@
         "kind": 2,
         "importPath": "utils.robot_control",
         "description": "utils.robot_control",
-        "peekOfCode": "def send_cmd_pause() -> None:\n    \"\"\"Send a command to the robot to pause.\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))\n        sock.connect(server_address)\n        # Send data",
+        "peekOfCode": "def send_cmd_pause() -> None:\n    \"\"\"Send a command to the robot to pause.\n    \"\"\"\n    if not is_in_remote_control():\n        logger.error(\"Cannot send command - robot not in remote control mode\")\n        update_status_label(\"Robot not in remote control mode\", \"red\", True)\n        return\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening",
         "detail": "utils.robot_control",
         "documentation": {}
     },
@@ -3547,7 +3581,7 @@
         "kind": 2,
         "importPath": "utils.robot_control",
         "description": "utils.robot_control",
-        "peekOfCode": "def send_cmd_stop() -> None:\n    \"\"\"Send a command to the robot to stop.\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))\n        sock.connect(server_address)\n        # Send data",
+        "peekOfCode": "def send_cmd_stop() -> None:\n    \"\"\"Send a command to the robot to stop.\n    \"\"\"\n    if not is_in_remote_control():\n        logger.error(\"Cannot send command - robot not in remote control mode\")\n        update_status_label(\"Robot not in remote control mode\", \"red\", True)\n        return\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening",
         "detail": "utils.robot_control",
         "documentation": {}
     },
@@ -3610,7 +3644,7 @@
         "kind": 5,
         "importPath": "utils.robot_control",
         "description": "utils.robot_control",
-        "peekOfCode": "logger = logging.getLogger(__name__)\ndef send_cmd_play() -> None:\n    \"\"\"Send a command to the robot to start.\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))\n        sock.connect(server_address)",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef is_in_remote_control() -> bool:\n    \"\"\"Check if the robot is in remote control mode.\n    Returns:\n        bool: True if robot is in remote control mode, False otherwise\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect to the dashboard server\n        server_address = (global_vars.robot_ip, 29999)",
         "detail": "utils.robot_control",
         "documentation": {}
     },

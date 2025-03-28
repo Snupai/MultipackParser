@@ -3,12 +3,88 @@ import logging
 import os
 from utils import global_vars
 from utils.database import save_to_database, find_file_in_database
+from utils.ui_helpers import update_status_label
 
 logger = logging.getLogger(__name__)
+
+def is_in_remote_control() -> bool:
+    """Check if the robot is in remote control mode.
+    
+    Returns:
+        bool: True if robot is in remote control mode, False otherwise
+    """
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        # Connect to the dashboard server
+        server_address = (global_vars.robot_ip, 29999)
+        logger.debug('connecting to %s port %s' %(server_address))
+        sock.connect(server_address)
+        
+        # Send polyscope command to check remote control status
+        message = 'is in remote control\n'
+        logger.debug('sending %s' %(message))
+        sock.sendall(message.encode('utf-8'))
+        
+        # Get response
+        data = sock.recv(4096).decode('utf-8')
+        logger.debug('received %s' %(data))
+        
+        # Response will be "true" if in remote control
+        return data.strip().lower() == "true"
+        
+    except Exception as e:
+        logger.error(f"Error checking remote control status: {e}")
+        return False
+    finally:
+        logger.debug('closing socket')
+        sock.close()
+
+def send_remote_control_command() -> None:
+    """Send the selected remote control command to the robot.
+    First checks if robot is in remote control mode.
+    """
+    if not is_in_remote_control():
+        logger.error("Cannot send command - robot not in remote control mode")
+        update_status_label("Robot not in remote control mode", "red", True)
+        return
+        
+    command = global_vars.ui.comboBoxCommandRemoteControl.currentText()
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        # Connect to the dashboard server
+        server_address = (global_vars.robot_ip, 29999)
+        logger.debug('connecting to %s port %s' %(server_address))
+        sock.connect(server_address)
+        
+        # Send command
+        message = command + '\n'
+        logger.debug('sending %s' %(message))
+        sock.sendall(message.encode('utf-8'))
+        
+        # Get response
+        data = sock.recv(4096).decode('utf-8')
+        logger.debug('received %s' %(data))
+        
+        if "Successfully" in data:
+            update_status_label("Command sent successfully", "green", True)
+        else:
+            update_status_label("Error sending command", "red", True)
+            
+    except Exception as e:
+        logger.error(f"Error sending remote control command: {e}")
+        update_status_label("Error sending command", "red", True)
+    finally:
+        logger.debug('closing socket')
+        sock.close()
 
 def send_cmd_play() -> None:
     """Send a command to the robot to start.
     """
+    if not is_in_remote_control():
+        logger.error("Cannot send command - robot not in remote control mode")
+        update_status_label("Robot not in remote control mode", "red", True)
+        return
+        
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         # Connect the socket to the port where the server is listening
@@ -32,6 +108,11 @@ def send_cmd_play() -> None:
 def send_cmd_pause() -> None:
     """Send a command to the robot to pause.
     """
+    if not is_in_remote_control():
+        logger.error("Cannot send command - robot not in remote control mode")
+        update_status_label("Robot not in remote control mode", "red", True)
+        return
+        
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         # Connect the socket to the port where the server is listening
@@ -55,6 +136,11 @@ def send_cmd_pause() -> None:
 def send_cmd_stop() -> None:
     """Send a command to the robot to stop.
     """
+    if not is_in_remote_control():
+        logger.error("Cannot send command - robot not in remote control mode")
+        update_status_label("Robot not in remote control mode", "red", True)
+        return
+        
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         # Connect the socket to the port where the server is listening
@@ -256,4 +342,4 @@ def load_selected_file():
     global_vars.ui.EingabePallettenplan.setText(file_name)
     
     # Call the load function to load the palette plan
-    load() 
+    load()

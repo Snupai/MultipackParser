@@ -18,7 +18,8 @@ from utils.ui_helpers import (CustomDoubleValidator, update_status_label, handle
                              open_file, save_open_file, execute_command, open_folder_dialog, 
                              open_file_dialog, set_settings_line_edits, check_key_or_password, clear_filters)
 from utils.robot_control import (display_selected_file, load, 
-                                send_cmd_play, send_cmd_pause, send_cmd_stop, load_selected_file)
+                                send_cmd_play, send_cmd_pause, send_cmd_stop, load_selected_file,
+                                send_remote_control_command)
 from utils.server import server_thread, server_stop
 from utils.audio import (spawn_play_stepback_warning_thread, kill_play_stepback_warning_thread, 
                         set_audio_volume, delay_warning_sound)
@@ -123,6 +124,9 @@ def connect_signal_handlers():
     global_vars.ui.ButtonStopRPCServer.clicked.connect(server_stop)
     global_vars.ui.ButtonZurueck_2.clicked.connect(lambda: open_page(Page.MAIN_PAGE))
     global_vars.ui.ButtonDatenSenden_2.clicked.connect(server_thread)
+    
+    # Connect remote control button
+    global_vars.ui.pushButtonSendCommandRemoteControl.clicked.connect(send_remote_control_command)
 
     # Connect settings page buttons
     global_vars.ui.ButtonZurueck_3.clicked.connect(leave_settings_page)
@@ -289,4 +293,4 @@ def setup_window_handling():
             global_vars.main_window.setWindowState(global_vars.main_window.windowState() ^ Qt.WindowState.WindowActive)
 
     global_vars.main_window.closeEvent = allow_close_event
-    global_vars.main_window.keyPressEvent = handle_key_press_event 
+    global_vars.main_window.keyPressEvent = handle_key_press_event
