@@ -10,8 +10,9 @@ from PySide6.QtCore import Qt, QObject, Signal, QTimer
 import logging
 from utils.audio import kill_play_stepback_warning_thread, spawn_play_stepback_warning_thread
 
-# Add logger at the top
-logger = global_vars.logger
+from utils.logging_config import setup_server_logger
+
+logger = setup_server_logger()
 
 class ScannerSignals(QObject):
     """Signals for the scanner.

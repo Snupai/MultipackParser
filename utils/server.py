@@ -1,6 +1,5 @@
 import threading
 import socket
-import logging
 from xmlrpc.server import SimpleXMLRPCServer
 from typing import Literal
 
@@ -10,8 +9,9 @@ from utils import UR10_Server_functions as UR10
 from utils import UR20_Server_functions as UR20
 from utils.message import MessageType
 from utils.message_manager import MessageManager
+from utils.logging_config import setup_server_logger
 
-logger = logging.getLogger(__name__)
+logger = setup_server_logger()
 
 def server_start() -> Literal[0]:
     """Start the XMLRPC server.
@@ -37,39 +37,61 @@ def server_start() -> Literal[0]:
         robot_type = 'UR10'
         logger.error(f"Error accessing robot type from settings: {e}. Defaulting to UR10")
         
+    # Wrapper to log function calls
+    def log_rpc_call(func, name):
+        def wrapper(*args, **kwargs):
+            logger.info(f"XMLRPC call: {name} - Args: {args}, Kwargs: {kwargs}")
+            result = func(*args, **kwargs)
+            logger.info(f"XMLRPC result: {name} -> {result}")
+            return result
+        return wrapper
+
     # Register common functions for both robot types
-    global_vars.server.register_function(UR.UR_SetFileName, "UR_SetFileName")
-    global_vars.server.register_function(UR.UR_ReadDataFromUsbStick, "UR_ReadDataFromUsbStick")
-    global_vars.server.register_function(UR.UR_Palette, "UR_Palette")
-    global_vars.server.register_function(UR.UR_Karton, "UR_Karton")
-    global_vars.server.register_function(UR.UR_Lagen, "UR_Lagen")
-    global_vars.server.register_function(UR.UR_Zwischenlagen, "UR_Zwischenlagen")
-    global_vars.server.register_function(UR.UR_PaketPos, "UR_PaketPos") # type: ignore
-    global_vars.server.register_function(UR.UR_AnzLagen, "UR_AnzLagen")
-    global_vars.server.register_function(UR.UR_AnzPakete, "UR_AnzPakete")
-    global_vars.server.register_function(UR.UR_PaketeZuordnung, "UR_PaketeZuordnung")
-    global_vars.server.register_function(UR.UR_Paket_hoehe, "UR_Paket_hoehe")
-    global_vars.server.register_function(UR.UR_Startlage, "UR_Startlage")
-    global_vars.server.register_function(UR.UR_Quergreifen, "UR_Quergreifen")
-    global_vars.server.register_function(UR.UR_CoG, "UR_CoG") # type: ignore
-    global_vars.server.register_function(UR.UR_MasseGeschaetzt, "UR_MasseGeschaetzt")
-    global_vars.server.register_function(UR.UR_PickOffsetX, "UR_PickOffsetX")
-    global_vars.server.register_function(UR.UR_PickOffsetY, "UR_PickOffsetY")
+    common_functions = [
+        (UR.UR_SetFileName, "UR_SetFileName"),
+        (UR.UR_ReadDataFromUsbStick, "UR_ReadDataFromUsbStick"),
+        (UR.UR_Palette, "UR_Palette"),
+        (UR.UR_Karton, "UR_Karton"),
+        (UR.UR_Lagen, "UR_Lagen"),
+        (UR.UR_Zwischenlagen, "UR_Zwischenlagen"),
+        (UR.UR_PaketPos, "UR_PaketPos"),  # type: ignore
+        (UR.UR_AnzLagen, "UR_AnzLagen"),
+        (UR.UR_AnzPakete, "UR_AnzPakete"),
+        (UR.UR_PaketeZuordnung, "UR_PaketeZuordnung"),
+        (UR.UR_Paket_hoehe, "UR_Paket_hoehe"),
+        (UR.UR_Startlage, "UR_Startlage"),
+        (UR.UR_Quergreifen, "UR_Quergreifen"),
+        (UR.UR_CoG, "UR_CoG"),  # type: ignore
+        (UR.UR_MasseGeschaetzt, "UR_MasseGeschaetzt"),
+        (UR.UR_PickOffsetX, "UR_PickOffsetX"),
+        (UR.UR_PickOffsetY, "UR_PickOffsetY")
+    ]
+
+    for func, name in common_functions:
+        global_vars.server.register_function(log_rpc_call(func, name), name)
     
     
     # Register robot type specific functions here if needed
     if robot_type == 'UR10':
-        global_vars.server.register_function(UR10.UR10_scanner1and2niobild, "UR_scanner1and2niobild")
-        global_vars.server.register_function(UR10.UR10_scanner1bild, "UR_scanner1bild")
-        global_vars.server.register_function(UR10.UR10_scanner2bild, "UR_scanner2bild")
-        global_vars.server.register_function(UR10.UR10_scanner1and2iobild, "UR_scanner1and2iobild")
+        ur10_functions = [
+            (UR10.UR10_scanner1and2niobild, "UR_scanner1and2niobild"),
+            (UR10.UR10_scanner1bild, "UR_scanner1bild"),
+            (UR10.UR10_scanner2bild, "UR_scanner2bild"),
+            (UR10.UR10_scanner1and2iobild, "UR_scanner1and2iobild")
+        ]
+        for func, name in ur10_functions:
+            global_vars.server.register_function(log_rpc_call(func, name), name)
     elif robot_type == 'UR20':
-        global_vars.server.register_function(UR20.UR20_scannerStatus, "UR_scannerStatus") # type: ignore
-        global_vars.server.register_function(UR20.UR20_SetActivePalette, "UR_SetActivePalette")
-        global_vars.server.register_function(UR20.UR20_GetActivePaletteNumber, "UR_GetActivePaletteNumber")
-        global_vars.server.register_function(UR20.UR20_GetPaletteStatus, "UR_GetPaletteStatus")
-        global_vars.server.register_function(UR20.UR20_SetZwischenLageLegen, "UR_SetZwischenLageLegen")
-        global_vars.server.register_function(UR20.UR20_GetKlemmungAktiv, "UR_GetKlemmungAktiv")
+        ur20_functions = [
+            (UR20.UR20_scannerStatus, "UR_scannerStatus"),  # type: ignore
+            (UR20.UR20_SetActivePalette, "UR_SetActivePalette"),
+            (UR20.UR20_GetActivePaletteNumber, "UR_GetActivePaletteNumber"),
+            (UR20.UR20_GetPaletteStatus, "UR_GetPaletteStatus"),
+            (UR20.UR20_SetZwischenLageLegen, "UR_SetZwischenLageLegen"),
+            (UR20.UR20_GetKlemmungAktiv, "UR_GetKlemmungAktiv")
+        ]
+        for func, name in ur20_functions:
+            global_vars.server.register_function(log_rpc_call(func, name), name)
 
     logger.debug(f"Successfully registered functions for {robot_type}")
     

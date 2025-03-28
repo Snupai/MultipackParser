@@ -2433,6 +2433,38 @@
         "documentation": {}
     },
     {
+        "label": "setup_server_logger",
+        "importPath": "utils.logging_config",
+        "description": "utils.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_server_logger",
+        "importPath": "utils.logging_config",
+        "description": "utils.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_server_logger",
+        "importPath": "utils.logging_config",
+        "description": "utils.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_server_logger",
+        "importPath": "utils.logging_config",
+        "description": "utils.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.logging_config",
+        "documentation": {}
+    },
+    {
         "label": "setup_logger",
         "importPath": "utils.logging_config",
         "description": "utils.logging_config",
@@ -3331,11 +3363,29 @@
         "documentation": {}
     },
     {
+        "label": "setup_server_logger",
+        "kind": 2,
+        "importPath": "utils.logging_config",
+        "description": "utils.logging_config",
+        "peekOfCode": "def setup_server_logger() -> logging.Logger:\n    \"\"\"Setup and configure the server logger\n    Returns:\n        logging.Logger: Configured server logger instance\n    \"\"\"\n    global _server_log_path\n    # Get existing logger if already set up\n    logger = logging.getLogger('server')\n    # If handlers exist, logger is already configured\n    if logger.handlers:",
+        "detail": "utils.logging_config",
+        "documentation": {}
+    },
+    {
         "label": "setup_logger",
         "kind": 2,
         "importPath": "utils.logging_config",
         "description": "utils.logging_config",
         "peekOfCode": "def setup_logger(verbose=False) -> logging.Logger:\n    \"\"\"Setup and configure the logger\n    Args:\n        verbose (bool): Whether to enable verbose (DEBUG) logging\n    Returns:\n        logging.Logger: Configured logger instance\n    \"\"\"\n    logger = logging.getLogger('multipack_parser')\n    logger.setLevel(logging.DEBUG if verbose else logging.INFO)\n    # Remove any existing handlers",
+        "detail": "utils.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "_server_log_path",
+        "kind": 5,
+        "importPath": "utils.logging_config",
+        "description": "utils.logging_config",
+        "peekOfCode": "_server_log_path = None\ndef setup_server_logger() -> logging.Logger:\n    \"\"\"Setup and configure the server logger\n    Returns:\n        logging.Logger: Configured server logger instance\n    \"\"\"\n    global _server_log_path\n    # Get existing logger if already set up\n    logger = logging.getLogger('server')\n    # If handlers exist, logger is already configured",
         "detail": "utils.logging_config",
         "documentation": {}
     },
@@ -3605,7 +3655,7 @@
         "kind": 5,
         "importPath": "utils.server",
         "description": "utils.server",
-        "peekOfCode": "logger = logging.getLogger(__name__)\ndef server_start() -> Literal[0]:\n    \"\"\"Start the XMLRPC server.\n    Returns:\n        Literal[0]: The exit code of the application.\n    \"\"\"\n    try:\n        # Initialize server if not already initialized\n        if global_vars.server is None:\n            global_vars.server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)",
+        "peekOfCode": "logger = setup_server_logger()\ndef server_start() -> Literal[0]:\n    \"\"\"Start the XMLRPC server.\n    Returns:\n        Literal[0]: The exit code of the application.\n    \"\"\"\n    try:\n        # Initialize server if not already initialized\n        if global_vars.server is None:\n            global_vars.server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)",
         "detail": "utils.server",
         "documentation": {}
     },
@@ -3979,6 +4029,15 @@
         "documentation": {}
     },
     {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.UR10_Server_functions",
+        "description": "utils.UR10_Server_functions",
+        "peekOfCode": "logger = setup_server_logger()\ndef UR10_scanner1and2niobild() -> None:\n    \"\"\"Set the scanner image.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.label_7:\n        global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner1&2nio.png'))\n    return\ndef UR10_scanner1bild() -> None:\n    \"\"\"Set the scanner image.\n    \"\"\"",
+        "detail": "utils.UR10_Server_functions",
+        "documentation": {}
+    },
+    {
         "label": "ScannerSignals",
         "kind": 6,
         "importPath": "utils.UR20_Server_functions",
@@ -4055,7 +4114,7 @@
         "kind": 5,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "logger = global_vars.logger\nclass ScannerSignals(QObject):\n    \"\"\"Signals for the scanner.\n    Args:\n        QObject (QObject): The parent class of the signals.\n    \"\"\"\n    status_changed = Signal(str, str)  # status, image_path\nscanner_signals = ScannerSignals()\ndef UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.",
+        "peekOfCode": "logger = setup_server_logger()\nclass ScannerSignals(QObject):\n    \"\"\"Signals for the scanner.\n    Args:\n        QObject (QObject): The parent class of the signals.\n    \"\"\"\n    status_changed = Signal(str, str)  # status, image_path\nscanner_signals = ScannerSignals()\ndef UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -4235,7 +4294,7 @@
         "kind": 5,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "logger = global_vars.logger\n#Dateiname abfragen\ndef UR_SetFileName(Artikelnummer) -> str:\n    \"\"\"Set the filename.\n    Args:\n        Artikelnummer (str): The article number.\n    Returns:\n        str: The filename.\n    \"\"\"\n    global_vars.FILENAME = (Artikelnummer + '.rob')",
+        "peekOfCode": "logger = setup_server_logger()\n#Dateiname abfragen\ndef UR_SetFileName(Artikelnummer) -> str:\n    \"\"\"Set the filename.\n    Args:\n        Artikelnummer (str): The article number.\n    Returns:\n        str: The filename.\n    \"\"\"\n    global_vars.FILENAME = (Artikelnummer + '.rob')",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },

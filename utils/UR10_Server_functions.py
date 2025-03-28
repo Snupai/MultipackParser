@@ -1,6 +1,8 @@
 from . import global_vars
 from PySide6.QtGui import QPixmap
+from utils.logging_config import setup_server_logger
 
+logger = setup_server_logger()
 
 def UR10_scanner1and2niobild() -> None:
     """Set the scanner image.

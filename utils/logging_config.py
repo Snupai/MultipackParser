@@ -31,6 +31,72 @@ def get_log_path() -> str:
     
     return log_file
 
+# Global variable to store server log path
+_server_log_path = None
+
+def setup_server_logger() -> logging.Logger:
+    """Setup and configure the server logger
+    
+    Returns:
+        logging.Logger: Configured server logger instance
+    """
+    global _server_log_path
+    
+    # Get existing logger if already set up
+    logger = logging.getLogger('server')
+    
+    # If handlers exist, logger is already configured
+    if logger.handlers:
+        return logger
+        
+    logger.setLevel(logging.DEBUG)  # Always use DEBUG for server logs
+    
+    try:
+        log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        
+        # Only create log path once
+        if _server_log_path is None:
+            # Get base log directory
+            if getattr(sys, 'frozen', False):
+                base_path = os.path.dirname(sys.executable)
+            else:
+                base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            
+            logs_dir = os.path.join(base_path, 'logs')
+            os.makedirs(logs_dir, exist_ok=True)
+            
+            # Create server-specific log file
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            _server_log_path = os.path.join(logs_dir, f'server_{timestamp}.log')
+        
+        # File handler for server logs
+        file_handler = RotatingFileHandler(
+            _server_log_path,
+            maxBytes=5*1024*1024,
+            backupCount=5,
+            encoding='utf-8'
+        )
+        file_handler.setFormatter(log_formatter)
+        file_handler.setLevel(logging.DEBUG)
+        logger.addHandler(file_handler)
+        
+        # Console handler
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(log_formatter)
+        console_handler.setLevel(logging.DEBUG)
+        logger.addHandler(console_handler)
+        
+        logger.info(f"Server logging initialized. Log file: {_server_log_path}")
+        
+    except Exception as e:
+        print(f"Error setting up server logger: {e}")
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+        logger.addHandler(console_handler)
+        logger.error(f"Failed to initialize server file logging: {e}")
+    
+    return logger
+
 def setup_logger(verbose=False) -> logging.Logger:
     """Setup and configure the logger
     

@@ -7,7 +7,9 @@ from typing import Literal, List, Optional, Union, Tuple
 from utils.database import load_from_database
 from . import global_vars
 
-logger = global_vars.logger
+from utils.logging_config import setup_server_logger
+
+logger = setup_server_logger()
 
 #Dateiname abfragen
 def UR_SetFileName(Artikelnummer) -> str:
