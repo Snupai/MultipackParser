@@ -800,9 +800,9 @@
     <widget class="QComboBox" name="comboBoxPalettierbarePaletten">
      <property name="geometry">
       <rect>
-       <x>320</x>
+       <x>330</x>
        <y>400</y>
-       <width>291</width>
+       <width>261</width>
        <height>41</height>
       </rect>
      </property>
@@ -832,7 +832,7 @@
      <property name="geometry">
       <rect>
        <x>610</x>
-       <y>380</y>
+       <y>390</y>
        <width>291</width>
        <height>61</height>
       </rect>
@@ -894,7 +894,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="Roboter">
       <attribute name="title">
