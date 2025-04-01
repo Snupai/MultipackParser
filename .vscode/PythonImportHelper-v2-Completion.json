@@ -1474,6 +1474,14 @@
         "documentation": {}
     },
     {
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Union",
         "importPath": "typing",
         "description": "typing",
@@ -1634,6 +1642,14 @@
         "documentation": {}
     },
     {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Literal",
         "importPath": "typing",
         "description": "typing",
@@ -1739,6 +1755,14 @@
     },
     {
         "label": "Message",
+        "importPath": "utils.message",
+        "description": "utils.message",
+        "isExtraImport": true,
+        "detail": "utils.message",
+        "documentation": {}
+    },
+    {
+        "label": "MessageType",
         "importPath": "utils.message",
         "description": "utils.message",
         "isExtraImport": true,
@@ -1859,6 +1883,14 @@
     },
     {
         "label": "UR20_Server_functions",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "global_vars",
         "importPath": "utils",
         "description": "utils",
         "isExtraImport": true,
@@ -2167,31 +2199,7 @@
         "documentation": {}
     },
     {
-        "label": "update_status_label",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "isExtraImport": true,
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "update_status_label",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "isExtraImport": true,
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
         "label": "CustomDoubleValidator",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "isExtraImport": true,
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "update_status_label",
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
         "isExtraImport": true,
@@ -2304,14 +2312,6 @@
     },
     {
         "label": "clear_filters",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "isExtraImport": true,
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "update_status_label",
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
         "isExtraImport": true,
@@ -2521,6 +2521,46 @@
         "documentation": {}
     },
     {
+        "label": "update_status_label",
+        "importPath": "utils.status_manager",
+        "description": "utils.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.status_manager",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.status_manager",
+        "description": "utils.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.status_manager",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.status_manager",
+        "description": "utils.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.status_manager",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.status_manager",
+        "description": "utils.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.status_manager",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.status_manager",
+        "description": "utils.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.status_manager",
+        "documentation": {}
+    },
+    {
         "label": "threading",
         "kind": 6,
         "isExtraImport": true,
@@ -2605,6 +2645,14 @@
         "importPath": "copy",
         "description": "copy",
         "detail": "copy",
+        "documentation": {}
+    },
+    {
+        "label": "BlinkingLabel",
+        "importPath": "ui_files.BlinkingLabel",
+        "description": "ui_files.BlinkingLabel",
+        "isExtraImport": true,
+        "detail": "ui_files.BlinkingLabel",
         "documentation": {}
     },
     {
@@ -3068,7 +3116,7 @@
         "kind": 2,
         "importPath": "ui_files.visualization_3d",
         "description": "ui_files.visualization_3d",
-        "peekOfCode": "def parse_rob_file(file_path) -> tuple[Pallet, int]:\n    start_time = time.time()\n    lines, *_ = load_from_database(file_name=file_path)\n    package_width, package_length, package_height, einlauf_richtung = lines[1][0:4]\n    if einlauf_richtung == 1:\n        package_width, package_length = package_length, package_width\n    num_unique_layers = lines[2][0]\n    num_layers = lines[3][0]\n    layer_order = []\n    current_line = 5",
+        "peekOfCode": "def parse_rob_file(file_path) -> Tuple[Pallet, int]:\n    start_time = time.time()\n    lines, *_ = load_from_database(file_name=file_path)\n    package_width, package_length, package_height, einlauf_richtung = lines[1][0:4]\n    if einlauf_richtung == 1:\n        package_width, package_length = package_length, package_width\n    num_unique_layers = lines[2][0]\n    num_layers = lines[3][0]\n    layer_order = []\n    current_line = 5",
         "detail": "ui_files.visualization_3d",
         "documentation": {}
     },
@@ -3590,7 +3638,7 @@
         "kind": 2,
         "importPath": "utils.robot_control",
         "description": "utils.robot_control",
-        "peekOfCode": "def load() -> None:\n    \"\"\"Load the pallet plan from file.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):\n        logger.error(\"UI not initialized\")\n        return\n    interface_enabled = False\n    from utils.ui_helpers import update_status_label\n    from utils import UR_Common_functions as UR\n    # Store the text first, then manually clear focus to avoid keyboard issues",
+        "peekOfCode": "def load() -> None:\n    \"\"\"Load the pallet plan from file.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):\n        logger.error(\"UI not initialized\")\n        return\n    interface_enabled = False\n    from utils.status_manager import update_status_label\n    from utils import UR_Common_functions as UR\n    # Store the text first, then manually clear focus to avoid keyboard issues",
         "detail": "utils.robot_control",
         "documentation": {}
     },
@@ -3730,11 +3778,29 @@
         "documentation": {}
     },
     {
+        "label": "update_status_label",
+        "kind": 2,
+        "importPath": "utils.status_manager",
+        "description": "utils.status_manager",
+        "peekOfCode": "def update_status_label(text: str, color: str, blink: bool = False, second_color: Optional[str] = None, instant_acknowledge: bool = False, block: bool = False) -> None:\n    \"\"\"Update the status label with the given text and color.\n    Args:\n        text (str): The text to be displayed in the status label.\n        color (str): The color of the status label.\n        blink (bool, optional): Whether the status label should blink. Defaults to False.\n        second_color (Optional[str], optional): The second color of the status label. Defaults to None.\n        instant_acknowledge (bool, optional): Whether the status label should be acknowledged immediately. Defaults to False.\n        block (bool, optional): Whether the status label should be blocked. Defaults to False.\n    \"\"\"",
+        "detail": "utils.status_manager",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.status_manager",
+        "description": "utils.status_manager",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef update_status_label(text: str, color: str, blink: bool = False, second_color: Optional[str] = None, instant_acknowledge: bool = False, block: bool = False) -> None:\n    \"\"\"Update the status label with the given text and color.\n    Args:\n        text (str): The text to be displayed in the status label.\n        color (str): The color of the status label.\n        blink (bool, optional): Whether the status label should blink. Defaults to False.\n        second_color (Optional[str], optional): The second color of the status label. Defaults to None.\n        instant_acknowledge (bool, optional): Whether the status label should be acknowledged immediately. Defaults to False.\n        block (bool, optional): Whether the status label should be blocked. Defaults to False.",
+        "detail": "utils.status_manager",
+        "documentation": {}
+    },
+    {
         "label": "Page",
         "kind": 6,
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
-        "peekOfCode": "class Page(Enum):\n    \"\"\"Enum for the pages.\n    Args:\n        Enum (Enum): The enum for the pages.\n    \"\"\"\n    MAIN_PAGE = 0\n    PARAMETER_PAGE = 1\n    SETTINGS_PAGE = 2\n    EXPERIMENTAL_PAGE = 3\ndef update_status_label(text: str, color: str, blink: bool = False, second_color: Optional[str] = None, instant_acknowledge: bool = False, block: bool = False) -> None:",
+        "peekOfCode": "class Page(Enum):\n    \"\"\"Enum for the pages.\n    Args:\n        Enum (Enum): The enum for the pages.\n    \"\"\"\n    MAIN_PAGE = 0\n    PARAMETER_PAGE = 1\n    SETTINGS_PAGE = 2\n    EXPERIMENTAL_PAGE = 3\ndef open_password_dialog() -> None:",
         "detail": "utils.ui_helpers",
         "documentation": {}
     },
@@ -3744,15 +3810,6 @@
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
         "peekOfCode": "class CustomDoubleValidator(QDoubleValidator):\n    \"\"\"Custom double validator that allows commas to be used as decimal separators.\n    Args:\n        QDoubleValidator (QDoubleValidator): The double validator to be used.\n    \"\"\"\n    def validate(self, arg__1: str, arg__2: int) -> object:\n        \"\"\"Validate the input.\n        Args:\n            arg__1 (str): The input to be validated.\n            arg__2 (int): The position of the input.",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "update_status_label",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def update_status_label(text: str, color: str, blink: bool = False, second_color: Optional[str] = None, instant_acknowledge: bool = False, block: bool = False) -> None:\n    \"\"\"Update the status label with the given text and color.\n    Args:\n        text (str): The text to be displayed in the status label.\n        color (str): The color of the status label.\n        blink (bool, optional): Whether the status label should blink. Defaults to False.\n        second_color (Optional[str], optional): The second color of the status label. Defaults to None.\n        instant_acknowledge (bool, optional): Whether the status label should be acknowledged immediately. Defaults to False.\n        block (bool, optional): Whether the status label should be blocked. Defaults to False.\n    \"\"\"",
         "detail": "utils.ui_helpers",
         "documentation": {}
     },

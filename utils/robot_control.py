@@ -3,7 +3,7 @@ import logging
 import os
 from utils import global_vars
 from utils.database import save_to_database, find_file_in_database
-from utils.ui_helpers import update_status_label
+from utils.status_manager import update_status_label
 
 logger = logging.getLogger(__name__)
 
@@ -169,7 +169,7 @@ def load() -> None:
         return
     interface_enabled = False
     
-    from utils.ui_helpers import update_status_label
+    from utils.status_manager import update_status_label
     from utils import UR_Common_functions as UR
 
     # Store the text first, then manually clear focus to avoid keyboard issues

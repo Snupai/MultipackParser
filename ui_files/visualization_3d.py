@@ -121,7 +121,9 @@ def calculate_package_centers(center, width, length, rotation, num_packages):
     return centers
 
 
-def parse_rob_file(file_path) -> tuple[Pallet, int]:
+from typing import Tuple
+
+def parse_rob_file(file_path) -> Tuple[Pallet, int]:
     
     start_time = time.time()
     lines, *_ = load_from_database(file_name=file_path)

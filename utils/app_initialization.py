@@ -1,3 +1,4 @@
+
 """
 Application initialization functions for the Multipack Parser app.
 """
@@ -17,7 +18,7 @@ from utils.app_control import show_instant_splash, exception_handler, qt_message
 from utils.logging_config import setup_logger
 from utils.startup_dialogs import show_palette_config_dialog
 from utils.message_manager import MessageManager
-from utils.ui_helpers import update_status_label
+from utils.status_manager import update_status_label
 
 # Add a logger for this module
 logger = logging.getLogger(__name__)

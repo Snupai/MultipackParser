@@ -92,7 +92,19 @@ def server_start() -> Literal[0]:
         ]
         for func, name in ur20_functions:
             global_vars.server.register_function(log_rpc_call(func, name), name)
-
+    def get_available_functions():
+        # get all functions from common_functions and robot type specific functions but only take the name of the function
+        available_functions = []
+        for func, name in common_functions:
+            available_functions.append(name)
+        if robot_type == 'UR10':
+            for func, name in ur10_functions:
+                available_functions.append(name)
+        elif robot_type == 'UR20':
+            for func, name in ur20_functions:
+                available_functions.append(name)
+        return available_functions
+    global_vars.server.register_function(get_available_functions, "get_available_functions")
     logger.debug(f"Successfully registered functions for {robot_type}")
     
     global_vars.server.serve_forever()
