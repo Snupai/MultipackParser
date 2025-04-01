@@ -26,7 +26,6 @@ canvas = None
 allow_close = False
 
 # Variables
-settings_file: str = 'MultipackParser.conf'
 VERSION: str = '1.5.10'
 
 # Network settings
