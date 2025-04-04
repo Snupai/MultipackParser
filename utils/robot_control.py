@@ -212,7 +212,7 @@ def load() -> None:
         if global_vars.ui:
             logger.debug(f"File for {Artikelnummer=} found")
             if global_vars.message_manager:
-                message_strings = ["Kein Pallettenplan geladen", "Kein Plan gefunden"]
+                message_strings = ["Kein Pallettenplan geladen", "Kein Plan gefunden", "Bitte Palettenplan eingeben"]
                 for message_string in message_strings:
                     # unblock the message if it is blocked
                     if message_string in global_vars.message_manager._blocked_messages:
