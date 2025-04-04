@@ -2,7 +2,7 @@ import socket
 import logging
 import os
 from utils import global_vars
-from utils.database import save_to_database, find_file_in_database
+from utils.database import save_to_database, find_file_in_database, list_available_files
 from utils.status_manager import update_status_label
 
 logger = logging.getLogger(__name__)
@@ -173,8 +173,33 @@ def load() -> None:
     from utils import UR_Common_functions as UR
 
     # Store the text first, then manually clear focus to avoid keyboard issues
-    Artikelnummer = global_vars.ui.EingabePallettenplan.text()
+    Artikelnummer = global_vars.ui.EingabePallettenplan.text().strip()
     global_vars.ui.EingabePallettenplan.clearFocus()
+    
+    # Validate input
+    if not Artikelnummer:
+        logger.warning("No palette plan number entered")
+        update_status_label("Bitte Palettenplan eingeben", "red", True)
+        return
+        
+    # Check if the input matches the expected format (numbers, hyphens, and underscores only)
+    if not all(c.isdigit() or c in '-_' for c in Artikelnummer):
+        logger.warning(f"Invalid palette plan number format: {Artikelnummer}")
+        update_status_label("Ungültiges Format", "red", True)
+        return
+    
+    # Check if the input exactly matches a valid palette plan
+    available_files = list_available_files()
+    if not available_files:
+        logger.error("No palette plans found in database")
+        update_status_label("Keine Palettenpläne gefunden", "red", True)
+        return
+        
+    valid_plans = [file['file_name'].replace('.rob', '') for file in available_files]
+    if Artikelnummer not in valid_plans:
+        logger.warning(f"Palette plan {Artikelnummer} not found in available plans")
+        update_status_label("Kein Plan gefunden", "red", True)
+        return
     
     UR.UR_SetFileName(Artikelnummer)
     

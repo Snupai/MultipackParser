@@ -2045,6 +2045,14 @@
         "documentation": {}
     },
     {
+        "label": "list_available_files",
+        "importPath": "utils.database",
+        "description": "utils.database",
+        "isExtraImport": true,
+        "detail": "utils.database",
+        "documentation": {}
+    },
+    {
         "label": "load_from_database",
         "importPath": "utils.database",
         "description": "utils.database",
