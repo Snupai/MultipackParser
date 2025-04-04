@@ -270,6 +270,9 @@ def load_wordlist() -> list:
             wordlist.append(file[:-4])
             count = count + 1
             
+    # Sort the wordlist alphabetically
+    wordlist.sort()
+            
     logger.debug(f"Wordlist {count=}")
     if hasattr(global_vars, 'settings'):
         global_vars.settings.settings['info']['number_of_plans'] = count

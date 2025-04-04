@@ -341,10 +341,18 @@ def set_wordlist() -> None:
     # Configure completer
     completer.setCompletionMode(QCompleter.PopupCompletion)  # Use popup mode instead of inline completion
     completer.setCaseSensitivity(Qt.CaseInsensitive)
-    completer.setFilterMode(Qt.MatchContains)  # Match anywhere in the text
+    
+    # Customize the popup appearance
+    popup = completer.popup()
+    popup.setMinimumWidth(300)  # Make the popup wider
+    popup.setMinimumHeight(200)  # Make the popup taller
+    
+    # Set larger font size for the popup
+    font = popup.font()
+    font.setPointSize(12)  # Increase font size
+    popup.setFont(font)
     
     # Override the popup's event filter to prevent keyboard dismissal
-    popup = completer.popup()
     original_event_filter = popup.eventFilter
     
     def custom_event_filter(obj, event):
