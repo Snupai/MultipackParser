@@ -3116,7 +3116,7 @@
         "kind": 2,
         "importPath": "ui_files.visualization_3d",
         "description": "ui_files.visualization_3d",
-        "peekOfCode": "def parse_rob_file(file_path) -> Tuple[Pallet, int]:\n    start_time = time.time()\n    lines, *_ = load_from_database(file_name=file_path)\n    package_width, package_length, package_height, einlauf_richtung = lines[1][0:4]\n    if einlauf_richtung == 1:\n        package_width, package_length = package_length, package_width\n    num_unique_layers = lines[2][0]\n    num_layers = lines[3][0]\n    layer_order = []\n    current_line = 5",
+        "peekOfCode": "def parse_rob_file(file_path) -> Tuple[Pallet, int]:\n    start_time = time.time()\n    lines, *_ = load_from_database(file_name=file_path)\n    pallet_length, pallet_width = lines[0][0:2]\n    package_width, package_length, package_height, einlauf_richtung = lines[1][0:4]\n    if einlauf_richtung == 1:\n        package_width, package_length = package_length, package_width\n    num_unique_layers = lines[2][0]\n    num_layers = lines[3][0]\n    layer_order = []",
         "detail": "ui_files.visualization_3d",
         "documentation": {}
     },
@@ -3575,7 +3575,7 @@
         "kind": 6,
         "importPath": "utils.pallet_data",
         "description": "utils.pallet_data",
-        "peekOfCode": "class Layer:\n    def __init__(self, unique_layer_id: int, boxes: List[Box]) -> None:\n        self.unique_layer_id: int = unique_layer_id\n        self.boxes: List[Box] = boxes\nclass Pallet:\n    def __init__(self, layers: List[Layer]):\n        self.layers: List[Layer] = layers\n        self.layer_count: int = len(layers)\n        self.total_boxes: int = sum(map(lambda layer: len(layer.boxes), layers))",
+        "peekOfCode": "class Layer:\n    def __init__(self, unique_layer_id: int, boxes: List[Box]) -> None:\n        self.unique_layer_id: int = unique_layer_id\n        self.boxes: List[Box] = boxes\nclass Pallet:\n    def __init__(self, layers: List[Layer], width: int, length: int):\n        self.layers: List[Layer] = layers\n        self.layer_count: int = len(layers)\n        self.total_boxes: int = sum(map(lambda layer: len(layer.boxes), layers))\n        self.width: int = width",
         "detail": "utils.pallet_data",
         "documentation": {}
     },
@@ -3584,7 +3584,7 @@
         "kind": 6,
         "importPath": "utils.pallet_data",
         "description": "utils.pallet_data",
-        "peekOfCode": "class Pallet:\n    def __init__(self, layers: List[Layer]):\n        self.layers: List[Layer] = layers\n        self.layer_count: int = len(layers)\n        self.total_boxes: int = sum(map(lambda layer: len(layer.boxes), layers))",
+        "peekOfCode": "class Pallet:\n    def __init__(self, layers: List[Layer], width: int, length: int):\n        self.layers: List[Layer] = layers\n        self.layer_count: int = len(layers)\n        self.total_boxes: int = sum(map(lambda layer: len(layer.boxes), layers))\n        self.width: int = width\n        self.length: int = length",
         "detail": "utils.pallet_data",
         "documentation": {}
     },

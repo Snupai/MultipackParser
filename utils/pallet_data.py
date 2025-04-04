@@ -40,7 +40,9 @@ class Layer:
         self.boxes: List[Box] = boxes
 
 class Pallet:
-    def __init__(self, layers: List[Layer]):
+    def __init__(self, layers: List[Layer], width: int, length: int):
         self.layers: List[Layer] = layers
         self.layer_count: int = len(layers)
         self.total_boxes: int = sum(map(lambda layer: len(layer.boxes), layers))
+        self.width: int = width
+        self.length: int = length

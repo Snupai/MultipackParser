@@ -127,7 +127,7 @@ def parse_rob_file(file_path) -> Tuple[Pallet, int]:
     
     start_time = time.time()
     lines, *_ = load_from_database(file_name=file_path)
-
+    pallet_length, pallet_width = lines[0][0:2]
     package_width, package_length, package_height, einlauf_richtung = lines[1][0:4]
     if einlauf_richtung == 1:
         package_width, package_length = package_length, package_width
@@ -183,7 +183,7 @@ def parse_rob_file(file_path) -> Tuple[Pallet, int]:
     layers = []
     for num in layer_order:
         layers.append(Layer(unique_layer_id=num, boxes=unique_layers[num - 1].boxes))
-    pallet = Pallet(layers=layers)
+    pallet = Pallet(layers=layers, width=pallet_width, length=pallet_length)
     parse_time = time.time() - start_time
     logger.info(f"Parse time: {parse_time:.3f} seconds")
     return pallet, einlauf_richtung
@@ -219,8 +219,8 @@ def display_pallet_3d(canvas, pallet_name):
     canvas.ax.view_init(elev=elev, azim=azim)
     
     # Track min/max coordinates to set proper view limits
-    min_x, max_x = 0, 1200
-    min_y, max_y = 0, 800
+    min_x, max_x = 0, pallet.length
+    min_y, max_y = 0, pallet.width
     min_z, max_z = 0, 0
 
     progress.setValue(30)
