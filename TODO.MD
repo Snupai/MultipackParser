@@ -1,3 +1,7 @@
+# Important:
+
+- [ ] Undo new stuff until it is functioning without additional stuff
+
 # Ideas
 
 - [x] Zwischenlagen bestätigen popup
