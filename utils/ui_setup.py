@@ -113,8 +113,8 @@ def connect_signal_handlers():
     global_vars.ui.LadePallettenplan.clicked.connect(load)
     global_vars.ui.ButtonOpenParameterRoboter.clicked.connect(lambda: open_page(Page.PARAMETER_PAGE))
     global_vars.ui.ButtonDatenSenden.clicked.connect(server_thread)
-    global_vars.ui.startaudio.clicked.connect(spawn_play_stepback_warning_thread)
-    global_vars.ui.stopaudio.clicked.connect(kill_play_stepback_warning_thread)
+    #global_vars.ui.startaudio.clicked.connect(spawn_play_stepback_warning_thread) # TODO: Temporarily disabled due to fast production push
+    #global_vars.ui.stopaudio.clicked.connect(kill_play_stepback_warning_thread) # TODO: Temporarily disabled due to fast production push
     global_vars.ui.pushButtonVolumeOnOff.clicked.connect(set_audio_volume)
 
     # Connect robot control buttons
