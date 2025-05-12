@@ -185,7 +185,7 @@ def UR_PaketPos(Nummer: int) -> Optional[List[int]]:
         pos[5] = (pos[5] + 180) % 360
     if global_vars.UR20_active_palette == 2:
         # For palette 2, transform coordinates using:
-        # (px, py, pr, x, y, r, n, dx, dy) -> (px, py, pr, y, x, (r+180)mod360, n, dy*-1, dx*-1)
+        # (px, py, pr, x, y, r, n, dx, dy) -> (px, py, pr, y, x, (r+180)mod360, n, dy*-1, dx)
         
         px, py, pr = pos[0], pos[1], pos[2]
         x, y, r = pos[3], pos[4], pos[5]
@@ -197,7 +197,7 @@ def UR_PaketPos(Nummer: int) -> Optional[List[int]]:
         new_y = x
         new_r = (r + 180) % 360
         new_dx = dy * -1
-        new_dy = dx * -1
+        new_dy = dx
         
         
         return [px, py, pr, new_x, new_y, new_r, n, new_dx, new_dy]
