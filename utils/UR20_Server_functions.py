@@ -106,6 +106,7 @@ def UR20_SetActivePalette(pallet_number) -> Union[Literal[0], Literal[1]]:
         
     logger.info(f"Setting active palette to {pallet_number}")
     global_vars.UR20_active_palette = pallet_number
+    # TODO: set palette to not empty and have another function that robot can call on palette done to prompt user to remove palette and confirm new empty palette
     return global_vars.UR20_active_palette
 
 # get active pallet number
