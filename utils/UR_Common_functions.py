@@ -181,14 +181,15 @@ def UR_PaketPos(Nummer: int) -> Optional[List[int]]:
         return None
         
     pos = global_vars.g_PaketPos[Nummer]
+    r = pos[5]
     if global_vars.ui.checkBoxLabelInvert.isChecked():
-        pos[5] = (pos[5] + 180) % 360
+        r = (r + 180) % 360
     if global_vars.UR20_active_palette == 2:
         # For palette 2, transform coordinates using:
         # (px, py, pr, x, y, r, n, dx, dy) -> (px, py, pr, y, x, (r+180)mod360, n, dy, dx)
         
         px, py, pr = pos[0], pos[1], pos[2]
-        x, y, r = pos[3], pos[4], pos[5]
+        x, y = pos[3], pos[4]
         n = pos[6]
         dx, dy = pos[7], pos[8]
         
