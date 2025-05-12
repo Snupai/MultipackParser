@@ -4356,7 +4356,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def Check_Einzelpaket_längs_greifen(package_length: int) -> None:\n    \"\"\"Check if package should be gripped lengthwise.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:\n        if package_length >= 265:\n            global_vars.ui.checkBoxEinzelpaket.setChecked(True)\n        else:\n            global_vars.ui.checkBoxEinzelpaket.setChecked(False)\n#funktion für den roboter \ndef UR_Palette() -> Optional[List[int]]:",
+        "peekOfCode": "def Check_Einzelpaket_längs_greifen(package_length: int) -> None:\n    \"\"\"Automatically check if package should be gripped lengthwise based on package length.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:\n        if package_length >= 265:\n            global_vars.ui.checkBoxEinzelpaket.setChecked(True)\n        else:\n            global_vars.ui.checkBoxEinzelpaket.setChecked(False)\n#funktion für den roboter \ndef UR_Palette() -> Optional[List[int]]:",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -4446,7 +4446,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_Paket_hoehe() -> int:\n    \"\"\"Set the package height.\n    Returns:\n        int: The package height.\n    \"\"\"\n    if global_vars.g_PaketDim is None:\n        logger.error(\"Package dimensions not initialized\")\n        return 0\n    if global_vars.ui and global_vars.ui.EingabeKartonhoehe:\n        global_vars.g_PaketDim[2] = int(global_vars.ui.EingabeKartonhoehe.text())",
+        "peekOfCode": "def UR_Paket_hoehe() -> int:\n    \"\"\"Get the package height from UI input.\n    Returns:\n        int: The package height.\n    \"\"\"\n    if global_vars.g_PaketDim is None:\n        logger.error(\"Package dimensions not initialized\")\n        return 0\n    if global_vars.ui and global_vars.ui.EingabeKartonhoehe:\n        global_vars.g_PaketDim[2] = int(global_vars.ui.EingabeKartonhoehe.text())",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -4455,7 +4455,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_Startlage() -> int:\n    \"\"\"Set the start layer.\n    Returns:\n        int: The start layer.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeStartlage:\n        global_vars.g_Startlage = int(global_vars.ui.EingabeStartlage.value())\n        return global_vars.g_Startlage\n    return 0\ndef UR_MasseGeschaetzt() -> float:",
+        "peekOfCode": "def UR_Startlage() -> int:\n    \"\"\"Get the start layer from UI input.\n    Returns:\n        int: The start layer.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeStartlage:\n        global_vars.g_Startlage = int(global_vars.ui.EingabeStartlage.value())\n        return global_vars.g_Startlage\n    return 0\ndef UR_MasseGeschaetzt() -> float:",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -4464,7 +4464,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_MasseGeschaetzt() -> float:\n    \"\"\"Set the mass of the carton.\n    Returns:\n        float: The mass of the carton.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeKartonGewicht:\n        global_vars.g_MassePaket = float(global_vars.ui.EingabeKartonGewicht.text())\n        return global_vars.g_MassePaket\n    return 0.0\ndef UR_PickOffsetX() -> int:",
+        "peekOfCode": "def UR_MasseGeschaetzt() -> float:\n    \"\"\"Get the mass of the carton from UI input.\n    Returns:\n        float: The mass of the carton.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeKartonGewicht:\n        global_vars.g_MassePaket = float(global_vars.ui.EingabeKartonGewicht.text())\n        return global_vars.g_MassePaket\n    return 0.0\ndef UR_PickOffsetX() -> int:",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -4473,7 +4473,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_PickOffsetX() -> int:\n    \"\"\"Set the pick offset in x direction.\n    Returns:\n        int: The pick offset in x direction.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeVerschiebungX:\n        global_vars.g_Pick_Offset_X = int(global_vars.ui.EingabeVerschiebungX.value())\n        return global_vars.g_Pick_Offset_X\n    return 0\ndef UR_PickOffsetY() -> int:",
+        "peekOfCode": "def UR_PickOffsetX() -> int:\n    \"\"\"Get the pick offset in x direction from UI input.\n    Returns:\n        int: The pick offset in x direction.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeVerschiebungX:\n        global_vars.g_Pick_Offset_X = int(global_vars.ui.EingabeVerschiebungX.value())\n        return global_vars.g_Pick_Offset_X\n    return 0\ndef UR_PickOffsetY() -> int:",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
@@ -4482,7 +4482,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_PickOffsetY() -> int:\n    \"\"\"Set the pick offset in y direction.\n    Returns:\n        int: The pick offset in y direction.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeVerschiebungY:\n        global_vars.g_Pick_Offset_Y = int(global_vars.ui.EingabeVerschiebungY.value())\n        return global_vars.g_Pick_Offset_Y\n    return 0\ndef UR_Quergreifen() -> bool:",
+        "peekOfCode": "def UR_PickOffsetY() -> int:\n    \"\"\"Get the pick offset in y direction from UI input.\n    Returns:\n        int: The pick offset in y direction.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeVerschiebungY:\n        global_vars.g_Pick_Offset_Y = int(global_vars.ui.EingabeVerschiebungY.value())\n        return global_vars.g_Pick_Offset_Y\n    return 0\ndef UR_Quergreifen() -> bool:",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },

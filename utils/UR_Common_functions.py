@@ -125,7 +125,7 @@ def UR_ReadDataFromUsbStick() -> Union[Literal[0], Literal[1]]:
     return 1
 
 def Check_Einzelpaket_längs_greifen(package_length: int) -> None:
-    """Check if package should be gripped lengthwise.
+    """Automatically check if package should be gripped lengthwise based on package length.
     """
     if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:
         if package_length >= 265:
@@ -261,7 +261,7 @@ def UR_CoG(Masse_Paket: float, Masse_Greifer: float, Anzahl_Pakete: int = 1) -> 
     return global_vars.g_CenterOfGravity
 
 def UR_Paket_hoehe() -> int:
-    """Set the package height.
+    """Get the package height from UI input.
 
     Returns:
         int: The package height.
@@ -276,7 +276,7 @@ def UR_Paket_hoehe() -> int:
     return 0
 
 def UR_Startlage() -> int:
-    """Set the start layer.
+    """Get the start layer from UI input.
 
     Returns:
         int: The start layer.
@@ -287,7 +287,7 @@ def UR_Startlage() -> int:
     return 0
 
 def UR_MasseGeschaetzt() -> float:
-    """Set the mass of the carton.
+    """Get the mass of the carton from UI input.
 
     Returns:
         float: The mass of the carton.
@@ -298,7 +298,7 @@ def UR_MasseGeschaetzt() -> float:
     return 0.0
 
 def UR_PickOffsetX() -> int:
-    """Set the pick offset in x direction.
+    """Get the pick offset in x direction from UI input.
 
     Returns:
         int: The pick offset in x direction.
@@ -309,7 +309,7 @@ def UR_PickOffsetX() -> int:
     return 0
 
 def UR_PickOffsetY() -> int:
-    """Set the pick offset in y direction.
+    """Get the pick offset in y direction from UI input.
 
     Returns:
         int: The pick offset in y direction.
