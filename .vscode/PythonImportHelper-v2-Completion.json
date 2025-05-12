@@ -4491,7 +4491,7 @@
         "kind": 2,
         "importPath": "utils.UR_Common_functions",
         "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_Quergreifen() -> bool:\n    \"\"\"Query the robot.\n    Returns:\n        bool: True if the robot is queried, False otherwise.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:\n        logger.debug(f\"{global_vars.ui.checkBoxEinzelpaket.isChecked()=}\")\n        return global_vars.ui.checkBoxEinzelpaket.isChecked()\n    return False",
+        "peekOfCode": "def UR_Quergreifen() -> bool:\n    \"\"\"One package lengthwise or crosswise.\n    Returns:\n        bool: True if the package should be gripped lengthwise, False otherwise.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:\n        logger.debug(f\"{global_vars.ui.checkBoxEinzelpaket.isChecked()=}\")\n        return global_vars.ui.checkBoxEinzelpaket.isChecked()\n    return False",
         "detail": "utils.UR_Common_functions",
         "documentation": {}
     },

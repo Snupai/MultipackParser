@@ -320,10 +320,10 @@ def UR_PickOffsetY() -> int:
     return 0
 
 def UR_Quergreifen() -> bool:
-    """Query the robot.
+    """One package lengthwise or crosswise.
 
     Returns:
-        bool: True if the robot is queried, False otherwise.
+        bool: True if the package should be gripped lengthwise, False otherwise.
     """
     if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:
         logger.debug(f"{global_vars.ui.checkBoxEinzelpaket.isChecked()=}")
