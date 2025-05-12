@@ -181,30 +181,27 @@ def UR_PaketPos(Nummer: int) -> Optional[List[int]]:
         return None
         
     pos = global_vars.g_PaketPos[Nummer]
-    r = pos[5]
+    px, py, pr = pos[0], pos[1], pos[2]
+    x, y, r = pos[3], pos[4], pos[5]
+    n = pos[6]
+    dx, dy = pos[7], pos[8]
     if global_vars.ui.checkBoxLabelInvert.isChecked():
         r = (r + 180) % 360
     if global_vars.UR20_active_palette == 2:
         # For palette 2, transform coordinates using:
         # (px, py, pr, x, y, r, n, dx, dy) -> (px, py, pr, y, x, (r+180)mod360, n, dy, dx)
         
-        px, py, pr = pos[0], pos[1], pos[2]
-        x, y = pos[3], pos[4]
-        n = pos[6]
-        dx, dy = pos[7], pos[8]
-        
         # Apply transformation
-        new_x = y
-        new_y = x
-        new_r = (r + 180) % 360
-        new_dx = dy
-        new_dy = dx
+        temp_x = x
+        x = y
+        y = temp_x
+        r = (r + 180) % 360
+        temp_dx = dx
+        dx = dy
+        dy = temp_dx
         
-        
-        return [px, py, pr, new_x, new_y, new_r, n, new_dx, new_dy]
-    
-    return pos
- 
+    return [px, py, pr, x, y, r, n, dx, dy]
+
 def UR_AnzLagen() -> Optional[int]:
     """Get the number of layers.
 
