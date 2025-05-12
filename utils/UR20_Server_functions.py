@@ -96,17 +96,17 @@ def UR20_SetActivePalette(pallet_number) -> Union[Literal[0], Literal[1]]:
     
     if pallet_number == 1 and not global_vars.UR20_palette1_empty:
         logger.warning("Cannot set palette 1 as active - not empty")
-        return 0
+        return 503
     elif pallet_number == 2 and not global_vars.UR20_palette2_empty:
         logger.warning("Cannot set palette 2 as active - not empty")
-        return 0
+        return 503
     elif pallet_number not in [1, 2]:
         logger.error(f"Invalid palette number: {pallet_number}")
-        return 0
+        return 404
         
     logger.info(f"Setting active palette to {pallet_number}")
     global_vars.UR20_active_palette = pallet_number
-    return 1
+    return global_vars.UR20_active_palette
 
 # get active pallet number
 def UR20_GetActivePaletteNumber() -> int:
