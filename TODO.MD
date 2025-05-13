@@ -1,6 +1,6 @@
 # Important:
 
-- [ ] Undo new stuff until it is functioning without additional stuff
+- [x] Undo new stuff until it is functioning without additional stuff
 
 # Ideas
 
