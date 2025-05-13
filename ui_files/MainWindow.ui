@@ -1165,7 +1165,7 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Daten senden</string>
+        <string>Server starten</string>
        </property>
       </widget>
      </widget>

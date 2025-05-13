@@ -864,7 +864,7 @@ class Ui_Form(object):
         self.label_6.setText(QCoreApplication.translate("Form", u"verschieben in Richtung y von:", None))
         self.EingabeVerschiebungX.setSuffix(QCoreApplication.translate("Form", u" mm", None))
         self.EingabeVerschiebungY.setSuffix(QCoreApplication.translate("Form", u" mm", None))
-        self.ButtonDatenSenden_2.setText(QCoreApplication.translate("Form", u"Daten senden", None))
+        self.ButtonDatenSenden_2.setText(QCoreApplication.translate("Form", u"Server starten", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Aufnahme), QCoreApplication.translate("Form", u"Aufnahme", None))
         self.ButtonZurueck_3.setText("")
         self.label_11.setText(QCoreApplication.translate("Form", u"UR Model: ", None))
