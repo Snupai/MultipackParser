@@ -553,6 +553,9 @@
      <property name="cursor">
       <cursorShape>IBeamCursor</cursorShape>
      </property>
+     <property name="showGroupSeparator" stdset="0">
+      <bool>false</bool>
+     </property>
      <property name="minimum">
       <number>1</number>
      </property>
@@ -1116,7 +1119,7 @@
         <rect>
          <x>970</x>
          <y>60</y>
-         <width>141</width>
+         <width>170</width>
          <height>41</height>
         </rect>
        </property>
@@ -1135,7 +1138,7 @@
         <rect>
          <x>970</x>
          <y>160</y>
-         <width>141</width>
+         <width>170</width>
          <height>41</height>
         </rect>
        </property>
@@ -1152,9 +1155,9 @@
       <widget class="QPushButton" name="ButtonDatenSenden_2">
        <property name="geometry">
         <rect>
-         <x>540</x>
+         <x>550</x>
          <y>250</y>
-         <width>571</width>
+         <width>590</width>
          <height>91</height>
         </rect>
        </property>

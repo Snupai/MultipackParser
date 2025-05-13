@@ -43,6 +43,7 @@ def initialize_main_window():
     global_vars.ui = Ui_Form()
     global_vars.ui.setupUi(main_window)
     global_vars.ui.stackedWidget.setCurrentIndex(0)
+    global_vars.ui.tabWidget.setCurrentIndex(0)
     global_vars.ui.tabWidget_2.setCurrentIndex(0)
     
     return main_window
@@ -88,6 +89,40 @@ def setup_input_validation():
 
 def connect_signal_handlers():
     """Connect all signal handlers."""
+    # set custom style to spinBoxes
+    _customStyleSheet = """
+            QSpinBox {
+                padding-right: 40px;
+            }
+            QSpinBox::up-button {
+                width: 39px;
+                height: 39px;
+                padding: 2px;
+                subcontrol-position: right;
+                subcontrol-origin: border;
+            }
+            QSpinBox::down-button {
+                width: 39px;
+                height: 39px;
+                padding: 2px;
+                subcontrol-position: right;
+                subcontrol-origin: border;
+                right: 39px;
+            }
+            QSpinBox::up-arrow {
+                width: 12px;
+                height: 12px;
+            }
+            QSpinBox::down-arrow {
+                width: 12px;
+                height: 12px;
+            }
+            """
+    global_vars.ui.EingabeStartlage.setStyleSheet(_customStyleSheet)
+    global_vars.ui.EingabeVerschiebungX.setStyleSheet(_customStyleSheet)
+    global_vars.ui.EingabeVerschiebungY.setStyleSheet(_customStyleSheet)
+        
+    
     # Connect main UI signals
     global_vars.ui.EingabePallettenplan.returnPressed.connect(load)
     global_vars.ui.openExperimentalTab.clicked.connect(lambda: open_page(Page.EXPERIMENTAL_PAGE))
