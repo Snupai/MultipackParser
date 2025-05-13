@@ -680,7 +680,7 @@ def check_palette_clearing_status():
                 if not hasattr(global_vars, 'palette1_clear_indicator'):
                     # Create indicator if it doesn't exist
                     indicator = QLabel(global_vars.main_window)
-                    indicator.setGeometry(20, 100, 200, 50)
+                    indicator.setGeometry(950, 380, 200, 50)
                     indicator.setStyleSheet("""
                         background-color: rgba(255, 200, 0, 200);
                         color: black;
@@ -717,7 +717,7 @@ def check_palette_clearing_status():
                 if not hasattr(global_vars, 'palette2_clear_indicator'):
                     # Create indicator if it doesn't exist
                     indicator = QLabel(global_vars.main_window)
-                    indicator.setGeometry(20, 160, 200, 50)
+                    indicator.setGeometry(950, 380+60, 200, 50)
                     indicator.setStyleSheet("""
                         background-color: rgba(255, 200, 0, 200);
                         color: black;
