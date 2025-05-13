@@ -3518,7 +3518,7 @@
         "kind": 5,
         "importPath": "utils.global_vars",
         "description": "utils.global_vars",
-        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.5.12'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False",
+        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False",
         "detail": "utils.global_vars",
         "documentation": {}
     },
@@ -3527,7 +3527,7 @@
         "kind": 5,
         "importPath": "utils.global_vars",
         "description": "utils.global_vars",
-        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.5.12'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False\nUR20_palette2_empty: bool = False",
+        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False\nUR20_palette2_empty: bool = False",
         "detail": "utils.global_vars",
         "documentation": {}
     },
@@ -3536,7 +3536,7 @@
         "kind": 5,
         "importPath": "utils.global_vars",
         "description": "utils.global_vars",
-        "peekOfCode": "allow_close = False\n# Variables\nVERSION: str = '1.5.12'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False\nUR20_palette2_empty: bool = False\n# UR20 zwischenlage",
+        "peekOfCode": "allow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False\nUR20_palette2_empty: bool = False\n# UR20 zwischenlage",
         "detail": "utils.global_vars",
         "documentation": {}
     },

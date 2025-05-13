@@ -26,7 +26,7 @@ canvas = None
 allow_close = False
 
 # Variables
-VERSION: str = '1.5.12'
+VERSION: str = '1.5.13'
 
 # Network settings
 robot_ip: str = '192.168.0.1'  # DO NOT CHANGE
