@@ -184,6 +184,7 @@ def UR20_GetActivePaletteNumber() -> int:
             case 1:
                 if global_vars.UR20_palette1_empty:
                     logger.warning("Palette 1 is empty - return palette 1")
+                    mark_palette_not_empty(global_vars.UR20_active_palette)
                     return global_vars.UR20_active_palette
                 else:
                     logger.warning("Palette 1 is not empty - return 0")
@@ -191,6 +192,7 @@ def UR20_GetActivePaletteNumber() -> int:
             case 2:
                 if global_vars.UR20_palette2_empty:
                     logger.warning("Palette 2 is empty - return palette 2")
+                    mark_palette_not_empty(global_vars.UR20_active_palette)
                     return global_vars.UR20_active_palette
                 else:
                     logger.warning("Palette 2 is not empty - return 0")
