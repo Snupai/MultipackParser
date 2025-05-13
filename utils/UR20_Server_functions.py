@@ -179,8 +179,23 @@ def UR20_GetActivePaletteNumber() -> int:
     Returns:
         int: The number of the active pallet.
     """
-    logger.debug(f"Current active palette: {global_vars.UR20_active_palette}")
-    return global_vars.UR20_active_palette
+    if global_vars.UR20_active_palette in [1, 2]:
+        match global_vars.UR20_active_palette:
+            case 1:
+                if global_vars.UR20_palette1_empty:
+                    logger.warning("Palette 1 is empty - return palette 1")
+                    return global_vars.UR20_active_palette
+                else:
+                    logger.warning("Palette 1 is not empty - return 0")
+                    return 0
+            case 2:
+                if global_vars.UR20_palette2_empty:
+                    logger.warning("Palette 2 is empty - return palette 2")
+                    return global_vars.UR20_active_palette
+                else:
+                    logger.warning("Palette 2 is not empty - return 0")
+                    return 0
+    return 0
 
 # get pallet status
 def UR20_GetPaletteStatus(pallet_number) -> Union[Literal[1], Literal[0], Literal[-1]]:

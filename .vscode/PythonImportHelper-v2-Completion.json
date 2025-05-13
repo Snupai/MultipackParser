@@ -4337,7 +4337,7 @@
         "kind": 2,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_GetActivePaletteNumber() -> int:\n    \"\"\"Get the active pallet number.\n    Returns:\n        int: The number of the active pallet.\n    \"\"\"\n    logger.debug(f\"Current active palette: {global_vars.UR20_active_palette}\")\n    return global_vars.UR20_active_palette\n# get pallet status\ndef UR20_GetPaletteStatus(pallet_number) -> Union[Literal[1], Literal[0], Literal[-1]]:\n    \"\"\"Get the status of the given pallet.",
+        "peekOfCode": "def UR20_GetActivePaletteNumber() -> int:\n    \"\"\"Get the active pallet number.\n    Returns:\n        int: The number of the active pallet.\n    \"\"\"\n    if global_vars.UR20_active_palette in [1, 2]:\n        match global_vars.UR20_active_palette:\n            case 1:\n                if global_vars.UR20_palette1_empty:\n                    logger.warning(\"Palette 1 is empty - return palette 1\")",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
