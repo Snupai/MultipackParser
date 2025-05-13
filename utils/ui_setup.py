@@ -17,7 +17,8 @@ from utils.status_manager import update_status_label
 from utils.ui_helpers import (CustomDoubleValidator, handle_scanner_status,
                              set_wordlist, open_page, Page, open_password_dialog, leave_settings_page,
                              open_file, save_open_file, execute_command, open_folder_dialog, 
-                             open_file_dialog, set_settings_line_edits, check_key_or_password, clear_filters)
+                             open_file_dialog, set_settings_line_edits, check_key_or_password, clear_filters,
+                             show_palette_clear_dialog)
 from utils.robot_control import (display_selected_file, load, 
                                 send_cmd_play, send_cmd_pause, send_cmd_stop, load_selected_file,
                                 send_remote_control_command)
@@ -213,6 +214,9 @@ def setup_components():
     # Set up settings
     set_settings_line_edits()
     
+    # Add palette clear dialog function to UI
+    global_vars.ui.show_palette_clear_dialog = show_palette_clear_dialog
+    
     # Override the keyPressEvent handler for the EingabePallettenplan input field
     original_key_press = global_vars.ui.EingabePallettenplan.keyPressEvent
     
@@ -242,6 +246,12 @@ def start_background_tasks():
     zwischenlage_timer = QTimer(global_vars.main_window)
     zwischenlage_timer.timeout.connect(check_zwischenlage_status)
     zwischenlage_timer.start(500)  # Check every 500ms
+    
+    # Create a timer to check palette clearing status every 1000ms
+    from utils.ui_helpers import check_palette_clearing_status
+    palette_clear_timer = QTimer(global_vars.main_window)
+    palette_clear_timer.timeout.connect(check_palette_clearing_status)
+    palette_clear_timer.start(1000)  # Check every 1000ms
     
     # Check zwischenlage status immediately (don't wait for timer)
     check_zwischenlage_status()

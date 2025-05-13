@@ -587,3 +587,196 @@ def clear_filters():
     global_vars.ui.lineEditFilterLength.setText("")
     global_vars.ui.lineEditFilterWidth.setText("")
     global_vars.ui.lineEditFilterHeight.setText("")
+
+def show_palette_clear_dialog(palette_number):
+    """Show a confirmation dialog when a palette is cleared.
+    
+    Args:
+        palette_number (int): The palette number (1 or 2)
+        
+    Returns:
+        bool: True if the user confirmed, False if rejected or too early
+    """
+    logger.info(f"Checking if palette {palette_number} clear dialog should be shown")
+    
+    import time
+    from datetime import datetime
+    
+    # Check how long palette has been not empty
+    current_time = time.time()
+    min_wait_time = 10  # seconds
+    
+    # Get the appropriate timestamp for when the palette became non-empty
+    if palette_number == 1:
+        palette_timestamp = getattr(global_vars, 'palette1_nonempty_timestamp', None)
+    elif palette_number == 2:
+        palette_timestamp = getattr(global_vars, 'palette2_nonempty_timestamp', None)
+    else:
+        logger.error(f"Invalid palette number: {palette_number}")
+        return False
+    
+    # If no timestamp exists or it hasn't been long enough, don't show dialog
+    if palette_timestamp is None or (current_time - palette_timestamp) < min_wait_time:
+        logger.info(f"Too early to show palette {palette_number} clear dialog - wait at least {min_wait_time} seconds")
+        # For debugging, show how much longer to wait
+        if palette_timestamp is not None:
+            time_left = min_wait_time - (current_time - palette_timestamp)
+            logger.debug(f"Waiting {time_left:.1f} more seconds before showing palette clear dialog")
+        return False
+    
+    # Show the confirmation dialog
+    response = QMessageBox.question(
+        global_vars.main_window,
+        "Palette leeren",
+        f"Möchten Sie Palette {palette_number} leeren?",
+        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+        QMessageBox.StandardButton.No
+    )
+    
+    confirmed = response == QMessageBox.StandardButton.Yes
+    
+    if confirmed:
+        logger.info(f"User confirmed clearing palette {palette_number}")
+        # Set the appropriate palette_empty variable
+        if palette_number == 1:
+            global_vars.UR20_palette1_empty = True
+            # Clear the timestamp
+            if hasattr(global_vars, 'palette1_nonempty_timestamp'):
+                delattr(global_vars, 'palette1_nonempty_timestamp')
+        elif palette_number == 2:
+            global_vars.UR20_palette2_empty = True
+            # Clear the timestamp
+            if hasattr(global_vars, 'palette2_nonempty_timestamp'):
+                delattr(global_vars, 'palette2_nonempty_timestamp')
+    else:
+        logger.info(f"User cancelled clearing palette {palette_number}")
+    
+    return confirmed
+
+def check_palette_clearing_status():
+    """Check if any palettes need clearing and update UI accordingly.
+    This function is meant to be called periodically.
+    """
+    from PySide6.QtWidgets import QLabel
+    from PySide6.QtGui import QPixmap
+    from PySide6.QtCore import Qt
+    import time
+    
+    # Check if UI is initialized
+    if not global_vars.ui:
+        return
+    
+    # Minimum time before showing clearing indicator
+    min_wait_time = 10  # seconds
+    current_time = time.time()
+    
+    # Check Palette 1
+    if hasattr(global_vars, 'UR20_palette1_empty') and not global_vars.UR20_palette1_empty:
+        # Check if timestamp exists
+        if hasattr(global_vars, 'palette1_nonempty_timestamp'):
+            time_elapsed = current_time - global_vars.palette1_nonempty_timestamp
+            if time_elapsed >= min_wait_time:
+                # Palette 1 needs clearing - update UI
+                if not hasattr(global_vars, 'palette1_clear_indicator'):
+                    # Create indicator if it doesn't exist
+                    indicator = QLabel(global_vars.main_window)
+                    indicator.setGeometry(20, 100, 200, 50)
+                    indicator.setStyleSheet("""
+                        background-color: rgba(255, 200, 0, 200);
+                        color: black;
+                        border-radius: 5px;
+                        padding: 5px;
+                        font-weight: bold;
+                    """)
+                    indicator.setText("Palette 1 leeren")
+                    indicator.setAlignment(Qt.AlignCenter)
+                    indicator.mousePressEvent = lambda e: clear_palette(1)
+                    indicator.setCursor(Qt.PointingHandCursor)
+                    indicator.setToolTip("Klicken Sie hier, um Palette 1 als leer zu markieren")
+                    global_vars.palette1_clear_indicator = indicator
+                
+                # Show the indicator
+                global_vars.palette1_clear_indicator.show()
+                global_vars.palette1_clear_indicator.raise_()
+            else:
+                # Hide indicator if it exists but not time yet
+                if hasattr(global_vars, 'palette1_clear_indicator'):
+                    global_vars.palette1_clear_indicator.hide()
+    else:
+        # Hide indicator if palette is already empty
+        if hasattr(global_vars, 'palette1_clear_indicator'):
+            global_vars.palette1_clear_indicator.hide()
+    
+    # Check Palette 2
+    if hasattr(global_vars, 'UR20_palette2_empty') and not global_vars.UR20_palette2_empty:
+        # Check if timestamp exists
+        if hasattr(global_vars, 'palette2_nonempty_timestamp'):
+            time_elapsed = current_time - global_vars.palette2_nonempty_timestamp
+            if time_elapsed >= min_wait_time:
+                # Palette 2 needs clearing - update UI
+                if not hasattr(global_vars, 'palette2_clear_indicator'):
+                    # Create indicator if it doesn't exist
+                    indicator = QLabel(global_vars.main_window)
+                    indicator.setGeometry(20, 160, 200, 50)
+                    indicator.setStyleSheet("""
+                        background-color: rgba(255, 200, 0, 200);
+                        color: black;
+                        border-radius: 5px;
+                        padding: 5px;
+                        font-weight: bold;
+                    """)
+                    indicator.setText("Palette 2 leeren")
+                    indicator.setAlignment(Qt.AlignCenter)
+                    indicator.mousePressEvent = lambda e: clear_palette(2)
+                    indicator.setCursor(Qt.PointingHandCursor)
+                    indicator.setToolTip("Klicken Sie hier, um Palette 2 als leer zu markieren")
+                    global_vars.palette2_clear_indicator = indicator
+                
+                # Show the indicator
+                global_vars.palette2_clear_indicator.show()
+                global_vars.palette2_clear_indicator.raise_()
+            else:
+                # Hide indicator if it exists but not time yet
+                if hasattr(global_vars, 'palette2_clear_indicator'):
+                    global_vars.palette2_clear_indicator.hide()
+    else:
+        # Hide indicator if palette is already empty
+        if hasattr(global_vars, 'palette2_clear_indicator'):
+            global_vars.palette2_clear_indicator.hide()
+
+def clear_palette(palette_number):
+    """Mark a palette as empty after user confirms clearing.
+    
+    Args:
+        palette_number (int): The palette number to clear (1 or 2)
+    """
+    logger.info(f"User clicked to clear palette {palette_number}")
+    
+    # Show confirmation dialog
+    response = QMessageBox.question(
+        global_vars.main_window,
+        "Palette leeren",
+        f"Bestätigen Sie, dass Palette {palette_number} leer ist?",
+        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+        QMessageBox.StandardButton.Yes
+    )
+    
+    if response == QMessageBox.StandardButton.Yes:
+        logger.info(f"User confirmed palette {palette_number} is empty")
+        # Set the appropriate palette_empty variable
+        if palette_number == 1:
+            global_vars.UR20_palette1_empty = True
+            # Clear the timestamp
+            if hasattr(global_vars, 'palette1_nonempty_timestamp'):
+                delattr(global_vars, 'palette1_nonempty_timestamp')
+            # Hide the indicator
+            if hasattr(global_vars, 'palette1_clear_indicator'):
+                global_vars.palette1_clear_indicator.hide()
+        elif palette_number == 2:
+            global_vars.UR20_palette2_empty = True
+            # Clear the timestamp
+            if hasattr(global_vars, 'palette2_nonempty_timestamp'):
+                delattr(global_vars, 'palette2_nonempty_timestamp')
+            # Hide the indicator
+            if hasattr(global_vars, 'palette2_clear_indicator'):
+                global_vars.palette2_clear_indicator.hide()

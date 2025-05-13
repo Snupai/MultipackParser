@@ -2,6 +2,7 @@
 
 from PySide6.QtWidgets import QMessageBox, QLabel
 from PySide6.QtGui import QPixmap
+import utils
 from . import global_vars
 from datetime import datetime
 from utils.status_manager import update_status_label
@@ -9,6 +10,7 @@ from typing import Literal, cast, Union
 from PySide6.QtCore import Qt, QObject, Signal, QTimer
 import logging
 from utils.audio import kill_play_stepback_warning_thread, spawn_play_stepback_warning_thread
+import time
 
 from utils.logging_config import setup_server_logger
 
@@ -23,6 +25,27 @@ class ScannerSignals(QObject):
     status_changed = Signal(str, str)  # status, image_path
 
 scanner_signals = ScannerSignals()
+
+# Helper function to mark palette as not empty and record timestamp
+def mark_palette_not_empty(palette_number: int) -> None:
+    """Mark a palette as not empty and record the timestamp.
+    
+    Args:
+        palette_number (int): The palette number (1 or 2)
+    """
+    logger.info(f"Marking palette {palette_number} as not empty")
+    current_time = time.time()
+    
+    if palette_number == 1:
+        global_vars.UR20_palette1_empty = False
+        if not hasattr(global_vars, 'palette1_nonempty_timestamp'):
+            global_vars.palette1_nonempty_timestamp = current_time
+    elif palette_number == 2:
+        global_vars.UR20_palette2_empty = False
+        if not hasattr(global_vars, 'palette2_nonempty_timestamp'):
+            global_vars.palette2_nonempty_timestamp = current_time
+    else:
+        logger.error(f"Invalid palette number: {palette_number}")
 
 def UR20_scannerStatus(status: str) -> int:
     """Set the scanner status.
@@ -106,8 +129,48 @@ def UR20_SetActivePalette(pallet_number) -> Union[Literal[0], Literal[1]]:
         
     logger.info(f"Setting active palette to {pallet_number}")
     global_vars.UR20_active_palette = pallet_number
-    # TODO: set palette to not empty and have another function that robot can call on palette done to prompt user to remove palette and confirm new empty palette
+    
+    # Mark the active palette as not empty since it will be used
+    mark_palette_not_empty(pallet_number)
+    
     return global_vars.UR20_active_palette
+
+
+def UR20_RequestPaletteChange(old_pallet_number: int, new_pallet_number: int) -> int:
+    """Set the palette change request.
+
+    Args:
+        old_pallet_number (int): The number of the old pallet.
+        new_pallet_number (int): The number of the new pallet.
+
+    Returns:
+        int: 1 if palette change request is good to go, 0 if not, 404 if invalid palette number.
+    """
+    logger.info(f"Palette change request received: {old_pallet_number} -> {new_pallet_number}")
+    
+    # Validate new palette number
+    if new_pallet_number not in [1, 2]:
+        logger.error(f"Invalid new palette number: {new_pallet_number}")
+        return 404
+    
+    # Only check if the new palette is empty
+    new_palette_empty = (global_vars.UR20_palette1_empty if new_pallet_number == 1 
+                        else global_vars.UR20_palette2_empty)
+    
+    # New palette must be empty to be used
+    if not new_palette_empty:
+        logger.warning(f"New palette {new_pallet_number} is not empty - cannot change to it")
+        return 0
+    
+    # All conditions met, mark new palette as not empty and proceed
+    ret = UR20_SetActivePalette(new_pallet_number)
+    if ret == 503:
+        logger.warning(f"Palette {new_pallet_number} is not empty - cannot change to it")
+        return 0
+    elif ret == 404:
+        logger.error(f"Invalid palette number: {new_pallet_number}")
+        return 404
+    return 1
 
 # get active pallet number
 def UR20_GetActivePaletteNumber() -> int:

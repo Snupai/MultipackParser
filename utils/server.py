@@ -85,6 +85,7 @@ def server_start() -> Literal[0]:
         ur20_functions = [
             (UR20.UR20_scannerStatus, "UR_scannerStatus"),  # type: ignore
             (UR20.UR20_SetActivePalette, "UR_SetActivePalette"),
+            (UR20.UR20_RequestPaletteChange, "UR_RequestPaletteChange"),
             (UR20.UR20_GetActivePaletteNumber, "UR_GetActivePaletteNumber"),
             (UR20.UR20_GetPaletteStatus, "UR_GetPaletteStatus"),
             (UR20.UR20_SetZwischenLageLegen, "UR_SetZwischenLageLegen"),

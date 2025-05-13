@@ -1796,6 +1796,15 @@
         "documentation": {}
     },
     {
+        "label": "utils",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "utils",
+        "description": "utils",
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
         "label": "global_vars",
         "importPath": "utils",
         "description": "utils",
@@ -2346,6 +2355,14 @@
     },
     {
         "label": "clear_filters",
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "show_palette_clear_dialog",
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
         "isExtraImport": true,
@@ -4095,7 +4112,34 @@
         "kind": 2,
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
-        "peekOfCode": "def clear_filters():\n    \"\"\"Clear the filters.\n    \"\"\"\n    global_vars.filter_length = 0\n    global_vars.filter_width = 0\n    global_vars.filter_height = 0\n    global_vars.ui.lineEditFilterLength.setText(\"\")\n    global_vars.ui.lineEditFilterWidth.setText(\"\")\n    global_vars.ui.lineEditFilterHeight.setText(\"\")",
+        "peekOfCode": "def clear_filters():\n    \"\"\"Clear the filters.\n    \"\"\"\n    global_vars.filter_length = 0\n    global_vars.filter_width = 0\n    global_vars.filter_height = 0\n    global_vars.ui.lineEditFilterLength.setText(\"\")\n    global_vars.ui.lineEditFilterWidth.setText(\"\")\n    global_vars.ui.lineEditFilterHeight.setText(\"\")\ndef show_palette_clear_dialog(palette_number):",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "show_palette_clear_dialog",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def show_palette_clear_dialog(palette_number):\n    \"\"\"Show a confirmation dialog when a palette is cleared.\n    Args:\n        palette_number (int): The palette number (1 or 2)\n    Returns:\n        bool: True if the user confirmed, False if rejected or too early\n    \"\"\"\n    logger.info(f\"Checking if palette {palette_number} clear dialog should be shown\")\n    import time\n    from datetime import datetime",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "check_palette_clearing_status",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def check_palette_clearing_status():\n    \"\"\"Check if any palettes need clearing and update UI accordingly.\n    This function is meant to be called periodically.\n    \"\"\"\n    from PySide6.QtWidgets import QLabel\n    from PySide6.QtGui import QPixmap\n    from PySide6.QtCore import Qt\n    import time\n    # Check if UI is initialized\n    if not global_vars.ui:",
+        "detail": "utils.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "clear_palette",
+        "kind": 2,
+        "importPath": "utils.ui_helpers",
+        "description": "utils.ui_helpers",
+        "peekOfCode": "def clear_palette(palette_number):\n    \"\"\"Mark a palette as empty after user confirms clearing.\n    Args:\n        palette_number (int): The palette number to clear (1 or 2)\n    \"\"\"\n    logger.info(f\"User clicked to clear palette {palette_number}\")\n    # Show confirmation dialog\n    response = QMessageBox.question(\n        global_vars.main_window,\n        \"Palette leeren\",",
         "detail": "utils.ui_helpers",
         "documentation": {}
     },
@@ -4149,7 +4193,7 @@
         "kind": 2,
         "importPath": "utils.ui_setup",
         "description": "utils.ui_setup",
-        "peekOfCode": "def setup_components():\n    \"\"\"Initialize and set up the application components.\"\"\"\n    # Initialize components\n    set_wordlist()\n    global_vars.canvas = initialize_3d_view(global_vars.ui.MatplotLibCanvasFrame)\n    load_rob_files()\n    # Set up settings\n    set_settings_line_edits()\n    # Override the keyPressEvent handler for the EingabePallettenplan input field\n    original_key_press = global_vars.ui.EingabePallettenplan.keyPressEvent",
+        "peekOfCode": "def setup_components():\n    \"\"\"Initialize and set up the application components.\"\"\"\n    # Initialize components\n    set_wordlist()\n    global_vars.canvas = initialize_3d_view(global_vars.ui.MatplotLibCanvasFrame)\n    load_rob_files()\n    # Set up settings\n    set_settings_line_edits()\n    # Add palette clear dialog function to UI\n    global_vars.ui.show_palette_clear_dialog = show_palette_clear_dialog",
         "detail": "utils.ui_setup",
         "documentation": {}
     },
@@ -4248,7 +4292,16 @@
         "kind": 6,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "class ScannerSignals(QObject):\n    \"\"\"Signals for the scanner.\n    Args:\n        QObject (QObject): The parent class of the signals.\n    \"\"\"\n    status_changed = Signal(str, str)  # status, image_path\nscanner_signals = ScannerSignals()\ndef UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:",
+        "peekOfCode": "class ScannerSignals(QObject):\n    \"\"\"Signals for the scanner.\n    Args:\n        QObject (QObject): The parent class of the signals.\n    \"\"\"\n    status_changed = Signal(str, str)  # status, image_path\nscanner_signals = ScannerSignals()\n# Helper function to mark palette as not empty and record timestamp\ndef mark_palette_not_empty(palette_number: int) -> None:\n    \"\"\"Mark a palette as not empty and record the timestamp.",
+        "detail": "utils.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "mark_palette_not_empty",
+        "kind": 2,
+        "importPath": "utils.UR20_Server_functions",
+        "description": "utils.UR20_Server_functions",
+        "peekOfCode": "def mark_palette_not_empty(palette_number: int) -> None:\n    \"\"\"Mark a palette as not empty and record the timestamp.\n    Args:\n        palette_number (int): The palette number (1 or 2)\n    \"\"\"\n    logger.info(f\"Marking palette {palette_number} as not empty\")\n    current_time = time.time()\n    if palette_number == 1:\n        global_vars.UR20_palette1_empty = False\n        if not hasattr(global_vars, 'palette1_nonempty_timestamp'):",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -4267,6 +4320,15 @@
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
         "peekOfCode": "def UR20_SetActivePalette(pallet_number) -> Union[Literal[0], Literal[1]]:\n    \"\"\"Set the active pallet.\n    Args:\n        pallet_number (int): The number of the pallet to be set as active.\n    Returns:\n        Literal[0] | Literal[1]: 0 if the pallet is not empty, 1 if the pallet is empty.\n    \"\"\"\n    logger.debug(f\"Request to set active palette to {pallet_number}\")\n    if pallet_number == 1 and not global_vars.UR20_palette1_empty:\n        logger.warning(\"Cannot set palette 1 as active - not empty\")",
+        "detail": "utils.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_RequestPaletteChange",
+        "kind": 2,
+        "importPath": "utils.UR20_Server_functions",
+        "description": "utils.UR20_Server_functions",
+        "peekOfCode": "def UR20_RequestPaletteChange(old_pallet_number: int, new_pallet_number: int) -> int:\n    \"\"\"Set the palette change request.\n    Args:\n        old_pallet_number (int): The number of the old pallet.\n        new_pallet_number (int): The number of the new pallet.\n    Returns:\n        int: 1 if palette change request is good to go, 0 if not, 404 if invalid palette number.\n    \"\"\"\n    logger.info(f\"Palette change request received: {old_pallet_number} -> {new_pallet_number}\")\n    # Validate new palette number",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -4320,7 +4382,7 @@
         "kind": 5,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "logger = setup_server_logger()\nclass ScannerSignals(QObject):\n    \"\"\"Signals for the scanner.\n    Args:\n        QObject (QObject): The parent class of the signals.\n    \"\"\"\n    status_changed = Signal(str, str)  # status, image_path\nscanner_signals = ScannerSignals()\ndef UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.",
+        "peekOfCode": "logger = setup_server_logger()\nclass ScannerSignals(QObject):\n    \"\"\"Signals for the scanner.\n    Args:\n        QObject (QObject): The parent class of the signals.\n    \"\"\"\n    status_changed = Signal(str, str)  # status, image_path\nscanner_signals = ScannerSignals()\n# Helper function to mark palette as not empty and record timestamp\ndef mark_palette_not_empty(palette_number: int) -> None:",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
@@ -4329,7 +4391,7 @@
         "kind": 5,
         "importPath": "utils.UR20_Server_functions",
         "description": "utils.UR20_Server_functions",
-        "peekOfCode": "scanner_signals = ScannerSignals()\ndef UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger.debug(f\"Scanner status update received: {status}\")\n    # Handle scanner fault detection",
+        "peekOfCode": "scanner_signals = ScannerSignals()\n# Helper function to mark palette as not empty and record timestamp\ndef mark_palette_not_empty(palette_number: int) -> None:\n    \"\"\"Mark a palette as not empty and record the timestamp.\n    Args:\n        palette_number (int): The palette number (1 or 2)\n    \"\"\"\n    logger.info(f\"Marking palette {palette_number} as not empty\")\n    current_time = time.time()\n    if palette_number == 1:",
         "detail": "utils.UR20_Server_functions",
         "documentation": {}
     },
