@@ -1,13 +1,13 @@
 # Important:
 
-- [ ] Undo new stuff until it is functioning without additional stuff
+- [x] Undo new stuff until it is functioning without additional stuff
 
 # Ideas
 
 - [x] Zwischenlagen bestätigen popup
 - [x] keyfile on usb for passwordless settings entry
 - [x] invert label position
-- [x] Klemmung an aus via HMI
+- [ ] Klemmung an aus via HMI
 - [x] database
   - [x] saving palette data into db
   - [x] dimension search palettes
