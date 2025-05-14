@@ -248,18 +248,12 @@ def load() -> None:
     global_vars.ui.EingabeStartlage.setEnabled(interface_enabled)
     global_vars.ui.checkBoxEinzelpaket.setEnabled(interface_enabled)
     global_vars.ui.checkBoxLabelInvert.setEnabled(interface_enabled)
-    global_vars.ui.checkBoxKlemmung.setEnabled(interface_enabled)
+    #global_vars.ui.checkBoxKlemmung.setEnabled(interface_enabled)
     global_vars.ui.label_Gewicht.setEnabled(interface_enabled)
     global_vars.ui.label_Kartonhoehe.setEnabled(interface_enabled)
     global_vars.ui.label_Startlage.setEnabled(interface_enabled)
     global_vars.ui.label_Gewicht_kg.setEnabled(interface_enabled)
     global_vars.ui.label_Kartonhoehe_mm.setEnabled(interface_enabled)
-    style_sheet = "color: #000000" if interface_enabled else "color: #bebebe"
-    global_vars.ui.label_Kartonhoehe_mm.setStyleSheet(style_sheet)
-    global_vars.ui.label_Gewicht_kg.setStyleSheet(style_sheet)
-    global_vars.ui.label_Kartonhoehe.setStyleSheet(style_sheet)
-    global_vars.ui.label_Startlage.setStyleSheet(style_sheet)
-    global_vars.ui.label_Gewicht.setStyleSheet(style_sheet)
 
 def update_database_from_usb() -> None:
     """Update the database with any new or modified palette plans from the USB stick.
