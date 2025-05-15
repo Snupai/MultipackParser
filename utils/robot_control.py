@@ -161,6 +161,15 @@ def send_cmd_stop() -> None:
         logger.debug('closing socket')
         sock.close()
 
+def Check_Einzelpaket_längs_greifen(package_length: int) -> None:
+    """Automatically check if package should be gripped lengthwise based on package length.
+    """
+    if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:
+        if package_length >= 265:
+            global_vars.ui.checkBoxEinzelpaket.setChecked(True)
+        else:
+            global_vars.ui.checkBoxEinzelpaket.setChecked(False)
+
 def load() -> None:
     """Load the pallet plan from file.
     """
@@ -241,6 +250,7 @@ def load() -> None:
             logger.debug(f"{Gewicht=}")
             global_vars.ui.EingabeKartonGewicht.setText(str(Gewicht))
             global_vars.ui.EingabeKartonhoehe.setText(str(global_vars.g_PaketDim[2]))
+            Check_Einzelpaket_längs_greifen(global_vars.g_PaketDim[0])
     global_vars.ui.ButtonOpenParameterRoboter.setEnabled(interface_enabled)
     global_vars.ui.ButtonDatenSenden.setEnabled(interface_enabled)
     global_vars.ui.EingabeKartonGewicht.setEnabled(interface_enabled)

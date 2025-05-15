@@ -62,8 +62,6 @@ def UR_ReadDataFromUsbStick() -> Union[Literal[0], Literal[1]]:
         ph = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_HEIGHT]
         pr = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_GAP]
         global_vars.g_PaketDim = [pl, pw, ph, pr]
-        
-        Check_Einzelpaket_längs_greifen(pl)
 
         #Lagearten
         global_vars.g_LageArten = global_vars.g_Daten[global_vars.LI_LAYERTYPES][0]
@@ -123,16 +121,6 @@ def UR_ReadDataFromUsbStick() -> Union[Literal[0], Literal[1]]:
     except:
         logger.error(f"Error reading file {global_vars.FILENAME}")
     return 1
-
-def Check_Einzelpaket_längs_greifen(package_length: int) -> None:
-    """Automatically check if package should be gripped lengthwise based on package length.
-    """
-    if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:
-        if package_length >= 265:
-            global_vars.ui.checkBoxEinzelpaket.setChecked(True)
-        else:
-            global_vars.ui.checkBoxEinzelpaket.setChecked(False)
- 
  
 #funktion für den roboter 
 def UR_Palette() -> Optional[List[int]]:
