@@ -627,8 +627,8 @@ def show_palette_clear_dialog(palette_number):
     # Show the confirmation dialog
     response = QMessageBox.question(
         global_vars.main_window,
-        "Palette leeren",
-        f"Möchten Sie Palette {palette_number} leeren?",
+        "Palette freigeben",
+        f"Möchten Sie Palette {palette_number} zum palettieren freigeben?",
         QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         QMessageBox.StandardButton.No
     )
@@ -688,11 +688,11 @@ def check_palette_clearing_status():
                         padding: 5px;
                         font-weight: bold;
                     """)
-                    indicator.setText("Palette 1 leeren")
+                    indicator.setText("Palette 1 freigeben")
                     indicator.setAlignment(Qt.AlignCenter)
                     indicator.mousePressEvent = lambda e: clear_palette(1)
                     indicator.setCursor(Qt.PointingHandCursor)
-                    indicator.setToolTip("Klicken Sie hier, um Palette 1 als leer zu markieren")
+                    indicator.setToolTip("Klicken Sie hier, um Palette 1 zum palettieren freizugeben")
                     global_vars.palette1_clear_indicator = indicator
                 
                 # Show the indicator
@@ -725,11 +725,11 @@ def check_palette_clearing_status():
                         padding: 5px;
                         font-weight: bold;
                     """)
-                    indicator.setText("Palette 2 leeren")
+                    indicator.setText("Palette 2 freigeben")
                     indicator.setAlignment(Qt.AlignCenter)
                     indicator.mousePressEvent = lambda e: clear_palette(2)
                     indicator.setCursor(Qt.PointingHandCursor)
-                    indicator.setToolTip("Klicken Sie hier, um Palette 2 als leer zu markieren")
+                    indicator.setToolTip("Klicken Sie hier, um Palette 2 zum palettieren freizugeben")
                     global_vars.palette2_clear_indicator = indicator
                 
                 # Show the indicator
@@ -755,8 +755,8 @@ def clear_palette(palette_number):
     # Show confirmation dialog
     response = QMessageBox.question(
         global_vars.main_window,
-        "Palette leeren",
-        f"Bestätigen Sie, dass Palette {palette_number} leer ist?",
+        "Palette freigeben",
+        f"Bestätigen Sie, dass Palette {palette_number} zum palettieren freigegeben werden soll?",
         QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         QMessageBox.StandardButton.Yes
     )

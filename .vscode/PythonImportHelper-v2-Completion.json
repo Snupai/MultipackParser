@@ -4148,7 +4148,7 @@
         "kind": 2,
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
-        "peekOfCode": "def clear_palette(palette_number):\n    \"\"\"Mark a palette as empty after user confirms clearing.\n    Args:\n        palette_number (int): The palette number to clear (1 or 2)\n    \"\"\"\n    logger.info(f\"User clicked to clear palette {palette_number}\")\n    # Show confirmation dialog\n    response = QMessageBox.question(\n        global_vars.main_window,\n        \"Palette leeren\",",
+        "peekOfCode": "def clear_palette(palette_number):\n    \"\"\"Mark a palette as empty after user confirms clearing.\n    Args:\n        palette_number (int): The palette number to clear (1 or 2)\n    \"\"\"\n    logger.info(f\"User clicked to clear palette {palette_number}\")\n    # Show confirmation dialog\n    response = QMessageBox.question(\n        global_vars.main_window,\n        \"Palette freigeben\",",
         "detail": "utils.ui_helpers",
         "documentation": {}
     },
