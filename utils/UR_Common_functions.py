@@ -183,7 +183,8 @@ def UR_PaketPos(Nummer: int) -> Optional[List[int]]:
         temp_x = x
         x = y
         y = temp_x
-        r = (r + 180) % 360
+        if r in [0, 180]:
+            r = (r + 180) % 360
         temp_dx = dx
         dx = dy
         dy = temp_dx
