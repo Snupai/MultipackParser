@@ -3437,7 +3437,7 @@
         "kind": 5,
         "importPath": "utils.audio",
         "description": "utils.audio",
-        "peekOfCode": "logger = logging.getLogger(__name__)\ndef spawn_play_stepback_warning_thread():\n    \"\"\"Spawn a thread to play the stepback warning.\n    \"\"\"\n    global audio_thread\n    logger.info(\"Starting stepback warning audio thread\")\n    global_vars.audio_thread_running = True\n    audio_thread = threading.Thread(target=play_stepback_warning)\n    audio_thread.daemon = True\n    audio_thread.start()",
+        "peekOfCode": "logger = logging.getLogger(__name__)\n# TODO: overhaul everything so that it can be used for other sounds as well and stuff\ndef spawn_play_stepback_warning_thread():\n    \"\"\"Spawn a thread to play the stepback warning.\n    \"\"\"\n    global audio_thread\n    logger.info(\"Starting stepback warning audio thread\")\n    global_vars.audio_thread_running = True\n    audio_thread = threading.Thread(target=play_stepback_warning)\n    audio_thread.daemon = True",
         "detail": "utils.audio",
         "documentation": {}
     },

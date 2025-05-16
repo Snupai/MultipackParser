@@ -10,6 +10,8 @@ from utils import global_vars
 
 logger = logging.getLogger(__name__)
 
+# TODO: overhaul everything so that it can be used for other sounds as well and stuff
+
 def spawn_play_stepback_warning_thread():
     """Spawn a thread to play the stepback warning.
     """
