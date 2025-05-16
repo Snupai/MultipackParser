@@ -1,6 +1,10 @@
 # Important:
 
 - [x] Undo new stuff until it is functioning without additional stuff
+- [ ] Palettieren fortsetzen ja nein (wenn palette nicht frei und programm abbruch mitten in lage)
+  - [ ] maybe automatically continue???
+- [ ] Palette leeren wenn palettierung erfolgreich beendet wurde.
+- [ ] rename Invert label to something more fitting (label facing op _checked by default_)
 
 # Ideas
 
