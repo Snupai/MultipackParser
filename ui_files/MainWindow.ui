@@ -1046,7 +1046,7 @@
        <property name="geometry">
         <rect>
          <x>110</x>
-         <y>40</y>
+         <y>20</y>
          <width>390</width>
          <height>270</height>
         </rect>
@@ -1166,6 +1166,34 @@
        </property>
        <property name="text">
         <string>Server starten</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="checkBoxKlemmung">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>300</y>
+         <width>221</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LayoutDirection::RightToLeft</enum>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border-color: rgb(0, 0, 0);</string>
+       </property>
+       <property name="text">
+        <string>Klemmung aktiv</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </widget>
