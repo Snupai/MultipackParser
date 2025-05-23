@@ -1,6 +1,6 @@
 __license__ = '''
     Multipack Parser Application - to parse the data from the Multipack Robot to an UR Robot
-    Copyright (C) 2024  Yann-Luca Näher
+    Copyright (C) 2025  Yann-Luca Näher
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
