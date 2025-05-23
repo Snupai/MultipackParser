@@ -516,7 +516,7 @@ def handle_scanner_status(message: str, image_path: str):
             global_vars.message_manager.unblock_message("Bitte Arbeitsbereich räumen.")
             global_vars.message_manager.acknowledge_message("Bitte Arbeitsbereich räumen.")
             global_vars.timestamp_scanner_fault = None
-            update_status_label("Everything operational", "green", False, instant_acknowledge=True)
+            update_status_label("Alles funktioniert", "green", False, instant_acknowledge=True)
     
     # Update scanner image
     if image_path and global_vars.ui and global_vars.ui.label_7:

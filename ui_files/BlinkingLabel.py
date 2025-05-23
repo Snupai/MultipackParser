@@ -148,7 +148,7 @@ class BlinkingLabel(QLabel):
                         self.update_color(color)
                     else:
                         # Show default operational message
-                        self.update_text("Everything operational")
+                        self.update_text("Alles funktioniert")
                         self.update_color("green")
                         self.stop_blinking()
             else:
