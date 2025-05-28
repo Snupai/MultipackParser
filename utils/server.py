@@ -89,7 +89,8 @@ def server_start() -> Literal[0]:
             (UR20.UR20_GetActivePaletteNumber, "UR_GetActivePaletteNumber"),
             (UR20.UR20_GetPaletteStatus, "UR_GetPaletteStatus"),
             (UR20.UR20_SetZwischenLageLegen, "UR_SetZwischenLageLegen"),
-            (UR20.UR20_GetKlemmungAktiv, "UR_GetKlemmungAktiv")
+            (UR20.UR20_GetKlemmungAktiv, "UR_GetKlemmungAktiv"),
+            (UR20.UR20_GetScannerOverride, "UR_GetScannerOverwrite")
         ]
         for func, name in ur20_functions:
             global_vars.server.register_function(log_rpc_call(func, name), name)
