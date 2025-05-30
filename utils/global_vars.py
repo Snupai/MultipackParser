@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from ui_files.ui_main_window import Ui_Form
     from ui_files.BlinkingLabel import BlinkingLabel
     from utils.message_manager import MessageManager
+    from utils.robot_status_monitor import RobotStatus, RobotMode, SafetyStatus, ProgramState
 
 from .logging_config import logger
 
@@ -30,6 +31,12 @@ VERSION: str = '1.5.13'
 
 # Network settings
 robot_ip: str = '192.168.0.1'  # DO NOT CHANGE
+
+# Robot Status Variables
+current_robot_mode: RobotMode = RobotMode.UNKNOWN
+current_safety_status: SafetyStatus = SafetyStatus.UNKNOWN
+current_program_state: ProgramState = ProgramState.UNKNOWN
+robot_status_monitor: Optional['RobotStatus'] = None
 
 # UR20 palette place
 UR20_active_palette: int = 0

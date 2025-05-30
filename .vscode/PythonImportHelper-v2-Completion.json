@@ -1652,6 +1652,22 @@
         "documentation": {}
     },
     {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Literal",
         "importPath": "typing",
         "description": "typing",
@@ -2032,6 +2048,22 @@
     },
     {
         "label": "Enum",
+        "importPath": "enum",
+        "description": "enum",
+        "isExtraImport": true,
+        "detail": "enum",
+        "documentation": {}
+    },
+    {
+        "label": "Enum",
+        "importPath": "enum",
+        "description": "enum",
+        "isExtraImport": true,
+        "detail": "enum",
+        "documentation": {}
+    },
+    {
+        "label": "auto",
         "importPath": "enum",
         "description": "enum",
         "isExtraImport": true,
@@ -2444,6 +2476,14 @@
         "documentation": {}
     },
     {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
         "label": "show_instant_splash",
         "importPath": "utils.app_control",
         "description": "utils.app_control",
@@ -2661,6 +2701,14 @@
         "importPath": "socket",
         "description": "socket",
         "detail": "socket",
+        "documentation": {}
+    },
+    {
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
         "documentation": {}
     },
     {
@@ -3518,7 +3566,7 @@
         "kind": 5,
         "importPath": "utils.global_vars",
         "description": "utils.global_vars",
-        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False",
+        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN",
         "detail": "utils.global_vars",
         "documentation": {}
     },
@@ -3527,7 +3575,7 @@
         "kind": 5,
         "importPath": "utils.global_vars",
         "description": "utils.global_vars",
-        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False\nUR20_palette2_empty: bool = False",
+        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN",
         "detail": "utils.global_vars",
         "documentation": {}
     },
@@ -3536,7 +3584,7 @@
         "kind": 5,
         "importPath": "utils.global_vars",
         "description": "utils.global_vars",
-        "peekOfCode": "allow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# UR20 palette place\nUR20_active_palette: int = 0\nUR20_palette1_empty: bool = False\nUR20_palette2_empty: bool = False\n# UR20 zwischenlage",
+        "peekOfCode": "allow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN\nrobot_status_monitor: Optional['RobotStatus'] = None",
         "detail": "utils.global_vars",
         "documentation": {}
     },
@@ -3835,6 +3883,87 @@
         "description": "utils.robot_control",
         "peekOfCode": "logger = logging.getLogger(__name__)\ndef is_in_remote_control() -> bool:\n    \"\"\"Check if the robot is in remote control mode.\n    Returns:\n        bool: True if robot is in remote control mode, False otherwise\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect to the dashboard server\n        server_address = (global_vars.robot_ip, 29999)",
         "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "RobotMode",
+        "kind": 6,
+        "importPath": "utils.robot_status_monitor",
+        "description": "utils.robot_status_monitor",
+        "peekOfCode": "class RobotMode(Enum):\n    \"\"\"Enum for robot operating modes\"\"\"\n    UNKNOWN = auto()\n    POWER_OFF = auto()\n    IDLE = auto()\n    RUNNING = auto()\n    BACKDRIVE = auto()\n    ERROR = auto()\n    @classmethod\n    def from_string(cls, mode_str: str) -> 'RobotMode':",
+        "detail": "utils.robot_status_monitor",
+        "documentation": {}
+    },
+    {
+        "label": "SafetyStatus",
+        "kind": 6,
+        "importPath": "utils.robot_status_monitor",
+        "description": "utils.robot_status_monitor",
+        "peekOfCode": "class SafetyStatus(Enum):\n    \"\"\"Enum for robot safety status\"\"\"\n    UNKNOWN = auto()\n    NORMAL = auto()\n    REDUCED = auto()\n    PROTECTIVE_STOP = auto()\n    RECOVERY = auto()\n    SAFEGUARD_STOP = auto()\n    SYSTEM_EMERGENCY_STOP = auto()\n    ROBOT_EMERGENCY_STOP = auto()",
+        "detail": "utils.robot_status_monitor",
+        "documentation": {}
+    },
+    {
+        "label": "ProgramState",
+        "kind": 6,
+        "importPath": "utils.robot_status_monitor",
+        "description": "utils.robot_status_monitor",
+        "peekOfCode": "class ProgramState(Enum):\n    \"\"\"Enum for robot program state\"\"\"\n    UNKNOWN = auto()\n    STOPPED = auto()\n    PLAYING = auto()\n    PAUSED = auto()\n    ERROR = auto()\n    @classmethod\n    def from_string(cls, state_str: str) -> 'ProgramState':\n        \"\"\"Convert string response to ProgramState enum\"\"\"",
+        "detail": "utils.robot_status_monitor",
+        "documentation": {}
+    },
+    {
+        "label": "RobotStatus",
+        "kind": 6,
+        "importPath": "utils.robot_status_monitor",
+        "description": "utils.robot_status_monitor",
+        "peekOfCode": "class RobotStatus:\n    \"\"\"Data class to hold robot status information\"\"\"\n    robot_mode: RobotMode = RobotMode.UNKNOWN\n    safety_status: SafetyStatus = SafetyStatus.UNKNOWN\n    program_state: ProgramState = ProgramState.UNKNOWN\n    last_update: Optional[datetime] = None\n    is_connected: bool = False\n    connection_error: Optional[str] = None\ndef send_dashboard_command(command: str, ip: str = robot_ip, port: int = DASHBOARD_PORT, timeout: int = TIMEOUT_SECONDS) -> Tuple[str, bool, Optional[str]]:\n    \"\"\"",
+        "detail": "utils.robot_status_monitor",
+        "documentation": {}
+    },
+    {
+        "label": "RobotStatusMonitor",
+        "kind": 6,
+        "importPath": "utils.robot_status_monitor",
+        "description": "utils.robot_status_monitor",
+        "peekOfCode": "class RobotStatusMonitor:\n    def __init__(self, update_interval: int = 2):\n        \"\"\"\n        Initialize the robot status monitor.\n        Args:\n            update_interval: Time between status updates in seconds\n        \"\"\"\n        self.update_interval = update_interval\n        self.running = False\n        self.monitor_thread: Optional[threading.Thread] = None",
+        "detail": "utils.robot_status_monitor",
+        "documentation": {}
+    },
+    {
+        "label": "send_dashboard_command",
+        "kind": 2,
+        "importPath": "utils.robot_status_monitor",
+        "description": "utils.robot_status_monitor",
+        "peekOfCode": "def send_dashboard_command(command: str, ip: str = robot_ip, port: int = DASHBOARD_PORT, timeout: int = TIMEOUT_SECONDS) -> Tuple[str, bool, Optional[str]]:\n    \"\"\"\n    Sends a command to the UR Dashboard Server and returns the response.\n    Args:\n        command: The command to send to the dashboard server\n        ip: Robot IP address\n        port: Dashboard server port\n        timeout: Connection timeout in seconds\n    Returns:\n        Tuple[str, bool, Optional[str]]: ",
+        "detail": "utils.robot_status_monitor",
+        "documentation": {}
+    },
+    {
+        "label": "get_polyscope_version",
+        "kind": 2,
+        "importPath": "utils.robot_status_monitor",
+        "description": "utils.robot_status_monitor",
+        "peekOfCode": "def get_polyscope_version() -> Tuple[str, bool, Optional[str]]:\n    \"\"\"\n    Gets the Polyscope version from the robot.\n    Returns:\n        Tuple[str, bool, Optional[str]]:\n            - Polyscope version or error message\n            - Success flag (True if command succeeded)\n            - Error message if any\n    \"\"\"\n    response, success, error = send_dashboard_command(\"PolyscopeVersion\")",
+        "detail": "utils.robot_status_monitor",
+        "documentation": {}
+    },
+    {
+        "label": "DASHBOARD_PORT",
+        "kind": 5,
+        "importPath": "utils.robot_status_monitor",
+        "description": "utils.robot_status_monitor",
+        "peekOfCode": "DASHBOARD_PORT = 29999\nTIMEOUT_SECONDS = 5\nclass RobotMode(Enum):\n    \"\"\"Enum for robot operating modes\"\"\"\n    UNKNOWN = auto()\n    POWER_OFF = auto()\n    IDLE = auto()\n    RUNNING = auto()\n    BACKDRIVE = auto()\n    ERROR = auto()",
+        "detail": "utils.robot_status_monitor",
+        "documentation": {}
+    },
+    {
+        "label": "TIMEOUT_SECONDS",
+        "kind": 5,
+        "importPath": "utils.robot_status_monitor",
+        "description": "utils.robot_status_monitor",
+        "peekOfCode": "TIMEOUT_SECONDS = 5\nclass RobotMode(Enum):\n    \"\"\"Enum for robot operating modes\"\"\"\n    UNKNOWN = auto()\n    POWER_OFF = auto()\n    IDLE = auto()\n    RUNNING = auto()\n    BACKDRIVE = auto()\n    ERROR = auto()\n    @classmethod",
+        "detail": "utils.robot_status_monitor",
         "documentation": {}
     },
     {
