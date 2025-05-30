@@ -13,7 +13,7 @@ from PySide6.QtGui import QRegularExpressionValidator, QIntValidator
 from ui_files.ui_main_window import Ui_Form
 from ui_files.visualization_3d import initialize_3d_view, clear_canvas, load_rob_files
 from utils.system.core import global_vars
-from ..message.status_manager import update_status_label
+from utils.message.status_manager import update_status_label
 from utils.ui.ui_helpers import (CustomDoubleValidator, handle_scanner_status,
                              set_wordlist, open_page, Page, open_password_dialog, leave_settings_page,
                              open_file, save_open_file, execute_command, open_folder_dialog, 

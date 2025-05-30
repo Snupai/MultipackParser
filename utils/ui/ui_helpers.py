@@ -10,12 +10,12 @@ from typing import Optional
 
 from utils.system.core import global_vars
 from ui_files.BlinkingLabel import BlinkingLabel
-from ..message.message import MessageType
-from ..message.message_manager import MessageManager
+from utils.message.message import MessageType
+from utils.message.message_manager import MessageManager
 from ui_files.PasswordDialog import PasswordEntryDialog
 from utils.robot.robot_control import load_rob_files
 from utils.system.security.usb_key_check import check_any_usb_for_key
-from ..message.status_manager import update_status_label
+from utils.message.status_manager import update_status_label
 from utils.robot.robot_control import load_wordlist
 from utils.ui.notification_popup import check_zwischenlage_status
 

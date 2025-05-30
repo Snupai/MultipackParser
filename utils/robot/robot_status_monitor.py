@@ -4,7 +4,7 @@ import threading
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, Tuple
-from .global_vars import robot_ip, logger
+from utils.system.core.global_vars import robot_ip, logger
 from .robot_enums import RobotMode, SafetyStatus, ProgramState
 
 # Constants

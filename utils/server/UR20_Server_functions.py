@@ -5,7 +5,7 @@ from PySide6.QtGui import QPixmap
 import utils
 from utils.system.core import global_vars
 from datetime import datetime
-from ..message.status_manager import update_status_label
+from utils.message.status_manager import update_status_label
 from typing import Literal, cast, Union
 from PySide6.QtCore import Qt, QObject, Signal, QTimer
 import logging

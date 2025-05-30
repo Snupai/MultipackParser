@@ -1,7 +1,7 @@
 from typing import List, Optional, Union, Set
 from datetime import datetime
 from .message import Message, MessageType
-from ..system.config.logging_config import logger
+from utils.system.config.logging_config import logger
 import threading
 import time
 

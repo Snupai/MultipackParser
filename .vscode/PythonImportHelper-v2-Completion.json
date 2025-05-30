@@ -1780,6 +1780,22 @@
         "documentation": {}
     },
     {
+        "label": "MessageType",
+        "importPath": "utils.message.message",
+        "description": "utils.message.message",
+        "isExtraImport": true,
+        "detail": "utils.message.message",
+        "documentation": {}
+    },
+    {
+        "label": "MessageType",
+        "importPath": "utils.message.message",
+        "description": "utils.message.message",
+        "isExtraImport": true,
+        "detail": "utils.message.message",
+        "documentation": {}
+    },
+    {
         "label": "global_vars",
         "importPath": "utils.system.core",
         "description": "utils.system.core",
@@ -2332,6 +2348,70 @@
         "documentation": {}
     },
     {
+        "label": "logger",
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.system.config.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_server_logger",
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.system.config.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_server_logger",
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.system.config.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_server_logger",
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.system.config.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_server_logger",
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.system.config.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_logger",
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.system.config.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.system.config.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_logger",
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.system.config.logging_config",
+        "documentation": {}
+    },
+    {
         "label": "socket",
         "kind": 6,
         "isExtraImport": true,
@@ -2341,11 +2421,67 @@
         "documentation": {}
     },
     {
+        "label": "update_status_label",
+        "importPath": "utils.message.status_manager",
+        "description": "utils.message.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.message.status_manager",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.message.status_manager",
+        "description": "utils.message.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.message.status_manager",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.message.status_manager",
+        "description": "utils.message.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.message.status_manager",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.message.status_manager",
+        "description": "utils.message.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.message.status_manager",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.message.status_manager",
+        "description": "utils.message.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.message.status_manager",
+        "documentation": {}
+    },
+    {
         "label": "dataclass",
         "importPath": "dataclasses",
         "description": "dataclasses",
         "isExtraImport": true,
         "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "robot_ip",
+        "importPath": "utils.system.core.global_vars",
+        "description": "utils.system.core.global_vars",
+        "isExtraImport": true,
+        "detail": "utils.system.core.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "importPath": "utils.system.core.global_vars",
+        "description": "utils.system.core.global_vars",
+        "isExtraImport": true,
+        "detail": "utils.system.core.global_vars",
         "documentation": {}
     },
     {
@@ -2597,59 +2733,27 @@
         "documentation": {}
     },
     {
-        "label": "setup_server_logger",
-        "importPath": "utils.system.config.logging_config",
-        "description": "utils.system.config.logging_config",
+        "label": "MessageManager",
+        "importPath": "utils.message.message_manager",
+        "description": "utils.message.message_manager",
         "isExtraImport": true,
-        "detail": "utils.system.config.logging_config",
+        "detail": "utils.message.message_manager",
         "documentation": {}
     },
     {
-        "label": "setup_server_logger",
-        "importPath": "utils.system.config.logging_config",
-        "description": "utils.system.config.logging_config",
+        "label": "MessageManager",
+        "importPath": "utils.message.message_manager",
+        "description": "utils.message.message_manager",
         "isExtraImport": true,
-        "detail": "utils.system.config.logging_config",
+        "detail": "utils.message.message_manager",
         "documentation": {}
     },
     {
-        "label": "setup_server_logger",
-        "importPath": "utils.system.config.logging_config",
-        "description": "utils.system.config.logging_config",
+        "label": "MessageManager",
+        "importPath": "utils.message.message_manager",
+        "description": "utils.message.message_manager",
         "isExtraImport": true,
-        "detail": "utils.system.config.logging_config",
-        "documentation": {}
-    },
-    {
-        "label": "setup_server_logger",
-        "importPath": "utils.system.config.logging_config",
-        "description": "utils.system.config.logging_config",
-        "isExtraImport": true,
-        "detail": "utils.system.config.logging_config",
-        "documentation": {}
-    },
-    {
-        "label": "setup_logger",
-        "importPath": "utils.system.config.logging_config",
-        "description": "utils.system.config.logging_config",
-        "isExtraImport": true,
-        "detail": "utils.system.config.logging_config",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "importPath": "utils.system.config.logging_config",
-        "description": "utils.system.config.logging_config",
-        "isExtraImport": true,
-        "detail": "utils.system.config.logging_config",
-        "documentation": {}
-    },
-    {
-        "label": "setup_logger",
-        "importPath": "utils.system.config.logging_config",
-        "description": "utils.system.config.logging_config",
-        "isExtraImport": true,
-        "detail": "utils.system.config.logging_config",
+        "detail": "utils.message.message_manager",
         "documentation": {}
     },
     {
@@ -2991,22 +3095,6 @@
         "description": "utils.ui.startup_dialogs",
         "isExtraImport": true,
         "detail": "utils.ui.startup_dialogs",
-        "documentation": {}
-    },
-    {
-        "label": "MessageManager",
-        "importPath": "utils.message.message_manager",
-        "description": "utils.message.message_manager",
-        "isExtraImport": true,
-        "detail": "utils.message.message_manager",
-        "documentation": {}
-    },
-    {
-        "label": "update_status_label",
-        "importPath": "utils.message.status_manager",
-        "description": "utils.message.status_manager",
-        "isExtraImport": true,
-        "detail": "utils.message.status_manager",
         "documentation": {}
     },
     {
