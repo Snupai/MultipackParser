@@ -12,7 +12,7 @@ import logging
 from utils.audio.audio import kill_play_stepback_warning_thread, spawn_play_stepback_warning_thread
 import time
 
-from utils.logging_config import setup_server_logger
+from utils.system.config.logging_config import setup_server_logger
 
 logger = setup_server_logger()
 

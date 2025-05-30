@@ -9,6 +9,7 @@ from PySide6.QtCore import Qt
 from utils import global_vars
 from utils.ui.ui_helpers import set_settings_line_edits
 from utils.server.server import server_stop
+from utils.system.config.settings import Settings
 
 logger = logging.getLogger(__name__)
 
@@ -93,7 +94,6 @@ def exit_app():
 def init_settings():
     """Initialize the settings
     """
-    from utils.settings import Settings
     settings = Settings()
     global_vars.settings = settings
     global_vars.PATH_USB_STICK = settings.settings['admin']['path']

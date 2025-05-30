@@ -14,7 +14,7 @@ from PySide6.QtGui import QPixmap, QPainter, QColor
 
 from utils import global_vars
 from utils.app_control import show_instant_splash, exception_handler, qt_message_handler
-from utils.logging_config import setup_logger
+from utils.system.config.logging_config import setup_logger
 from utils.ui.startup_dialogs import show_palette_config_dialog
 from .message.message_manager import MessageManager
 from .message.status_manager import update_status_label

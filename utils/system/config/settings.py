@@ -6,7 +6,6 @@ import pickle
 import base64
 import copy
 from PySide6.QtCore import QSettings
-from . import global_vars
 from .logging_config import logger
 
 class Settings:
@@ -16,6 +15,7 @@ class Settings:
     def __init__(self):
         """Initialize the settings with QSettings.
         """
+        from ... import global_vars  # Import here to avoid circular import
         logger.debug("Initializing Settings")
         # Create QSettings instance with organization and application name
         self.qsettings = QSettings("Multipack", "MultipackParser")

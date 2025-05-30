@@ -1,6 +1,6 @@
 from utils import global_vars
 from PySide6.QtGui import QPixmap
-from utils.logging_config import setup_server_logger
+from utils.system.config.logging_config import setup_server_logger
 
 logger = setup_server_logger()
 

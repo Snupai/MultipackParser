@@ -23,7 +23,7 @@ from utils.server.UR20_Server_functions import (
 )
 from ..message.message import MessageType
 from ..message.message_manager import MessageManager
-from utils.logging_config import setup_server_logger
+from utils.system.config.logging_config import setup_server_logger
 
 logger = setup_server_logger()
 

@@ -10,13 +10,13 @@ import os
 import sys
 
 if TYPE_CHECKING:
-    from utils.settings import Settings
+    from utils.system.config.settings import Settings
     from ui_files.ui_main_window import Ui_Form
     from ui_files.BlinkingLabel import BlinkingLabel
     from .message.message_manager import MessageManager
     from utils.robot.robot_status_monitor import RobotStatus
 
-from .logging_config import logger
+from .system.config.logging_config import logger
 from .robot.robot_enums import RobotMode, SafetyStatus, ProgramState
 
 # Global variables

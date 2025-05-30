@@ -916,6 +916,14 @@
         "documentation": {}
     },
     {
+        "label": "QSettings",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
         "label": "Qt",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
@@ -1029,14 +1037,6 @@
     },
     {
         "label": "QLocale",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
-        "label": "QSettings",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
         "isExtraImport": true,
@@ -2599,50 +2599,50 @@
     },
     {
         "label": "setup_server_logger",
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
         "isExtraImport": true,
-        "detail": "utils.logging_config",
+        "detail": "utils.system.config.logging_config",
         "documentation": {}
     },
     {
         "label": "setup_server_logger",
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
         "isExtraImport": true,
-        "detail": "utils.logging_config",
+        "detail": "utils.system.config.logging_config",
         "documentation": {}
     },
     {
         "label": "setup_server_logger",
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
         "isExtraImport": true,
-        "detail": "utils.logging_config",
+        "detail": "utils.system.config.logging_config",
         "documentation": {}
     },
     {
         "label": "setup_server_logger",
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
         "isExtraImport": true,
-        "detail": "utils.logging_config",
+        "detail": "utils.system.config.logging_config",
         "documentation": {}
     },
     {
         "label": "setup_logger",
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
         "isExtraImport": true,
-        "detail": "utils.logging_config",
+        "detail": "utils.system.config.logging_config",
         "documentation": {}
     },
     {
         "label": "setup_logger",
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
         "isExtraImport": true,
-        "detail": "utils.logging_config",
+        "detail": "utils.system.config.logging_config",
         "documentation": {}
     },
     {
@@ -2691,6 +2691,49 @@
         "description": "utils.audio.audio",
         "isExtraImport": true,
         "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "RotatingFileHandler",
+        "importPath": "logging.handlers",
+        "description": "logging.handlers",
+        "isExtraImport": true,
+        "detail": "logging.handlers",
+        "documentation": {}
+    },
+    {
+        "label": "RotatingFileHandler",
+        "importPath": "logging.handlers",
+        "description": "logging.handlers",
+        "isExtraImport": true,
+        "detail": "logging.handlers",
+        "documentation": {}
+    },
+    {
+        "label": "pickle",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pickle",
+        "description": "pickle",
+        "detail": "pickle",
+        "documentation": {}
+    },
+    {
+        "label": "base64",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "base64",
+        "description": "base64",
+        "detail": "base64",
+        "documentation": {}
+    },
+    {
+        "label": "copy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "copy",
+        "description": "copy",
+        "detail": "copy",
         "documentation": {}
     },
     {
@@ -3025,6 +3068,14 @@
         "documentation": {}
     },
     {
+        "label": "Settings",
+        "importPath": "utils.system.config.settings",
+        "description": "utils.system.config.settings",
+        "isExtraImport": true,
+        "detail": "utils.system.config.settings",
+        "documentation": {}
+    },
+    {
         "label": "argparse",
         "kind": 6,
         "isExtraImport": true,
@@ -3042,55 +3093,12 @@
         "documentation": {}
     },
     {
-        "label": "RotatingFileHandler",
-        "importPath": "logging.handlers",
-        "description": "logging.handlers",
-        "isExtraImport": true,
-        "detail": "logging.handlers",
-        "documentation": {}
-    },
-    {
-        "label": "RotatingFileHandler",
-        "importPath": "logging.handlers",
-        "description": "logging.handlers",
-        "isExtraImport": true,
-        "detail": "logging.handlers",
-        "documentation": {}
-    },
-    {
         "label": "multiprocessing",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "multiprocessing",
         "description": "multiprocessing",
         "detail": "multiprocessing",
-        "documentation": {}
-    },
-    {
-        "label": "pickle",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "pickle",
-        "description": "pickle",
-        "detail": "pickle",
-        "documentation": {}
-    },
-    {
-        "label": "base64",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "base64",
-        "description": "base64",
-        "detail": "base64",
-        "documentation": {}
-    },
-    {
-        "label": "copy",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "copy",
-        "description": "copy",
-        "detail": "copy",
         "documentation": {}
     },
     {
@@ -4287,6 +4295,60 @@
         "documentation": {}
     },
     {
+        "label": "get_log_path",
+        "kind": 2,
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
+        "peekOfCode": "def get_log_path() -> str:\n    \"\"\"Get the appropriate log file path whether running as script or frozen exe\"\"\"\n    if getattr(sys, 'frozen', False):\n        # Running as compiled executable\n        base_path = os.path.dirname(sys.executable)\n    else:\n        # Running as script\n        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))\n    # Create logs directory if it doesn't exist\n    logs_dir = os.path.join(base_path, 'logs')",
+        "detail": "utils.system.config.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_server_logger",
+        "kind": 2,
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
+        "peekOfCode": "def setup_server_logger() -> logging.Logger:\n    \"\"\"Setup and configure the server logger\n    Returns:\n        logging.Logger: Configured server logger instance\n    \"\"\"\n    global _server_log_path\n    # Get existing logger if already set up\n    logger = logging.getLogger('server')\n    # If handlers exist, logger is already configured\n    if logger.handlers:",
+        "detail": "utils.system.config.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_logger",
+        "kind": 2,
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
+        "peekOfCode": "def setup_logger(verbose=False) -> logging.Logger:\n    \"\"\"Setup and configure the logger\n    Args:\n        verbose (bool): Whether to enable verbose (DEBUG) logging\n    Returns:\n        logging.Logger: Configured logger instance\n    \"\"\"\n    logger = logging.getLogger('multipack_parser')\n    logger.setLevel(logging.DEBUG if verbose else logging.INFO)\n    # Remove any existing handlers",
+        "detail": "utils.system.config.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "_server_log_path",
+        "kind": 5,
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
+        "peekOfCode": "_server_log_path = None\ndef setup_server_logger() -> logging.Logger:\n    \"\"\"Setup and configure the server logger\n    Returns:\n        logging.Logger: Configured server logger instance\n    \"\"\"\n    global _server_log_path\n    # Get existing logger if already set up\n    logger = logging.getLogger('server')\n    # If handlers exist, logger is already configured",
+        "detail": "utils.system.config.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
+        "peekOfCode": "logger = logging.getLogger('multipack_parser')",
+        "detail": "utils.system.config.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "Settings",
+        "kind": 6,
+        "importPath": "utils.system.config.settings",
+        "description": "utils.system.config.settings",
+        "peekOfCode": "class Settings:\n    \"\"\"Settings class.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the settings with QSettings.\n        \"\"\"\n        from ... import global_vars  # Import here to avoid circular import\n        logger.debug(\"Initializing Settings\")\n        # Create QSettings instance with organization and application name\n        self.qsettings = QSettings(\"Multipack\", \"MultipackParser\")",
+        "detail": "utils.system.config.settings",
+        "documentation": {}
+    },
+    {
         "label": "check_hidden_key",
         "kind": 2,
         "importPath": "utils.system.security.usb_key_check",
@@ -4723,7 +4785,7 @@
         "kind": 2,
         "importPath": "utils.app_control",
         "description": "utils.app_control",
-        "peekOfCode": "def init_settings():\n    \"\"\"Initialize the settings\n    \"\"\"\n    from utils.settings import Settings\n    settings = Settings()\n    global_vars.settings = settings\n    global_vars.PATH_USB_STICK = settings.settings['admin']['path']\n    logger.debug(f\"Settings initialized: {settings}\")\ndef exception_handler(exc_type, exc_value, exc_traceback):\n    \"\"\"Global exception handler to log unhandled exceptions",
+        "peekOfCode": "def init_settings():\n    \"\"\"Initialize the settings\n    \"\"\"\n    settings = Settings()\n    global_vars.settings = settings\n    global_vars.PATH_USB_STICK = settings.settings['admin']['path']\n    logger.debug(f\"Settings initialized: {settings}\")\ndef exception_handler(exc_type, exc_value, exc_traceback):\n    \"\"\"Global exception handler to log unhandled exceptions\n    Args:",
         "detail": "utils.app_control",
         "documentation": {}
     },
@@ -4842,60 +4904,6 @@
         "description": "utils.global_vars",
         "peekOfCode": "server = None",
         "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "get_log_path",
-        "kind": 2,
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
-        "peekOfCode": "def get_log_path() -> str:\n    \"\"\"Get the appropriate log file path whether running as script or frozen exe\"\"\"\n    if getattr(sys, 'frozen', False):\n        # Running as compiled executable\n        base_path = os.path.dirname(sys.executable)\n    else:\n        # Running as script\n        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))\n    # Create logs directory if it doesn't exist\n    logs_dir = os.path.join(base_path, 'logs')",
-        "detail": "utils.logging_config",
-        "documentation": {}
-    },
-    {
-        "label": "setup_server_logger",
-        "kind": 2,
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
-        "peekOfCode": "def setup_server_logger() -> logging.Logger:\n    \"\"\"Setup and configure the server logger\n    Returns:\n        logging.Logger: Configured server logger instance\n    \"\"\"\n    global _server_log_path\n    # Get existing logger if already set up\n    logger = logging.getLogger('server')\n    # If handlers exist, logger is already configured\n    if logger.handlers:",
-        "detail": "utils.logging_config",
-        "documentation": {}
-    },
-    {
-        "label": "setup_logger",
-        "kind": 2,
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
-        "peekOfCode": "def setup_logger(verbose=False) -> logging.Logger:\n    \"\"\"Setup and configure the logger\n    Args:\n        verbose (bool): Whether to enable verbose (DEBUG) logging\n    Returns:\n        logging.Logger: Configured logger instance\n    \"\"\"\n    logger = logging.getLogger('multipack_parser')\n    logger.setLevel(logging.DEBUG if verbose else logging.INFO)\n    # Remove any existing handlers",
-        "detail": "utils.logging_config",
-        "documentation": {}
-    },
-    {
-        "label": "_server_log_path",
-        "kind": 5,
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
-        "peekOfCode": "_server_log_path = None\ndef setup_server_logger() -> logging.Logger:\n    \"\"\"Setup and configure the server logger\n    Returns:\n        logging.Logger: Configured server logger instance\n    \"\"\"\n    global _server_log_path\n    # Get existing logger if already set up\n    logger = logging.getLogger('server')\n    # If handlers exist, logger is already configured",
-        "detail": "utils.logging_config",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
-        "peekOfCode": "logger = logging.getLogger('multipack_parser')",
-        "detail": "utils.logging_config",
-        "documentation": {}
-    },
-    {
-        "label": "Settings",
-        "kind": 6,
-        "importPath": "utils.settings",
-        "description": "utils.settings",
-        "peekOfCode": "class Settings:\n    \"\"\"Settings class.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the settings with QSettings.\n        \"\"\"\n        logger.debug(\"Initializing Settings\")\n        # Create QSettings instance with organization and application name\n        self.qsettings = QSettings(\"Multipack\", \"MultipackParser\")\n        # Define default settings",
-        "detail": "utils.settings",
         "documentation": {}
     },
     {
