@@ -3,7 +3,7 @@
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QRadioButton, QSpinBox, QGroupBox, QMessageBox
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
-from . import global_vars
+from utils import global_vars
 import logging
 
 logger = logging.getLogger('multipack_parser')

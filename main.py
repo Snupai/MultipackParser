@@ -36,7 +36,7 @@ from utils.logging_config import setup_logger
 from utils.app_initialization import parse_arguments, initialize_app, setup_initial_app_state
 from utils.database.database import create_database
 from utils.robot.robot_control import update_database_from_usb
-from utils.ui_setup import (initialize_main_window, setup_input_validation, connect_signal_handlers,
+from utils.ui.ui_setup import (initialize_main_window, setup_input_validation, connect_signal_handlers,
                           setup_password_handling, setup_components, start_background_tasks,
                           setup_window_handling)
 

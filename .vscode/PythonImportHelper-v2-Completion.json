@@ -436,54 +436,6 @@
         "documentation": {}
     },
     {
-        "label": "QMessageBox",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QApplication",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QSplashScreen",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QProgressBar",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QLabel",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QMessageBox",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
         "label": "QLabel",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -613,6 +565,54 @@
     },
     {
         "label": "QMainWindow",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMessageBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMessageBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QApplication",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QSplashScreen",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QProgressBar",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLabel",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
         "isExtraImport": true,
@@ -924,30 +924,6 @@
         "documentation": {}
     },
     {
-        "label": "Qt",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
-        "label": "QLocale",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
-        "label": "Qt",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
         "label": "QTimer",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
@@ -965,14 +941,6 @@
     },
     {
         "label": "QSize",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
-        "label": "QSettings",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
         "isExtraImport": true,
@@ -1044,6 +1012,38 @@
         "documentation": {}
     },
     {
+        "label": "Qt",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QLocale",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QSettings",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
         "label": "QFont",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
@@ -1357,30 +1357,6 @@
     },
     {
         "label": "QPixmap",
-        "importPath": "PySide6.QtGui",
-        "description": "PySide6.QtGui",
-        "isExtraImport": true,
-        "detail": "PySide6.QtGui",
-        "documentation": {}
-    },
-    {
-        "label": "QPixmap",
-        "importPath": "PySide6.QtGui",
-        "description": "PySide6.QtGui",
-        "isExtraImport": true,
-        "detail": "PySide6.QtGui",
-        "documentation": {}
-    },
-    {
-        "label": "QPainter",
-        "importPath": "PySide6.QtGui",
-        "description": "PySide6.QtGui",
-        "isExtraImport": true,
-        "detail": "PySide6.QtGui",
-        "documentation": {}
-    },
-    {
-        "label": "QColor",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
         "isExtraImport": true,
@@ -1461,6 +1437,30 @@
     },
     {
         "label": "QIntValidator",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPixmap",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPainter",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QColor",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
         "isExtraImport": true,
@@ -1668,6 +1668,14 @@
         "documentation": {}
     },
     {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Union",
         "importPath": "typing",
         "description": "typing",
@@ -1748,14 +1756,6 @@
         "documentation": {}
     },
     {
-        "label": "Optional",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
         "label": "MessageType",
         "importPath": "utils.message",
         "description": "utils.message",
@@ -1796,7 +1796,7 @@
         "documentation": {}
     },
     {
-        "label": "Message",
+        "label": "MessageType",
         "importPath": "utils.message",
         "description": "utils.message",
         "isExtraImport": true,
@@ -1804,7 +1804,7 @@
         "documentation": {}
     },
     {
-        "label": "MessageType",
+        "label": "Message",
         "importPath": "utils.message",
         "description": "utils.message",
         "isExtraImport": true,
@@ -1846,6 +1846,14 @@
     },
     {
         "label": "Settings",
+        "importPath": "utils",
+        "description": "utils",
+        "isExtraImport": true,
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "global_vars",
         "importPath": "utils",
         "description": "utils",
         "isExtraImport": true,
@@ -2790,147 +2798,227 @@
         "documentation": {}
     },
     {
-        "label": "set_settings_line_edits",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "label": "BlinkingLabel",
+        "importPath": "ui_files.BlinkingLabel",
+        "description": "ui_files.BlinkingLabel",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "ui_files.BlinkingLabel",
+        "documentation": {}
+    },
+    {
+        "label": "BlinkingLabel",
+        "importPath": "ui_files.BlinkingLabel",
+        "description": "ui_files.BlinkingLabel",
+        "isExtraImport": true,
+        "detail": "ui_files.BlinkingLabel",
+        "documentation": {}
+    },
+    {
+        "label": "PasswordEntryDialog",
+        "importPath": "ui_files.PasswordDialog",
+        "description": "ui_files.PasswordDialog",
+        "isExtraImport": true,
+        "detail": "ui_files.PasswordDialog",
+        "documentation": {}
+    },
+    {
+        "label": "check_any_usb_for_key",
+        "importPath": "utils.usb_key_check",
+        "description": "utils.usb_key_check",
+        "isExtraImport": true,
+        "detail": "utils.usb_key_check",
+        "documentation": {}
+    },
+    {
+        "label": "check_zwischenlage_status",
+        "importPath": "utils.ui.notification_popup",
+        "description": "utils.ui.notification_popup",
+        "isExtraImport": true,
+        "detail": "utils.ui.notification_popup",
+        "documentation": {}
+    },
+    {
+        "label": "check_zwischenlage_status",
+        "importPath": "utils.ui.notification_popup",
+        "description": "utils.ui.notification_popup",
+        "isExtraImport": true,
+        "detail": "utils.ui.notification_popup",
+        "documentation": {}
+    },
+    {
+        "label": "Ui_Form",
+        "importPath": "ui_files.ui_main_window",
+        "description": "ui_files.ui_main_window",
+        "isExtraImport": true,
+        "detail": "ui_files.ui_main_window",
+        "documentation": {}
+    },
+    {
+        "label": "initialize_3d_view",
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "isExtraImport": true,
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "clear_canvas",
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "isExtraImport": true,
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "load_rob_files",
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "isExtraImport": true,
+        "detail": "ui_files.visualization_3d",
         "documentation": {}
     },
     {
         "label": "CustomDoubleValidator",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
         "label": "handle_scanner_status",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
         "label": "set_wordlist",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
         "label": "open_page",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
         "label": "Page",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
         "label": "open_password_dialog",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
         "label": "leave_settings_page",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
         "label": "open_file",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
         "label": "save_open_file",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
         "label": "execute_command",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
         "label": "open_folder_dialog",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
         "label": "open_file_dialog",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
         "label": "set_settings_line_edits",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
         "label": "check_key_or_password",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
         "label": "clear_filters",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
         "label": "show_palette_clear_dialog",
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.ui_helpers",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
-        "label": "server_stop",
-        "importPath": "utils.server.server",
-        "description": "utils.server.server",
+        "label": "check_palette_clearing_status",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "utils.server.server",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "set_settings_line_edits",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
@@ -2950,12 +3038,35 @@
         "documentation": {}
     },
     {
-        "label": "argparse",
-        "kind": 6,
+        "label": "server_stop",
+        "importPath": "utils.server.server",
+        "description": "utils.server.server",
         "isExtraImport": true,
-        "importPath": "argparse",
-        "description": "argparse",
-        "detail": "argparse",
+        "detail": "utils.server.server",
+        "documentation": {}
+    },
+    {
+        "label": "check_for_updates",
+        "importPath": "utils.updater",
+        "description": "utils.updater",
+        "isExtraImport": true,
+        "detail": "utils.updater",
+        "documentation": {}
+    },
+    {
+        "label": "restart_app",
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "isExtraImport": true,
+        "detail": "utils.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "exit_app",
+        "importPath": "utils.app_control",
+        "description": "utils.app_control",
+        "isExtraImport": true,
+        "detail": "utils.app_control",
         "documentation": {}
     },
     {
@@ -2983,22 +3094,6 @@
         "documentation": {}
     },
     {
-        "label": "restart_app",
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "isExtraImport": true,
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
-        "label": "exit_app",
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "isExtraImport": true,
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
         "label": "init_settings",
         "importPath": "utils.app_control",
         "description": "utils.app_control",
@@ -3007,11 +3102,20 @@
         "documentation": {}
     },
     {
-        "label": "show_palette_config_dialog",
-        "importPath": "utils.startup_dialogs",
-        "description": "utils.startup_dialogs",
+        "label": "argparse",
+        "kind": 6,
         "isExtraImport": true,
-        "detail": "utils.startup_dialogs",
+        "importPath": "argparse",
+        "description": "argparse",
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "show_palette_config_dialog",
+        "importPath": "utils.ui.startup_dialogs",
+        "description": "utils.ui.startup_dialogs",
+        "isExtraImport": true,
+        "detail": "utils.ui.startup_dialogs",
         "documentation": {}
     },
     {
@@ -3064,78 +3168,6 @@
         "importPath": "copy",
         "description": "copy",
         "detail": "copy",
-        "documentation": {}
-    },
-    {
-        "label": "BlinkingLabel",
-        "importPath": "ui_files.BlinkingLabel",
-        "description": "ui_files.BlinkingLabel",
-        "isExtraImport": true,
-        "detail": "ui_files.BlinkingLabel",
-        "documentation": {}
-    },
-    {
-        "label": "BlinkingLabel",
-        "importPath": "ui_files.BlinkingLabel",
-        "description": "ui_files.BlinkingLabel",
-        "isExtraImport": true,
-        "detail": "ui_files.BlinkingLabel",
-        "documentation": {}
-    },
-    {
-        "label": "PasswordEntryDialog",
-        "importPath": "ui_files.PasswordDialog",
-        "description": "ui_files.PasswordDialog",
-        "isExtraImport": true,
-        "detail": "ui_files.PasswordDialog",
-        "documentation": {}
-    },
-    {
-        "label": "check_any_usb_for_key",
-        "importPath": "utils.usb_key_check",
-        "description": "utils.usb_key_check",
-        "isExtraImport": true,
-        "detail": "utils.usb_key_check",
-        "documentation": {}
-    },
-    {
-        "label": "Ui_Form",
-        "importPath": "ui_files.ui_main_window",
-        "description": "ui_files.ui_main_window",
-        "isExtraImport": true,
-        "detail": "ui_files.ui_main_window",
-        "documentation": {}
-    },
-    {
-        "label": "initialize_3d_view",
-        "importPath": "ui_files.visualization_3d",
-        "description": "ui_files.visualization_3d",
-        "isExtraImport": true,
-        "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
-        "label": "clear_canvas",
-        "importPath": "ui_files.visualization_3d",
-        "description": "ui_files.visualization_3d",
-        "isExtraImport": true,
-        "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
-        "label": "load_rob_files",
-        "importPath": "ui_files.visualization_3d",
-        "description": "ui_files.visualization_3d",
-        "isExtraImport": true,
-        "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
-        "label": "check_for_updates",
-        "importPath": "utils.updater",
-        "description": "utils.updater",
-        "isExtraImport": true,
-        "detail": "utils.updater",
         "documentation": {}
     },
     {
@@ -3232,58 +3264,58 @@
     },
     {
         "label": "initialize_main_window",
-        "importPath": "utils.ui_setup",
-        "description": "utils.ui_setup",
+        "importPath": "utils.ui.ui_setup",
+        "description": "utils.ui.ui_setup",
         "isExtraImport": true,
-        "detail": "utils.ui_setup",
+        "detail": "utils.ui.ui_setup",
         "documentation": {}
     },
     {
         "label": "setup_input_validation",
-        "importPath": "utils.ui_setup",
-        "description": "utils.ui_setup",
+        "importPath": "utils.ui.ui_setup",
+        "description": "utils.ui.ui_setup",
         "isExtraImport": true,
-        "detail": "utils.ui_setup",
+        "detail": "utils.ui.ui_setup",
         "documentation": {}
     },
     {
         "label": "connect_signal_handlers",
-        "importPath": "utils.ui_setup",
-        "description": "utils.ui_setup",
+        "importPath": "utils.ui.ui_setup",
+        "description": "utils.ui.ui_setup",
         "isExtraImport": true,
-        "detail": "utils.ui_setup",
+        "detail": "utils.ui.ui_setup",
         "documentation": {}
     },
     {
         "label": "setup_password_handling",
-        "importPath": "utils.ui_setup",
-        "description": "utils.ui_setup",
+        "importPath": "utils.ui.ui_setup",
+        "description": "utils.ui.ui_setup",
         "isExtraImport": true,
-        "detail": "utils.ui_setup",
+        "detail": "utils.ui.ui_setup",
         "documentation": {}
     },
     {
         "label": "setup_components",
-        "importPath": "utils.ui_setup",
-        "description": "utils.ui_setup",
+        "importPath": "utils.ui.ui_setup",
+        "description": "utils.ui.ui_setup",
         "isExtraImport": true,
-        "detail": "utils.ui_setup",
+        "detail": "utils.ui.ui_setup",
         "documentation": {}
     },
     {
         "label": "start_background_tasks",
-        "importPath": "utils.ui_setup",
-        "description": "utils.ui_setup",
+        "importPath": "utils.ui.ui_setup",
+        "description": "utils.ui.ui_setup",
         "isExtraImport": true,
-        "detail": "utils.ui_setup",
+        "detail": "utils.ui.ui_setup",
         "documentation": {}
     },
     {
         "label": "setup_window_handling",
-        "importPath": "utils.ui_setup",
-        "description": "utils.ui_setup",
+        "importPath": "utils.ui.ui_setup",
+        "description": "utils.ui.ui_setup",
         "isExtraImport": true,
-        "detail": "utils.ui_setup",
+        "detail": "utils.ui.ui_setup",
         "documentation": {}
     },
     {
@@ -4322,6 +4354,366 @@
         "documentation": {}
     },
     {
+        "label": "ArrowPopup",
+        "kind": 6,
+        "importPath": "utils.ui.notification_popup",
+        "description": "utils.ui.notification_popup",
+        "peekOfCode": "class ArrowPopup(QWidget):\n    \"\"\"\n    A popup widget that displays at the bottom right of the screen with a right-pointing arrow.\n    \"\"\"\n    def __init__(self, parent=None, message=\"\", timeout=0):\n        \"\"\"\n        Initialize the popup with a message and optional timeout.\n        Args:\n            parent: Parent widget\n            message: Message to display in the popup",
+        "detail": "utils.ui.notification_popup",
+        "documentation": {}
+    },
+    {
+        "label": "check_zwischenlage_status",
+        "kind": 2,
+        "importPath": "utils.ui.notification_popup",
+        "description": "utils.ui.notification_popup",
+        "peekOfCode": "def check_zwischenlage_status():\n    \"\"\"\n    Check the zwischenlage status and show/hide popup accordingly.\n    \"\"\"\n    global zwischenlage_popup\n    if global_vars.UR20_zwischenlage is True:\n        if zwischenlage_popup is None or not zwischenlage_popup.isVisible():\n            logger.debug(\"Showing zwischenlage popup\")\n            # Create popup with main window as parent\n            zwischenlage_popup = ArrowPopup(",
+        "detail": "utils.ui.notification_popup",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.ui.notification_popup",
+        "description": "utils.ui.notification_popup",
+        "peekOfCode": "logger = logging.getLogger(__name__)\nclass ArrowPopup(QWidget):\n    \"\"\"\n    A popup widget that displays at the bottom right of the screen with a right-pointing arrow.\n    \"\"\"\n    def __init__(self, parent=None, message=\"\", timeout=0):\n        \"\"\"\n        Initialize the popup with a message and optional timeout.\n        Args:\n            parent: Parent widget",
+        "detail": "utils.ui.notification_popup",
+        "documentation": {}
+    },
+    {
+        "label": "zwischenlage_popup",
+        "kind": 5,
+        "importPath": "utils.ui.notification_popup",
+        "description": "utils.ui.notification_popup",
+        "peekOfCode": "zwischenlage_popup = None\ndef check_zwischenlage_status():\n    \"\"\"\n    Check the zwischenlage status and show/hide popup accordingly.\n    \"\"\"\n    global zwischenlage_popup\n    if global_vars.UR20_zwischenlage is True:\n        if zwischenlage_popup is None or not zwischenlage_popup.isVisible():\n            logger.debug(\"Showing zwischenlage popup\")\n            # Create popup with main window as parent",
+        "detail": "utils.ui.notification_popup",
+        "documentation": {}
+    },
+    {
+        "label": "PaletteConfigDialog",
+        "kind": 6,
+        "importPath": "utils.ui.startup_dialogs",
+        "description": "utils.ui.startup_dialogs",
+        "peekOfCode": "class PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(600)  # Reduced width\n        self.setMaximumHeight(680)  # Set maximum height for RPi display\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Store pixmaps as class variables\n        self.no_palette_pixmap = QPixmap()  # Empty pixmap for no selection",
+        "detail": "utils.ui.startup_dialogs",
+        "documentation": {}
+    },
+    {
+        "label": "show_palette_config_dialog",
+        "kind": 2,
+        "importPath": "utils.ui.startup_dialogs",
+        "description": "utils.ui.startup_dialogs",
+        "peekOfCode": "def show_palette_config_dialog(parent=None):\n    \"\"\"Show the palette configuration dialog and apply settings.\n    Args:\n        parent: Parent widget\n    Returns:\n        bool: True if configuration was successful, False otherwise\n    \"\"\"\n    dialog = PaletteConfigDialog(parent)\n    # Make sure dialog appears in front of main window\n    dialog.setWindowModality(Qt.ApplicationModal)",
+        "detail": "utils.ui.startup_dialogs",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.ui.startup_dialogs",
+        "description": "utils.ui.startup_dialogs",
+        "peekOfCode": "logger = logging.getLogger('multipack_parser')\nclass PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(600)  # Reduced width\n        self.setMaximumHeight(680)  # Set maximum height for RPi display\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Store pixmaps as class variables",
+        "detail": "utils.ui.startup_dialogs",
+        "documentation": {}
+    },
+    {
+        "label": "Page",
+        "kind": 6,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "class Page(Enum):\n    \"\"\"Enum for the pages.\n    Args:\n        Enum (Enum): The enum for the pages.\n    \"\"\"\n    MAIN_PAGE = 0\n    PARAMETER_PAGE = 1\n    SETTINGS_PAGE = 2\n    EXPERIMENTAL_PAGE = 3\ndef open_password_dialog() -> None:",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "CustomDoubleValidator",
+        "kind": 6,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "class CustomDoubleValidator(QDoubleValidator):\n    \"\"\"Custom double validator that allows commas to be used as decimal separators.\n    Args:\n        QDoubleValidator (QDoubleValidator): The double validator to be used.\n    \"\"\"\n    def validate(self, arg__1: str, arg__2: int) -> object:\n        \"\"\"Validate the input.\n        Args:\n            arg__1 (str): The input to be validated.\n            arg__2 (int): The position of the input.",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_password_dialog",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def open_password_dialog() -> None:\n    \"\"\"Open the password dialog.\n    \"\"\"\n    from ui_files.PasswordDialog import PasswordEntryDialog\n    dialog = PasswordEntryDialog(parent_window=global_vars.main_window)\n    if hasattr(dialog, 'ui') and dialog.ui is not None:\n        dialog.show()\n        dialog.ui.lineEdit.setFocus()\n        dialog.exec()\n        if dialog.password_accepted:",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "check_key_or_password",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def check_key_or_password() -> None:\n    \"\"\"\n    Checks for a valid USB key on any connected USB drive.\n    If a valid key is found, directly opens the settings page.\n    Otherwise, prompts for password via password dialog.\n    \"\"\"\n    logger.debug(\"Checking for USB key before opening password dialog\")\n    # Try to find a valid key on any connected USB\n    if check_any_usb_for_key():\n        logger.info(\"Valid USB key found - opening settings directly\")",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_page",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def open_page(page: Page) -> None:\n    \"\"\"Open the specified page.\n    Args:\n        page (Page): The page to be opened.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.stackedWidget:\n        if page == Page.SETTINGS_PAGE:\n            global_vars.settings.reset_unsaved_changes()\n        global_vars.ui.tabWidget.setCurrentIndex(0)            \n        global_vars.ui.stackedWidget.setCurrentIndex(page.value)",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_explorer",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def open_explorer() -> None:\n    \"\"\"Open the explorer.\n    \"\"\"\n    logger.info(\"Opening explorer\")\n    try:\n        if sys.platform == \"win32\":\n            subprocess.Popen([\"explorer.exe\"])\n        elif sys.platform == \"linux\":\n            # Try different file managers in order of preference\n            file_managers = [\"nautilus\", \"dolphin\", \"thunar\", \"pcmanfm\"]",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_terminal",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def open_terminal() -> None:\n    \"\"\"Open the terminal.\n    \"\"\"\n    logger.info(\"Opening terminal\")\n    try:\n        if sys.platform == \"win32\":\n            subprocess.Popen([\"start\", \"cmd.exe\"], shell=True)\n        elif sys.platform == \"linux\":\n            # Try different terminals in order of preference\n            terminals = [\"gnome-terminal\", \"konsole\", \"xfce4-terminal\", \"xterm\"]",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_file",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def open_file() -> None:\n    \"\"\"Open a file.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path, _ = QFileDialog.getOpenFileName(parent=global_vars.main_window, caption=\"Open File\")\n    if not file_path:\n        return\n    global_vars.ui.lineEditFilePath.setText(file_path)",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "save_open_file",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def save_open_file() -> None:\n    \"\"\"Save or open a file.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path = global_vars.ui.lineEditFilePath.text()\n    if not file_path:\n        logger.debug(\"No file path specified\")\n        QMessageBox.warning(global_vars.main_window, \"Error\", \"Please select a file to save.\")",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "execute_command",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def execute_command() -> None:\n    \"\"\"Execute a command in the console.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    command = global_vars.ui.lineEditCommand.text().strip()\n    # Check if the command starts with \">\"\n    if command.startswith(\"> \"):\n        command = command[2:].strip()",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "handle_stdout",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def handle_stdout() -> None:\n    \"\"\"Handle standard output.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'textEditConsole'):\n        logger.error(\"UI not initialized\")\n        return\n    if not isinstance(global_vars.process, QProcess):\n        logger.error(\"Process not initialized or wrong type\")\n        return\n    data = global_vars.process.readAll()  # Use readAll() instead of readAllStandardOutput()",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "handle_stderr",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def handle_stderr() -> None:\n    \"\"\"Handle standard error output.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'textEditConsole'):\n        logger.error(\"UI not initialized\")\n        return\n    if not isinstance(global_vars.process, QProcess):\n        logger.error(\"Process not initialized or wrong type\")\n        return\n    data = global_vars.process.readAll()",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "set_settings_line_edits",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def set_settings_line_edits() -> None:\n    \"\"\"Set the line edits in the settings page to the current settings.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    settings = global_vars.settings\n    global_vars.ui.lineEditDisplayHeight.setText(str(settings.settings['display']['specs']['height']))\n    global_vars.ui.lineEditDisplayWidth.setText(str(settings.settings['display']['specs']['width']))\n    global_vars.ui.lineEditDisplayRefreshRate.setText(str(int(float(settings.settings['display']['specs']['refresh_rate']))))",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "leave_settings_page",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def leave_settings_page():\n    \"\"\"Leave the settings page.\n    \"\"\"\n    try:\n        global_vars.settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        # If settings do not match, ask whether to discard or save the new data\n        response = QMessageBox.question(\n            global_vars.main_window, ",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_folder_dialog",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def open_folder_dialog():\n    \"\"\"Open the folder dialog.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    # show warning dialog if the user wants to set the path\n    # only if the user acknowledges the warning dialog and the risks then continue with choosing the folder else cancel asap\n    response = QMessageBox.warning(global_vars.main_window, \"Warnung! - Mögliche Risiken!\", \"<b>Möchten Sie den Pfad wirklich ändern?</b><br>Dies könnte zu Problemen führen, wenn bereits ein Palettenplan geladen ist und nach dem Setzen des Pfades nicht ein neuer geladen wird.\", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)\n    global_vars.main_window.setWindowState(global_vars.main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_file_dialog",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def open_file_dialog() -> None:\n    \"\"\"Open the file dialog.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path = QFileDialog.getOpenFileName(global_vars.main_window, \"Open Audio File\", \"\", \"Audio Files (*.wav)\")\n    if file_path:\n        global_vars.ui.audioPathEdit.setText(file_path[0])\ndef set_wordlist() -> None:",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "set_wordlist",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def set_wordlist() -> None:\n    \"\"\"Set the wordlist.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    from utils.robot.robot_control import load_wordlist\n    # Load wordlist and create completer\n    wordlist = load_wordlist()\n    completer = QCompleter(wordlist, global_vars.main_window)",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "update_wordlist",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def update_wordlist() -> None:\n    \"\"\"Update the wordlist.\n    \"\"\"\n    from utils.robot.robot_control import load_wordlist\n    new_wordlist = load_wordlist()\n    model = global_vars.completer.model()\n    if not isinstance(model, QStringListModel):\n        # Create new model if current isn't a QStringListModel\n        string_model = QStringListModel(new_wordlist)\n        global_vars.completer.setModel(string_model)",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "handle_scanner_status",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def handle_scanner_status(message: str, image_path: str):\n    \"\"\"Handle scanner status updates from server thread\n    Args:\n        message (str): The message from the scanner.\n        image_path (str): The path to the image from the scanner.\n    \"\"\"\n    from PySide6.QtGui import QPixmap\n    logger.debug(f\"Received scanner status - Message: {message}, Image: {image_path}\")\n    if message != \"True,True,True\":\n        logger.warning(\"Scanner detected safety violation\")",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "test_zwischenlage_popup",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def test_zwischenlage_popup(enable: bool = True):\n    \"\"\"\n    Test function to show or hide the zwischenlage popup.\n    Args:\n        enable (bool): Whether to show (True) or hide (False) the popup\n    \"\"\"\n    from utils import global_vars\n    # Set the global variable\n    global_vars.UR20_zwischenlage = enable\n    # Force an immediate check without waiting for the timer",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "clear_filters",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def clear_filters():\n    \"\"\"Clear the filters.\n    \"\"\"\n    global_vars.filter_length = 0\n    global_vars.filter_width = 0\n    global_vars.filter_height = 0\n    global_vars.ui.lineEditFilterLength.setText(\"\")\n    global_vars.ui.lineEditFilterWidth.setText(\"\")\n    global_vars.ui.lineEditFilterHeight.setText(\"\")\ndef show_palette_clear_dialog(palette_number):",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "show_palette_clear_dialog",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def show_palette_clear_dialog(palette_number):\n    \"\"\"Show a confirmation dialog when a palette is cleared.\n    Args:\n        palette_number (int): The palette number (1 or 2)\n    Returns:\n        bool: True if the user confirmed, False if rejected or too early\n    \"\"\"\n    logger.info(f\"Checking if palette {palette_number} clear dialog should be shown\")\n    import time\n    from datetime import datetime",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "check_palette_clearing_status",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def check_palette_clearing_status():\n    \"\"\"Check if any palettes need clearing and update UI accordingly.\n    This function is meant to be called periodically.\n    \"\"\"\n    from PySide6.QtWidgets import QLabel\n    from PySide6.QtGui import QPixmap\n    from PySide6.QtCore import Qt\n    import time\n    # Check if UI is initialized\n    if not global_vars.ui:",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "clear_palette",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def clear_palette(palette_number):\n    \"\"\"Mark a palette as empty after user confirms clearing.\n    Args:\n        palette_number (int): The palette number to clear (1 or 2)\n    \"\"\"\n    logger.info(f\"User clicked to clear palette {palette_number}\")\n    # Show confirmation dialog\n    response = QMessageBox.question(\n        global_vars.main_window,\n        \"Palette freigeben\",",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "logger = logging.getLogger(__name__)\nclass Page(Enum):\n    \"\"\"Enum for the pages.\n    Args:\n        Enum (Enum): The enum for the pages.\n    \"\"\"\n    MAIN_PAGE = 0\n    PARAMETER_PAGE = 1\n    SETTINGS_PAGE = 2\n    EXPERIMENTAL_PAGE = 3",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "initialize_main_window",
+        "kind": 2,
+        "importPath": "utils.ui.ui_setup",
+        "description": "utils.ui.ui_setup",
+        "peekOfCode": "def initialize_main_window():\n    \"\"\"Initialize the main window and UI.\n    Returns:\n        QMainWindow: The initialized main window\n    \"\"\"\n    main_window = QMainWindow()\n    main_window.setWindowFlags(Qt.WindowType.FramelessWindowHint)\n    global_vars.main_window = main_window\n    global_vars.ui = Ui_Form()\n    global_vars.ui.setupUi(main_window)",
+        "detail": "utils.ui.ui_setup",
+        "documentation": {}
+    },
+    {
+        "label": "setup_input_validation",
+        "kind": 2,
+        "importPath": "utils.ui.ui_setup",
+        "description": "utils.ui.ui_setup",
+        "peekOfCode": "def setup_input_validation():\n    \"\"\"Set up input validation for UI elements.\"\"\"\n    # Set up input validation\n    regex = QRegularExpression(r\"^[0-9\\-_]*$\")\n    validator = QRegularExpressionValidator(regex)\n    global_vars.ui.EingabePallettenplan.setValidator(validator)\n    # Force numeric keyboard with special number preference\n    global_vars.ui.EingabePallettenplan.setInputMethodHints(\n        Qt.ImhPreferNumbers |  # Prefer numeric keyboard\n        Qt.ImhNoPredictiveText  # Disable predictive text",
+        "detail": "utils.ui.ui_setup",
+        "documentation": {}
+    },
+    {
+        "label": "connect_signal_handlers",
+        "kind": 2,
+        "importPath": "utils.ui.ui_setup",
+        "description": "utils.ui.ui_setup",
+        "peekOfCode": "def connect_signal_handlers():\n    \"\"\"Connect all signal handlers.\"\"\"\n    # set custom style to spinBoxes\n    _customStyleSheet = \"\"\"\n            QSpinBox {\n                padding-right: 40px;\n            }\n            QSpinBox::up-button {\n                width: 39px;\n                height: 39px;",
+        "detail": "utils.ui.ui_setup",
+        "documentation": {}
+    },
+    {
+        "label": "setup_password_handling",
+        "kind": 2,
+        "importPath": "utils.ui.ui_setup",
+        "description": "utils.ui.ui_setup",
+        "peekOfCode": "def setup_password_handling():\n    \"\"\"Set up password handling functionality.\"\"\"\n    def hash_password(password, salt=None):\n        if salt is None:\n            salt = os.urandom(16)\n        salted_password = salt + password.encode()\n        hashed_password = hashlib.sha256(salted_password).hexdigest()\n        return salt.hex() + '$' + hashed_password\n    global_vars.ui.passwordEdit.textChanged.connect(\n        lambda text: global_vars.settings.settings['admin'].__setitem__('password', hash_password(text)) if text else None",
+        "detail": "utils.ui.ui_setup",
+        "documentation": {}
+    },
+    {
+        "label": "setup_components",
+        "kind": 2,
+        "importPath": "utils.ui.ui_setup",
+        "description": "utils.ui.ui_setup",
+        "peekOfCode": "def setup_components():\n    \"\"\"Initialize and set up the application components.\"\"\"\n    # Initialize components\n    set_wordlist()\n    global_vars.canvas = initialize_3d_view(global_vars.ui.MatplotLibCanvasFrame)\n    load_rob_files()\n    # Set up settings\n    set_settings_line_edits()\n    # Add palette clear dialog function to UI\n    global_vars.ui.show_palette_clear_dialog = show_palette_clear_dialog",
+        "detail": "utils.ui.ui_setup",
+        "documentation": {}
+    },
+    {
+        "label": "start_background_tasks",
+        "kind": 2,
+        "importPath": "utils.ui.ui_setup",
+        "description": "utils.ui.ui_setup",
+        "peekOfCode": "def start_background_tasks():\n    \"\"\"Start background tasks and threads.\"\"\"\n    # Start delay warning sound monitor thread\n    warning_sound_thread = threading.Thread(target=delay_warning_sound)\n    warning_sound_thread.daemon = True\n    warning_sound_thread.start()\n    # Start zwischenlage popup monitor\n    check_zwischenlage_status()\n    # Create a timer to check zwischenlage status every 500ms\n    zwischenlage_timer = QTimer(global_vars.main_window)",
+        "detail": "utils.ui.ui_setup",
+        "documentation": {}
+    },
+    {
+        "label": "setup_window_handling",
+        "kind": 2,
+        "importPath": "utils.ui.ui_setup",
+        "description": "utils.ui.ui_setup",
+        "peekOfCode": "def setup_window_handling():\n    \"\"\"Set up window close handling and key press events.\"\"\"\n    # Set up window close handling\n    global_vars.allow_close = False\n    def allow_close_event(event):\n        if global_vars.allow_close:\n            event.accept()\n            global_vars.allow_close = False\n        else:\n            event.ignore()",
+        "detail": "utils.ui.ui_setup",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.ui.ui_setup",
+        "description": "utils.ui.ui_setup",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef initialize_main_window():\n    \"\"\"Initialize the main window and UI.\n    Returns:\n        QMainWindow: The initialized main window\n    \"\"\"\n    main_window = QMainWindow()\n    main_window.setWindowFlags(Qt.WindowType.FramelessWindowHint)\n    global_vars.main_window = main_window\n    global_vars.ui = Ui_Form()",
+        "detail": "utils.ui.ui_setup",
+        "documentation": {}
+    },
+    {
         "label": "restart_app",
         "kind": 2,
         "importPath": "utils.app_control",
@@ -4547,75 +4939,12 @@
         "documentation": {}
     },
     {
-        "label": "ArrowPopup",
-        "kind": 6,
-        "importPath": "utils.notification_popup",
-        "description": "utils.notification_popup",
-        "peekOfCode": "class ArrowPopup(QWidget):\n    \"\"\"\n    A popup widget that displays at the bottom right of the screen with a right-pointing arrow.\n    \"\"\"\n    def __init__(self, parent=None, message=\"\", timeout=0):\n        \"\"\"\n        Initialize the popup with a message and optional timeout.\n        Args:\n            parent: Parent widget\n            message: Message to display in the popup",
-        "detail": "utils.notification_popup",
-        "documentation": {}
-    },
-    {
-        "label": "check_zwischenlage_status",
-        "kind": 2,
-        "importPath": "utils.notification_popup",
-        "description": "utils.notification_popup",
-        "peekOfCode": "def check_zwischenlage_status():\n    \"\"\"\n    Check the zwischenlage status and show/hide popup accordingly.\n    \"\"\"\n    global zwischenlage_popup\n    if global_vars.UR20_zwischenlage is True:\n        if zwischenlage_popup is None or not zwischenlage_popup.isVisible():\n            logger.debug(\"Showing zwischenlage popup\")\n            # Create popup with main window as parent\n            zwischenlage_popup = ArrowPopup(",
-        "detail": "utils.notification_popup",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.notification_popup",
-        "description": "utils.notification_popup",
-        "peekOfCode": "logger = logging.getLogger(__name__)\nclass ArrowPopup(QWidget):\n    \"\"\"\n    A popup widget that displays at the bottom right of the screen with a right-pointing arrow.\n    \"\"\"\n    def __init__(self, parent=None, message=\"\", timeout=0):\n        \"\"\"\n        Initialize the popup with a message and optional timeout.\n        Args:\n            parent: Parent widget",
-        "detail": "utils.notification_popup",
-        "documentation": {}
-    },
-    {
-        "label": "zwischenlage_popup",
-        "kind": 5,
-        "importPath": "utils.notification_popup",
-        "description": "utils.notification_popup",
-        "peekOfCode": "zwischenlage_popup = None\ndef check_zwischenlage_status():\n    \"\"\"\n    Check the zwischenlage status and show/hide popup accordingly.\n    \"\"\"\n    global zwischenlage_popup\n    if global_vars.UR20_zwischenlage is True:\n        if zwischenlage_popup is None or not zwischenlage_popup.isVisible():\n            logger.debug(\"Showing zwischenlage popup\")\n            # Create popup with main window as parent",
-        "detail": "utils.notification_popup",
-        "documentation": {}
-    },
-    {
         "label": "Settings",
         "kind": 6,
         "importPath": "utils.settings",
         "description": "utils.settings",
         "peekOfCode": "class Settings:\n    \"\"\"Settings class.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the settings with QSettings.\n        \"\"\"\n        logger.debug(\"Initializing Settings\")\n        # Create QSettings instance with organization and application name\n        self.qsettings = QSettings(\"Multipack\", \"MultipackParser\")\n        # Define default settings",
         "detail": "utils.settings",
-        "documentation": {}
-    },
-    {
-        "label": "PaletteConfigDialog",
-        "kind": 6,
-        "importPath": "utils.startup_dialogs",
-        "description": "utils.startup_dialogs",
-        "peekOfCode": "class PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(600)  # Reduced width\n        self.setMaximumHeight(680)  # Set maximum height for RPi display\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Store pixmaps as class variables\n        self.no_palette_pixmap = QPixmap()  # Empty pixmap for no selection",
-        "detail": "utils.startup_dialogs",
-        "documentation": {}
-    },
-    {
-        "label": "show_palette_config_dialog",
-        "kind": 2,
-        "importPath": "utils.startup_dialogs",
-        "description": "utils.startup_dialogs",
-        "peekOfCode": "def show_palette_config_dialog(parent=None):\n    \"\"\"Show the palette configuration dialog and apply settings.\n    Args:\n        parent: Parent widget\n    Returns:\n        bool: True if configuration was successful, False otherwise\n    \"\"\"\n    dialog = PaletteConfigDialog(parent)\n    # Make sure dialog appears in front of main window\n    dialog.setWindowModality(Qt.ApplicationModal)",
-        "detail": "utils.startup_dialogs",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.startup_dialogs",
-        "description": "utils.startup_dialogs",
-        "peekOfCode": "logger = logging.getLogger('multipack_parser')\nclass PaletteConfigDialog(QDialog):\n    \"\"\"Dialog to configure palettes on startup.\"\"\"\n    def __init__(self, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Palette Configuration\")\n        self.setMinimumWidth(600)  # Reduced width\n        self.setMaximumHeight(680)  # Set maximum height for RPi display\n        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)\n        # Store pixmaps as class variables",
-        "detail": "utils.startup_dialogs",
         "documentation": {}
     },
     {
@@ -4634,303 +4963,6 @@
         "description": "utils.status_manager",
         "peekOfCode": "logger = logging.getLogger(__name__)\ndef update_status_label(text: str, color: str, blink: bool = False, second_color: Optional[str] = None, instant_acknowledge: bool = False, block: bool = False) -> None:\n    \"\"\"Update the status label with the given text and color.\n    Args:\n        text (str): The text to be displayed in the status label.\n        color (str): The color of the status label.\n        blink (bool, optional): Whether the status label should blink. Defaults to False.\n        second_color (Optional[str], optional): The second color of the status label. Defaults to None.\n        instant_acknowledge (bool, optional): Whether the status label should be acknowledged immediately. Defaults to False.\n        block (bool, optional): Whether the status label should be blocked. Defaults to False.",
         "detail": "utils.status_manager",
-        "documentation": {}
-    },
-    {
-        "label": "Page",
-        "kind": 6,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "class Page(Enum):\n    \"\"\"Enum for the pages.\n    Args:\n        Enum (Enum): The enum for the pages.\n    \"\"\"\n    MAIN_PAGE = 0\n    PARAMETER_PAGE = 1\n    SETTINGS_PAGE = 2\n    EXPERIMENTAL_PAGE = 3\ndef open_password_dialog() -> None:",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "CustomDoubleValidator",
-        "kind": 6,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "class CustomDoubleValidator(QDoubleValidator):\n    \"\"\"Custom double validator that allows commas to be used as decimal separators.\n    Args:\n        QDoubleValidator (QDoubleValidator): The double validator to be used.\n    \"\"\"\n    def validate(self, arg__1: str, arg__2: int) -> object:\n        \"\"\"Validate the input.\n        Args:\n            arg__1 (str): The input to be validated.\n            arg__2 (int): The position of the input.",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "open_password_dialog",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def open_password_dialog() -> None:\n    \"\"\"Open the password dialog.\n    \"\"\"\n    from ui_files.PasswordDialog import PasswordEntryDialog\n    dialog = PasswordEntryDialog(parent_window=global_vars.main_window)\n    if hasattr(dialog, 'ui') and dialog.ui is not None:\n        dialog.show()\n        dialog.ui.lineEdit.setFocus()\n        dialog.exec()\n        if dialog.password_accepted:",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "check_key_or_password",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def check_key_or_password() -> None:\n    \"\"\"\n    Checks for a valid USB key on any connected USB drive.\n    If a valid key is found, directly opens the settings page.\n    Otherwise, prompts for password via password dialog.\n    \"\"\"\n    logger.debug(\"Checking for USB key before opening password dialog\")\n    # Try to find a valid key on any connected USB\n    if check_any_usb_for_key():\n        logger.info(\"Valid USB key found - opening settings directly\")",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "open_page",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def open_page(page: Page) -> None:\n    \"\"\"Open the specified page.\n    Args:\n        page (Page): The page to be opened.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.stackedWidget:\n        if page == Page.SETTINGS_PAGE:\n            global_vars.settings.reset_unsaved_changes()\n        global_vars.ui.tabWidget.setCurrentIndex(0)            \n        global_vars.ui.stackedWidget.setCurrentIndex(page.value)",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "open_explorer",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def open_explorer() -> None:\n    \"\"\"Open the explorer.\n    \"\"\"\n    logger.info(\"Opening explorer\")\n    try:\n        if sys.platform == \"win32\":\n            subprocess.Popen([\"explorer.exe\"])\n        elif sys.platform == \"linux\":\n            # Try different file managers in order of preference\n            file_managers = [\"nautilus\", \"dolphin\", \"thunar\", \"pcmanfm\"]",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "open_terminal",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def open_terminal() -> None:\n    \"\"\"Open the terminal.\n    \"\"\"\n    logger.info(\"Opening terminal\")\n    try:\n        if sys.platform == \"win32\":\n            subprocess.Popen([\"start\", \"cmd.exe\"], shell=True)\n        elif sys.platform == \"linux\":\n            # Try different terminals in order of preference\n            terminals = [\"gnome-terminal\", \"konsole\", \"xfce4-terminal\", \"xterm\"]",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "open_file",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def open_file() -> None:\n    \"\"\"Open a file.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path, _ = QFileDialog.getOpenFileName(parent=global_vars.main_window, caption=\"Open File\")\n    if not file_path:\n        return\n    global_vars.ui.lineEditFilePath.setText(file_path)",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "save_open_file",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def save_open_file() -> None:\n    \"\"\"Save or open a file.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path = global_vars.ui.lineEditFilePath.text()\n    if not file_path:\n        logger.debug(\"No file path specified\")\n        QMessageBox.warning(global_vars.main_window, \"Error\", \"Please select a file to save.\")",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "execute_command",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def execute_command() -> None:\n    \"\"\"Execute a command in the console.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    command = global_vars.ui.lineEditCommand.text().strip()\n    # Check if the command starts with \">\"\n    if command.startswith(\"> \"):\n        command = command[2:].strip()",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "handle_stdout",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def handle_stdout() -> None:\n    \"\"\"Handle standard output.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'textEditConsole'):\n        logger.error(\"UI not initialized\")\n        return\n    if not isinstance(global_vars.process, QProcess):\n        logger.error(\"Process not initialized or wrong type\")\n        return\n    data = global_vars.process.readAll()  # Use readAll() instead of readAllStandardOutput()",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "handle_stderr",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def handle_stderr() -> None:\n    \"\"\"Handle standard error output.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'textEditConsole'):\n        logger.error(\"UI not initialized\")\n        return\n    if not isinstance(global_vars.process, QProcess):\n        logger.error(\"Process not initialized or wrong type\")\n        return\n    data = global_vars.process.readAll()",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "set_settings_line_edits",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def set_settings_line_edits() -> None:\n    \"\"\"Set the line edits in the settings page to the current settings.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    settings = global_vars.settings\n    global_vars.ui.lineEditDisplayHeight.setText(str(settings.settings['display']['specs']['height']))\n    global_vars.ui.lineEditDisplayWidth.setText(str(settings.settings['display']['specs']['width']))\n    global_vars.ui.lineEditDisplayRefreshRate.setText(str(int(float(settings.settings['display']['specs']['refresh_rate']))))",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "leave_settings_page",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def leave_settings_page():\n    \"\"\"Leave the settings page.\n    \"\"\"\n    try:\n        global_vars.settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        # If settings do not match, ask whether to discard or save the new data\n        response = QMessageBox.question(\n            global_vars.main_window, ",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "open_folder_dialog",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def open_folder_dialog():\n    \"\"\"Open the folder dialog.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    # show warning dialog if the user wants to set the path\n    # only if the user acknowledges the warning dialog and the risks then continue with choosing the folder else cancel asap\n    response = QMessageBox.warning(global_vars.main_window, \"Warnung! - Mögliche Risiken!\", \"<b>Möchten Sie den Pfad wirklich ändern?</b><br>Dies könnte zu Problemen führen, wenn bereits ein Palettenplan geladen ist und nach dem Setzen des Pfades nicht ein neuer geladen wird.\", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)\n    global_vars.main_window.setWindowState(global_vars.main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "open_file_dialog",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def open_file_dialog() -> None:\n    \"\"\"Open the file dialog.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path = QFileDialog.getOpenFileName(global_vars.main_window, \"Open Audio File\", \"\", \"Audio Files (*.wav)\")\n    if file_path:\n        global_vars.ui.audioPathEdit.setText(file_path[0])\ndef set_wordlist() -> None:",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "set_wordlist",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def set_wordlist() -> None:\n    \"\"\"Set the wordlist.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    from utils.robot.robot_control import load_wordlist\n    # Load wordlist and create completer\n    wordlist = load_wordlist()\n    completer = QCompleter(wordlist, global_vars.main_window)",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "update_wordlist",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def update_wordlist() -> None:\n    \"\"\"Update the wordlist.\n    \"\"\"\n    from utils.robot.robot_control import load_wordlist\n    new_wordlist = load_wordlist()\n    model = global_vars.completer.model()\n    if not isinstance(model, QStringListModel):\n        # Create new model if current isn't a QStringListModel\n        string_model = QStringListModel(new_wordlist)\n        global_vars.completer.setModel(string_model)",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "handle_scanner_status",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def handle_scanner_status(message: str, image_path: str):\n    \"\"\"Handle scanner status updates from server thread\n    Args:\n        message (str): The message from the scanner.\n        image_path (str): The path to the image from the scanner.\n    \"\"\"\n    from PySide6.QtGui import QPixmap\n    logger.debug(f\"Received scanner status - Message: {message}, Image: {image_path}\")\n    if message != \"True,True,True\":\n        logger.warning(\"Scanner detected safety violation\")",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "test_zwischenlage_popup",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def test_zwischenlage_popup(enable: bool = True):\n    \"\"\"\n    Test function to show or hide the zwischenlage popup.\n    Args:\n        enable (bool): Whether to show (True) or hide (False) the popup\n    \"\"\"\n    from utils import global_vars\n    # Set the global variable\n    global_vars.UR20_zwischenlage = enable\n    # Force an immediate check without waiting for the timer",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "clear_filters",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def clear_filters():\n    \"\"\"Clear the filters.\n    \"\"\"\n    global_vars.filter_length = 0\n    global_vars.filter_width = 0\n    global_vars.filter_height = 0\n    global_vars.ui.lineEditFilterLength.setText(\"\")\n    global_vars.ui.lineEditFilterWidth.setText(\"\")\n    global_vars.ui.lineEditFilterHeight.setText(\"\")\ndef show_palette_clear_dialog(palette_number):",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "show_palette_clear_dialog",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def show_palette_clear_dialog(palette_number):\n    \"\"\"Show a confirmation dialog when a palette is cleared.\n    Args:\n        palette_number (int): The palette number (1 or 2)\n    Returns:\n        bool: True if the user confirmed, False if rejected or too early\n    \"\"\"\n    logger.info(f\"Checking if palette {palette_number} clear dialog should be shown\")\n    import time\n    from datetime import datetime",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "check_palette_clearing_status",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def check_palette_clearing_status():\n    \"\"\"Check if any palettes need clearing and update UI accordingly.\n    This function is meant to be called periodically.\n    \"\"\"\n    from PySide6.QtWidgets import QLabel\n    from PySide6.QtGui import QPixmap\n    from PySide6.QtCore import Qt\n    import time\n    # Check if UI is initialized\n    if not global_vars.ui:",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "clear_palette",
-        "kind": 2,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "def clear_palette(palette_number):\n    \"\"\"Mark a palette as empty after user confirms clearing.\n    Args:\n        palette_number (int): The palette number to clear (1 or 2)\n    \"\"\"\n    logger.info(f\"User clicked to clear palette {palette_number}\")\n    # Show confirmation dialog\n    response = QMessageBox.question(\n        global_vars.main_window,\n        \"Palette freigeben\",",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.ui_helpers",
-        "description": "utils.ui_helpers",
-        "peekOfCode": "logger = logging.getLogger(__name__)\nclass Page(Enum):\n    \"\"\"Enum for the pages.\n    Args:\n        Enum (Enum): The enum for the pages.\n    \"\"\"\n    MAIN_PAGE = 0\n    PARAMETER_PAGE = 1\n    SETTINGS_PAGE = 2\n    EXPERIMENTAL_PAGE = 3",
-        "detail": "utils.ui_helpers",
-        "documentation": {}
-    },
-    {
-        "label": "initialize_main_window",
-        "kind": 2,
-        "importPath": "utils.ui_setup",
-        "description": "utils.ui_setup",
-        "peekOfCode": "def initialize_main_window():\n    \"\"\"Initialize the main window and UI.\n    Returns:\n        QMainWindow: The initialized main window\n    \"\"\"\n    main_window = QMainWindow()\n    main_window.setWindowFlags(Qt.WindowType.FramelessWindowHint)\n    global_vars.main_window = main_window\n    global_vars.ui = Ui_Form()\n    global_vars.ui.setupUi(main_window)",
-        "detail": "utils.ui_setup",
-        "documentation": {}
-    },
-    {
-        "label": "setup_input_validation",
-        "kind": 2,
-        "importPath": "utils.ui_setup",
-        "description": "utils.ui_setup",
-        "peekOfCode": "def setup_input_validation():\n    \"\"\"Set up input validation for UI elements.\"\"\"\n    # Set up input validation\n    regex = QRegularExpression(r\"^[0-9\\-_]*$\")\n    validator = QRegularExpressionValidator(regex)\n    global_vars.ui.EingabePallettenplan.setValidator(validator)\n    # Force numeric keyboard with special number preference\n    global_vars.ui.EingabePallettenplan.setInputMethodHints(\n        Qt.ImhPreferNumbers |  # Prefer numeric keyboard\n        Qt.ImhNoPredictiveText  # Disable predictive text",
-        "detail": "utils.ui_setup",
-        "documentation": {}
-    },
-    {
-        "label": "connect_signal_handlers",
-        "kind": 2,
-        "importPath": "utils.ui_setup",
-        "description": "utils.ui_setup",
-        "peekOfCode": "def connect_signal_handlers():\n    \"\"\"Connect all signal handlers.\"\"\"\n    # set custom style to spinBoxes\n    _customStyleSheet = \"\"\"\n            QSpinBox {\n                padding-right: 40px;\n            }\n            QSpinBox::up-button {\n                width: 39px;\n                height: 39px;",
-        "detail": "utils.ui_setup",
-        "documentation": {}
-    },
-    {
-        "label": "setup_password_handling",
-        "kind": 2,
-        "importPath": "utils.ui_setup",
-        "description": "utils.ui_setup",
-        "peekOfCode": "def setup_password_handling():\n    \"\"\"Set up password handling functionality.\"\"\"\n    def hash_password(password, salt=None):\n        if salt is None:\n            salt = os.urandom(16)\n        salted_password = salt + password.encode()\n        hashed_password = hashlib.sha256(salted_password).hexdigest()\n        return salt.hex() + '$' + hashed_password\n    global_vars.ui.passwordEdit.textChanged.connect(\n        lambda text: global_vars.settings.settings['admin'].__setitem__('password', hash_password(text)) if text else None",
-        "detail": "utils.ui_setup",
-        "documentation": {}
-    },
-    {
-        "label": "setup_components",
-        "kind": 2,
-        "importPath": "utils.ui_setup",
-        "description": "utils.ui_setup",
-        "peekOfCode": "def setup_components():\n    \"\"\"Initialize and set up the application components.\"\"\"\n    # Initialize components\n    set_wordlist()\n    global_vars.canvas = initialize_3d_view(global_vars.ui.MatplotLibCanvasFrame)\n    load_rob_files()\n    # Set up settings\n    set_settings_line_edits()\n    # Add palette clear dialog function to UI\n    global_vars.ui.show_palette_clear_dialog = show_palette_clear_dialog",
-        "detail": "utils.ui_setup",
-        "documentation": {}
-    },
-    {
-        "label": "start_background_tasks",
-        "kind": 2,
-        "importPath": "utils.ui_setup",
-        "description": "utils.ui_setup",
-        "peekOfCode": "def start_background_tasks():\n    \"\"\"Start background tasks and threads.\"\"\"\n    # Start delay warning sound monitor thread\n    warning_sound_thread = threading.Thread(target=delay_warning_sound)\n    warning_sound_thread.daemon = True\n    warning_sound_thread.start()\n    # Start zwischenlage popup monitor\n    from utils.notification_popup import check_zwischenlage_status\n    # Create a timer to check zwischenlage status every 500ms\n    zwischenlage_timer = QTimer(global_vars.main_window)",
-        "detail": "utils.ui_setup",
-        "documentation": {}
-    },
-    {
-        "label": "setup_window_handling",
-        "kind": 2,
-        "importPath": "utils.ui_setup",
-        "description": "utils.ui_setup",
-        "peekOfCode": "def setup_window_handling():\n    \"\"\"Set up window close handling and key press events.\"\"\"\n    # Set up window close handling\n    global_vars.allow_close = False\n    def allow_close_event(event):\n        if global_vars.allow_close:\n            event.accept()\n            global_vars.allow_close = False\n        else:\n            event.ignore()",
-        "detail": "utils.ui_setup",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.ui_setup",
-        "description": "utils.ui_setup",
-        "peekOfCode": "logger = logging.getLogger(__name__)\ndef initialize_main_window():\n    \"\"\"Initialize the main window and UI.\n    Returns:\n        QMainWindow: The initialized main window\n    \"\"\"\n    main_window = QMainWindow()\n    main_window.setWindowFlags(Qt.WindowType.FramelessWindowHint)\n    global_vars.main_window = main_window\n    global_vars.ui = Ui_Form()",
-        "detail": "utils.ui_setup",
         "documentation": {}
     },
     {

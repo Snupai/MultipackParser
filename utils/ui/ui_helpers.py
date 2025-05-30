@@ -17,6 +17,7 @@ from utils.robot.robot_control import load_rob_files
 from utils.usb_key_check import check_any_usb_for_key
 from utils.status_manager import update_status_label
 from utils.robot.robot_control import load_wordlist
+from utils.ui.notification_popup import check_zwischenlage_status
 
 logger = logging.getLogger(__name__)
 

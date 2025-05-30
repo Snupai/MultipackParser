@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QMessageBox
 from PySide6.QtCore import Qt
 
 from utils import global_vars
-from utils.ui_helpers import set_settings_line_edits
+from utils.ui.ui_helpers import set_settings_line_edits
 from utils.server.server import server_stop
 
 logger = logging.getLogger(__name__)
