@@ -14,7 +14,7 @@ from PySide6.QtCore import Qt
 from utils import global_vars
 import time
 from utils.database.pallet_data import *
-from utils.robot_control import load_wordlist
+from utils.robot.robot_control import load_wordlist
 logger = global_vars.logger
 
 class MatplotlibCanvas(FigureCanvas):

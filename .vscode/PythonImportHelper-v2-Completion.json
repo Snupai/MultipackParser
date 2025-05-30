@@ -1580,6 +1580,22 @@
         "documentation": {}
     },
     {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Union",
         "importPath": "typing",
         "description": "typing",
@@ -1645,22 +1661,6 @@
     },
     {
         "label": "Set",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Optional",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Tuple",
         "importPath": "typing",
         "description": "typing",
         "isExtraImport": true,
@@ -2055,7 +2055,7 @@
         "documentation": {}
     },
     {
-        "label": "Enum",
+        "label": "auto",
         "importPath": "enum",
         "description": "enum",
         "isExtraImport": true,
@@ -2063,7 +2063,7 @@
         "documentation": {}
     },
     {
-        "label": "auto",
+        "label": "Enum",
         "importPath": "enum",
         "description": "enum",
         "isExtraImport": true,
@@ -2178,82 +2178,90 @@
     },
     {
         "label": "load_wordlist",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
         "isExtraImport": true,
-        "detail": "utils.robot_control",
+        "detail": "utils.robot.robot_control",
         "documentation": {}
     },
     {
         "label": "load_rob_files",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
         "isExtraImport": true,
-        "detail": "utils.robot_control",
+        "detail": "utils.robot.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "load_wordlist",
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
+        "isExtraImport": true,
+        "detail": "utils.robot.robot_control",
         "documentation": {}
     },
     {
         "label": "display_selected_file",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
         "isExtraImport": true,
-        "detail": "utils.robot_control",
+        "detail": "utils.robot.robot_control",
         "documentation": {}
     },
     {
         "label": "load",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
         "isExtraImport": true,
-        "detail": "utils.robot_control",
+        "detail": "utils.robot.robot_control",
         "documentation": {}
     },
     {
         "label": "send_cmd_play",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
         "isExtraImport": true,
-        "detail": "utils.robot_control",
+        "detail": "utils.robot.robot_control",
         "documentation": {}
     },
     {
         "label": "send_cmd_pause",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
         "isExtraImport": true,
-        "detail": "utils.robot_control",
+        "detail": "utils.robot.robot_control",
         "documentation": {}
     },
     {
         "label": "send_cmd_stop",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
         "isExtraImport": true,
-        "detail": "utils.robot_control",
+        "detail": "utils.robot.robot_control",
         "documentation": {}
     },
     {
         "label": "load_selected_file",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
         "isExtraImport": true,
-        "detail": "utils.robot_control",
+        "detail": "utils.robot.robot_control",
         "documentation": {}
     },
     {
         "label": "send_remote_control_command",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
         "isExtraImport": true,
-        "detail": "utils.robot_control",
+        "detail": "utils.robot.robot_control",
         "documentation": {}
     },
     {
         "label": "update_database_from_usb",
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
         "isExtraImport": true,
-        "detail": "utils.robot_control",
+        "detail": "utils.robot.robot_control",
         "documentation": {}
     },
     {
@@ -2354,6 +2362,63 @@
         "importPath": "sqlite3",
         "description": "sqlite3",
         "detail": "sqlite3",
+        "documentation": {}
+    },
+    {
+        "label": "socket",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "socket",
+        "description": "socket",
+        "detail": "socket",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.status_manager",
+        "description": "utils.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.status_manager",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.status_manager",
+        "description": "utils.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.status_manager",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.status_manager",
+        "description": "utils.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.status_manager",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.status_manager",
+        "description": "utils.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.status_manager",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.status_manager",
+        "description": "utils.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.status_manager",
+        "documentation": {}
+    },
+    {
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
         "documentation": {}
     },
     {
@@ -2630,46 +2695,6 @@
         "documentation": {}
     },
     {
-        "label": "update_status_label",
-        "importPath": "utils.status_manager",
-        "description": "utils.status_manager",
-        "isExtraImport": true,
-        "detail": "utils.status_manager",
-        "documentation": {}
-    },
-    {
-        "label": "update_status_label",
-        "importPath": "utils.status_manager",
-        "description": "utils.status_manager",
-        "isExtraImport": true,
-        "detail": "utils.status_manager",
-        "documentation": {}
-    },
-    {
-        "label": "update_status_label",
-        "importPath": "utils.status_manager",
-        "description": "utils.status_manager",
-        "isExtraImport": true,
-        "detail": "utils.status_manager",
-        "documentation": {}
-    },
-    {
-        "label": "update_status_label",
-        "importPath": "utils.status_manager",
-        "description": "utils.status_manager",
-        "isExtraImport": true,
-        "detail": "utils.status_manager",
-        "documentation": {}
-    },
-    {
-        "label": "update_status_label",
-        "importPath": "utils.status_manager",
-        "description": "utils.status_manager",
-        "isExtraImport": true,
-        "detail": "utils.status_manager",
-        "documentation": {}
-    },
-    {
         "label": "RotatingFileHandler",
         "importPath": "logging.handlers",
         "description": "logging.handlers",
@@ -2692,23 +2717,6 @@
         "importPath": "multiprocessing",
         "description": "multiprocessing",
         "detail": "multiprocessing",
-        "documentation": {}
-    },
-    {
-        "label": "socket",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "socket",
-        "description": "socket",
-        "detail": "socket",
-        "documentation": {}
-    },
-    {
-        "label": "dataclass",
-        "importPath": "dataclasses",
-        "description": "dataclasses",
-        "isExtraImport": true,
-        "detail": "dataclasses",
         "documentation": {}
     },
     {
@@ -3508,6 +3516,204 @@
         "documentation": {}
     },
     {
+        "label": "is_in_remote_control",
+        "kind": 2,
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
+        "peekOfCode": "def is_in_remote_control() -> bool:\n    \"\"\"Check if the robot is in remote control mode.\n    Returns:\n        bool: True if robot is in remote control mode, False otherwise\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect to the dashboard server\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))",
+        "detail": "utils.robot.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "send_remote_control_command",
+        "kind": 2,
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
+        "peekOfCode": "def send_remote_control_command() -> None:\n    \"\"\"Send the selected remote control command to the robot.\n    First checks if robot is in remote control mode.\n    \"\"\"\n    if not is_in_remote_control():\n        logger.error(\"Cannot send command - robot not in remote control mode\")\n        update_status_label(\"Robot not in remote control mode\", \"red\", True)\n        return\n    command = global_vars.ui.comboBoxCommandRemoteControl.currentText()\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)",
+        "detail": "utils.robot.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "send_cmd_play",
+        "kind": 2,
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
+        "peekOfCode": "def send_cmd_play() -> None:\n    \"\"\"Send a command to the robot to start.\n    \"\"\"\n    if not is_in_remote_control():\n        logger.error(\"Cannot send command - robot not in remote control mode\")\n        update_status_label(\"Robot not in remote control mode\", \"red\", True)\n        return\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening",
+        "detail": "utils.robot.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "send_cmd_pause",
+        "kind": 2,
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
+        "peekOfCode": "def send_cmd_pause() -> None:\n    \"\"\"Send a command to the robot to pause.\n    \"\"\"\n    if not is_in_remote_control():\n        logger.error(\"Cannot send command - robot not in remote control mode\")\n        update_status_label(\"Robot not in remote control mode\", \"red\", True)\n        return\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening",
+        "detail": "utils.robot.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "send_cmd_stop",
+        "kind": 2,
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
+        "peekOfCode": "def send_cmd_stop() -> None:\n    \"\"\"Send a command to the robot to stop.\n    \"\"\"\n    if not is_in_remote_control():\n        logger.error(\"Cannot send command - robot not in remote control mode\")\n        update_status_label(\"Robot not in remote control mode\", \"red\", True)\n        return\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening",
+        "detail": "utils.robot.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "Check_Einzelpaket_längs_greifen",
+        "kind": 2,
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
+        "peekOfCode": "def Check_Einzelpaket_längs_greifen(package_length: int) -> None:\n    \"\"\"Automatically check if package should be gripped lengthwise based on package length.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:\n        if package_length >= 265:\n            global_vars.ui.checkBoxEinzelpaket.setChecked(True)\n        else:\n            global_vars.ui.checkBoxEinzelpaket.setChecked(False)\ndef load() -> None:\n    \"\"\"Load the pallet plan from file.",
+        "detail": "utils.robot.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "load",
+        "kind": 2,
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
+        "peekOfCode": "def load() -> None:\n    \"\"\"Load the pallet plan from file.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):\n        logger.error(\"UI not initialized\")\n        return\n    interface_enabled = False\n    from utils.status_manager import update_status_label\n    from utils import UR_Common_functions as UR\n    # Store the text first, then manually clear focus to avoid keyboard issues",
+        "detail": "utils.robot.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "update_database_from_usb",
+        "kind": 2,
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
+        "peekOfCode": "def update_database_from_usb() -> None:\n    \"\"\"Update the database with any new or modified palette plans from the USB stick.\n    \"\"\"\n    if not os.path.exists(global_vars.PATH_USB_STICK):\n        logger.error(f\"USB stick path {global_vars.PATH_USB_STICK} does not exist\")\n        return\n    # Get all .rob files\n    rob_files = [f for f in os.listdir(global_vars.PATH_USB_STICK) if f.endswith(\".rob\")]\n    logger.info(f\"Found {len(rob_files)} .rob files to process\")\n    for file in rob_files:",
+        "detail": "utils.robot.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "load_wordlist",
+        "kind": 2,
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
+        "peekOfCode": "def load_wordlist() -> list:\n    \"\"\"Load the wordlist from the USB stick and update the database.\n    Returns:\n        list: A list of wordlist items.\n    \"\"\"\n    wordlist = []\n    count = 0\n    # First update the database with any new or modified files\n    update_database_from_usb()\n    # Then load the wordlist",
+        "detail": "utils.robot.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "load_rob_files",
+        "kind": 2,
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
+        "peekOfCode": "def load_rob_files():\n    \"\"\"Load .rob files into the list widget.\"\"\"\n    import os\n    if not global_vars.ui:\n        return\n    global_vars.ui.robFilesListWidget.clear()\n    rob_files = []\n    for file in os.listdir(global_vars.PATH_USB_STICK):\n        if file.endswith(\".rob\"):\n            rob_files.append(file[:-4])",
+        "detail": "utils.robot.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "display_selected_file",
+        "kind": 2,
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
+        "peekOfCode": "def display_selected_file(item):\n    \"\"\"Display the selected file in 3D.\n    Args:\n        item (QListWidgetItem): The selected item.\n    \"\"\"\n    if not hasattr(global_vars, 'canvas') or not global_vars.canvas:\n        logger.error(\"No canvas available for 3D visualization\")\n        return\n    try:\n        from ui_files.visualization_3d import display_pallet_3d",
+        "detail": "utils.robot.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "load_selected_file",
+        "kind": 2,
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
+        "peekOfCode": "def load_selected_file():\n    \"\"\"Load the currently selected file from the robFilesListWidget.\n    This function gets the currently selected item from the robFilesListWidget,\n    sets its text as the value of the EingabePallettenplan input field,\n    and then calls the load() function to load the palette plan.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    # Get the selected item from the list widget",
+        "detail": "utils.robot.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.robot.robot_control",
+        "description": "utils.robot.robot_control",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef is_in_remote_control() -> bool:\n    \"\"\"Check if the robot is in remote control mode.\n    Returns:\n        bool: True if robot is in remote control mode, False otherwise\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect to the dashboard server\n        server_address = (global_vars.robot_ip, 29999)",
+        "detail": "utils.robot.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "RobotMode",
+        "kind": 6,
+        "importPath": "utils.robot.robot_enums",
+        "description": "utils.robot.robot_enums",
+        "peekOfCode": "class RobotMode(Enum):\n    \"\"\"Enum for robot operating modes\"\"\"\n    UNKNOWN = auto()\n    POWER_OFF = auto()\n    IDLE = auto()\n    RUNNING = auto()\n    BACKDRIVE = auto()\n    ERROR = auto()\n    @classmethod\n    def from_string(cls, mode_str: str) -> 'RobotMode':",
+        "detail": "utils.robot.robot_enums",
+        "documentation": {}
+    },
+    {
+        "label": "SafetyStatus",
+        "kind": 6,
+        "importPath": "utils.robot.robot_enums",
+        "description": "utils.robot.robot_enums",
+        "peekOfCode": "class SafetyStatus(Enum):\n    \"\"\"Enum for robot safety status\"\"\"\n    UNKNOWN = auto()\n    NORMAL = auto()\n    REDUCED = auto()\n    PROTECTIVE_STOP = auto()\n    RECOVERY = auto()\n    SAFEGUARD_STOP = auto()\n    SYSTEM_EMERGENCY_STOP = auto()\n    ROBOT_EMERGENCY_STOP = auto()",
+        "detail": "utils.robot.robot_enums",
+        "documentation": {}
+    },
+    {
+        "label": "ProgramState",
+        "kind": 6,
+        "importPath": "utils.robot.robot_enums",
+        "description": "utils.robot.robot_enums",
+        "peekOfCode": "class ProgramState(Enum):\n    \"\"\"Enum for robot program state\"\"\"\n    UNKNOWN = auto()\n    STOPPED = auto()\n    PLAYING = auto()\n    PAUSED = auto()\n    ERROR = auto()\n    @classmethod\n    def from_string(cls, state_str: str) -> 'ProgramState':\n        \"\"\"Convert string response to ProgramState enum\"\"\"",
+        "detail": "utils.robot.robot_enums",
+        "documentation": {}
+    },
+    {
+        "label": "RobotStatus",
+        "kind": 6,
+        "importPath": "utils.robot.robot_status_monitor",
+        "description": "utils.robot.robot_status_monitor",
+        "peekOfCode": "class RobotStatus:\n    \"\"\"Data class to hold robot status information\"\"\"\n    robot_mode: RobotMode = RobotMode.UNKNOWN\n    safety_status: SafetyStatus = SafetyStatus.UNKNOWN\n    program_state: ProgramState = ProgramState.UNKNOWN\n    last_update: Optional[datetime] = None\n    is_connected: bool = False\n    connection_error: Optional[str] = None\ndef send_dashboard_command(command: str, ip: str = robot_ip, port: int = DASHBOARD_PORT, timeout: int = TIMEOUT_SECONDS) -> Tuple[str, bool, Optional[str]]:\n    \"\"\"",
+        "detail": "utils.robot.robot_status_monitor",
+        "documentation": {}
+    },
+    {
+        "label": "RobotStatusMonitor",
+        "kind": 6,
+        "importPath": "utils.robot.robot_status_monitor",
+        "description": "utils.robot.robot_status_monitor",
+        "peekOfCode": "class RobotStatusMonitor:\n    def __init__(self, update_interval: int = 2):\n        \"\"\"\n        Initialize the robot status monitor.\n        Args:\n            update_interval: Time between status updates in seconds\n        \"\"\"\n        self.update_interval = update_interval\n        self.running = False\n        self.monitor_thread: Optional[threading.Thread] = None",
+        "detail": "utils.robot.robot_status_monitor",
+        "documentation": {}
+    },
+    {
+        "label": "send_dashboard_command",
+        "kind": 2,
+        "importPath": "utils.robot.robot_status_monitor",
+        "description": "utils.robot.robot_status_monitor",
+        "peekOfCode": "def send_dashboard_command(command: str, ip: str = robot_ip, port: int = DASHBOARD_PORT, timeout: int = TIMEOUT_SECONDS) -> Tuple[str, bool, Optional[str]]:\n    \"\"\"\n    Sends a command to the UR Dashboard Server and returns the response.\n    Args:\n        command: The command to send to the dashboard server\n        ip: Robot IP address\n        port: Dashboard server port\n        timeout: Connection timeout in seconds\n    Returns:\n        Tuple[str, bool, Optional[str]]: ",
+        "detail": "utils.robot.robot_status_monitor",
+        "documentation": {}
+    },
+    {
+        "label": "get_polyscope_version",
+        "kind": 2,
+        "importPath": "utils.robot.robot_status_monitor",
+        "description": "utils.robot.robot_status_monitor",
+        "peekOfCode": "def get_polyscope_version() -> Tuple[str, bool, Optional[str]]:\n    \"\"\"\n    Gets the Polyscope version from the robot.\n    Returns:\n        Tuple[str, bool, Optional[str]]:\n            - Polyscope version or error message\n            - Success flag (True if command succeeded)\n            - Error message if any\n    \"\"\"\n    response, success, error = send_dashboard_command(\"PolyscopeVersion\")",
+        "detail": "utils.robot.robot_status_monitor",
+        "documentation": {}
+    },
+    {
+        "label": "DASHBOARD_PORT",
+        "kind": 5,
+        "importPath": "utils.robot.robot_status_monitor",
+        "description": "utils.robot.robot_status_monitor",
+        "peekOfCode": "DASHBOARD_PORT = 29999\nTIMEOUT_SECONDS = 5\n@dataclass\nclass RobotStatus:\n    \"\"\"Data class to hold robot status information\"\"\"\n    robot_mode: RobotMode = RobotMode.UNKNOWN\n    safety_status: SafetyStatus = SafetyStatus.UNKNOWN\n    program_state: ProgramState = ProgramState.UNKNOWN\n    last_update: Optional[datetime] = None\n    is_connected: bool = False",
+        "detail": "utils.robot.robot_status_monitor",
+        "documentation": {}
+    },
+    {
+        "label": "TIMEOUT_SECONDS",
+        "kind": 5,
+        "importPath": "utils.robot.robot_status_monitor",
+        "description": "utils.robot.robot_status_monitor",
+        "peekOfCode": "TIMEOUT_SECONDS = 5\n@dataclass\nclass RobotStatus:\n    \"\"\"Data class to hold robot status information\"\"\"\n    robot_mode: RobotMode = RobotMode.UNKNOWN\n    safety_status: SafetyStatus = SafetyStatus.UNKNOWN\n    program_state: ProgramState = ProgramState.UNKNOWN\n    last_update: Optional[datetime] = None\n    is_connected: bool = False\n    connection_error: Optional[str] = None",
+        "detail": "utils.robot.robot_status_monitor",
+        "documentation": {}
+    },
+    {
         "label": "restart_app",
         "kind": 2,
         "importPath": "utils.app_control",
@@ -3769,204 +3975,6 @@
         "documentation": {}
     },
     {
-        "label": "is_in_remote_control",
-        "kind": 2,
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "peekOfCode": "def is_in_remote_control() -> bool:\n    \"\"\"Check if the robot is in remote control mode.\n    Returns:\n        bool: True if robot is in remote control mode, False otherwise\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect to the dashboard server\n        server_address = (global_vars.robot_ip, 29999)\n        logger.debug('connecting to %s port %s' %(server_address))",
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "send_remote_control_command",
-        "kind": 2,
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "peekOfCode": "def send_remote_control_command() -> None:\n    \"\"\"Send the selected remote control command to the robot.\n    First checks if robot is in remote control mode.\n    \"\"\"\n    if not is_in_remote_control():\n        logger.error(\"Cannot send command - robot not in remote control mode\")\n        update_status_label(\"Robot not in remote control mode\", \"red\", True)\n        return\n    command = global_vars.ui.comboBoxCommandRemoteControl.currentText()\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)",
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "send_cmd_play",
-        "kind": 2,
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "peekOfCode": "def send_cmd_play() -> None:\n    \"\"\"Send a command to the robot to start.\n    \"\"\"\n    if not is_in_remote_control():\n        logger.error(\"Cannot send command - robot not in remote control mode\")\n        update_status_label(\"Robot not in remote control mode\", \"red\", True)\n        return\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening",
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "send_cmd_pause",
-        "kind": 2,
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "peekOfCode": "def send_cmd_pause() -> None:\n    \"\"\"Send a command to the robot to pause.\n    \"\"\"\n    if not is_in_remote_control():\n        logger.error(\"Cannot send command - robot not in remote control mode\")\n        update_status_label(\"Robot not in remote control mode\", \"red\", True)\n        return\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening",
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "send_cmd_stop",
-        "kind": 2,
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "peekOfCode": "def send_cmd_stop() -> None:\n    \"\"\"Send a command to the robot to stop.\n    \"\"\"\n    if not is_in_remote_control():\n        logger.error(\"Cannot send command - robot not in remote control mode\")\n        update_status_label(\"Robot not in remote control mode\", \"red\", True)\n        return\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect the socket to the port where the server is listening",
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "Check_Einzelpaket_längs_greifen",
-        "kind": 2,
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "peekOfCode": "def Check_Einzelpaket_längs_greifen(package_length: int) -> None:\n    \"\"\"Automatically check if package should be gripped lengthwise based on package length.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:\n        if package_length >= 265:\n            global_vars.ui.checkBoxEinzelpaket.setChecked(True)\n        else:\n            global_vars.ui.checkBoxEinzelpaket.setChecked(False)\ndef load() -> None:\n    \"\"\"Load the pallet plan from file.",
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "load",
-        "kind": 2,
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "peekOfCode": "def load() -> None:\n    \"\"\"Load the pallet plan from file.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):\n        logger.error(\"UI not initialized\")\n        return\n    interface_enabled = False\n    from utils.status_manager import update_status_label\n    from utils import UR_Common_functions as UR\n    # Store the text first, then manually clear focus to avoid keyboard issues",
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "update_database_from_usb",
-        "kind": 2,
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "peekOfCode": "def update_database_from_usb() -> None:\n    \"\"\"Update the database with any new or modified palette plans from the USB stick.\n    \"\"\"\n    if not os.path.exists(global_vars.PATH_USB_STICK):\n        logger.error(f\"USB stick path {global_vars.PATH_USB_STICK} does not exist\")\n        return\n    # Get all .rob files\n    rob_files = [f for f in os.listdir(global_vars.PATH_USB_STICK) if f.endswith(\".rob\")]\n    logger.info(f\"Found {len(rob_files)} .rob files to process\")\n    for file in rob_files:",
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "load_wordlist",
-        "kind": 2,
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "peekOfCode": "def load_wordlist() -> list:\n    \"\"\"Load the wordlist from the USB stick and update the database.\n    Returns:\n        list: A list of wordlist items.\n    \"\"\"\n    wordlist = []\n    count = 0\n    # First update the database with any new or modified files\n    update_database_from_usb()\n    # Then load the wordlist",
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "load_rob_files",
-        "kind": 2,
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "peekOfCode": "def load_rob_files():\n    \"\"\"Load .rob files into the list widget.\"\"\"\n    import os\n    if not global_vars.ui:\n        return\n    global_vars.ui.robFilesListWidget.clear()\n    rob_files = []\n    for file in os.listdir(global_vars.PATH_USB_STICK):\n        if file.endswith(\".rob\"):\n            rob_files.append(file[:-4])",
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "display_selected_file",
-        "kind": 2,
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "peekOfCode": "def display_selected_file(item):\n    \"\"\"Display the selected file in 3D.\n    Args:\n        item (QListWidgetItem): The selected item.\n    \"\"\"\n    if not hasattr(global_vars, 'canvas') or not global_vars.canvas:\n        logger.error(\"No canvas available for 3D visualization\")\n        return\n    try:\n        from ui_files.visualization_3d import display_pallet_3d",
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "load_selected_file",
-        "kind": 2,
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "peekOfCode": "def load_selected_file():\n    \"\"\"Load the currently selected file from the robFilesListWidget.\n    This function gets the currently selected item from the robFilesListWidget,\n    sets its text as the value of the EingabePallettenplan input field,\n    and then calls the load() function to load the palette plan.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    # Get the selected item from the list widget",
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.robot_control",
-        "description": "utils.robot_control",
-        "peekOfCode": "logger = logging.getLogger(__name__)\ndef is_in_remote_control() -> bool:\n    \"\"\"Check if the robot is in remote control mode.\n    Returns:\n        bool: True if robot is in remote control mode, False otherwise\n    \"\"\"\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    try:\n        # Connect to the dashboard server\n        server_address = (global_vars.robot_ip, 29999)",
-        "detail": "utils.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "RobotMode",
-        "kind": 6,
-        "importPath": "utils.robot_enums",
-        "description": "utils.robot_enums",
-        "peekOfCode": "class RobotMode(Enum):\n    \"\"\"Enum for robot operating modes\"\"\"\n    UNKNOWN = auto()\n    POWER_OFF = auto()\n    IDLE = auto()\n    RUNNING = auto()\n    BACKDRIVE = auto()\n    ERROR = auto()\n    @classmethod\n    def from_string(cls, mode_str: str) -> 'RobotMode':",
-        "detail": "utils.robot_enums",
-        "documentation": {}
-    },
-    {
-        "label": "SafetyStatus",
-        "kind": 6,
-        "importPath": "utils.robot_enums",
-        "description": "utils.robot_enums",
-        "peekOfCode": "class SafetyStatus(Enum):\n    \"\"\"Enum for robot safety status\"\"\"\n    UNKNOWN = auto()\n    NORMAL = auto()\n    REDUCED = auto()\n    PROTECTIVE_STOP = auto()\n    RECOVERY = auto()\n    SAFEGUARD_STOP = auto()\n    SYSTEM_EMERGENCY_STOP = auto()\n    ROBOT_EMERGENCY_STOP = auto()",
-        "detail": "utils.robot_enums",
-        "documentation": {}
-    },
-    {
-        "label": "ProgramState",
-        "kind": 6,
-        "importPath": "utils.robot_enums",
-        "description": "utils.robot_enums",
-        "peekOfCode": "class ProgramState(Enum):\n    \"\"\"Enum for robot program state\"\"\"\n    UNKNOWN = auto()\n    STOPPED = auto()\n    PLAYING = auto()\n    PAUSED = auto()\n    ERROR = auto()\n    @classmethod\n    def from_string(cls, state_str: str) -> 'ProgramState':\n        \"\"\"Convert string response to ProgramState enum\"\"\"",
-        "detail": "utils.robot_enums",
-        "documentation": {}
-    },
-    {
-        "label": "RobotStatus",
-        "kind": 6,
-        "importPath": "utils.robot_status_monitor",
-        "description": "utils.robot_status_monitor",
-        "peekOfCode": "class RobotStatus:\n    \"\"\"Data class to hold robot status information\"\"\"\n    robot_mode: RobotMode = RobotMode.UNKNOWN\n    safety_status: SafetyStatus = SafetyStatus.UNKNOWN\n    program_state: ProgramState = ProgramState.UNKNOWN\n    last_update: Optional[datetime] = None\n    is_connected: bool = False\n    connection_error: Optional[str] = None\ndef send_dashboard_command(command: str, ip: str = robot_ip, port: int = DASHBOARD_PORT, timeout: int = TIMEOUT_SECONDS) -> Tuple[str, bool, Optional[str]]:\n    \"\"\"",
-        "detail": "utils.robot_status_monitor",
-        "documentation": {}
-    },
-    {
-        "label": "RobotStatusMonitor",
-        "kind": 6,
-        "importPath": "utils.robot_status_monitor",
-        "description": "utils.robot_status_monitor",
-        "peekOfCode": "class RobotStatusMonitor:\n    def __init__(self, update_interval: int = 2):\n        \"\"\"\n        Initialize the robot status monitor.\n        Args:\n            update_interval: Time between status updates in seconds\n        \"\"\"\n        self.update_interval = update_interval\n        self.running = False\n        self.monitor_thread: Optional[threading.Thread] = None",
-        "detail": "utils.robot_status_monitor",
-        "documentation": {}
-    },
-    {
-        "label": "send_dashboard_command",
-        "kind": 2,
-        "importPath": "utils.robot_status_monitor",
-        "description": "utils.robot_status_monitor",
-        "peekOfCode": "def send_dashboard_command(command: str, ip: str = robot_ip, port: int = DASHBOARD_PORT, timeout: int = TIMEOUT_SECONDS) -> Tuple[str, bool, Optional[str]]:\n    \"\"\"\n    Sends a command to the UR Dashboard Server and returns the response.\n    Args:\n        command: The command to send to the dashboard server\n        ip: Robot IP address\n        port: Dashboard server port\n        timeout: Connection timeout in seconds\n    Returns:\n        Tuple[str, bool, Optional[str]]: ",
-        "detail": "utils.robot_status_monitor",
-        "documentation": {}
-    },
-    {
-        "label": "get_polyscope_version",
-        "kind": 2,
-        "importPath": "utils.robot_status_monitor",
-        "description": "utils.robot_status_monitor",
-        "peekOfCode": "def get_polyscope_version() -> Tuple[str, bool, Optional[str]]:\n    \"\"\"\n    Gets the Polyscope version from the robot.\n    Returns:\n        Tuple[str, bool, Optional[str]]:\n            - Polyscope version or error message\n            - Success flag (True if command succeeded)\n            - Error message if any\n    \"\"\"\n    response, success, error = send_dashboard_command(\"PolyscopeVersion\")",
-        "detail": "utils.robot_status_monitor",
-        "documentation": {}
-    },
-    {
-        "label": "DASHBOARD_PORT",
-        "kind": 5,
-        "importPath": "utils.robot_status_monitor",
-        "description": "utils.robot_status_monitor",
-        "peekOfCode": "DASHBOARD_PORT = 29999\nTIMEOUT_SECONDS = 5\n@dataclass\nclass RobotStatus:\n    \"\"\"Data class to hold robot status information\"\"\"\n    robot_mode: RobotMode = RobotMode.UNKNOWN\n    safety_status: SafetyStatus = SafetyStatus.UNKNOWN\n    program_state: ProgramState = ProgramState.UNKNOWN\n    last_update: Optional[datetime] = None\n    is_connected: bool = False",
-        "detail": "utils.robot_status_monitor",
-        "documentation": {}
-    },
-    {
-        "label": "TIMEOUT_SECONDS",
-        "kind": 5,
-        "importPath": "utils.robot_status_monitor",
-        "description": "utils.robot_status_monitor",
-        "peekOfCode": "TIMEOUT_SECONDS = 5\n@dataclass\nclass RobotStatus:\n    \"\"\"Data class to hold robot status information\"\"\"\n    robot_mode: RobotMode = RobotMode.UNKNOWN\n    safety_status: SafetyStatus = SafetyStatus.UNKNOWN\n    program_state: ProgramState = ProgramState.UNKNOWN\n    last_update: Optional[datetime] = None\n    is_connected: bool = False\n    connection_error: Optional[str] = None",
-        "detail": "utils.robot_status_monitor",
-        "documentation": {}
-    },
-    {
         "label": "server_start",
         "kind": 2,
         "importPath": "utils.server",
@@ -4214,7 +4222,7 @@
         "kind": 2,
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
-        "peekOfCode": "def set_wordlist() -> None:\n    \"\"\"Set the wordlist.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    from utils.robot_control import load_wordlist\n    # Load wordlist and create completer\n    wordlist = load_wordlist()\n    completer = QCompleter(wordlist, global_vars.main_window)",
+        "peekOfCode": "def set_wordlist() -> None:\n    \"\"\"Set the wordlist.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    from utils.robot.robot_control import load_wordlist\n    # Load wordlist and create completer\n    wordlist = load_wordlist()\n    completer = QCompleter(wordlist, global_vars.main_window)",
         "detail": "utils.ui_helpers",
         "documentation": {}
     },
@@ -4223,7 +4231,7 @@
         "kind": 2,
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
-        "peekOfCode": "def update_wordlist() -> None:\n    \"\"\"Update the wordlist.\n    \"\"\"\n    from utils.robot_control import load_wordlist\n    new_wordlist = load_wordlist()\n    model = global_vars.completer.model()\n    if not isinstance(model, QStringListModel):\n        # Create new model if current isn't a QStringListModel\n        string_model = QStringListModel(new_wordlist)\n        global_vars.completer.setModel(string_model)",
+        "peekOfCode": "def update_wordlist() -> None:\n    \"\"\"Update the wordlist.\n    \"\"\"\n    from utils.robot.robot_control import load_wordlist\n    new_wordlist = load_wordlist()\n    model = global_vars.completer.model()\n    if not isinstance(model, QStringListModel):\n        # Create new model if current isn't a QStringListModel\n        string_model = QStringListModel(new_wordlist)\n        global_vars.completer.setModel(string_model)",
         "detail": "utils.ui_helpers",
         "documentation": {}
     },

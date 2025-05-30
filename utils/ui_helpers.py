@@ -13,9 +13,10 @@ from ui_files.BlinkingLabel import BlinkingLabel
 from utils.message import MessageType
 from utils.message_manager import MessageManager
 from ui_files.PasswordDialog import PasswordEntryDialog
-from utils.robot_control import load_rob_files
+from utils.robot.robot_control import load_rob_files
 from utils.usb_key_check import check_any_usb_for_key
 from utils.status_manager import update_status_label
+from utils.robot.robot_control import load_wordlist
 
 logger = logging.getLogger(__name__)
 
@@ -332,7 +333,7 @@ def set_wordlist() -> None:
         logger.error("UI not initialized")
         return
     
-    from utils.robot_control import load_wordlist
+    from utils.robot.robot_control import load_wordlist
         
     # Load wordlist and create completer
     wordlist = load_wordlist()
@@ -389,7 +390,7 @@ def set_wordlist() -> None:
     
     # Update visualization palette list if it exists
     try:
-        from utils.robot_control import load_rob_files
+        from utils.robot.robot_control import load_rob_files
         # Call load_rob_files to update the list widget
         load_rob_files()
         logger.debug("Updated palette list in robFilesListWidget")
@@ -403,7 +404,7 @@ def set_wordlist() -> None:
 def update_wordlist() -> None:
     """Update the wordlist.
     """
-    from utils.robot_control import load_wordlist
+    from utils.robot.robot_control import load_wordlist
     
     new_wordlist = load_wordlist()
     model = global_vars.completer.model()
@@ -481,7 +482,7 @@ def update_wordlist() -> None:
     
     # Update visualization palette list if it exists
     try:
-        from utils.robot_control import load_rob_files
+        from utils.robot.robot_control import load_rob_files
         # Call load_rob_files to update the list widget
         load_rob_files()
         logger.debug("Updated palette list in robFilesListWidget")

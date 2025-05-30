@@ -14,10 +14,10 @@ if TYPE_CHECKING:
     from ui_files.ui_main_window import Ui_Form
     from ui_files.BlinkingLabel import BlinkingLabel
     from utils.message_manager import MessageManager
-    from utils.robot_status_monitor import RobotStatus
+    from utils.robot.robot_status_monitor import RobotStatus
 
 from .logging_config import logger
-from .robot_enums import RobotMode, SafetyStatus, ProgramState
+from .robot.robot_enums import RobotMode, SafetyStatus, ProgramState
 
 # Global variables
 process: Optional[multiprocessing.Process] = None

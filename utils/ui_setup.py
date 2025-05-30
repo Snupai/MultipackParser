@@ -19,7 +19,7 @@ from utils.ui_helpers import (CustomDoubleValidator, handle_scanner_status,
                              open_file, save_open_file, execute_command, open_folder_dialog, 
                              open_file_dialog, set_settings_line_edits, check_key_or_password, clear_filters,
                              show_palette_clear_dialog)
-from utils.robot_control import (display_selected_file, load, 
+from utils.robot.robot_control import (display_selected_file, load, 
                                 send_cmd_play, send_cmd_pause, send_cmd_stop, load_selected_file,
                                 send_remote_control_command)
 from utils.server import server_thread, server_stop
