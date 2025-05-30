@@ -3888,28 +3888,28 @@
     {
         "label": "RobotMode",
         "kind": 6,
-        "importPath": "utils.robot_status_monitor",
-        "description": "utils.robot_status_monitor",
+        "importPath": "utils.robot_enums",
+        "description": "utils.robot_enums",
         "peekOfCode": "class RobotMode(Enum):\n    \"\"\"Enum for robot operating modes\"\"\"\n    UNKNOWN = auto()\n    POWER_OFF = auto()\n    IDLE = auto()\n    RUNNING = auto()\n    BACKDRIVE = auto()\n    ERROR = auto()\n    @classmethod\n    def from_string(cls, mode_str: str) -> 'RobotMode':",
-        "detail": "utils.robot_status_monitor",
+        "detail": "utils.robot_enums",
         "documentation": {}
     },
     {
         "label": "SafetyStatus",
         "kind": 6,
-        "importPath": "utils.robot_status_monitor",
-        "description": "utils.robot_status_monitor",
+        "importPath": "utils.robot_enums",
+        "description": "utils.robot_enums",
         "peekOfCode": "class SafetyStatus(Enum):\n    \"\"\"Enum for robot safety status\"\"\"\n    UNKNOWN = auto()\n    NORMAL = auto()\n    REDUCED = auto()\n    PROTECTIVE_STOP = auto()\n    RECOVERY = auto()\n    SAFEGUARD_STOP = auto()\n    SYSTEM_EMERGENCY_STOP = auto()\n    ROBOT_EMERGENCY_STOP = auto()",
-        "detail": "utils.robot_status_monitor",
+        "detail": "utils.robot_enums",
         "documentation": {}
     },
     {
         "label": "ProgramState",
         "kind": 6,
-        "importPath": "utils.robot_status_monitor",
-        "description": "utils.robot_status_monitor",
+        "importPath": "utils.robot_enums",
+        "description": "utils.robot_enums",
         "peekOfCode": "class ProgramState(Enum):\n    \"\"\"Enum for robot program state\"\"\"\n    UNKNOWN = auto()\n    STOPPED = auto()\n    PLAYING = auto()\n    PAUSED = auto()\n    ERROR = auto()\n    @classmethod\n    def from_string(cls, state_str: str) -> 'ProgramState':\n        \"\"\"Convert string response to ProgramState enum\"\"\"",
-        "detail": "utils.robot_status_monitor",
+        "detail": "utils.robot_enums",
         "documentation": {}
     },
     {
@@ -3953,7 +3953,7 @@
         "kind": 5,
         "importPath": "utils.robot_status_monitor",
         "description": "utils.robot_status_monitor",
-        "peekOfCode": "DASHBOARD_PORT = 29999\nTIMEOUT_SECONDS = 5\nclass RobotMode(Enum):\n    \"\"\"Enum for robot operating modes\"\"\"\n    UNKNOWN = auto()\n    POWER_OFF = auto()\n    IDLE = auto()\n    RUNNING = auto()\n    BACKDRIVE = auto()\n    ERROR = auto()",
+        "peekOfCode": "DASHBOARD_PORT = 29999\nTIMEOUT_SECONDS = 5\n@dataclass\nclass RobotStatus:\n    \"\"\"Data class to hold robot status information\"\"\"\n    robot_mode: RobotMode = RobotMode.UNKNOWN\n    safety_status: SafetyStatus = SafetyStatus.UNKNOWN\n    program_state: ProgramState = ProgramState.UNKNOWN\n    last_update: Optional[datetime] = None\n    is_connected: bool = False",
         "detail": "utils.robot_status_monitor",
         "documentation": {}
     },
@@ -3962,7 +3962,7 @@
         "kind": 5,
         "importPath": "utils.robot_status_monitor",
         "description": "utils.robot_status_monitor",
-        "peekOfCode": "TIMEOUT_SECONDS = 5\nclass RobotMode(Enum):\n    \"\"\"Enum for robot operating modes\"\"\"\n    UNKNOWN = auto()\n    POWER_OFF = auto()\n    IDLE = auto()\n    RUNNING = auto()\n    BACKDRIVE = auto()\n    ERROR = auto()\n    @classmethod",
+        "peekOfCode": "TIMEOUT_SECONDS = 5\n@dataclass\nclass RobotStatus:\n    \"\"\"Data class to hold robot status information\"\"\"\n    robot_mode: RobotMode = RobotMode.UNKNOWN\n    safety_status: SafetyStatus = SafetyStatus.UNKNOWN\n    program_state: ProgramState = ProgramState.UNKNOWN\n    last_update: Optional[datetime] = None\n    is_connected: bool = False\n    connection_error: Optional[str] = None",
         "detail": "utils.robot_status_monitor",
         "documentation": {}
     },
