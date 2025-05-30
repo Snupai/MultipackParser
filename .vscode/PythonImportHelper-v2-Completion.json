@@ -436,6 +436,14 @@
         "documentation": {}
     },
     {
+        "label": "QMessageBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QLabel",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -613,14 +621,6 @@
     },
     {
         "label": "QLabel",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QMessageBox",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
         "isExtraImport": true,
@@ -2694,6 +2694,41 @@
         "documentation": {}
     },
     {
+        "label": "Fernet",
+        "importPath": "cryptography.fernet",
+        "description": "cryptography.fernet",
+        "isExtraImport": true,
+        "detail": "cryptography.fernet",
+        "documentation": {}
+    },
+    {
+        "label": "string",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "string",
+        "description": "string",
+        "detail": "string",
+        "documentation": {}
+    },
+    {
+        "label": "ctypes",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "ctypes",
+        "description": "ctypes",
+        "detail": "ctypes",
+        "documentation": {}
+    },
+    {
+        "label": "shutil",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "shutil",
+        "description": "shutil",
+        "detail": "shutil",
+        "documentation": {}
+    },
+    {
         "label": "BlinkingLabel",
         "importPath": "ui_files.BlinkingLabel",
         "description": "ui_files.BlinkingLabel",
@@ -2935,10 +2970,10 @@
     },
     {
         "label": "check_for_updates",
-        "importPath": "utils.updater",
-        "description": "utils.updater",
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
         "isExtraImport": true,
-        "detail": "utils.updater",
+        "detail": "utils.system.updater",
         "documentation": {}
     },
     {
@@ -3056,41 +3091,6 @@
         "importPath": "copy",
         "description": "copy",
         "detail": "copy",
-        "documentation": {}
-    },
-    {
-        "label": "shutil",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "shutil",
-        "description": "shutil",
-        "detail": "shutil",
-        "documentation": {}
-    },
-    {
-        "label": "Fernet",
-        "importPath": "cryptography.fernet",
-        "description": "cryptography.fernet",
-        "isExtraImport": true,
-        "detail": "cryptography.fernet",
-        "documentation": {}
-    },
-    {
-        "label": "string",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "string",
-        "description": "string",
-        "detail": "string",
-        "documentation": {}
-    },
-    {
-        "label": "ctypes",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "ctypes",
-        "description": "ctypes",
-        "detail": "ctypes",
         "documentation": {}
     },
     {
@@ -4287,6 +4287,51 @@
         "documentation": {}
     },
     {
+        "label": "check_hidden_key",
+        "kind": 2,
+        "importPath": "utils.system.security.usb_key_check",
+        "description": "utils.system.security.usb_key_check",
+        "peekOfCode": "def check_hidden_key(usb_path):\n    # First check for the index file\n    settings = global_vars.settings\n    index_file_path = os.path.join(usb_path, \".keyindex\")\n    if not os.path.exists(index_file_path):\n        return False\n    # Read the key file path from the index\n    try:\n        with open(index_file_path, 'r') as file:\n            relative_key_path = file.read().strip()",
+        "detail": "utils.system.security.usb_key_check",
+        "documentation": {}
+    },
+    {
+        "label": "find_keyindex_files",
+        "kind": 2,
+        "importPath": "utils.system.security.usb_key_check",
+        "description": "utils.system.security.usb_key_check",
+        "peekOfCode": "def find_keyindex_files(base_dir):\n    \"\"\"\n    Recursively search for .keyindex files in all subdirectories\n    Returns a list of directories containing a .keyindex file\n    \"\"\"\n    key_dirs = []\n    try:\n        for root, dirs, files in os.walk(base_dir):\n            if \".keyindex\" in files:\n                key_dirs.append(root)",
+        "detail": "utils.system.security.usb_key_check",
+        "documentation": {}
+    },
+    {
+        "label": "check_any_usb_for_key",
+        "kind": 2,
+        "importPath": "utils.system.security.usb_key_check",
+        "description": "utils.system.security.usb_key_check",
+        "peekOfCode": "def check_any_usb_for_key():\n    \"\"\"\n    Checks all connected USB drives for a valid security key.\n    Returns True if a valid key is found on any drive, False otherwise.\n    \"\"\"\n    # Get all available drives on Windows\n    if os.name == 'nt':  # Windows\n        drives = []\n        bitmask = ctypes.windll.kernel32.GetLogicalDrives()\n        for letter in string.ascii_uppercase:",
+        "detail": "utils.system.security.usb_key_check",
+        "documentation": {}
+    },
+    {
+        "label": "check_for_updates",
+        "kind": 2,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "def check_for_updates():\n    \"\"\"Check for updates.\n    \"\"\"    \n    # TODO: Add visual feedback to the user so that they know that the application is checking for updates\n    # disable the main window for interaction\n    global_vars.main_window.setDisabled(True)\n    msg_box = QMessageBox()\n    msg_box.setWindowTitle(\"Update suchen\")\n    msg_box.setText(\"Es wird nach einem Update gesucht.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.\")\n    msg_box.setIcon(QMessageBox.Icon.Information)",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef check_for_updates():\n    \"\"\"Check for updates.\n    \"\"\"    \n    # TODO: Add visual feedback to the user so that they know that the application is checking for updates\n    # disable the main window for interaction\n    global_vars.main_window.setDisabled(True)\n    msg_box = QMessageBox()\n    msg_box.setWindowTitle(\"Update suchen\")\n    msg_box.setText(\"Es wird nach einem Update gesucht.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.\")",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
         "label": "ArrowPopup",
         "kind": 6,
         "importPath": "utils.ui.notification_popup",
@@ -4851,51 +4896,6 @@
         "description": "utils.settings",
         "peekOfCode": "class Settings:\n    \"\"\"Settings class.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the settings with QSettings.\n        \"\"\"\n        logger.debug(\"Initializing Settings\")\n        # Create QSettings instance with organization and application name\n        self.qsettings = QSettings(\"Multipack\", \"MultipackParser\")\n        # Define default settings",
         "detail": "utils.settings",
-        "documentation": {}
-    },
-    {
-        "label": "check_for_updates",
-        "kind": 2,
-        "importPath": "utils.updater",
-        "description": "utils.updater",
-        "peekOfCode": "def check_for_updates():\n    \"\"\"Check for updates.\n    \"\"\"    \n    # TODO: Add visual feedback to the user so that they know that the application is checking for updates\n    # disable the main window for interaction\n    global_vars.main_window.setDisabled(True)\n    msg_box = QMessageBox()\n    msg_box.setWindowTitle(\"Update suchen\")\n    msg_box.setText(\"Es wird nach einem Update gesucht.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.\")\n    msg_box.setIcon(QMessageBox.Icon.Information)",
-        "detail": "utils.updater",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.updater",
-        "description": "utils.updater",
-        "peekOfCode": "logger = logging.getLogger(__name__)\ndef check_for_updates():\n    \"\"\"Check for updates.\n    \"\"\"    \n    # TODO: Add visual feedback to the user so that they know that the application is checking for updates\n    # disable the main window for interaction\n    global_vars.main_window.setDisabled(True)\n    msg_box = QMessageBox()\n    msg_box.setWindowTitle(\"Update suchen\")\n    msg_box.setText(\"Es wird nach einem Update gesucht.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.\")",
-        "detail": "utils.updater",
-        "documentation": {}
-    },
-    {
-        "label": "check_hidden_key",
-        "kind": 2,
-        "importPath": "utils.usb_key_check",
-        "description": "utils.usb_key_check",
-        "peekOfCode": "def check_hidden_key(usb_path):\n    # First check for the index file\n    settings = global_vars.settings\n    index_file_path = os.path.join(usb_path, \".keyindex\")\n    if not os.path.exists(index_file_path):\n        return False\n    # Read the key file path from the index\n    try:\n        with open(index_file_path, 'r') as file:\n            relative_key_path = file.read().strip()",
-        "detail": "utils.usb_key_check",
-        "documentation": {}
-    },
-    {
-        "label": "find_keyindex_files",
-        "kind": 2,
-        "importPath": "utils.usb_key_check",
-        "description": "utils.usb_key_check",
-        "peekOfCode": "def find_keyindex_files(base_dir):\n    \"\"\"\n    Recursively search for .keyindex files in all subdirectories\n    Returns a list of directories containing a .keyindex file\n    \"\"\"\n    key_dirs = []\n    try:\n        for root, dirs, files in os.walk(base_dir):\n            if \".keyindex\" in files:\n                key_dirs.append(root)",
-        "detail": "utils.usb_key_check",
-        "documentation": {}
-    },
-    {
-        "label": "check_any_usb_for_key",
-        "kind": 2,
-        "importPath": "utils.usb_key_check",
-        "description": "utils.usb_key_check",
-        "peekOfCode": "def check_any_usb_for_key():\n    \"\"\"\n    Checks all connected USB drives for a valid security key.\n    Returns True if a valid key is found on any drive, False otherwise.\n    \"\"\"\n    # Get all available drives on Windows\n    if os.name == 'nt':  # Windows\n        drives = []\n        bitmask = ctypes.windll.kernel32.GetLogicalDrives()\n        for letter in string.ascii_uppercase:",
-        "detail": "utils.usb_key_check",
         "documentation": {}
     },
     {

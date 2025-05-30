@@ -25,7 +25,7 @@ from utils.robot.robot_control import (display_selected_file, load,
 from utils.server.server import server_thread, server_stop
 from utils.audio.audio import (spawn_play_stepback_warning_thread, kill_play_stepback_warning_thread, 
                         set_audio_volume, delay_warning_sound)
-from utils.updater import check_for_updates
+from utils.system.updater import check_for_updates
 from utils.app_control import restart_app, exit_app
 from utils.server.UR20_Server_functions import scanner_signals
 from utils.ui.notification_popup import check_zwischenlage_status
