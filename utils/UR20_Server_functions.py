@@ -9,7 +9,7 @@ from utils.status_manager import update_status_label
 from typing import Literal, cast, Union
 from PySide6.QtCore import Qt, QObject, Signal, QTimer
 import logging
-from utils.audio import kill_play_stepback_warning_thread, spawn_play_stepback_warning_thread
+from utils.audio.audio import kill_play_stepback_warning_thread, spawn_play_stepback_warning_thread
 import time
 
 from utils.logging_config import setup_server_logger

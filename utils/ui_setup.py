@@ -23,7 +23,7 @@ from utils.robot_control import (display_selected_file, load,
                                 send_cmd_play, send_cmd_pause, send_cmd_stop, load_selected_file,
                                 send_remote_control_command)
 from utils.server import server_thread, server_stop
-from utils.audio import (spawn_play_stepback_warning_thread, kill_play_stepback_warning_thread, 
+from utils.audio.audio import (spawn_play_stepback_warning_thread, kill_play_stepback_warning_thread, 
                         set_audio_volume, delay_warning_sound)
 from utils.updater import check_for_updates
 from utils.app_control import restart_app, exit_app

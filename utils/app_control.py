@@ -78,7 +78,7 @@ def exit_app():
     
     # Stop any running audio threads
     if hasattr(global_vars, 'audio_thread_running') and global_vars.audio_thread_running:
-        from utils.audio import kill_play_stepback_warning_thread
+        from utils.audio.audio import kill_play_stepback_warning_thread
         kill_play_stepback_warning_thread()
     
     # Use Qt's application exit mechanism for proper cleanup

@@ -1340,6 +1340,14 @@
         "documentation": {}
     },
     {
+        "label": "QIcon",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
         "label": "QPixmap",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
@@ -1357,14 +1365,6 @@
     },
     {
         "label": "QColor",
-        "importPath": "PySide6.QtGui",
-        "description": "PySide6.QtGui",
-        "isExtraImport": true,
-        "detail": "PySide6.QtGui",
-        "documentation": {}
-    },
-    {
-        "label": "QIcon",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
         "isExtraImport": true,
@@ -2257,94 +2257,103 @@
         "documentation": {}
     },
     {
-        "label": "sqlite3",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "sqlite3",
-        "description": "sqlite3",
-        "detail": "sqlite3",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "datetime",
-        "description": "datetime",
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
         "label": "subprocess",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "subprocess",
         "description": "subprocess",
         "detail": "subprocess",
+        "documentation": {}
+    },
+    {
+        "label": "threading",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "threading",
+        "description": "threading",
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "datetime",
+        "description": "datetime",
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "sqlite3",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlite3",
+        "description": "sqlite3",
+        "detail": "sqlite3",
         "documentation": {}
     },
     {
@@ -2661,15 +2670,6 @@
         "documentation": {}
     },
     {
-        "label": "threading",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "threading",
-        "description": "threading",
-        "detail": "threading",
-        "documentation": {}
-    },
-    {
         "label": "RotatingFileHandler",
         "importPath": "logging.handlers",
         "description": "logging.handlers",
@@ -2828,50 +2828,50 @@
     },
     {
         "label": "spawn_play_stepback_warning_thread",
-        "importPath": "utils.audio",
-        "description": "utils.audio",
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
         "isExtraImport": true,
-        "detail": "utils.audio",
+        "detail": "utils.audio.audio",
         "documentation": {}
     },
     {
         "label": "kill_play_stepback_warning_thread",
-        "importPath": "utils.audio",
-        "description": "utils.audio",
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
         "isExtraImport": true,
-        "detail": "utils.audio",
+        "detail": "utils.audio.audio",
         "documentation": {}
     },
     {
         "label": "set_audio_volume",
-        "importPath": "utils.audio",
-        "description": "utils.audio",
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
         "isExtraImport": true,
-        "detail": "utils.audio",
+        "detail": "utils.audio.audio",
         "documentation": {}
     },
     {
         "label": "delay_warning_sound",
-        "importPath": "utils.audio",
-        "description": "utils.audio",
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
         "isExtraImport": true,
-        "detail": "utils.audio",
+        "detail": "utils.audio.audio",
         "documentation": {}
     },
     {
         "label": "kill_play_stepback_warning_thread",
-        "importPath": "utils.audio",
-        "description": "utils.audio",
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
         "isExtraImport": true,
-        "detail": "utils.audio",
+        "detail": "utils.audio.audio",
         "documentation": {}
     },
     {
         "label": "spawn_play_stepback_warning_thread",
-        "importPath": "utils.audio",
-        "description": "utils.audio",
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
         "isExtraImport": true,
-        "detail": "utils.audio",
+        "detail": "utils.audio.audio",
         "documentation": {}
     },
     {
@@ -3319,6 +3319,60 @@
         "documentation": {}
     },
     {
+        "label": "spawn_play_stepback_warning_thread",
+        "kind": 2,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "peekOfCode": "def spawn_play_stepback_warning_thread():\n    \"\"\"Spawn a thread to play the stepback warning.\n    \"\"\"\n    global audio_thread\n    logger.info(\"Starting stepback warning audio thread\")\n    global_vars.audio_thread_running = True\n    audio_thread = threading.Thread(target=play_stepback_warning)\n    audio_thread.daemon = True\n    audio_thread.start()\n    global_vars.audio_thread = audio_thread",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "kill_play_stepback_warning_thread",
+        "kind": 2,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "peekOfCode": "def kill_play_stepback_warning_thread():\n    \"\"\"Kill the thread playing the stepback warning.\n    \"\"\"\n    logger.info(\"Stopping stepback warning audio thread\")\n    global_vars.audio_thread_running = False\n    if global_vars.audio_thread:\n        global_vars.audio_thread = None\ndef play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.\n    \"\"\"",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "play_stepback_warning",
+        "kind": 2,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "peekOfCode": "def play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.\n    \"\"\"\n    logger.debug(\"Starting stepback warning playback loop\")\n    try:\n        while global_vars.audio_thread_running:\n            try:\n                # Use aplay to play the audio file\n                logger.debug(f\"Playing audio file: {global_vars.settings.settings['admin']['alarm_sound_file']}\")\n                if os.name != 'nt':",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "set_audio_volume",
+        "kind": 2,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "peekOfCode": "def set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = '0' if not global_vars.audio_muted else '100'\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"\n    logger.info(f\"Setting audio volume to {volume}\")\n    try:",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "delay_warning_sound",
+        "kind": 2,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "peekOfCode": "def delay_warning_sound():\n    \"\"\"Delay the warning sound start by 40 seconds.\n    \"\"\"\n    logger.debug(\"Starting delay warning sound monitor\")\n    while True:\n        try:\n            if global_vars.timestamp_scanner_fault:\n                # Handle the case where timestamp_scanner_fault might be a float\n                if isinstance(global_vars.timestamp_scanner_fault, float):\n                    # If it's a float, assume it's a timestamp and calculate the difference directly",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "peekOfCode": "logger = logging.getLogger(__name__)\n# TODO: overhaul everything so that it can be used for other sounds as well and stuff\ndef spawn_play_stepback_warning_thread():\n    \"\"\"Spawn a thread to play the stepback warning.\n    \"\"\"\n    global audio_thread\n    logger.info(\"Starting stepback warning audio thread\")\n    global_vars.audio_thread_running = True\n    audio_thread = threading.Thread(target=play_stepback_warning)\n    audio_thread.daemon = True",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
         "label": "create_database",
         "kind": 2,
         "importPath": "utils.database.database",
@@ -3568,60 +3622,6 @@
         "description": "utils.app_initialization",
         "peekOfCode": "logger = logging.getLogger(__name__)\ndef parse_arguments():\n    \"\"\"Parse command line arguments.\n    Returns:\n        argparse.Namespace: Parsed arguments\n    \"\"\"\n    parser = argparse.ArgumentParser(\n        description=\"Multipack Parser Application\",\n        formatter_class=argparse.RawDescriptionHelpFormatter,\n        epilog=\"\"\"",
         "detail": "utils.app_initialization",
-        "documentation": {}
-    },
-    {
-        "label": "spawn_play_stepback_warning_thread",
-        "kind": 2,
-        "importPath": "utils.audio",
-        "description": "utils.audio",
-        "peekOfCode": "def spawn_play_stepback_warning_thread():\n    \"\"\"Spawn a thread to play the stepback warning.\n    \"\"\"\n    global audio_thread\n    logger.info(\"Starting stepback warning audio thread\")\n    global_vars.audio_thread_running = True\n    audio_thread = threading.Thread(target=play_stepback_warning)\n    audio_thread.daemon = True\n    audio_thread.start()\n    global_vars.audio_thread = audio_thread",
-        "detail": "utils.audio",
-        "documentation": {}
-    },
-    {
-        "label": "kill_play_stepback_warning_thread",
-        "kind": 2,
-        "importPath": "utils.audio",
-        "description": "utils.audio",
-        "peekOfCode": "def kill_play_stepback_warning_thread():\n    \"\"\"Kill the thread playing the stepback warning.\n    \"\"\"\n    logger.info(\"Stopping stepback warning audio thread\")\n    global_vars.audio_thread_running = False\n    if global_vars.audio_thread:\n        global_vars.audio_thread = None\ndef play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.\n    \"\"\"",
-        "detail": "utils.audio",
-        "documentation": {}
-    },
-    {
-        "label": "play_stepback_warning",
-        "kind": 2,
-        "importPath": "utils.audio",
-        "description": "utils.audio",
-        "peekOfCode": "def play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.\n    \"\"\"\n    logger.debug(\"Starting stepback warning playback loop\")\n    try:\n        while global_vars.audio_thread_running:\n            try:\n                # Use aplay to play the audio file\n                logger.debug(f\"Playing audio file: {global_vars.settings.settings['admin']['alarm_sound_file']}\")\n                if os.name != 'nt':",
-        "detail": "utils.audio",
-        "documentation": {}
-    },
-    {
-        "label": "set_audio_volume",
-        "kind": 2,
-        "importPath": "utils.audio",
-        "description": "utils.audio",
-        "peekOfCode": "def set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = '0' if not global_vars.audio_muted else '100'\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"\n    logger.info(f\"Setting audio volume to {volume}\")\n    try:",
-        "detail": "utils.audio",
-        "documentation": {}
-    },
-    {
-        "label": "delay_warning_sound",
-        "kind": 2,
-        "importPath": "utils.audio",
-        "description": "utils.audio",
-        "peekOfCode": "def delay_warning_sound():\n    \"\"\"Delay the warning sound start by 40 seconds.\n    \"\"\"\n    logger.debug(\"Starting delay warning sound monitor\")\n    while True:\n        try:\n            if global_vars.timestamp_scanner_fault:\n                # Handle the case where timestamp_scanner_fault might be a float\n                if isinstance(global_vars.timestamp_scanner_fault, float):\n                    # If it's a float, assume it's a timestamp and calculate the difference directly",
-        "detail": "utils.audio",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.audio",
-        "description": "utils.audio",
-        "peekOfCode": "logger = logging.getLogger(__name__)\n# TODO: overhaul everything so that it can be used for other sounds as well and stuff\ndef spawn_play_stepback_warning_thread():\n    \"\"\"Spawn a thread to play the stepback warning.\n    \"\"\"\n    global audio_thread\n    logger.info(\"Starting stepback warning audio thread\")\n    global_vars.audio_thread_running = True\n    audio_thread = threading.Thread(target=play_stepback_warning)\n    audio_thread.daemon = True",
-        "detail": "utils.audio",
         "documentation": {}
     },
     {
