@@ -3939,7 +3939,7 @@
         "kind": 2,
         "importPath": "utils.robot.robot_control",
         "description": "utils.robot.robot_control",
-        "peekOfCode": "def load() -> None:\n    \"\"\"Load the pallet plan from file.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):\n        logger.error(\"UI not initialized\")\n        return\n    interface_enabled = False\n    from utils.status_manager import update_status_label\n    from utils import UR_Common_functions as UR\n    # Store the text first, then manually clear focus to avoid keyboard issues",
+        "peekOfCode": "def load() -> None:\n    \"\"\"Load the pallet plan from file.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):\n        logger.error(\"UI not initialized\")\n        return\n    interface_enabled = False\n    from utils.message.status_manager import update_status_label\n    from utils.robot.UR_Common_functions import UR\n    # Store the text first, then manually clear focus to avoid keyboard issues",
         "detail": "utils.robot.robot_control",
         "documentation": {}
     },
@@ -4488,7 +4488,7 @@
         "kind": 6,
         "importPath": "utils.system.config.settings",
         "description": "utils.system.config.settings",
-        "peekOfCode": "class Settings:\n    \"\"\"Settings class.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the settings with QSettings.\n        \"\"\"\n        from ... import global_vars  # Import here to avoid circular import\n        logger.debug(\"Initializing Settings\")\n        # Create QSettings instance with organization and application name\n        self.qsettings = QSettings(\"Multipack\", \"MultipackParser\")",
+        "peekOfCode": "class Settings:\n    \"\"\"Settings class.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the settings with QSettings.\n        \"\"\"\n        from utils.system.core import global_vars  # Import here to avoid circular import\n        logger.debug(\"Initializing Settings\")\n        # Create QSettings instance with organization and application name\n        self.qsettings = QSettings(\"Multipack\", \"MultipackParser\")",
         "detail": "utils.system.config.settings",
         "documentation": {}
     },
@@ -4929,7 +4929,7 @@
         "kind": 2,
         "importPath": "utils.ui.ui_helpers",
         "description": "utils.ui.ui_helpers",
-        "peekOfCode": "def test_zwischenlage_popup(enable: bool = True):\n    \"\"\"\n    Test function to show or hide the zwischenlage popup.\n    Args:\n        enable (bool): Whether to show (True) or hide (False) the popup\n    \"\"\"\n    from utils import global_vars\n    # Set the global variable\n    global_vars.UR20_zwischenlage = enable\n    # Force an immediate check without waiting for the timer",
+        "peekOfCode": "def test_zwischenlage_popup(enable: bool = True):\n    \"\"\"\n    Test function to show or hide the zwischenlage popup.\n    Args:\n        enable (bool): Whether to show (True) or hide (False) the popup\n    \"\"\"\n    from utils.system.core import global_vars\n    # Set the global variable\n    global_vars.UR20_zwischenlage = enable\n    # Force an immediate check without waiting for the timer",
         "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },

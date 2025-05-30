@@ -15,7 +15,7 @@ class Settings:
     def __init__(self):
         """Initialize the settings with QSettings.
         """
-        from ... import global_vars  # Import here to avoid circular import
+        from utils.system.core import global_vars  # Import here to avoid circular import
         logger.debug("Initializing Settings")
         # Create QSettings instance with organization and application name
         self.qsettings = QSettings("Multipack", "MultipackParser")

@@ -178,8 +178,8 @@ def load() -> None:
         return
     interface_enabled = False
     
-    from utils.status_manager import update_status_label
-    from utils import UR_Common_functions as UR
+    from utils.message.status_manager import update_status_label
+    from utils.robot.UR_Common_functions import UR
 
     # Store the text first, then manually clear focus to avoid keyboard issues
     Artikelnummer = global_vars.ui.EingabePallettenplan.text().strip()

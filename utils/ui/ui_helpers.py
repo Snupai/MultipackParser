@@ -566,12 +566,12 @@ def test_zwischenlage_popup(enable: bool = True):
     Args:
         enable (bool): Whether to show (True) or hide (False) the popup
     """
-    from utils import global_vars
+    from utils.system.core import global_vars
     # Set the global variable
     global_vars.UR20_zwischenlage = enable
     
     # Force an immediate check without waiting for the timer
-    from utils.notification_popup import check_zwischenlage_status
+    from utils.ui.notification_popup import check_zwischenlage_status
     check_zwischenlage_status()
     
     # Log the action

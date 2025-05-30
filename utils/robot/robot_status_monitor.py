@@ -134,10 +134,10 @@ class RobotStatusMonitor:
                     self.status.connection_error = None
                 
                 # Update global variables
-                from .global_vars import current_robot_mode, current_safety_status, current_program_state
-                current_robot_mode = self.status.robot_mode
-                current_safety_status = self.status.safety_status
-                current_program_state = self.status.program_state
+                from utils.system.core import global_vars
+                global_vars.current_robot_mode = self.status.robot_mode
+                global_vars.current_safety_status = self.status.safety_status
+                global_vars.current_program_state = self.status.program_state
                 
             except Exception as e:
                 logger.error(f"Error in status monitoring loop: {str(e)}")
