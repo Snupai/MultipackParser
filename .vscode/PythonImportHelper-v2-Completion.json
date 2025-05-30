@@ -428,6 +428,22 @@
         "documentation": {}
     },
     {
+        "label": "QLabel",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMessageBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QApplication",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -620,22 +636,6 @@
         "documentation": {}
     },
     {
-        "label": "QMessageBox",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QLabel",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
         "label": "QTimer",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
@@ -877,6 +877,38 @@
     },
     {
         "label": "Qt",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QObject",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Signal",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QTimer",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
         "isExtraImport": true,
@@ -1012,38 +1044,6 @@
         "documentation": {}
     },
     {
-        "label": "Qt",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
-        "label": "QObject",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
-        "label": "Signal",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
-        "label": "QTimer",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
         "label": "QFont",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
@@ -1341,6 +1341,22 @@
     },
     {
         "label": "QIcon",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPixmap",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPixmap",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
         "isExtraImport": true,
@@ -1445,22 +1461,6 @@
     },
     {
         "label": "QIntValidator",
-        "importPath": "PySide6.QtGui",
-        "description": "PySide6.QtGui",
-        "isExtraImport": true,
-        "detail": "PySide6.QtGui",
-        "documentation": {}
-    },
-    {
-        "label": "QPixmap",
-        "importPath": "PySide6.QtGui",
-        "description": "PySide6.QtGui",
-        "isExtraImport": true,
-        "detail": "PySide6.QtGui",
-        "documentation": {}
-    },
-    {
-        "label": "QPixmap",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
         "isExtraImport": true,
@@ -1596,6 +1596,78 @@
         "documentation": {}
     },
     {
+        "label": "Literal",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Literal",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "cast",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Union",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Literal",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Union",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Union",
         "importPath": "typing",
         "description": "typing",
@@ -1668,14 +1740,6 @@
         "documentation": {}
     },
     {
-        "label": "Literal",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
         "label": "Optional",
         "importPath": "typing",
         "description": "typing",
@@ -1685,70 +1749,6 @@
     },
     {
         "label": "Optional",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Literal",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "cast",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Union",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Literal",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "List",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Optional",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Union",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Tuple",
         "importPath": "typing",
         "description": "typing",
         "isExtraImport": true,
@@ -1917,7 +1917,7 @@
         "documentation": {}
     },
     {
-        "label": "UR_Common_functions",
+        "label": "global_vars",
         "importPath": "utils",
         "description": "utils",
         "isExtraImport": true,
@@ -1925,7 +1925,7 @@
         "documentation": {}
     },
     {
-        "label": "UR10_Server_functions",
+        "label": "global_vars",
         "importPath": "utils",
         "description": "utils",
         "isExtraImport": true,
@@ -1933,7 +1933,7 @@
         "documentation": {}
     },
     {
-        "label": "UR20_Server_functions",
+        "label": "global_vars",
         "importPath": "utils",
         "description": "utils",
         "isExtraImport": true,
@@ -2422,6 +2422,374 @@
         "documentation": {}
     },
     {
+        "label": "SimpleXMLRPCServer",
+        "importPath": "xmlrpc.server",
+        "description": "xmlrpc.server",
+        "isExtraImport": true,
+        "detail": "xmlrpc.server",
+        "documentation": {}
+    },
+    {
+        "label": "UR_SetFileName",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_ReadDataFromUsbStick",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Palette",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Karton",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Lagen",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Zwischenlagen",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_PaketPos",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_AnzLagen",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_AnzPakete",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_PaketeZuordnung",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Paket_hoehe",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Startlage",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Quergreifen",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_CoG",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_MasseGeschaetzt",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_PickOffsetX",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_PickOffsetY",
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR10_scanner1and2niobild",
+        "importPath": "utils.server.UR10_Server_functions",
+        "description": "utils.server.UR10_Server_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR10_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR10_scanner1bild",
+        "importPath": "utils.server.UR10_Server_functions",
+        "description": "utils.server.UR10_Server_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR10_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR10_scanner2bild",
+        "importPath": "utils.server.UR10_Server_functions",
+        "description": "utils.server.UR10_Server_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR10_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR10_scanner1and2iobild",
+        "importPath": "utils.server.UR10_Server_functions",
+        "description": "utils.server.UR10_Server_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR10_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_scannerStatus",
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_SetActivePalette",
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_RequestPaletteChange",
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_GetActivePaletteNumber",
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_GetPaletteStatus",
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_SetZwischenLageLegen",
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_GetKlemmungAktiv",
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_GetScannerOverride",
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "scanner_signals",
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "isExtraImport": true,
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "MessageManager",
+        "importPath": "utils.message_manager",
+        "description": "utils.message_manager",
+        "isExtraImport": true,
+        "detail": "utils.message_manager",
+        "documentation": {}
+    },
+    {
+        "label": "MessageManager",
+        "importPath": "utils.message_manager",
+        "description": "utils.message_manager",
+        "isExtraImport": true,
+        "detail": "utils.message_manager",
+        "documentation": {}
+    },
+    {
+        "label": "MessageManager",
+        "importPath": "utils.message_manager",
+        "description": "utils.message_manager",
+        "isExtraImport": true,
+        "detail": "utils.message_manager",
+        "documentation": {}
+    },
+    {
+        "label": "setup_server_logger",
+        "importPath": "utils.logging_config",
+        "description": "utils.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_server_logger",
+        "importPath": "utils.logging_config",
+        "description": "utils.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_server_logger",
+        "importPath": "utils.logging_config",
+        "description": "utils.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_server_logger",
+        "importPath": "utils.logging_config",
+        "description": "utils.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_logger",
+        "importPath": "utils.logging_config",
+        "description": "utils.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "setup_logger",
+        "importPath": "utils.logging_config",
+        "description": "utils.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "kill_play_stepback_warning_thread",
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "isExtraImport": true,
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "spawn_play_stepback_warning_thread",
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "isExtraImport": true,
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "spawn_play_stepback_warning_thread",
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "isExtraImport": true,
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "kill_play_stepback_warning_thread",
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "isExtraImport": true,
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "set_audio_volume",
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "isExtraImport": true,
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "delay_warning_sound",
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "isExtraImport": true,
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
         "label": "set_settings_line_edits",
         "importPath": "utils.ui_helpers",
         "description": "utils.ui_helpers",
@@ -2558,6 +2926,30 @@
         "documentation": {}
     },
     {
+        "label": "server_stop",
+        "importPath": "utils.server.server",
+        "description": "utils.server.server",
+        "isExtraImport": true,
+        "detail": "utils.server.server",
+        "documentation": {}
+    },
+    {
+        "label": "server_thread",
+        "importPath": "utils.server.server",
+        "description": "utils.server.server",
+        "isExtraImport": true,
+        "detail": "utils.server.server",
+        "documentation": {}
+    },
+    {
+        "label": "server_stop",
+        "importPath": "utils.server.server",
+        "description": "utils.server.server",
+        "isExtraImport": true,
+        "detail": "utils.server.server",
+        "documentation": {}
+    },
+    {
         "label": "argparse",
         "kind": 6,
         "isExtraImport": true,
@@ -2615,83 +3007,11 @@
         "documentation": {}
     },
     {
-        "label": "setup_logger",
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
-        "isExtraImport": true,
-        "detail": "utils.logging_config",
-        "documentation": {}
-    },
-    {
-        "label": "setup_server_logger",
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
-        "isExtraImport": true,
-        "detail": "utils.logging_config",
-        "documentation": {}
-    },
-    {
-        "label": "setup_server_logger",
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
-        "isExtraImport": true,
-        "detail": "utils.logging_config",
-        "documentation": {}
-    },
-    {
-        "label": "setup_server_logger",
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
-        "isExtraImport": true,
-        "detail": "utils.logging_config",
-        "documentation": {}
-    },
-    {
-        "label": "setup_server_logger",
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
-        "isExtraImport": true,
-        "detail": "utils.logging_config",
-        "documentation": {}
-    },
-    {
-        "label": "setup_logger",
-        "importPath": "utils.logging_config",
-        "description": "utils.logging_config",
-        "isExtraImport": true,
-        "detail": "utils.logging_config",
-        "documentation": {}
-    },
-    {
         "label": "show_palette_config_dialog",
         "importPath": "utils.startup_dialogs",
         "description": "utils.startup_dialogs",
         "isExtraImport": true,
         "detail": "utils.startup_dialogs",
-        "documentation": {}
-    },
-    {
-        "label": "MessageManager",
-        "importPath": "utils.message_manager",
-        "description": "utils.message_manager",
-        "isExtraImport": true,
-        "detail": "utils.message_manager",
-        "documentation": {}
-    },
-    {
-        "label": "MessageManager",
-        "importPath": "utils.message_manager",
-        "description": "utils.message_manager",
-        "isExtraImport": true,
-        "detail": "utils.message_manager",
-        "documentation": {}
-    },
-    {
-        "label": "MessageManager",
-        "importPath": "utils.message_manager",
-        "description": "utils.message_manager",
-        "isExtraImport": true,
-        "detail": "utils.message_manager",
         "documentation": {}
     },
     {
@@ -2717,14 +3037,6 @@
         "importPath": "multiprocessing",
         "description": "multiprocessing",
         "detail": "multiprocessing",
-        "documentation": {}
-    },
-    {
-        "label": "SimpleXMLRPCServer",
-        "importPath": "xmlrpc.server",
-        "description": "xmlrpc.server",
-        "isExtraImport": true,
-        "detail": "xmlrpc.server",
         "documentation": {}
     },
     {
@@ -2816,70 +3128,6 @@
         "description": "ui_files.visualization_3d",
         "isExtraImport": true,
         "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
-        "label": "server_thread",
-        "importPath": "utils.server",
-        "description": "utils.server",
-        "isExtraImport": true,
-        "detail": "utils.server",
-        "documentation": {}
-    },
-    {
-        "label": "server_stop",
-        "importPath": "utils.server",
-        "description": "utils.server",
-        "isExtraImport": true,
-        "detail": "utils.server",
-        "documentation": {}
-    },
-    {
-        "label": "spawn_play_stepback_warning_thread",
-        "importPath": "utils.audio.audio",
-        "description": "utils.audio.audio",
-        "isExtraImport": true,
-        "detail": "utils.audio.audio",
-        "documentation": {}
-    },
-    {
-        "label": "kill_play_stepback_warning_thread",
-        "importPath": "utils.audio.audio",
-        "description": "utils.audio.audio",
-        "isExtraImport": true,
-        "detail": "utils.audio.audio",
-        "documentation": {}
-    },
-    {
-        "label": "set_audio_volume",
-        "importPath": "utils.audio.audio",
-        "description": "utils.audio.audio",
-        "isExtraImport": true,
-        "detail": "utils.audio.audio",
-        "documentation": {}
-    },
-    {
-        "label": "delay_warning_sound",
-        "importPath": "utils.audio.audio",
-        "description": "utils.audio.audio",
-        "isExtraImport": true,
-        "detail": "utils.audio.audio",
-        "documentation": {}
-    },
-    {
-        "label": "kill_play_stepback_warning_thread",
-        "importPath": "utils.audio.audio",
-        "description": "utils.audio.audio",
-        "isExtraImport": true,
-        "detail": "utils.audio.audio",
-        "documentation": {}
-    },
-    {
-        "label": "spawn_play_stepback_warning_thread",
-        "importPath": "utils.audio.audio",
-        "description": "utils.audio.audio",
-        "isExtraImport": true,
-        "detail": "utils.audio.audio",
         "documentation": {}
     },
     {
@@ -3714,6 +3962,366 @@
         "documentation": {}
     },
     {
+        "label": "server_start",
+        "kind": 2,
+        "importPath": "utils.server.server",
+        "description": "utils.server.server",
+        "peekOfCode": "def server_start() -> Literal[0]:\n    \"\"\"Start the XMLRPC server.\n    Returns:\n        Literal[0]: The exit code of the application.\n    \"\"\"\n    try:\n        # Initialize server if not already initialized\n        if global_vars.server is None:\n            global_vars.server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)\n            logger.debug(\"Start Server\")",
+        "detail": "utils.server.server",
+        "documentation": {}
+    },
+    {
+        "label": "server_stop",
+        "kind": 2,
+        "importPath": "utils.server.server",
+        "description": "utils.server.server",
+        "peekOfCode": "def server_stop() -> None:\n    \"\"\"Stop the XMLRPC server.\n    \"\"\"\n    if global_vars.server:\n        if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n            global_vars.ui.ButtonStopRPCServer.setEnabled(False)\n        try:\n            # First shutdown the server\n            global_vars.server.shutdown()\n            # Close the socket connection",
+        "detail": "utils.server.server",
+        "documentation": {}
+    },
+    {
+        "label": "server_thread",
+        "kind": 2,
+        "importPath": "utils.server.server",
+        "description": "utils.server.server",
+        "peekOfCode": "def server_thread() -> None:\n    \"\"\"Start the XMLRPC server in a separate thread.\n    \"\"\"\n    logger.debug(\"Starting server thread\")\n    # Store thread reference in global_vars\n    global_vars.server_thread = threading.Thread(target=server_start)\n    global_vars.server_thread.daemon = True  # Make thread daemon so it exits when main thread exits\n    global_vars.server_thread.start()\n    if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n        global_vars.ui.ButtonStopRPCServer.setEnabled(True)",
+        "detail": "utils.server.server",
+        "documentation": {}
+    },
+    {
+        "label": "datensenden_manipulation",
+        "kind": 2,
+        "importPath": "utils.server.server",
+        "description": "utils.server.server",
+        "peekOfCode": "def datensenden_manipulation(visibility: bool, display_text: str, display_colour: str) -> None:\n    \"\"\"Manipulate the visibility of the \"Daten Senden\" button and the display text.\n    Args:\n        visibility (bool): Whether the \"Daten Senden\" button should be visible.\n        display_text (str): The text to be displayed in the \"Daten Senden\" button.\n        display_colour (str): The colour of the \"Daten Senden\" button.\n    \"\"\"\n    if global_vars.ui:\n        buttons = []\n        if hasattr(global_vars.ui, 'ButtonDatenSenden'):",
+        "detail": "utils.server.server",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.server.server",
+        "description": "utils.server.server",
+        "peekOfCode": "logger = setup_server_logger()\ndef server_start() -> Literal[0]:\n    \"\"\"Start the XMLRPC server.\n    Returns:\n        Literal[0]: The exit code of the application.\n    \"\"\"\n    try:\n        # Initialize server if not already initialized\n        if global_vars.server is None:\n            global_vars.server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)",
+        "detail": "utils.server.server",
+        "documentation": {}
+    },
+    {
+        "label": "UR10_scanner1and2niobild",
+        "kind": 2,
+        "importPath": "utils.server.UR10_Server_functions",
+        "description": "utils.server.UR10_Server_functions",
+        "peekOfCode": "def UR10_scanner1and2niobild() -> int:\n    \"\"\"Get the scanner status for both scanners.\n    Returns:\n        int: The scanner status.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.scanner1and2niobild:\n        return global_vars.ui.scanner1and2niobild.value()\n    return 0\ndef UR10_scanner1bild() -> int:\n    \"\"\"Get the scanner status for scanner 1.",
+        "detail": "utils.server.UR10_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR10_scanner1bild",
+        "kind": 2,
+        "importPath": "utils.server.UR10_Server_functions",
+        "description": "utils.server.UR10_Server_functions",
+        "peekOfCode": "def UR10_scanner1bild() -> int:\n    \"\"\"Get the scanner status for scanner 1.\n    Returns:\n        int: The scanner status.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.scanner1bild:\n        return global_vars.ui.scanner1bild.value()\n    return 0\ndef UR10_scanner2bild() -> int:\n    \"\"\"Get the scanner status for scanner 2.",
+        "detail": "utils.server.UR10_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR10_scanner2bild",
+        "kind": 2,
+        "importPath": "utils.server.UR10_Server_functions",
+        "description": "utils.server.UR10_Server_functions",
+        "peekOfCode": "def UR10_scanner2bild() -> int:\n    \"\"\"Get the scanner status for scanner 2.\n    Returns:\n        int: The scanner status.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.scanner2bild:\n        return global_vars.ui.scanner2bild.value()\n    return 0\ndef UR10_scanner1and2iobild() -> int:\n    \"\"\"Get the scanner status for both scanners.",
+        "detail": "utils.server.UR10_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR10_scanner1and2iobild",
+        "kind": 2,
+        "importPath": "utils.server.UR10_Server_functions",
+        "description": "utils.server.UR10_Server_functions",
+        "peekOfCode": "def UR10_scanner1and2iobild() -> int:\n    \"\"\"Get the scanner status for both scanners.\n    Returns:\n        int: The scanner status.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.scanner1and2iobild:\n        return global_vars.ui.scanner1and2iobild.value()\n    return 0",
+        "detail": "utils.server.UR10_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.server.UR10_Server_functions",
+        "description": "utils.server.UR10_Server_functions",
+        "peekOfCode": "logger = setup_server_logger()\ndef UR10_scanner1and2niobild() -> int:\n    \"\"\"Get the scanner status for both scanners.\n    Returns:\n        int: The scanner status.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.scanner1and2niobild:\n        return global_vars.ui.scanner1and2niobild.value()\n    return 0\ndef UR10_scanner1bild() -> int:",
+        "detail": "utils.server.UR10_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "ScannerSignals",
+        "kind": 6,
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "peekOfCode": "class ScannerSignals(QObject):\n    \"\"\"Signals for the scanner.\n    Args:\n        QObject (QObject): The parent class of the signals.\n    \"\"\"\n    status_changed = Signal(str, str)  # status, image_path\nscanner_signals = ScannerSignals()\n# Helper function to mark palette as not empty and record timestamp\ndef mark_palette_not_empty(palette_number: int) -> None:\n    \"\"\"Mark a palette as not empty and record the timestamp.",
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "mark_palette_not_empty",
+        "kind": 2,
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "peekOfCode": "def mark_palette_not_empty(palette_number: int) -> None:\n    \"\"\"Mark a palette as not empty and record the timestamp.\n    Args:\n        palette_number (int): The palette number (1 or 2)\n    \"\"\"\n    logger.info(f\"Marking palette {palette_number} as not empty\")\n    current_time = time.time()\n    if palette_number == 1:\n        global_vars.UR20_palette1_empty = False\n        if not hasattr(global_vars, 'palette1_nonempty_timestamp'):",
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_scannerStatus",
+        "kind": 2,
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "peekOfCode": "def UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger.debug(f\"Scanner status update received: {status}\")\n    # Handle scanner fault detection\n    if status != \"True,True,True\":",
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_SetActivePalette",
+        "kind": 2,
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "peekOfCode": "def UR20_SetActivePalette(pallet_number) -> Union[Literal[0], Literal[1]]:\n    \"\"\"Set the active pallet.\n    Args:\n        pallet_number (int): The number of the pallet to be set as active.\n    Returns:\n        Literal[0] | Literal[1]: 0 if the pallet is not empty, 1 if the pallet is empty.\n    \"\"\"\n    logger.debug(f\"Request to set active palette to {pallet_number}\")\n    if pallet_number == 1 and not global_vars.UR20_palette1_empty:\n        logger.warning(\"Cannot set palette 1 as active - not empty\")",
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_RequestPaletteChange",
+        "kind": 2,
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "peekOfCode": "def UR20_RequestPaletteChange(old_pallet_number: int, new_pallet_number: int) -> int:\n    \"\"\"Set the palette change request.\n    Args:\n        old_pallet_number (int): The number of the old pallet.\n        new_pallet_number (int): The number of the new pallet.\n    Returns:\n        int: 1 if palette change request is good to go, 0 if not, 404 if invalid palette number.\n    \"\"\"\n    logger.info(f\"Palette change request received: {old_pallet_number} -> {new_pallet_number}\")\n    # Validate new palette number",
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_GetActivePaletteNumber",
+        "kind": 2,
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "peekOfCode": "def UR20_GetActivePaletteNumber() -> int:\n    \"\"\"Get the active pallet number.\n    Returns:\n        int: The number of the active pallet.\n    \"\"\"\n    if global_vars.UR20_active_palette in [1, 2]:\n        match global_vars.UR20_active_palette:\n            case 1:\n                if global_vars.UR20_palette1_empty:\n                    logger.warning(\"Palette 1 is empty - return palette 1\")",
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_GetPaletteStatus",
+        "kind": 2,
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "peekOfCode": "def UR20_GetPaletteStatus(pallet_number) -> Union[Literal[1], Literal[0], Literal[-1]]:\n    \"\"\"Get the status of the given pallet.\n    Returns:\n        Union[Literal[1], Literal[0], Literal[-1]]: 1 if the pallet is empty, 0 if the pallet is full, -1 if the pallet number is invalid.\n    \"\"\"\n    logger.debug(f\"Checking status of palette {pallet_number}\")\n    match pallet_number:\n        case 1:\n            status = 1 if global_vars.UR20_palette1_empty else 0\n            logger.info(f\"Palette 1 status: {'empty' if status else 'not empty'}\")",
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_SetZwischenLageLegen",
+        "kind": 2,
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "peekOfCode": "def UR20_SetZwischenLageLegen(aktiv: bool):\n    \"\"\"Set the zwischenlage.\n    Args:\n        aktiv (bool): Zwischenlage aktiv legen\n    Returns:\n        1: Zwischenlage aktiv legen\n    \"\"\"\n    logger.info(f\"Setting zwischenlage to {aktiv}\")\n    global_vars.UR20_zwischenlage = bool(aktiv)  # Ensure it's a boolean value\n    # Log additional info for UI state",
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_GetKlemmungAktiv",
+        "kind": 2,
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "peekOfCode": "def UR20_GetKlemmungAktiv() -> bool:\n    \"\"\"Check if the klemmung is active.\n    Returns:\n        bool: True if the klemmung is active, False otherwise.\n    \"\"\"\n    return global_vars.ui.checkBoxKlemmung.isChecked()\ndef UR20_GetScannerOverride() -> list[bool]:\n    \"\"\"Get the scanner override.\n    Returns:\n        list[bool]: The status of the scanner override.",
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR20_GetScannerOverride",
+        "kind": 2,
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "peekOfCode": "def UR20_GetScannerOverride() -> list[bool]:\n    \"\"\"Get the scanner override.\n    Returns:\n        list[bool]: The status of the scanner override.\n    \"\"\"\n    scanner_override: list[bool] = [global_vars.ui.checkBoxScanner1Overwrite.isChecked(), global_vars.ui.checkBoxScanner2Overwrite.isChecked(), global_vars.ui.checkBoxScanner3Overwrite.isChecked()]\n    logger.debug(f\"Checking scanner override: {scanner_override=}\")\n    return scanner_override",
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "peekOfCode": "logger = setup_server_logger()\nclass ScannerSignals(QObject):\n    \"\"\"Signals for the scanner.\n    Args:\n        QObject (QObject): The parent class of the signals.\n    \"\"\"\n    status_changed = Signal(str, str)  # status, image_path\nscanner_signals = ScannerSignals()\n# Helper function to mark palette as not empty and record timestamp\ndef mark_palette_not_empty(palette_number: int) -> None:",
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "scanner_signals",
+        "kind": 5,
+        "importPath": "utils.server.UR20_Server_functions",
+        "description": "utils.server.UR20_Server_functions",
+        "peekOfCode": "scanner_signals = ScannerSignals()\n# Helper function to mark palette as not empty and record timestamp\ndef mark_palette_not_empty(palette_number: int) -> None:\n    \"\"\"Mark a palette as not empty and record the timestamp.\n    Args:\n        palette_number (int): The palette number (1 or 2)\n    \"\"\"\n    logger.info(f\"Marking palette {palette_number} as not empty\")\n    current_time = time.time()\n    if palette_number == 1:",
+        "detail": "utils.server.UR20_Server_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_SetFileName",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_SetFileName(Artikelnummer) -> str:\n    \"\"\"Set the filename.\n    Args:\n        Artikelnummer (str): The article number.\n    Returns:\n        str: The filename.\n    \"\"\"\n    global_vars.FILENAME = (Artikelnummer + '.rob')\n    logger.debug(f\"{global_vars.FILENAME=}\")\n    return global_vars.FILENAME ",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_ReadDataFromUsbStick",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_ReadDataFromUsbStick() -> Union[Literal[0], Literal[1]]:\n    \"\"\"Read data from the Path_USB_STICK.\n    Returns:\n        Union[Literal[0], Literal[1]]: 1 if the data was read successfully, 0 otherwise.\n    \"\"\"\n    global_vars.g_Daten = []\n    global_vars.g_LageZuordnung = []\n    global_vars.g_PaketPos = []\n    global_vars.g_PaketeZuordnung = []\n    global_vars.g_Zwischenlagen = []",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Palette",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_Palette() -> Optional[List[int]]:\n    \"\"\"Get the palette dimensions.\n    Returns:\n        Optional[List[int]]: The palette dimensions, or None if not available.\n    \"\"\"\n    return global_vars.g_PalettenDim\ndef UR_Karton() -> Optional[List[int]]:\n    \"\"\"Get the carton dimensions.\n    Returns:\n        Optional[List[int]]: The carton dimensions, or None if not available.",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Karton",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_Karton() -> Optional[List[int]]:\n    \"\"\"Get the carton dimensions.\n    Returns:\n        Optional[List[int]]: The carton dimensions, or None if not available.\n    \"\"\"\n    return global_vars.g_PaketDim\ndef UR_Lagen() -> Optional[List[int]]:\n    \"\"\"Get the layer types.\n    Returns:\n        Optional[List[int]]: The layer types, or None if not available.",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Lagen",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_Lagen() -> Optional[List[int]]:\n    \"\"\"Get the layer types.\n    Returns:\n        Optional[List[int]]: The layer types, or None if not available.\n    \"\"\"\n    return global_vars.g_LageZuordnung\ndef UR_Zwischenlagen() -> Optional[List[int]]:\n    \"\"\"Get the number of use cycles.\n    Returns:\n        Optional[List[int]]: The number of use cycles, or None if not available.",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Zwischenlagen",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_Zwischenlagen() -> Optional[List[int]]:\n    \"\"\"Get the number of use cycles.\n    Returns:\n        Optional[List[int]]: The number of use cycles, or None if not available.\n    \"\"\"\n    return global_vars.g_Zwischenlagen\ndef UR_PaketPos(Nummer: int) -> Optional[List[int]]:\n    \"\"\"Get the package position, with coordinate transformation for palette 2.\n    Args:\n        Nummer (int): The package number.",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_PaketPos",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_PaketPos(Nummer: int) -> Optional[List[int]]:\n    \"\"\"Get the package position, with coordinate transformation for palette 2.\n    Args:\n        Nummer (int): The package number.\n    Returns:\n        Optional[List[int]]: The package position, or None if not available.\n    \"\"\"\n    if global_vars.g_PaketPos is None:\n        logger.error(\"Package positions not initialized\")\n        return None",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_AnzLagen",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_AnzLagen() -> Optional[int]:\n    \"\"\"Get the number of layers.\n    Returns:\n        Optional[int]: The number of layers, or None if not available.\n    \"\"\"\n    return global_vars.g_AnzLagen\ndef UR_AnzPakete() -> Optional[int]:\n    \"\"\"Get the number of packages.\n    Returns:\n        Optional[int]: The number of packages, or None if not available.",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_AnzPakete",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_AnzPakete() -> Optional[int]:\n    \"\"\"Get the number of packages.\n    Returns:\n        Optional[int]: The number of packages, or None if not available.\n    \"\"\"\n    return global_vars.g_AnzahlPakete\ndef UR_PaketeZuordnung() -> Optional[List[int]]:\n    \"\"\"Get the package order.\n    Returns:\n        Optional[List[int]]: The package order, or None if not available.",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_PaketeZuordnung",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_PaketeZuordnung() -> Optional[List[int]]:\n    \"\"\"Get the package order.\n    Returns:\n        Optional[List[int]]: The package order, or None if not available.\n    \"\"\"\n    return global_vars.g_PaketeZuordnung\n#den \"center of gravity\" messen\ndef UR_CoG(Masse_Paket: float, Masse_Greifer: float, Anzahl_Pakete: int = 1) -> Optional[List[float]]:\n    \"\"\"Calculate the center of gravity.\n    Args:",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_CoG",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_CoG(Masse_Paket: float, Masse_Greifer: float, Anzahl_Pakete: int = 1) -> Optional[List[float]]:\n    \"\"\"Calculate the center of gravity.\n    Args:\n        Masse_Paket (float): The mass of the package.\n        Masse_Greifer (float): The mass of the carton.\n        Anzahl_Pakete (int, optional): The number of packages. Defaults to 1.\n    Returns:\n        Optional[List[float]]: The center of gravity, or None if it couldn't be calculated.\n    \"\"\"\n    if global_vars.g_PaketDim is None:",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Paket_hoehe",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_Paket_hoehe() -> int:\n    \"\"\"Get the package height from UI input.\n    Returns:\n        int: The package height.\n    \"\"\"\n    if global_vars.g_PaketDim is None:\n        logger.error(\"Package dimensions not initialized\")\n        return 0\n    if global_vars.ui and global_vars.ui.EingabeKartonhoehe:\n        global_vars.g_PaketDim[2] = int(global_vars.ui.EingabeKartonhoehe.text())",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Startlage",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_Startlage() -> int:\n    \"\"\"Get the start layer from UI input.\n    Returns:\n        int: The start layer.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeStartlage:\n        global_vars.g_Startlage = int(global_vars.ui.EingabeStartlage.value())\n        return global_vars.g_Startlage\n    return 0\ndef UR_MasseGeschaetzt() -> float:",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_MasseGeschaetzt",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_MasseGeschaetzt() -> float:\n    \"\"\"Get the mass of the carton from UI input.\n    Returns:\n        float: The mass of the carton.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeKartonGewicht:\n        global_vars.g_MassePaket = float(global_vars.ui.EingabeKartonGewicht.text())\n        return global_vars.g_MassePaket\n    return 0.0\ndef UR_PickOffsetX() -> int:",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_PickOffsetX",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_PickOffsetX() -> int:\n    \"\"\"Get the pick offset in x direction from UI input.\n    Returns:\n        int: The pick offset in x direction.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeVerschiebungX:\n        global_vars.g_Pick_Offset_X = int(global_vars.ui.EingabeVerschiebungX.value())\n        return global_vars.g_Pick_Offset_X\n    return 0\ndef UR_PickOffsetY() -> int:",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_PickOffsetY",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_PickOffsetY() -> int:\n    \"\"\"Get the pick offset in y direction from UI input.\n    Returns:\n        int: The pick offset in y direction.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeVerschiebungY:\n        global_vars.g_Pick_Offset_Y = int(global_vars.ui.EingabeVerschiebungY.value())\n        return global_vars.g_Pick_Offset_Y\n    return 0\ndef UR_Quergreifen() -> bool:",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "UR_Quergreifen",
+        "kind": 2,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "def UR_Quergreifen() -> bool:\n    \"\"\"One package lengthwise or crosswise.\n    Returns:\n        bool: True if the package should be gripped lengthwise, False otherwise.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:\n        logger.debug(f\"{global_vars.ui.checkBoxEinzelpaket.isChecked()=}\")\n        return global_vars.ui.checkBoxEinzelpaket.isChecked()\n    return False",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.server.UR_Common_functions",
+        "description": "utils.server.UR_Common_functions",
+        "peekOfCode": "logger = setup_server_logger()\n#Dateiname abfragen\ndef UR_SetFileName(Artikelnummer) -> str:\n    \"\"\"Set the filename.\n    Args:\n        Artikelnummer (str): The article number.\n    Returns:\n        str: The filename.\n    \"\"\"\n    global_vars.FILENAME = (Artikelnummer + '.rob')",
+        "detail": "utils.server.UR_Common_functions",
+        "documentation": {}
+    },
+    {
         "label": "restart_app",
         "kind": 2,
         "importPath": "utils.app_control",
@@ -3736,7 +4344,7 @@
         "kind": 2,
         "importPath": "utils.app_control",
         "description": "utils.app_control",
-        "peekOfCode": "def exit_app():\n    \"\"\"Exit the application.\n    \"\"\"\n    logger.info(\"Exiting application\")\n    # First stop the server if it's running\n    if hasattr(global_vars, 'server') and global_vars.server:\n        from utils.server import server_stop\n        server_stop()\n    # Stop any running audio threads\n    if hasattr(global_vars, 'audio_thread_running') and global_vars.audio_thread_running:",
+        "peekOfCode": "def exit_app():\n    \"\"\"Exit the application.\n    \"\"\"\n    logger.info(\"Exiting application\")\n    # First stop the server if it's running\n    if hasattr(global_vars, 'server') and global_vars.server:\n        server_stop()\n    # Stop any running audio threads\n    if hasattr(global_vars, 'audio_thread_running') and global_vars.audio_thread_running:\n        from utils.audio.audio import kill_play_stepback_warning_thread",
         "detail": "utils.app_control",
         "documentation": {}
     },
@@ -3972,51 +4580,6 @@
         "description": "utils.notification_popup",
         "peekOfCode": "zwischenlage_popup = None\ndef check_zwischenlage_status():\n    \"\"\"\n    Check the zwischenlage status and show/hide popup accordingly.\n    \"\"\"\n    global zwischenlage_popup\n    if global_vars.UR20_zwischenlage is True:\n        if zwischenlage_popup is None or not zwischenlage_popup.isVisible():\n            logger.debug(\"Showing zwischenlage popup\")\n            # Create popup with main window as parent",
         "detail": "utils.notification_popup",
-        "documentation": {}
-    },
-    {
-        "label": "server_start",
-        "kind": 2,
-        "importPath": "utils.server",
-        "description": "utils.server",
-        "peekOfCode": "def server_start() -> Literal[0]:\n    \"\"\"Start the XMLRPC server.\n    Returns:\n        Literal[0]: The exit code of the application.\n    \"\"\"\n    try:\n        # Initialize server if not already initialized\n        if global_vars.server is None:\n            global_vars.server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)\n            logger.debug(\"Start Server\")",
-        "detail": "utils.server",
-        "documentation": {}
-    },
-    {
-        "label": "server_stop",
-        "kind": 2,
-        "importPath": "utils.server",
-        "description": "utils.server",
-        "peekOfCode": "def server_stop() -> None:\n    \"\"\"Stop the XMLRPC server.\n    \"\"\"\n    if global_vars.server:\n        if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n            global_vars.ui.ButtonStopRPCServer.setEnabled(False)\n        try:\n            # First shutdown the server\n            global_vars.server.shutdown()\n            # Close the socket connection",
-        "detail": "utils.server",
-        "documentation": {}
-    },
-    {
-        "label": "server_thread",
-        "kind": 2,
-        "importPath": "utils.server",
-        "description": "utils.server",
-        "peekOfCode": "def server_thread() -> None:\n    \"\"\"Start the XMLRPC server in a separate thread.\n    \"\"\"\n    logger.debug(\"Starting server thread\")\n    # Store thread reference in global_vars\n    global_vars.server_thread = threading.Thread(target=server_start)\n    global_vars.server_thread.daemon = True  # Make thread daemon so it exits when main thread exits\n    global_vars.server_thread.start()\n    if global_vars.ui and global_vars.ui.ButtonStopRPCServer:\n        global_vars.ui.ButtonStopRPCServer.setEnabled(True)",
-        "detail": "utils.server",
-        "documentation": {}
-    },
-    {
-        "label": "datensenden_manipulation",
-        "kind": 2,
-        "importPath": "utils.server",
-        "description": "utils.server",
-        "peekOfCode": "def datensenden_manipulation(visibility: bool, display_text: str, display_colour: str) -> None:\n    \"\"\"Manipulate the visibility of the \"Daten Senden\" button and the display text.\n    Args:\n        visibility (bool): Whether the \"Daten Senden\" button should be visible.\n        display_text (str): The text to be displayed in the \"Daten Senden\" button.\n        display_colour (str): The colour of the \"Daten Senden\" button.\n    \"\"\"\n    if global_vars.ui:\n        buttons = []\n        if hasattr(global_vars.ui, 'ButtonDatenSenden'):",
-        "detail": "utils.server",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.server",
-        "description": "utils.server",
-        "peekOfCode": "logger = setup_server_logger()\ndef server_start() -> Literal[0]:\n    \"\"\"Start the XMLRPC server.\n    Returns:\n        Literal[0]: The exit code of the application.\n    \"\"\"\n    try:\n        # Initialize server if not already initialized\n        if global_vars.server is None:\n            global_vars.server = SimpleXMLRPCServer((\"\", 8080), allow_none=True)",
-        "detail": "utils.server",
         "documentation": {}
     },
     {
@@ -4386,321 +4949,6 @@
         "description": "utils.updater",
         "peekOfCode": "logger = logging.getLogger(__name__)\ndef check_for_updates():\n    \"\"\"Check for updates.\n    \"\"\"    \n    # TODO: Add visual feedback to the user so that they know that the application is checking for updates\n    # disable the main window for interaction\n    global_vars.main_window.setDisabled(True)\n    msg_box = QMessageBox()\n    msg_box.setWindowTitle(\"Update suchen\")\n    msg_box.setText(\"Es wird nach einem Update gesucht.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.\")",
         "detail": "utils.updater",
-        "documentation": {}
-    },
-    {
-        "label": "UR10_scanner1and2niobild",
-        "kind": 2,
-        "importPath": "utils.UR10_Server_functions",
-        "description": "utils.UR10_Server_functions",
-        "peekOfCode": "def UR10_scanner1and2niobild() -> None:\n    \"\"\"Set the scanner image.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.label_7:\n        global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner1&2nio.png'))\n    return\ndef UR10_scanner1bild() -> None:\n    \"\"\"Set the scanner image.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.label_7:",
-        "detail": "utils.UR10_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR10_scanner1bild",
-        "kind": 2,
-        "importPath": "utils.UR10_Server_functions",
-        "description": "utils.UR10_Server_functions",
-        "peekOfCode": "def UR10_scanner1bild() -> None:\n    \"\"\"Set the scanner image.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.label_7:\n        global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner1nio.png'))\n    return\ndef UR10_scanner2bild() -> None:\n    \"\"\"Set the scanner image.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.label_7:",
-        "detail": "utils.UR10_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR10_scanner2bild",
-        "kind": 2,
-        "importPath": "utils.UR10_Server_functions",
-        "description": "utils.UR10_Server_functions",
-        "peekOfCode": "def UR10_scanner2bild() -> None:\n    \"\"\"Set the scanner image.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.label_7:\n        global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner2nio.png'))\n    return\ndef UR10_scanner1and2iobild() -> None:\n    \"\"\"Set the scanner image.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.label_7:",
-        "detail": "utils.UR10_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR10_scanner1and2iobild",
-        "kind": 2,
-        "importPath": "utils.UR10_Server_functions",
-        "description": "utils.UR10_Server_functions",
-        "peekOfCode": "def UR10_scanner1and2iobild() -> None:\n    \"\"\"Set the scanner image.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.label_7:\n        global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scannerio.png'))\n    return",
-        "detail": "utils.UR10_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.UR10_Server_functions",
-        "description": "utils.UR10_Server_functions",
-        "peekOfCode": "logger = setup_server_logger()\ndef UR10_scanner1and2niobild() -> None:\n    \"\"\"Set the scanner image.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.label_7:\n        global_vars.ui.label_7.setPixmap(QPixmap(u':/ScannerUR10e/imgs/scanner1&2nio.png'))\n    return\ndef UR10_scanner1bild() -> None:\n    \"\"\"Set the scanner image.\n    \"\"\"",
-        "detail": "utils.UR10_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "ScannerSignals",
-        "kind": 6,
-        "importPath": "utils.UR20_Server_functions",
-        "description": "utils.UR20_Server_functions",
-        "peekOfCode": "class ScannerSignals(QObject):\n    \"\"\"Signals for the scanner.\n    Args:\n        QObject (QObject): The parent class of the signals.\n    \"\"\"\n    status_changed = Signal(str, str)  # status, image_path\nscanner_signals = ScannerSignals()\n# Helper function to mark palette as not empty and record timestamp\ndef mark_palette_not_empty(palette_number: int) -> None:\n    \"\"\"Mark a palette as not empty and record the timestamp.",
-        "detail": "utils.UR20_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "mark_palette_not_empty",
-        "kind": 2,
-        "importPath": "utils.UR20_Server_functions",
-        "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def mark_palette_not_empty(palette_number: int) -> None:\n    \"\"\"Mark a palette as not empty and record the timestamp.\n    Args:\n        palette_number (int): The palette number (1 or 2)\n    \"\"\"\n    logger.info(f\"Marking palette {palette_number} as not empty\")\n    current_time = time.time()\n    if palette_number == 1:\n        global_vars.UR20_palette1_empty = False\n        if not hasattr(global_vars, 'palette1_nonempty_timestamp'):",
-        "detail": "utils.UR20_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR20_scannerStatus",
-        "kind": 2,
-        "importPath": "utils.UR20_Server_functions",
-        "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger.debug(f\"Scanner status update received: {status}\")\n    # Handle scanner fault detection\n    if status != \"True,True,True\":",
-        "detail": "utils.UR20_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR20_SetActivePalette",
-        "kind": 2,
-        "importPath": "utils.UR20_Server_functions",
-        "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_SetActivePalette(pallet_number) -> Union[Literal[0], Literal[1]]:\n    \"\"\"Set the active pallet.\n    Args:\n        pallet_number (int): The number of the pallet to be set as active.\n    Returns:\n        Literal[0] | Literal[1]: 0 if the pallet is not empty, 1 if the pallet is empty.\n    \"\"\"\n    logger.debug(f\"Request to set active palette to {pallet_number}\")\n    if pallet_number == 1 and not global_vars.UR20_palette1_empty:\n        logger.warning(\"Cannot set palette 1 as active - not empty\")",
-        "detail": "utils.UR20_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR20_RequestPaletteChange",
-        "kind": 2,
-        "importPath": "utils.UR20_Server_functions",
-        "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_RequestPaletteChange(old_pallet_number: int, new_pallet_number: int) -> int:\n    \"\"\"Set the palette change request.\n    Args:\n        old_pallet_number (int): The number of the old pallet.\n        new_pallet_number (int): The number of the new pallet.\n    Returns:\n        int: 1 if palette change request is good to go, 0 if not, 404 if invalid palette number.\n    \"\"\"\n    logger.info(f\"Palette change request received: {old_pallet_number} -> {new_pallet_number}\")\n    # Validate new palette number",
-        "detail": "utils.UR20_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR20_GetActivePaletteNumber",
-        "kind": 2,
-        "importPath": "utils.UR20_Server_functions",
-        "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_GetActivePaletteNumber() -> int:\n    \"\"\"Get the active pallet number.\n    Returns:\n        int: The number of the active pallet.\n    \"\"\"\n    if global_vars.UR20_active_palette in [1, 2]:\n        match global_vars.UR20_active_palette:\n            case 1:\n                if global_vars.UR20_palette1_empty:\n                    logger.warning(\"Palette 1 is empty - return palette 1\")",
-        "detail": "utils.UR20_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR20_GetPaletteStatus",
-        "kind": 2,
-        "importPath": "utils.UR20_Server_functions",
-        "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_GetPaletteStatus(pallet_number) -> Union[Literal[1], Literal[0], Literal[-1]]:\n    \"\"\"Get the status of the given pallet.\n    Returns:\n        Union[Literal[1], Literal[0], Literal[-1]]: 1 if the pallet is empty, 0 if the pallet is full, -1 if the pallet number is invalid.\n    \"\"\"\n    logger.debug(f\"Checking status of palette {pallet_number}\")\n    match pallet_number:\n        case 1:\n            status = 1 if global_vars.UR20_palette1_empty else 0\n            logger.info(f\"Palette 1 status: {'empty' if status else 'not empty'}\")",
-        "detail": "utils.UR20_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR20_SetZwischenLageLegen",
-        "kind": 2,
-        "importPath": "utils.UR20_Server_functions",
-        "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_SetZwischenLageLegen(aktiv: bool):\n    \"\"\"Set the zwischenlage.\n    Args:\n        aktiv (bool): Zwischenlage aktiv legen\n    Returns:\n        1: Zwischenlage aktiv legen\n    \"\"\"\n    logger.info(f\"Setting zwischenlage to {aktiv}\")\n    global_vars.UR20_zwischenlage = bool(aktiv)  # Ensure it's a boolean value\n    # Log additional info for UI state",
-        "detail": "utils.UR20_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR20_GetKlemmungAktiv",
-        "kind": 2,
-        "importPath": "utils.UR20_Server_functions",
-        "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_GetKlemmungAktiv() -> bool:\n    \"\"\"Check if the klemmung is active.\n    Returns:\n        bool: True if the klemmung is active, False otherwise.\n    \"\"\"\n    return global_vars.ui.checkBoxKlemmung.isChecked()\ndef UR20_GetScannerOverride() -> list[bool]:\n    \"\"\"Get the scanner override.\n    Returns:\n        list[bool]: The status of the scanner override.",
-        "detail": "utils.UR20_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR20_GetScannerOverride",
-        "kind": 2,
-        "importPath": "utils.UR20_Server_functions",
-        "description": "utils.UR20_Server_functions",
-        "peekOfCode": "def UR20_GetScannerOverride() -> list[bool]:\n    \"\"\"Get the scanner override.\n    Returns:\n        list[bool]: The status of the scanner override.\n    \"\"\"\n    scanner_override: list[bool] = [global_vars.ui.checkBoxScanner1Overwrite.isChecked(), global_vars.ui.checkBoxScanner2Overwrite.isChecked(), global_vars.ui.checkBoxScanner3Overwrite.isChecked()]\n    logger.debug(f\"Checking scanner override: {scanner_override=}\")\n    return scanner_override",
-        "detail": "utils.UR20_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.UR20_Server_functions",
-        "description": "utils.UR20_Server_functions",
-        "peekOfCode": "logger = setup_server_logger()\nclass ScannerSignals(QObject):\n    \"\"\"Signals for the scanner.\n    Args:\n        QObject (QObject): The parent class of the signals.\n    \"\"\"\n    status_changed = Signal(str, str)  # status, image_path\nscanner_signals = ScannerSignals()\n# Helper function to mark palette as not empty and record timestamp\ndef mark_palette_not_empty(palette_number: int) -> None:",
-        "detail": "utils.UR20_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "scanner_signals",
-        "kind": 5,
-        "importPath": "utils.UR20_Server_functions",
-        "description": "utils.UR20_Server_functions",
-        "peekOfCode": "scanner_signals = ScannerSignals()\n# Helper function to mark palette as not empty and record timestamp\ndef mark_palette_not_empty(palette_number: int) -> None:\n    \"\"\"Mark a palette as not empty and record the timestamp.\n    Args:\n        palette_number (int): The palette number (1 or 2)\n    \"\"\"\n    logger.info(f\"Marking palette {palette_number} as not empty\")\n    current_time = time.time()\n    if palette_number == 1:",
-        "detail": "utils.UR20_Server_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_SetFileName",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_SetFileName(Artikelnummer) -> str:\n    \"\"\"Set the filename.\n    Args:\n        Artikelnummer (str): The article number.\n    Returns:\n        str: The filename.\n    \"\"\"\n    global_vars.FILENAME = (Artikelnummer + '.rob')\n    logger.debug(f\"{global_vars.FILENAME=}\")\n    return global_vars.FILENAME ",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_ReadDataFromUsbStick",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_ReadDataFromUsbStick() -> Union[Literal[0], Literal[1]]:\n    \"\"\"Read data from the Path_USB_STICK.\n    Returns:\n        Union[Literal[0], Literal[1]]: 1 if the data was read successfully, 0 otherwise.\n    \"\"\"\n    global_vars.g_Daten = []\n    global_vars.g_LageZuordnung = []\n    global_vars.g_PaketPos = []\n    global_vars.g_PaketeZuordnung = []\n    global_vars.g_Zwischenlagen = []",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_Palette",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_Palette() -> Optional[List[int]]:\n    \"\"\"Get the palette dimensions.\n    Returns:\n        Optional[List[int]]: The palette dimensions, or None if not available.\n    \"\"\"\n    return global_vars.g_PalettenDim\ndef UR_Karton() -> Optional[List[int]]:\n    \"\"\"Get the carton dimensions.\n    Returns:\n        Optional[List[int]]: The carton dimensions, or None if not available.",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_Karton",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_Karton() -> Optional[List[int]]:\n    \"\"\"Get the carton dimensions.\n    Returns:\n        Optional[List[int]]: The carton dimensions, or None if not available.\n    \"\"\"\n    return global_vars.g_PaketDim\ndef UR_Lagen() -> Optional[List[int]]:\n    \"\"\"Get the layer types.\n    Returns:\n        Optional[List[int]]: The layer types, or None if not available.",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_Lagen",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_Lagen() -> Optional[List[int]]:\n    \"\"\"Get the layer types.\n    Returns:\n        Optional[List[int]]: The layer types, or None if not available.\n    \"\"\"\n    return global_vars.g_LageZuordnung\ndef UR_Zwischenlagen() -> Optional[List[int]]:\n    \"\"\"Get the number of use cycles.\n    Returns:\n        Optional[List[int]]: The number of use cycles, or None if not available.",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_Zwischenlagen",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_Zwischenlagen() -> Optional[List[int]]:\n    \"\"\"Get the number of use cycles.\n    Returns:\n        Optional[List[int]]: The number of use cycles, or None if not available.\n    \"\"\"\n    return global_vars.g_Zwischenlagen\ndef UR_PaketPos(Nummer: int) -> Optional[List[int]]:\n    \"\"\"Get the package position, with coordinate transformation for palette 2.\n    Args:\n        Nummer (int): The package number.",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_PaketPos",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_PaketPos(Nummer: int) -> Optional[List[int]]:\n    \"\"\"Get the package position, with coordinate transformation for palette 2.\n    Args:\n        Nummer (int): The package number.\n    Returns:\n        Optional[List[int]]: The package position, or None if not available.\n    \"\"\"\n    if global_vars.g_PaketPos is None:\n        logger.error(\"Package positions not initialized\")\n        return None",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_AnzLagen",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_AnzLagen() -> Optional[int]:\n    \"\"\"Get the number of layers.\n    Returns:\n        Optional[int]: The number of layers, or None if not available.\n    \"\"\"\n    return global_vars.g_AnzLagen\ndef UR_AnzPakete() -> Optional[int]:\n    \"\"\"Get the number of packages.\n    Returns:\n        Optional[int]: The number of packages, or None if not available.",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_AnzPakete",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_AnzPakete() -> Optional[int]:\n    \"\"\"Get the number of packages.\n    Returns:\n        Optional[int]: The number of packages, or None if not available.\n    \"\"\"\n    return global_vars.g_AnzahlPakete\ndef UR_PaketeZuordnung() -> Optional[List[int]]:\n    \"\"\"Get the package order.\n    Returns:\n        Optional[List[int]]: The package order, or None if not available.",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_PaketeZuordnung",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_PaketeZuordnung() -> Optional[List[int]]:\n    \"\"\"Get the package order.\n    Returns:\n        Optional[List[int]]: The package order, or None if not available.\n    \"\"\"\n    return global_vars.g_PaketeZuordnung\n#den \"center of gravity\" messen\ndef UR_CoG(Masse_Paket: float, Masse_Greifer: float, Anzahl_Pakete: int = 1) -> Optional[List[float]]:\n    \"\"\"Calculate the center of gravity.\n    Args:",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_CoG",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_CoG(Masse_Paket: float, Masse_Greifer: float, Anzahl_Pakete: int = 1) -> Optional[List[float]]:\n    \"\"\"Calculate the center of gravity.\n    Args:\n        Masse_Paket (float): The mass of the package.\n        Masse_Greifer (float): The mass of the carton.\n        Anzahl_Pakete (int, optional): The number of packages. Defaults to 1.\n    Returns:\n        Optional[List[float]]: The center of gravity, or None if it couldn't be calculated.\n    \"\"\"\n    if global_vars.g_PaketDim is None:",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_Paket_hoehe",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_Paket_hoehe() -> int:\n    \"\"\"Get the package height from UI input.\n    Returns:\n        int: The package height.\n    \"\"\"\n    if global_vars.g_PaketDim is None:\n        logger.error(\"Package dimensions not initialized\")\n        return 0\n    if global_vars.ui and global_vars.ui.EingabeKartonhoehe:\n        global_vars.g_PaketDim[2] = int(global_vars.ui.EingabeKartonhoehe.text())",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_Startlage",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_Startlage() -> int:\n    \"\"\"Get the start layer from UI input.\n    Returns:\n        int: The start layer.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeStartlage:\n        global_vars.g_Startlage = int(global_vars.ui.EingabeStartlage.value())\n        return global_vars.g_Startlage\n    return 0\ndef UR_MasseGeschaetzt() -> float:",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_MasseGeschaetzt",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_MasseGeschaetzt() -> float:\n    \"\"\"Get the mass of the carton from UI input.\n    Returns:\n        float: The mass of the carton.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeKartonGewicht:\n        global_vars.g_MassePaket = float(global_vars.ui.EingabeKartonGewicht.text())\n        return global_vars.g_MassePaket\n    return 0.0\ndef UR_PickOffsetX() -> int:",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_PickOffsetX",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_PickOffsetX() -> int:\n    \"\"\"Get the pick offset in x direction from UI input.\n    Returns:\n        int: The pick offset in x direction.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeVerschiebungX:\n        global_vars.g_Pick_Offset_X = int(global_vars.ui.EingabeVerschiebungX.value())\n        return global_vars.g_Pick_Offset_X\n    return 0\ndef UR_PickOffsetY() -> int:",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_PickOffsetY",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_PickOffsetY() -> int:\n    \"\"\"Get the pick offset in y direction from UI input.\n    Returns:\n        int: The pick offset in y direction.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.EingabeVerschiebungY:\n        global_vars.g_Pick_Offset_Y = int(global_vars.ui.EingabeVerschiebungY.value())\n        return global_vars.g_Pick_Offset_Y\n    return 0\ndef UR_Quergreifen() -> bool:",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "UR_Quergreifen",
-        "kind": 2,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "def UR_Quergreifen() -> bool:\n    \"\"\"One package lengthwise or crosswise.\n    Returns:\n        bool: True if the package should be gripped lengthwise, False otherwise.\n    \"\"\"\n    if global_vars.ui and global_vars.ui.checkBoxEinzelpaket:\n        logger.debug(f\"{global_vars.ui.checkBoxEinzelpaket.isChecked()=}\")\n        return global_vars.ui.checkBoxEinzelpaket.isChecked()\n    return False",
-        "detail": "utils.UR_Common_functions",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.UR_Common_functions",
-        "description": "utils.UR_Common_functions",
-        "peekOfCode": "logger = setup_server_logger()\n#Dateiname abfragen\ndef UR_SetFileName(Artikelnummer) -> str:\n    \"\"\"Set the filename.\n    Args:\n        Artikelnummer (str): The article number.\n    Returns:\n        str: The filename.\n    \"\"\"\n    global_vars.FILENAME = (Artikelnummer + '.rob')",
-        "detail": "utils.UR_Common_functions",
         "documentation": {}
     },
     {

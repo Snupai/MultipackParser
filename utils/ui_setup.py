@@ -22,11 +22,12 @@ from utils.ui_helpers import (CustomDoubleValidator, handle_scanner_status,
 from utils.robot.robot_control import (display_selected_file, load, 
                                 send_cmd_play, send_cmd_pause, send_cmd_stop, load_selected_file,
                                 send_remote_control_command)
-from utils.server import server_thread, server_stop
+from utils.server.server import server_thread, server_stop
 from utils.audio.audio import (spawn_play_stepback_warning_thread, kill_play_stepback_warning_thread, 
                         set_audio_volume, delay_warning_sound)
 from utils.updater import check_for_updates
 from utils.app_control import restart_app, exit_app
+from utils.server.UR20_Server_functions import scanner_signals
 
 # Add logger
 logger = logging.getLogger(__name__)
@@ -223,7 +224,6 @@ def connect_signal_handlers():
     global_vars.ui.pushButtonExitApp.clicked.connect(restart_app)
     
     # Connect scanner signal
-    from utils.UR20_Server_functions import scanner_signals
     scanner_signals.status_changed.connect(handle_scanner_status)
 
 def setup_password_handling():

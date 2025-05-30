@@ -3,7 +3,7 @@
 from PySide6.QtWidgets import QMessageBox, QLabel
 from PySide6.QtGui import QPixmap
 import utils
-from . import global_vars
+from utils import global_vars
 from datetime import datetime
 from utils.status_manager import update_status_label
 from typing import Literal, cast, Union

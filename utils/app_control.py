@@ -8,6 +8,7 @@ from PySide6.QtCore import Qt
 
 from utils import global_vars
 from utils.ui_helpers import set_settings_line_edits
+from utils.server.server import server_stop
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,6 @@ def restart_app():
     
     logger.info("Rebooting system...")
     if hasattr(global_vars, 'server') and global_vars.server:
-        from utils.server import server_stop
         server_stop()
     subprocess.run(['sudo', 'reboot'], check=True)
 
@@ -73,7 +73,6 @@ def exit_app():
     
     # First stop the server if it's running
     if hasattr(global_vars, 'server') and global_vars.server:
-        from utils.server import server_stop
         server_stop()
     
     # Stop any running audio threads

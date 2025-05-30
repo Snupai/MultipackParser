@@ -5,7 +5,7 @@
 from typing import Literal, List, Optional, Union, Tuple
 
 from utils.database.database import load_from_database
-from . import global_vars
+from utils import global_vars
 
 from utils.logging_config import setup_server_logger
 

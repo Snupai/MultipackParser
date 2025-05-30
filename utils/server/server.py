@@ -4,9 +4,23 @@ from xmlrpc.server import SimpleXMLRPCServer
 from typing import Literal
 
 from utils import global_vars
-from utils import UR_Common_functions as UR
-from utils import UR10_Server_functions as UR10
-from utils import UR20_Server_functions as UR20
+from utils.server.UR_Common_functions import (
+    UR_SetFileName, UR_ReadDataFromUsbStick, UR_Palette, UR_Karton,
+    UR_Lagen, UR_Zwischenlagen, UR_PaketPos, UR_AnzLagen,
+    UR_AnzPakete, UR_PaketeZuordnung, UR_Paket_hoehe, UR_Startlage,
+    UR_Quergreifen, UR_CoG, UR_MasseGeschaetzt, UR_PickOffsetX,
+    UR_PickOffsetY
+)
+from utils.server.UR10_Server_functions import (
+    UR10_scanner1and2niobild, UR10_scanner1bild,
+    UR10_scanner2bild, UR10_scanner1and2iobild
+)
+from utils.server.UR20_Server_functions import (
+    UR20_scannerStatus, UR20_SetActivePalette, UR20_RequestPaletteChange,
+    UR20_GetActivePaletteNumber, UR20_GetPaletteStatus,
+    UR20_SetZwischenLageLegen, UR20_GetKlemmungAktiv,
+    UR20_GetScannerOverride
+)
 from utils.message import MessageType
 from utils.message_manager import MessageManager
 from utils.logging_config import setup_server_logger
@@ -48,23 +62,23 @@ def server_start() -> Literal[0]:
 
     # Register common functions for both robot types
     common_functions = [
-        (UR.UR_SetFileName, "UR_SetFileName"),
-        (UR.UR_ReadDataFromUsbStick, "UR_ReadDataFromUsbStick"),
-        (UR.UR_Palette, "UR_Palette"),
-        (UR.UR_Karton, "UR_Karton"),
-        (UR.UR_Lagen, "UR_Lagen"),
-        (UR.UR_Zwischenlagen, "UR_Zwischenlagen"),
-        (UR.UR_PaketPos, "UR_PaketPos"),  # type: ignore
-        (UR.UR_AnzLagen, "UR_AnzLagen"),
-        (UR.UR_AnzPakete, "UR_AnzPakete"),
-        (UR.UR_PaketeZuordnung, "UR_PaketeZuordnung"),
-        (UR.UR_Paket_hoehe, "UR_Paket_hoehe"),
-        (UR.UR_Startlage, "UR_Startlage"),
-        (UR.UR_Quergreifen, "UR_Quergreifen"),
-        (UR.UR_CoG, "UR_CoG"),  # type: ignore
-        (UR.UR_MasseGeschaetzt, "UR_MasseGeschaetzt"),
-        (UR.UR_PickOffsetX, "UR_PickOffsetX"),
-        (UR.UR_PickOffsetY, "UR_PickOffsetY")
+        (UR_SetFileName, "UR_SetFileName"),
+        (UR_ReadDataFromUsbStick, "UR_ReadDataFromUsbStick"),
+        (UR_Palette, "UR_Palette"),
+        (UR_Karton, "UR_Karton"),
+        (UR_Lagen, "UR_Lagen"),
+        (UR_Zwischenlagen, "UR_Zwischenlagen"),
+        (UR_PaketPos, "UR_PaketPos"),
+        (UR_AnzLagen, "UR_AnzLagen"),
+        (UR_AnzPakete, "UR_AnzPakete"),
+        (UR_PaketeZuordnung, "UR_PaketeZuordnung"),
+        (UR_Paket_hoehe, "UR_Paket_hoehe"),
+        (UR_Startlage, "UR_Startlage"),
+        (UR_Quergreifen, "UR_Quergreifen"),
+        (UR_CoG, "UR_CoG"),
+        (UR_MasseGeschaetzt, "UR_MasseGeschaetzt"),
+        (UR_PickOffsetX, "UR_PickOffsetX"),
+        (UR_PickOffsetY, "UR_PickOffsetY")
     ]
 
     for func, name in common_functions:
@@ -74,23 +88,23 @@ def server_start() -> Literal[0]:
     # Register robot type specific functions here if needed
     if robot_type == 'UR10':
         ur10_functions = [
-            (UR10.UR10_scanner1and2niobild, "UR_scanner1and2niobild"),
-            (UR10.UR10_scanner1bild, "UR_scanner1bild"),
-            (UR10.UR10_scanner2bild, "UR_scanner2bild"),
-            (UR10.UR10_scanner1and2iobild, "UR_scanner1and2iobild")
+            (UR10_scanner1and2niobild, "UR_scanner1and2niobild"),
+            (UR10_scanner1bild, "UR_scanner1bild"),
+            (UR10_scanner2bild, "UR_scanner2bild"),
+            (UR10_scanner1and2iobild, "UR_scanner1and2iobild")
         ]
         for func, name in ur10_functions:
             global_vars.server.register_function(log_rpc_call(func, name), name)
     elif robot_type == 'UR20':
         ur20_functions = [
-            (UR20.UR20_scannerStatus, "UR_scannerStatus"),  # type: ignore
-            (UR20.UR20_SetActivePalette, "UR_SetActivePalette"),
-            (UR20.UR20_RequestPaletteChange, "UR_RequestPaletteChange"),
-            (UR20.UR20_GetActivePaletteNumber, "UR_GetActivePaletteNumber"),
-            (UR20.UR20_GetPaletteStatus, "UR_GetPaletteStatus"),
-            (UR20.UR20_SetZwischenLageLegen, "UR_SetZwischenLageLegen"),
-            (UR20.UR20_GetKlemmungAktiv, "UR_GetKlemmungAktiv"),
-            (UR20.UR20_GetScannerOverride, "UR_GetScannerOverwrite")
+            (UR20_scannerStatus, "UR_scannerStatus"),
+            (UR20_SetActivePalette, "UR_SetActivePalette"),
+            (UR20_RequestPaletteChange, "UR_RequestPaletteChange"),
+            (UR20_GetActivePaletteNumber, "UR_GetActivePaletteNumber"),
+            (UR20_GetPaletteStatus, "UR_GetPaletteStatus"),
+            (UR20_SetZwischenLageLegen, "UR_SetZwischenLageLegen"),
+            (UR20_GetKlemmungAktiv, "UR_GetKlemmungAktiv"),
+            (UR20_GetScannerOverride, "UR_GetScannerOverwrite")
         ]
         for func, name in ur20_functions:
             global_vars.server.register_function(log_rpc_call(func, name), name)
