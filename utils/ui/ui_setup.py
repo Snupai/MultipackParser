@@ -12,7 +12,7 @@ from PySide6.QtGui import QRegularExpressionValidator, QIntValidator
 
 from ui_files.ui_main_window import Ui_Form
 from ui_files.visualization_3d import initialize_3d_view, clear_canvas, load_rob_files
-from utils import global_vars
+from utils.system.core import global_vars
 from ..message.status_manager import update_status_label
 from utils.ui.ui_helpers import (CustomDoubleValidator, handle_scanner_status,
                              set_wordlist, open_page, Page, open_password_dialog, leave_settings_page,
@@ -26,7 +26,7 @@ from utils.server.server import server_thread, server_stop
 from utils.audio.audio import (spawn_play_stepback_warning_thread, kill_play_stepback_warning_thread, 
                         set_audio_volume, delay_warning_sound)
 from utils.system.updater import check_for_updates
-from utils.app_control import restart_app, exit_app
+from utils.system.core.app_control import restart_app, exit_app
 from utils.server.UR20_Server_functions import scanner_signals
 from utils.ui.notification_popup import check_zwischenlage_status
 from utils.ui.ui_helpers import check_palette_clearing_status

@@ -1,7 +1,7 @@
 import socket
 import logging
 import os
-from utils import global_vars
+from utils.system.core import global_vars
 from utils.database.database import save_to_database, find_file_in_database, list_available_files
 from ..message.status_manager import update_status_label
 

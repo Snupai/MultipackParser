@@ -444,6 +444,54 @@
         "documentation": {}
     },
     {
+        "label": "QApplication",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QSplashScreen",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QProgressBar",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLabel",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMessageBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMessageBox",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QLabel",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -573,54 +621,6 @@
     },
     {
         "label": "QMainWindow",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QMessageBox",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QMessageBox",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QApplication",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QSplashScreen",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QProgressBar",
-        "importPath": "PySide6.QtWidgets",
-        "description": "PySide6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PySide6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QLabel",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
         "isExtraImport": true,
@@ -932,6 +932,30 @@
         "documentation": {}
     },
     {
+        "label": "Qt",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QLocale",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
         "label": "QTimer",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
@@ -1020,30 +1044,6 @@
         "documentation": {}
     },
     {
-        "label": "Qt",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
-        "label": "Qt",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
-        "label": "QLocale",
-        "importPath": "PySide6.QtCore",
-        "description": "PySide6.QtCore",
-        "isExtraImport": true,
-        "detail": "PySide6.QtCore",
-        "documentation": {}
-    },
-    {
         "label": "QFont",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
@@ -1357,6 +1357,30 @@
     },
     {
         "label": "QPixmap",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPixmap",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QPainter",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QColor",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
         "isExtraImport": true,
@@ -1437,30 +1461,6 @@
     },
     {
         "label": "QIntValidator",
-        "importPath": "PySide6.QtGui",
-        "description": "PySide6.QtGui",
-        "isExtraImport": true,
-        "detail": "PySide6.QtGui",
-        "documentation": {}
-    },
-    {
-        "label": "QPixmap",
-        "importPath": "PySide6.QtGui",
-        "description": "PySide6.QtGui",
-        "isExtraImport": true,
-        "detail": "PySide6.QtGui",
-        "documentation": {}
-    },
-    {
-        "label": "QPainter",
-        "importPath": "PySide6.QtGui",
-        "description": "PySide6.QtGui",
-        "isExtraImport": true,
-        "detail": "PySide6.QtGui",
-        "documentation": {}
-    },
-    {
-        "label": "QColor",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
         "isExtraImport": true,
@@ -1716,14 +1716,6 @@
         "documentation": {}
     },
     {
-        "label": "Optional",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
         "label": "Union",
         "importPath": "typing",
         "description": "typing",
@@ -1756,6 +1748,14 @@
         "documentation": {}
     },
     {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "MessageType",
         "importPath": "utils.message.message",
         "description": "utils.message.message",
@@ -1780,180 +1780,163 @@
         "documentation": {}
     },
     {
-        "label": "utils",
-        "kind": 6,
+        "label": "global_vars",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "importPath": "utils",
-        "description": "utils",
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
-        "documentation": {}
-    },
-    {
-        "label": "Settings",
-        "importPath": "utils",
-        "description": "utils",
-        "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
         "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
+        "importPath": "utils.system.core",
+        "description": "utils.system.core",
         "isExtraImport": true,
-        "detail": "utils",
-        "documentation": {}
-    },
-    {
-        "label": "global_vars",
-        "importPath": "utils",
-        "description": "utils",
-        "isExtraImport": true,
-        "detail": "utils",
+        "detail": "utils.system.core",
         "documentation": {}
     },
     {
@@ -1988,6 +1971,22 @@
         "importPath": "hashlib",
         "description": "hashlib",
         "detail": "hashlib",
+        "documentation": {}
+    },
+    {
+        "label": "Settings",
+        "importPath": "utils.system.config.settings",
+        "description": "utils.system.config.settings",
+        "isExtraImport": true,
+        "detail": "utils.system.config.settings",
+        "documentation": {}
+    },
+    {
+        "label": "Settings",
+        "importPath": "utils.system.config.settings",
+        "description": "utils.system.config.settings",
+        "isExtraImport": true,
+        "detail": "utils.system.config.settings",
         "documentation": {}
     },
     {
@@ -2638,11 +2637,28 @@
         "documentation": {}
     },
     {
+        "label": "logger",
+        "importPath": "utils.system.config.logging_config",
+        "description": "utils.system.config.logging_config",
+        "isExtraImport": true,
+        "detail": "utils.system.config.logging_config",
+        "documentation": {}
+    },
+    {
         "label": "setup_logger",
         "importPath": "utils.system.config.logging_config",
         "description": "utils.system.config.logging_config",
         "isExtraImport": true,
         "detail": "utils.system.config.logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "utils",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "utils",
+        "description": "utils",
+        "detail": "utils",
         "documentation": {}
     },
     {
@@ -2737,110 +2753,11 @@
         "documentation": {}
     },
     {
-        "label": "Fernet",
-        "importPath": "cryptography.fernet",
-        "description": "cryptography.fernet",
+        "label": "set_settings_line_edits",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
-        "detail": "cryptography.fernet",
-        "documentation": {}
-    },
-    {
-        "label": "string",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "string",
-        "description": "string",
-        "detail": "string",
-        "documentation": {}
-    },
-    {
-        "label": "ctypes",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "ctypes",
-        "description": "ctypes",
-        "detail": "ctypes",
-        "documentation": {}
-    },
-    {
-        "label": "shutil",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "shutil",
-        "description": "shutil",
-        "detail": "shutil",
-        "documentation": {}
-    },
-    {
-        "label": "BlinkingLabel",
-        "importPath": "ui_files.BlinkingLabel",
-        "description": "ui_files.BlinkingLabel",
-        "isExtraImport": true,
-        "detail": "ui_files.BlinkingLabel",
-        "documentation": {}
-    },
-    {
-        "label": "PasswordEntryDialog",
-        "importPath": "ui_files.PasswordDialog",
-        "description": "ui_files.PasswordDialog",
-        "isExtraImport": true,
-        "detail": "ui_files.PasswordDialog",
-        "documentation": {}
-    },
-    {
-        "label": "check_any_usb_for_key",
-        "importPath": "utils.system.security.usb_key_check",
-        "description": "utils.system.security.usb_key_check",
-        "isExtraImport": true,
-        "detail": "utils.system.security.usb_key_check",
-        "documentation": {}
-    },
-    {
-        "label": "check_zwischenlage_status",
-        "importPath": "utils.ui.notification_popup",
-        "description": "utils.ui.notification_popup",
-        "isExtraImport": true,
-        "detail": "utils.ui.notification_popup",
-        "documentation": {}
-    },
-    {
-        "label": "check_zwischenlage_status",
-        "importPath": "utils.ui.notification_popup",
-        "description": "utils.ui.notification_popup",
-        "isExtraImport": true,
-        "detail": "utils.ui.notification_popup",
-        "documentation": {}
-    },
-    {
-        "label": "Ui_Form",
-        "importPath": "ui_files.ui_main_window",
-        "description": "ui_files.ui_main_window",
-        "isExtraImport": true,
-        "detail": "ui_files.ui_main_window",
-        "documentation": {}
-    },
-    {
-        "label": "initialize_3d_view",
-        "importPath": "ui_files.visualization_3d",
-        "description": "ui_files.visualization_3d",
-        "isExtraImport": true,
-        "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
-        "label": "clear_canvas",
-        "importPath": "ui_files.visualization_3d",
-        "description": "ui_files.visualization_3d",
-        "isExtraImport": true,
-        "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
-        "label": "load_rob_files",
-        "importPath": "ui_files.visualization_3d",
-        "description": "ui_files.visualization_3d",
-        "isExtraImport": true,
-        "detail": "ui_files.visualization_3d",
+        "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },
     {
@@ -2980,11 +2897,11 @@
         "documentation": {}
     },
     {
-        "label": "set_settings_line_edits",
-        "importPath": "utils.ui.ui_helpers",
-        "description": "utils.ui.ui_helpers",
+        "label": "server_stop",
+        "importPath": "utils.server.server",
+        "description": "utils.server.server",
         "isExtraImport": true,
-        "detail": "utils.ui.ui_helpers",
+        "detail": "utils.server.server",
         "documentation": {}
     },
     {
@@ -3004,84 +2921,68 @@
         "documentation": {}
     },
     {
-        "label": "server_stop",
-        "importPath": "utils.server.server",
-        "description": "utils.server.server",
-        "isExtraImport": true,
-        "detail": "utils.server.server",
-        "documentation": {}
-    },
-    {
-        "label": "check_for_updates",
-        "importPath": "utils.system.updater",
-        "description": "utils.system.updater",
-        "isExtraImport": true,
-        "detail": "utils.system.updater",
-        "documentation": {}
-    },
-    {
-        "label": "restart_app",
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "isExtraImport": true,
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
-        "label": "exit_app",
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "isExtraImport": true,
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
-        "label": "show_instant_splash",
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "isExtraImport": true,
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
-        "label": "exception_handler",
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "isExtraImport": true,
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
-        "label": "qt_message_handler",
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "isExtraImport": true,
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
-        "label": "init_settings",
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "isExtraImport": true,
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
-        "label": "Settings",
-        "importPath": "utils.system.config.settings",
-        "description": "utils.system.config.settings",
-        "isExtraImport": true,
-        "detail": "utils.system.config.settings",
-        "documentation": {}
-    },
-    {
         "label": "argparse",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "argparse",
         "description": "argparse",
         "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "show_instant_splash",
+        "importPath": "utils.system.core.app_control",
+        "description": "utils.system.core.app_control",
+        "isExtraImport": true,
+        "detail": "utils.system.core.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "exception_handler",
+        "importPath": "utils.system.core.app_control",
+        "description": "utils.system.core.app_control",
+        "isExtraImport": true,
+        "detail": "utils.system.core.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "qt_message_handler",
+        "importPath": "utils.system.core.app_control",
+        "description": "utils.system.core.app_control",
+        "isExtraImport": true,
+        "detail": "utils.system.core.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "exit_app",
+        "importPath": "utils.system.core.app_control",
+        "description": "utils.system.core.app_control",
+        "isExtraImport": true,
+        "detail": "utils.system.core.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "restart_app",
+        "importPath": "utils.system.core.app_control",
+        "description": "utils.system.core.app_control",
+        "isExtraImport": true,
+        "detail": "utils.system.core.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "exit_app",
+        "importPath": "utils.system.core.app_control",
+        "description": "utils.system.core.app_control",
+        "isExtraImport": true,
+        "detail": "utils.system.core.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "init_settings",
+        "importPath": "utils.system.core.app_control",
+        "description": "utils.system.core.app_control",
+        "isExtraImport": true,
+        "detail": "utils.system.core.app_control",
         "documentation": {}
     },
     {
@@ -3093,12 +2994,167 @@
         "documentation": {}
     },
     {
+        "label": "MessageManager",
+        "importPath": "utils.message.message_manager",
+        "description": "utils.message.message_manager",
+        "isExtraImport": true,
+        "detail": "utils.message.message_manager",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "importPath": "utils.message.status_manager",
+        "description": "utils.message.status_manager",
+        "isExtraImport": true,
+        "detail": "utils.message.status_manager",
+        "documentation": {}
+    },
+    {
         "label": "multiprocessing",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "multiprocessing",
         "description": "multiprocessing",
         "detail": "multiprocessing",
+        "documentation": {}
+    },
+    {
+        "label": "RobotMode",
+        "importPath": "utils.robot.robot_enums",
+        "description": "utils.robot.robot_enums",
+        "isExtraImport": true,
+        "detail": "utils.robot.robot_enums",
+        "documentation": {}
+    },
+    {
+        "label": "SafetyStatus",
+        "importPath": "utils.robot.robot_enums",
+        "description": "utils.robot.robot_enums",
+        "isExtraImport": true,
+        "detail": "utils.robot.robot_enums",
+        "documentation": {}
+    },
+    {
+        "label": "ProgramState",
+        "importPath": "utils.robot.robot_enums",
+        "description": "utils.robot.robot_enums",
+        "isExtraImport": true,
+        "detail": "utils.robot.robot_enums",
+        "documentation": {}
+    },
+    {
+        "label": "Fernet",
+        "importPath": "cryptography.fernet",
+        "description": "cryptography.fernet",
+        "isExtraImport": true,
+        "detail": "cryptography.fernet",
+        "documentation": {}
+    },
+    {
+        "label": "string",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "string",
+        "description": "string",
+        "detail": "string",
+        "documentation": {}
+    },
+    {
+        "label": "ctypes",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "ctypes",
+        "description": "ctypes",
+        "detail": "ctypes",
+        "documentation": {}
+    },
+    {
+        "label": "shutil",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "shutil",
+        "description": "shutil",
+        "detail": "shutil",
+        "documentation": {}
+    },
+    {
+        "label": "BlinkingLabel",
+        "importPath": "ui_files.BlinkingLabel",
+        "description": "ui_files.BlinkingLabel",
+        "isExtraImport": true,
+        "detail": "ui_files.BlinkingLabel",
+        "documentation": {}
+    },
+    {
+        "label": "PasswordEntryDialog",
+        "importPath": "ui_files.PasswordDialog",
+        "description": "ui_files.PasswordDialog",
+        "isExtraImport": true,
+        "detail": "ui_files.PasswordDialog",
+        "documentation": {}
+    },
+    {
+        "label": "check_any_usb_for_key",
+        "importPath": "utils.system.security.usb_key_check",
+        "description": "utils.system.security.usb_key_check",
+        "isExtraImport": true,
+        "detail": "utils.system.security.usb_key_check",
+        "documentation": {}
+    },
+    {
+        "label": "check_zwischenlage_status",
+        "importPath": "utils.ui.notification_popup",
+        "description": "utils.ui.notification_popup",
+        "isExtraImport": true,
+        "detail": "utils.ui.notification_popup",
+        "documentation": {}
+    },
+    {
+        "label": "check_zwischenlage_status",
+        "importPath": "utils.ui.notification_popup",
+        "description": "utils.ui.notification_popup",
+        "isExtraImport": true,
+        "detail": "utils.ui.notification_popup",
+        "documentation": {}
+    },
+    {
+        "label": "Ui_Form",
+        "importPath": "ui_files.ui_main_window",
+        "description": "ui_files.ui_main_window",
+        "isExtraImport": true,
+        "detail": "ui_files.ui_main_window",
+        "documentation": {}
+    },
+    {
+        "label": "initialize_3d_view",
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "isExtraImport": true,
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "clear_canvas",
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "isExtraImport": true,
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "load_rob_files",
+        "importPath": "ui_files.visualization_3d",
+        "description": "ui_files.visualization_3d",
+        "isExtraImport": true,
+        "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "check_for_updates",
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "isExtraImport": true,
+        "detail": "utils.system.updater",
         "documentation": {}
     },
     {
@@ -3136,26 +3192,26 @@
     },
     {
         "label": "parse_arguments",
-        "importPath": "utils.app_initialization",
-        "description": "utils.app_initialization",
+        "importPath": "utils.system.core.app_initialization",
+        "description": "utils.system.core.app_initialization",
         "isExtraImport": true,
-        "detail": "utils.app_initialization",
+        "detail": "utils.system.core.app_initialization",
         "documentation": {}
     },
     {
         "label": "initialize_app",
-        "importPath": "utils.app_initialization",
-        "description": "utils.app_initialization",
+        "importPath": "utils.system.core.app_initialization",
+        "description": "utils.system.core.app_initialization",
         "isExtraImport": true,
-        "detail": "utils.app_initialization",
+        "detail": "utils.system.core.app_initialization",
         "documentation": {}
     },
     {
         "label": "setup_initial_app_state",
-        "importPath": "utils.app_initialization",
-        "description": "utils.app_initialization",
+        "importPath": "utils.system.core.app_initialization",
+        "description": "utils.system.core.app_initialization",
         "isExtraImport": true,
-        "detail": "utils.app_initialization",
+        "detail": "utils.system.core.app_initialization",
         "documentation": {}
     },
     {
@@ -4349,6 +4405,159 @@
         "documentation": {}
     },
     {
+        "label": "restart_app",
+        "kind": 2,
+        "importPath": "utils.system.core.app_control",
+        "description": "utils.system.core.app_control",
+        "peekOfCode": "def restart_app():\n    \"\"\"Restart the application.\n    \"\"\"\n    try:\n        global_vars.settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        response = QMessageBox.question(global_vars.main_window, \"Verwerfen oder Speichern\", \n                                            \"Möchten Sie die neuen Daten verwerfen oder speichern?\",\n                                            QMessageBox.StandardButton.Discard | ",
+        "detail": "utils.system.core.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "save_and_exit_app",
+        "kind": 2,
+        "importPath": "utils.system.core.app_control",
+        "description": "utils.system.core.app_control",
+        "peekOfCode": "def save_and_exit_app():\n    \"\"\"Save and exit the application.\n    \"\"\"\n    try:\n        global_vars.settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        # If settings do not match, ask whether to discard or save the new data\n        response = QMessageBox.question(global_vars.main_window, \"Verwerfen oder Speichern\", \n                                            \"Möchten Sie die neuen Daten verwerfen oder speichern?\",",
+        "detail": "utils.system.core.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "exit_app",
+        "kind": 2,
+        "importPath": "utils.system.core.app_control",
+        "description": "utils.system.core.app_control",
+        "peekOfCode": "def exit_app():\n    \"\"\"Exit the application.\n    \"\"\"\n    logger.info(\"Exiting application\")\n    # First stop the server if it's running\n    if hasattr(global_vars, 'server') and global_vars.server:\n        server_stop()\n    # Stop any running audio threads\n    if hasattr(global_vars, 'audio_thread_running') and global_vars.audio_thread_running:\n        from utils.audio.audio import kill_play_stepback_warning_thread",
+        "detail": "utils.system.core.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "init_settings",
+        "kind": 2,
+        "importPath": "utils.system.core.app_control",
+        "description": "utils.system.core.app_control",
+        "peekOfCode": "def init_settings():\n    \"\"\"Initialize the settings\n    \"\"\"\n    settings = Settings()\n    global_vars.settings = settings\n    global_vars.PATH_USB_STICK = settings.settings['admin']['path']\n    logger.debug(f\"Settings initialized: {settings}\")\ndef exception_handler(exc_type, exc_value, exc_traceback):\n    \"\"\"Global exception handler to log unhandled exceptions\n    Args:",
+        "detail": "utils.system.core.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "exception_handler",
+        "kind": 2,
+        "importPath": "utils.system.core.app_control",
+        "description": "utils.system.core.app_control",
+        "peekOfCode": "def exception_handler(exc_type, exc_value, exc_traceback):\n    \"\"\"Global exception handler to log unhandled exceptions\n    Args:\n        exc_type (type): The type of the exception.\n        exc_value (Exception): The exception value.\n        exc_traceback (traceback): The traceback of the exception.\n    \"\"\"\n    if issubclass(exc_type, KeyboardInterrupt):\n        # Don't log keyboard interrupt\n        sys.__excepthook__(exc_type, exc_value, exc_traceback)",
+        "detail": "utils.system.core.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "qt_message_handler",
+        "kind": 2,
+        "importPath": "utils.system.core.app_control",
+        "description": "utils.system.core.app_control",
+        "peekOfCode": "def qt_message_handler(mode, context, message):\n    \"\"\"Handler for Qt messages\n    Args:\n        mode (QtCore.QtMsgType): The mode of the message.\n        context (QtCore.QtMsgType): The context of the message.\n        message (str): The message to be logged.\n    \"\"\"\n    from PySide6 import QtCore\n    if mode == QtCore.QtMsgType.QtFatalMsg:\n        logger.critical(f\"Qt Fatal: {message}\")",
+        "detail": "utils.system.core.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "show_instant_splash",
+        "kind": 2,
+        "importPath": "utils.system.core.app_control",
+        "description": "utils.system.core.app_control",
+        "peekOfCode": "def show_instant_splash():\n    \"\"\"Show an instant splash screen before any initialization.\"\"\"\n    import sys\n    from PySide6.QtWidgets import QApplication, QSplashScreen, QLabel\n    from PySide6.QtGui import QPixmap, QPainter, QColor\n    from PySide6.QtCore import Qt\n    # Create minimal QApplication instance just for the splash\n    if not QApplication.instance():\n        temp_app = QApplication(sys.argv)\n    else:",
+        "detail": "utils.system.core.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.system.core.app_control",
+        "description": "utils.system.core.app_control",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef restart_app():\n    \"\"\"Restart the application.\n    \"\"\"\n    try:\n        global_vars.settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        response = QMessageBox.question(global_vars.main_window, \"Verwerfen oder Speichern\", \n                                            \"Möchten Sie die neuen Daten verwerfen oder speichern?\",",
+        "detail": "utils.system.core.app_control",
+        "documentation": {}
+    },
+    {
+        "label": "parse_arguments",
+        "kind": 2,
+        "importPath": "utils.system.core.app_initialization",
+        "description": "utils.system.core.app_initialization",
+        "peekOfCode": "def parse_arguments():\n    \"\"\"Parse command line arguments.\n    Returns:\n        argparse.Namespace: Parsed arguments\n    \"\"\"\n    parser = argparse.ArgumentParser(\n        description=\"Multipack Parser Application\",\n        formatter_class=argparse.RawDescriptionHelpFormatter,\n        epilog=\"\"\"\nExamples:",
+        "detail": "utils.system.core.app_initialization",
+        "documentation": {}
+    },
+    {
+        "label": "create_splash_screen",
+        "kind": 2,
+        "importPath": "utils.system.core.app_initialization",
+        "description": "utils.system.core.app_initialization",
+        "peekOfCode": "def create_splash_screen(app):\n    \"\"\"Create and show the splash screen.\n    Args:\n        app: QApplication instance\n    Returns:\n        tuple: (splash, progress, loading_label) - The splash screen and its components\n    \"\"\"\n    # Create and show the proper splash screen\n    temp_splash = show_instant_splash()\n    logo_pix = QPixmap(\":/Szaidel Logo/imgs/logoszaidel-transparent-big.png\")",
+        "detail": "utils.system.core.app_initialization",
+        "documentation": {}
+    },
+    {
+        "label": "initialize_app",
+        "kind": 2,
+        "importPath": "utils.system.core.app_initialization",
+        "description": "utils.system.core.app_initialization",
+        "peekOfCode": "def initialize_app():\n    \"\"\"Initialize the application basics.\n    Returns:\n        tuple: (app, splash, progress, loading_label) - The app and splash screen components\n    \"\"\"\n    # Initialize the application\n    app = QApplication.instance() or QApplication(sys.argv)\n    # Create splash screen\n    splash, progress, loading_label = create_splash_screen(app)\n    # Start with initial progress",
+        "detail": "utils.system.core.app_initialization",
+        "documentation": {}
+    },
+    {
+        "label": "setup_initial_app_state",
+        "kind": 2,
+        "importPath": "utils.system.core.app_initialization",
+        "description": "utils.system.core.app_initialization",
+        "peekOfCode": "def setup_initial_app_state():\n    \"\"\"Set up the initial application state.\n    This includes message manager, settings initialization and palette configuration.\n    \"\"\"\n    # Initialize message manager\n    global_vars.message_manager = MessageManager()\n    # Set last restart and number of use cycles\n    global_vars.settings.settings['info']['last_restart'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')\n    global_vars.settings.settings['info']['number_of_use_cycles'] = str(int(global_vars.settings.settings['info']['number_of_use_cycles']) + 1)\n    global_vars.settings.save_settings()",
+        "detail": "utils.system.core.app_initialization",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.system.core.app_initialization",
+        "description": "utils.system.core.app_initialization",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef parse_arguments():\n    \"\"\"Parse command line arguments.\n    Returns:\n        argparse.Namespace: Parsed arguments\n    \"\"\"\n    parser = argparse.ArgumentParser(\n        description=\"Multipack Parser Application\",\n        formatter_class=argparse.RawDescriptionHelpFormatter,\n        epilog=\"\"\"",
+        "detail": "utils.system.core.app_initialization",
+        "documentation": {}
+    },
+    {
+        "label": "main_window",
+        "kind": 5,
+        "importPath": "utils.system.core.global_vars",
+        "description": "utils.system.core.global_vars",
+        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN",
+        "detail": "utils.system.core.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "canvas",
+        "kind": 5,
+        "importPath": "utils.system.core.global_vars",
+        "description": "utils.system.core.global_vars",
+        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN",
+        "detail": "utils.system.core.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "allow_close",
+        "kind": 5,
+        "importPath": "utils.system.core.global_vars",
+        "description": "utils.system.core.global_vars",
+        "peekOfCode": "allow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN\nrobot_status_monitor: Optional['RobotStatus'] = None",
+        "detail": "utils.system.core.global_vars",
+        "documentation": {}
+    },
+    {
+        "label": "server",
+        "kind": 5,
+        "importPath": "utils.system.core.global_vars",
+        "description": "utils.system.core.global_vars",
+        "peekOfCode": "server = None",
+        "detail": "utils.system.core.global_vars",
+        "documentation": {}
+    },
+    {
         "label": "check_hidden_key",
         "kind": 2,
         "importPath": "utils.system.security.usb_key_check",
@@ -4751,159 +4960,6 @@
         "description": "utils.ui.ui_setup",
         "peekOfCode": "logger = logging.getLogger(__name__)\ndef initialize_main_window():\n    \"\"\"Initialize the main window and UI.\n    Returns:\n        QMainWindow: The initialized main window\n    \"\"\"\n    main_window = QMainWindow()\n    main_window.setWindowFlags(Qt.WindowType.FramelessWindowHint)\n    global_vars.main_window = main_window\n    global_vars.ui = Ui_Form()",
         "detail": "utils.ui.ui_setup",
-        "documentation": {}
-    },
-    {
-        "label": "restart_app",
-        "kind": 2,
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "peekOfCode": "def restart_app():\n    \"\"\"Restart the application.\n    \"\"\"\n    try:\n        global_vars.settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        response = QMessageBox.question(global_vars.main_window, \"Verwerfen oder Speichern\", \n                                            \"Möchten Sie die neuen Daten verwerfen oder speichern?\",\n                                            QMessageBox.StandardButton.Discard | ",
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
-        "label": "save_and_exit_app",
-        "kind": 2,
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "peekOfCode": "def save_and_exit_app():\n    \"\"\"Save and exit the application.\n    \"\"\"\n    try:\n        global_vars.settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        # If settings do not match, ask whether to discard or save the new data\n        response = QMessageBox.question(global_vars.main_window, \"Verwerfen oder Speichern\", \n                                            \"Möchten Sie die neuen Daten verwerfen oder speichern?\",",
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
-        "label": "exit_app",
-        "kind": 2,
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "peekOfCode": "def exit_app():\n    \"\"\"Exit the application.\n    \"\"\"\n    logger.info(\"Exiting application\")\n    # First stop the server if it's running\n    if hasattr(global_vars, 'server') and global_vars.server:\n        server_stop()\n    # Stop any running audio threads\n    if hasattr(global_vars, 'audio_thread_running') and global_vars.audio_thread_running:\n        from utils.audio.audio import kill_play_stepback_warning_thread",
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
-        "label": "init_settings",
-        "kind": 2,
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "peekOfCode": "def init_settings():\n    \"\"\"Initialize the settings\n    \"\"\"\n    settings = Settings()\n    global_vars.settings = settings\n    global_vars.PATH_USB_STICK = settings.settings['admin']['path']\n    logger.debug(f\"Settings initialized: {settings}\")\ndef exception_handler(exc_type, exc_value, exc_traceback):\n    \"\"\"Global exception handler to log unhandled exceptions\n    Args:",
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
-        "label": "exception_handler",
-        "kind": 2,
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "peekOfCode": "def exception_handler(exc_type, exc_value, exc_traceback):\n    \"\"\"Global exception handler to log unhandled exceptions\n    Args:\n        exc_type (type): The type of the exception.\n        exc_value (Exception): The exception value.\n        exc_traceback (traceback): The traceback of the exception.\n    \"\"\"\n    if issubclass(exc_type, KeyboardInterrupt):\n        # Don't log keyboard interrupt\n        sys.__excepthook__(exc_type, exc_value, exc_traceback)",
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
-        "label": "qt_message_handler",
-        "kind": 2,
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "peekOfCode": "def qt_message_handler(mode, context, message):\n    \"\"\"Handler for Qt messages\n    Args:\n        mode (QtCore.QtMsgType): The mode of the message.\n        context (QtCore.QtMsgType): The context of the message.\n        message (str): The message to be logged.\n    \"\"\"\n    from PySide6 import QtCore\n    if mode == QtCore.QtMsgType.QtFatalMsg:\n        logger.critical(f\"Qt Fatal: {message}\")",
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
-        "label": "show_instant_splash",
-        "kind": 2,
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "peekOfCode": "def show_instant_splash():\n    \"\"\"Show an instant splash screen before any initialization.\"\"\"\n    import sys\n    from PySide6.QtWidgets import QApplication, QSplashScreen, QLabel\n    from PySide6.QtGui import QPixmap, QPainter, QColor\n    from PySide6.QtCore import Qt\n    # Create minimal QApplication instance just for the splash\n    if not QApplication.instance():\n        temp_app = QApplication(sys.argv)\n    else:",
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.app_control",
-        "description": "utils.app_control",
-        "peekOfCode": "logger = logging.getLogger(__name__)\ndef restart_app():\n    \"\"\"Restart the application.\n    \"\"\"\n    try:\n        global_vars.settings.compare_loaded_settings_to_saved_settings()\n    except ValueError as e:\n        logger.error(f\"Error: {e}\")\n        response = QMessageBox.question(global_vars.main_window, \"Verwerfen oder Speichern\", \n                                            \"Möchten Sie die neuen Daten verwerfen oder speichern?\",",
-        "detail": "utils.app_control",
-        "documentation": {}
-    },
-    {
-        "label": "parse_arguments",
-        "kind": 2,
-        "importPath": "utils.app_initialization",
-        "description": "utils.app_initialization",
-        "peekOfCode": "def parse_arguments():\n    \"\"\"Parse command line arguments.\n    Returns:\n        argparse.Namespace: Parsed arguments\n    \"\"\"\n    parser = argparse.ArgumentParser(\n        description=\"Multipack Parser Application\",\n        formatter_class=argparse.RawDescriptionHelpFormatter,\n        epilog=\"\"\"\nExamples:",
-        "detail": "utils.app_initialization",
-        "documentation": {}
-    },
-    {
-        "label": "create_splash_screen",
-        "kind": 2,
-        "importPath": "utils.app_initialization",
-        "description": "utils.app_initialization",
-        "peekOfCode": "def create_splash_screen(app):\n    \"\"\"Create and show the splash screen.\n    Args:\n        app: QApplication instance\n    Returns:\n        tuple: (splash, progress, loading_label) - The splash screen and its components\n    \"\"\"\n    # Create and show the proper splash screen\n    temp_splash = show_instant_splash()\n    logo_pix = QPixmap(\":/Szaidel Logo/imgs/logoszaidel-transparent-big.png\")",
-        "detail": "utils.app_initialization",
-        "documentation": {}
-    },
-    {
-        "label": "initialize_app",
-        "kind": 2,
-        "importPath": "utils.app_initialization",
-        "description": "utils.app_initialization",
-        "peekOfCode": "def initialize_app():\n    \"\"\"Initialize the application basics.\n    Returns:\n        tuple: (app, splash, progress, loading_label) - The app and splash screen components\n    \"\"\"\n    # Initialize the application\n    app = QApplication.instance() or QApplication(sys.argv)\n    # Create splash screen\n    splash, progress, loading_label = create_splash_screen(app)\n    # Start with initial progress",
-        "detail": "utils.app_initialization",
-        "documentation": {}
-    },
-    {
-        "label": "setup_initial_app_state",
-        "kind": 2,
-        "importPath": "utils.app_initialization",
-        "description": "utils.app_initialization",
-        "peekOfCode": "def setup_initial_app_state():\n    \"\"\"Set up the initial application state.\n    This includes message manager, settings initialization and palette configuration.\n    \"\"\"\n    # Initialize message manager\n    global_vars.message_manager = MessageManager()\n    # Set last restart and number of use cycles\n    global_vars.settings.settings['info']['last_restart'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')\n    global_vars.settings.settings['info']['number_of_use_cycles'] = str(int(global_vars.settings.settings['info']['number_of_use_cycles']) + 1)\n    global_vars.settings.save_settings()",
-        "detail": "utils.app_initialization",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.app_initialization",
-        "description": "utils.app_initialization",
-        "peekOfCode": "logger = logging.getLogger(__name__)\ndef parse_arguments():\n    \"\"\"Parse command line arguments.\n    Returns:\n        argparse.Namespace: Parsed arguments\n    \"\"\"\n    parser = argparse.ArgumentParser(\n        description=\"Multipack Parser Application\",\n        formatter_class=argparse.RawDescriptionHelpFormatter,\n        epilog=\"\"\"",
-        "detail": "utils.app_initialization",
-        "documentation": {}
-    },
-    {
-        "label": "main_window",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "canvas",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "allow_close",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "allow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN\nrobot_status_monitor: Optional['RobotStatus'] = None",
-        "detail": "utils.global_vars",
-        "documentation": {}
-    },
-    {
-        "label": "server",
-        "kind": 5,
-        "importPath": "utils.global_vars",
-        "description": "utils.global_vars",
-        "peekOfCode": "server = None",
-        "detail": "utils.global_vars",
         "documentation": {}
     },
     {

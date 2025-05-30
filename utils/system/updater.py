@@ -5,7 +5,8 @@ import subprocess
 import sys
 from PySide6.QtWidgets import QMessageBox
 
-from utils import global_vars
+from utils.system.core import global_vars
+from utils.system.core.app_control import exit_app
 
 logger = logging.getLogger(__name__)
 
@@ -121,5 +122,4 @@ reboot
     )
 
     logger.info("Updater process spawned. Exiting current application.")  # Log the process spawn
-    from utils.app_control import exit_app
     exit_app() 

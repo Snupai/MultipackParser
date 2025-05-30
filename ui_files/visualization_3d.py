@@ -11,7 +11,7 @@ from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from PySide6.QtWidgets import QVBoxLayout, QProgressDialog, QHBoxLayout, QListWidget, QSplitter, QWidget
 from PySide6.QtCore import Qt
-from utils import global_vars
+from utils.system.core import global_vars
 import time
 from utils.database.pallet_data import *
 from utils.robot.robot_control import load_wordlist

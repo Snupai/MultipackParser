@@ -8,7 +8,7 @@ from PySide6.QtCore import Qt, QProcess, QFileSystemWatcher, QStringListModel
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator
 from typing import Optional
 
-from utils import global_vars
+from utils.system.core import global_vars
 from ui_files.BlinkingLabel import BlinkingLabel
 from ..message.message import MessageType
 from ..message.message_manager import MessageManager

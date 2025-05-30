@@ -5,7 +5,7 @@ import datetime
 import logging
 from typing import Union, List, Dict, Any, Optional, Tuple, Literal
 
-from utils import global_vars
+from utils.system.core import global_vars
 
 logger = logging.getLogger(__name__)
 

@@ -5,7 +5,8 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import hashlib 
-from utils import global_vars, Settings
+from utils.system.core import global_vars
+from utils.system.config.settings import Settings
 from ui_files.ui_password_entry import Ui_Dialog
 from PySide6.QtWidgets import QDialog, QMessageBox
 from PySide6.QtCore import Qt

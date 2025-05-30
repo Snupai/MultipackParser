@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (QDialog, QVBoxLayout, QTableWidget,
 from PySide6.QtCore import Qt, QRect
 from PySide6.QtGui import QColor, QFont, QGuiApplication
 from utils.message.message import Message, MessageType
-from utils import global_vars
+from utils.system.core import global_vars
 import logging
 
 logger = logging.getLogger(__name__)

@@ -13,11 +13,11 @@ if TYPE_CHECKING:
     from utils.system.config.settings import Settings
     from ui_files.ui_main_window import Ui_Form
     from ui_files.BlinkingLabel import BlinkingLabel
-    from .message.message_manager import MessageManager
+    from utils.message.message_manager import MessageManager
     from utils.robot.robot_status_monitor import RobotStatus
 
-from .system.config.logging_config import logger
-from .robot.robot_enums import RobotMode, SafetyStatus, ProgramState
+from utils.system.config.logging_config import logger
+from utils.robot.robot_enums import RobotMode, SafetyStatus, ProgramState
 
 # Global variables
 process: Optional[multiprocessing.Process] = None

@@ -6,7 +6,7 @@ import time
 from datetime import datetime
 from PySide6.QtGui import QIcon
 
-from utils import global_vars
+from utils.system.core import global_vars
 
 logger = logging.getLogger(__name__)
 

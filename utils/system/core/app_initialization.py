@@ -12,12 +12,12 @@ from PySide6.QtCore import Qt, QLocale
 from PySide6 import QtCore
 from PySide6.QtGui import QPixmap, QPainter, QColor
 
-from utils import global_vars
-from utils.app_control import show_instant_splash, exception_handler, qt_message_handler
+from utils.system.core import global_vars
+from utils.system.core.app_control import show_instant_splash, exception_handler, qt_message_handler
 from utils.system.config.logging_config import setup_logger
 from utils.ui.startup_dialogs import show_palette_config_dialog
-from .message.message_manager import MessageManager
-from .message.status_manager import update_status_label
+from utils.message.message_manager import MessageManager
+from utils.message.status_manager import update_status_label
 
 # Add a logger for this module
 logger = logging.getLogger(__name__)

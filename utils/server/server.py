@@ -3,7 +3,7 @@ import socket
 from xmlrpc.server import SimpleXMLRPCServer
 from typing import Literal
 
-from utils import global_vars
+from utils.system.core import global_vars
 from utils.server.UR_Common_functions import (
     UR_SetFileName, UR_ReadDataFromUsbStick, UR_Palette, UR_Karton,
     UR_Lagen, UR_Zwischenlagen, UR_PaketPos, UR_AnzLagen,
