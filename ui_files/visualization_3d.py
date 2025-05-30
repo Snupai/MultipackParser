@@ -4,7 +4,7 @@ from typing import Union, List
 from enum import Enum
 import matplotlib
 
-from utils.database import load_from_database
+from utils.database.database import load_from_database
 matplotlib.use('qtagg', force=True)
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -13,7 +13,7 @@ from PySide6.QtWidgets import QVBoxLayout, QProgressDialog, QHBoxLayout, QListWi
 from PySide6.QtCore import Qt
 from utils import global_vars
 import time
-from utils.pallet_data import *
+from utils.database.pallet_data import *
 from utils.robot_control import load_wordlist
 logger = global_vars.logger
 
@@ -62,7 +62,7 @@ def load_rob_files():
     
     # If any dimension is provided, use find_palettplan to get filtered list
     if global_vars.filter_length > 0 or global_vars.filter_width > 0 or global_vars.filter_height > 0:
-        from utils.database import find_palettplan
+        from utils.database.database import find_palettplan
         filtered_files = find_palettplan(global_vars.filter_length, global_vars.filter_width, global_vars.filter_height)
         if filtered_files:
             # Sort the filtered list alphabetically
@@ -75,7 +75,7 @@ def load_rob_files():
             logger.info("No matching palette plans found for the given dimensions")
     else:
         # If no dimensions provided, load all files from database
-        from utils.database import list_available_files
+        from utils.database.database import list_available_files
         files = list_available_files()
         if files:
             # Extract file names without .rob extension and sort them

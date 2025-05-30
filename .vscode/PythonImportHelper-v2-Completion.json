@@ -1572,6 +1572,22 @@
         "documentation": {}
     },
     {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Union",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Optional",
         "importPath": "typing",
         "description": "typing",
@@ -1629,22 +1645,6 @@
     },
     {
         "label": "Set",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Union",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "List",
         "importPath": "typing",
         "description": "typing",
         "isExtraImport": true,
@@ -2089,50 +2089,50 @@
     },
     {
         "label": "load_from_database",
-        "importPath": "utils.database",
-        "description": "utils.database",
+        "importPath": "utils.database.database",
+        "description": "utils.database.database",
         "isExtraImport": true,
-        "detail": "utils.database",
+        "detail": "utils.database.database",
         "documentation": {}
     },
     {
         "label": "save_to_database",
-        "importPath": "utils.database",
-        "description": "utils.database",
+        "importPath": "utils.database.database",
+        "description": "utils.database.database",
         "isExtraImport": true,
-        "detail": "utils.database",
+        "detail": "utils.database.database",
         "documentation": {}
     },
     {
         "label": "find_file_in_database",
-        "importPath": "utils.database",
-        "description": "utils.database",
+        "importPath": "utils.database.database",
+        "description": "utils.database.database",
         "isExtraImport": true,
-        "detail": "utils.database",
+        "detail": "utils.database.database",
         "documentation": {}
     },
     {
         "label": "list_available_files",
-        "importPath": "utils.database",
-        "description": "utils.database",
+        "importPath": "utils.database.database",
+        "description": "utils.database.database",
         "isExtraImport": true,
-        "detail": "utils.database",
+        "detail": "utils.database.database",
         "documentation": {}
     },
     {
         "label": "load_from_database",
-        "importPath": "utils.database",
-        "description": "utils.database",
+        "importPath": "utils.database.database",
+        "description": "utils.database.database",
         "isExtraImport": true,
-        "detail": "utils.database",
+        "detail": "utils.database.database",
         "documentation": {}
     },
     {
         "label": "create_database",
-        "importPath": "utils.database",
-        "description": "utils.database",
+        "importPath": "utils.database.database",
+        "description": "utils.database.database",
         "isExtraImport": true,
-        "detail": "utils.database",
+        "detail": "utils.database.database",
         "documentation": {}
     },
     {
@@ -2170,10 +2170,10 @@
     },
     {
         "label": "*",
-        "importPath": "utils.pallet_data",
-        "description": "utils.pallet_data",
+        "importPath": "utils.database.pallet_data",
+        "description": "utils.database.pallet_data",
         "isExtraImport": true,
-        "detail": "utils.pallet_data",
+        "detail": "utils.database.pallet_data",
         "documentation": {}
     },
     {
@@ -2254,6 +2254,88 @@
         "description": "utils.robot_control",
         "isExtraImport": true,
         "detail": "utils.robot_control",
+        "documentation": {}
+    },
+    {
+        "label": "sqlite3",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlite3",
+        "description": "sqlite3",
+        "detail": "sqlite3",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "datetime",
+        "description": "datetime",
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
         "documentation": {}
     },
     {
@@ -2408,79 +2490,6 @@
         "importPath": "argparse",
         "description": "argparse",
         "detail": "argparse",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "datetime",
-        "description": "datetime",
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
         "documentation": {}
     },
     {
@@ -2658,15 +2667,6 @@
         "importPath": "threading",
         "description": "threading",
         "detail": "threading",
-        "documentation": {}
-    },
-    {
-        "label": "sqlite3",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "sqlite3",
-        "description": "sqlite3",
-        "detail": "sqlite3",
         "documentation": {}
     },
     {
@@ -3269,7 +3269,7 @@
         "kind": 2,
         "importPath": "ui_files.visualization_3d",
         "description": "ui_files.visualization_3d",
-        "peekOfCode": "def load_rob_files():\n    \"\"\"Load .rob files into the list widget with optional filtering by package dimensions.\"\"\"\n    if not global_vars.ui:\n        return\n    global_vars.ui.robFilesListWidget.clear()\n    # If any dimension is provided, use find_palettplan to get filtered list\n    if global_vars.filter_length > 0 or global_vars.filter_width > 0 or global_vars.filter_height > 0:\n        from utils.database import find_palettplan\n        filtered_files = find_palettplan(global_vars.filter_length, global_vars.filter_width, global_vars.filter_height)\n        if filtered_files:",
+        "peekOfCode": "def load_rob_files():\n    \"\"\"Load .rob files into the list widget with optional filtering by package dimensions.\"\"\"\n    if not global_vars.ui:\n        return\n    global_vars.ui.robFilesListWidget.clear()\n    # If any dimension is provided, use find_palettplan to get filtered list\n    if global_vars.filter_length > 0 or global_vars.filter_width > 0 or global_vars.filter_height > 0:\n        from utils.database.database import find_palettplan\n        filtered_files = find_palettplan(global_vars.filter_length, global_vars.filter_width, global_vars.filter_height)\n        if filtered_files:",
         "detail": "ui_files.visualization_3d",
         "documentation": {}
     },
@@ -3316,6 +3316,141 @@
         "description": "ui_files.visualization_3d",
         "peekOfCode": "logger = global_vars.logger\nclass MatplotlibCanvas(FigureCanvas):\n    def __init__(self, parent=None, width=6, height=4, dpi=100):\n        fig = Figure(figsize=(width, height), dpi=dpi)\n        self.ax = fig.add_subplot(111, projection='3d')\n        super().__init__(fig)\n        self.setParent(parent)\n        self.ax.mouse_init(rotate_btn=None, zoom_btn=None)\ndef initialize_3d_view(frame):\n    \"\"\"Initialize the 3D view in the given frame.",
         "detail": "ui_files.visualization_3d",
+        "documentation": {}
+    },
+    {
+        "label": "create_database",
+        "kind": 2,
+        "importPath": "utils.database.database",
+        "description": "utils.database.database",
+        "peekOfCode": "def create_database(db_path=\"paletten.db\"):\n    \"\"\"Create the database and tables if they don't exist.\"\"\"\n    conn = sqlite3.connect(db_path)\n    cursor = conn.cursor()\n    # Create tables for all the global data structures\n    cursor.execute('''\n    CREATE TABLE IF NOT EXISTS paletten_metadata (\n        id INTEGER PRIMARY KEY AUTOINCREMENT,\n        paket_quer INTEGER,\n        center_of_gravity_x REAL,",
+        "detail": "utils.database.database",
+        "documentation": {}
+    },
+    {
+        "label": "UR_ReadDataFromUsbStick",
+        "kind": 2,
+        "importPath": "utils.database.database",
+        "description": "utils.database.database",
+        "peekOfCode": "def UR_ReadDataFromUsbStick(filename: str, path_usb_stick: str) -> Union[Literal[0], Literal[1]]:\n    \"\"\"Read data from a .rob file on the USB stick and parse it into global variables.\n    The .rob file contains data about pallet and package dimensions, layer types and positions.\n    File format is tab-separated values with the following structure:\n    - Line 1: Pallet dimensions (length, width, height)\n    - Line 2: Package dimensions (length, width, height, gap)\n    - Line 3: Number of layer types\n    - Line 4: Number of layers\n    - Lines 5+: Layer assignments and intermediate layers\n    - Remaining lines: Package positions for each layer type",
+        "detail": "utils.database.database",
+        "documentation": {}
+    },
+    {
+        "label": "save_to_database",
+        "kind": 2,
+        "importPath": "utils.database.database",
+        "description": "utils.database.database",
+        "peekOfCode": "def save_to_database(file_name, db_path=\"paletten.db\") -> bool:\n    \"\"\"Save all global data to the database.\n    Args:\n        db_path (str): Path to the database\n        file_path (str): Path to the source .rob file that was parsed\n        file_timestamp (float): Timestamp of when the source file was last modified\n    Returns:\n        bool: True if data was saved, False if skipped due to older timestamp\n    \"\"\"\n    # Create database tables if they don't exist",
+        "detail": "utils.database.database",
+        "documentation": {}
+    },
+    {
+        "label": "load_from_database",
+        "kind": 2,
+        "importPath": "utils.database.database",
+        "description": "utils.database.database",
+        "peekOfCode": "def load_from_database(db_path=\"paletten.db\", file_name=None, metadata_id=None) -> Union[Literal[0], Literal[1]]:\n    \"\"\"Load all data from the database to global variables.\n    Args:\n        db_path (str): Path to the database\n        file_name (str, optional): Specific .rob filename to load. If None, loads the most recent entry.\n        metadata_id (int, optional): Specific metadata ID to load. Takes precedence over file_name.\n    Returns:\n        Union[Literal[0], Literal[1]]: 0 if successful, 1 otherwise.\n    \"\"\"\n    try:",
+        "detail": "utils.database.database",
+        "documentation": {}
+    },
+    {
+        "label": "list_available_files",
+        "kind": 2,
+        "importPath": "utils.database.database",
+        "description": "utils.database.database",
+        "peekOfCode": "def list_available_files(db_path=\"paletten.db\") -> List[Dict[str, Any]]:\n    \"\"\"List all .rob files stored in the database.\n    Returns:\n        List[Dict[str, Any]]: A list of dictionaries containing file info (name, timestamp)\n    \"\"\"\n    try:\n        conn = sqlite3.connect(db_path)\n        cursor = conn.cursor()\n        cursor.execute('''\n        SELECT id, file_name, file_timestamp FROM paletten_metadata ",
+        "detail": "utils.database.database",
+        "documentation": {}
+    },
+    {
+        "label": "find_file_in_database",
+        "kind": 2,
+        "importPath": "utils.database.database",
+        "description": "utils.database.database",
+        "peekOfCode": "def find_file_in_database(file_name: str, db_path=\"paletten.db\") -> Optional[Dict[str, Any]]:\n    \"\"\"Find a specific .rob file in the database.\n    Args:\n        file_name (str): Name of the file to find\n        db_path (str): Path to the database\n    Returns:\n        Optional[Dict[str, Any]]: File info or None if not found\n    \"\"\"\n    try:\n        conn = sqlite3.connect(db_path)",
+        "detail": "utils.database.database",
+        "documentation": {}
+    },
+    {
+        "label": "find_palettplan",
+        "kind": 2,
+        "importPath": "utils.database.database",
+        "description": "utils.database.database",
+        "peekOfCode": "def find_palettplan(package_length=0, package_width=0, package_height=0, db_path=\"paletten.db\") -> Optional[List[str]]:\n    \"\"\"Find a palettplan that matches the given package dimensions.\n    Args:\n        package_length (float): Length of the package\n        package_width (float): Width of the package\n        package_height (float): Height of the package\n        db_path (str): Path to the database\n    Returns:\n        Optional[List[str]]: List of file names or None if not found\n    \"\"\"",
+        "detail": "utils.database.database",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.database.database",
+        "description": "utils.database.database",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef create_database(db_path=\"paletten.db\"):\n    \"\"\"Create the database and tables if they don't exist.\"\"\"\n    conn = sqlite3.connect(db_path)\n    cursor = conn.cursor()\n    # Create tables for all the global data structures\n    cursor.execute('''\n    CREATE TABLE IF NOT EXISTS paletten_metadata (\n        id INTEGER PRIMARY KEY AUTOINCREMENT,\n        paket_quer INTEGER,",
+        "detail": "utils.database.database",
+        "documentation": {}
+    },
+    {
+        "label": "Side",
+        "kind": 6,
+        "importPath": "utils.database.pallet_data",
+        "description": "utils.database.pallet_data",
+        "peekOfCode": "class Side(Enum):\n    top = 1\n    right = 2\n    bottom = 3\n    left = 4\nclass Corner(Enum):\n    top_right = 1\n    bottom_right = 2\n    bottom_left = 3\n    top_left = 4",
+        "detail": "utils.database.pallet_data",
+        "documentation": {}
+    },
+    {
+        "label": "Corner",
+        "kind": 6,
+        "importPath": "utils.database.pallet_data",
+        "description": "utils.database.pallet_data",
+        "peekOfCode": "class Corner(Enum):\n    top_right = 1\n    bottom_right = 2\n    bottom_left = 3\n    top_left = 4\nclass Rotation(Enum):\n    zero = 0\n    ninety = 90\n    one_eighty = 180\n    two_seventy = 270",
+        "detail": "utils.database.pallet_data",
+        "documentation": {}
+    },
+    {
+        "label": "Rotation",
+        "kind": 6,
+        "importPath": "utils.database.pallet_data",
+        "description": "utils.database.pallet_data",
+        "peekOfCode": "class Rotation(Enum):\n    zero = 0\n    ninety = 90\n    one_eighty = 180\n    two_seventy = 270\nclass Rectangle:\n    def __init__(self, width: int, length: int, x: int, y: int) -> None:\n        self.width: int = width\n        self.length: int = length\n        self.x: int = x",
+        "detail": "utils.database.pallet_data",
+        "documentation": {}
+    },
+    {
+        "label": "Rectangle",
+        "kind": 6,
+        "importPath": "utils.database.pallet_data",
+        "description": "utils.database.pallet_data",
+        "peekOfCode": "class Rectangle:\n    def __init__(self, width: int, length: int, x: int, y: int) -> None:\n        self.width: int = width\n        self.length: int = length\n        self.x: int = x\n        self.y: int = y\nclass Box:\n    def __init__(self, blueNumber: int, blueLine: Union[Side, Corner, None], rotation: Rotation, rect: Rectangle, height: int) -> None:\n        self.blueNumber: int = blueNumber\n        self.blueLine: Union[Side, Corner, None] = blueLine",
+        "detail": "utils.database.pallet_data",
+        "documentation": {}
+    },
+    {
+        "label": "Box",
+        "kind": 6,
+        "importPath": "utils.database.pallet_data",
+        "description": "utils.database.pallet_data",
+        "peekOfCode": "class Box:\n    def __init__(self, blueNumber: int, blueLine: Union[Side, Corner, None], rotation: Rotation, rect: Rectangle, height: int) -> None:\n        self.blueNumber: int = blueNumber\n        self.blueLine: Union[Side, Corner, None] = blueLine\n        self.rotation: Rotation = rotation\n        self.rect: Rectangle = rect\n        self.height: int = height\nclass Layer:\n    def __init__(self, unique_layer_id: int, boxes: List[Box]) -> None:\n        self.unique_layer_id: int = unique_layer_id",
+        "detail": "utils.database.pallet_data",
+        "documentation": {}
+    },
+    {
+        "label": "Layer",
+        "kind": 6,
+        "importPath": "utils.database.pallet_data",
+        "description": "utils.database.pallet_data",
+        "peekOfCode": "class Layer:\n    def __init__(self, unique_layer_id: int, boxes: List[Box]) -> None:\n        self.unique_layer_id: int = unique_layer_id\n        self.boxes: List[Box] = boxes\nclass Pallet:\n    def __init__(self, layers: List[Layer], width: int, length: int):\n        self.layers: List[Layer] = layers\n        self.layer_count: int = len(layers)\n        self.total_boxes: int = sum(map(lambda layer: len(layer.boxes), layers))\n        self.width: int = width",
+        "detail": "utils.database.pallet_data",
+        "documentation": {}
+    },
+    {
+        "label": "Pallet",
+        "kind": 6,
+        "importPath": "utils.database.pallet_data",
+        "description": "utils.database.pallet_data",
+        "peekOfCode": "class Pallet:\n    def __init__(self, layers: List[Layer], width: int, length: int):\n        self.layers: List[Layer] = layers\n        self.layer_count: int = len(layers)\n        self.total_boxes: int = sum(map(lambda layer: len(layer.boxes), layers))\n        self.width: int = width\n        self.length: int = length",
+        "detail": "utils.database.pallet_data",
         "documentation": {}
     },
     {
@@ -3490,78 +3625,6 @@
         "documentation": {}
     },
     {
-        "label": "create_database",
-        "kind": 2,
-        "importPath": "utils.database",
-        "description": "utils.database",
-        "peekOfCode": "def create_database(db_path=\"paletten.db\"):\n    \"\"\"Create the database and tables if they don't exist.\"\"\"\n    conn = sqlite3.connect(db_path)\n    cursor = conn.cursor()\n    # Create tables for all the global data structures\n    cursor.execute('''\n    CREATE TABLE IF NOT EXISTS paletten_metadata (\n        id INTEGER PRIMARY KEY AUTOINCREMENT,\n        paket_quer INTEGER,\n        center_of_gravity_x REAL,",
-        "detail": "utils.database",
-        "documentation": {}
-    },
-    {
-        "label": "UR_ReadDataFromUsbStick",
-        "kind": 2,
-        "importPath": "utils.database",
-        "description": "utils.database",
-        "peekOfCode": "def UR_ReadDataFromUsbStick(filename: str, path_usb_stick: str) -> Union[Literal[0], Literal[1]]:\n    \"\"\"Read data from a .rob file on the USB stick and parse it into global variables.\n    The .rob file contains data about pallet and package dimensions, layer types and positions.\n    File format is tab-separated values with the following structure:\n    - Line 1: Pallet dimensions (length, width, height)\n    - Line 2: Package dimensions (length, width, height, gap)\n    - Line 3: Number of layer types\n    - Line 4: Number of layers\n    - Lines 5+: Layer assignments and intermediate layers\n    - Remaining lines: Package positions for each layer type",
-        "detail": "utils.database",
-        "documentation": {}
-    },
-    {
-        "label": "save_to_database",
-        "kind": 2,
-        "importPath": "utils.database",
-        "description": "utils.database",
-        "peekOfCode": "def save_to_database(file_name, db_path=\"paletten.db\") -> bool:\n    \"\"\"Save all global data to the database.\n    Args:\n        db_path (str): Path to the database\n        file_path (str): Path to the source .rob file that was parsed\n        file_timestamp (float): Timestamp of when the source file was last modified\n    Returns:\n        bool: True if data was saved, False if skipped due to older timestamp\n    \"\"\"\n    # Create database tables if they don't exist",
-        "detail": "utils.database",
-        "documentation": {}
-    },
-    {
-        "label": "load_from_database",
-        "kind": 2,
-        "importPath": "utils.database",
-        "description": "utils.database",
-        "peekOfCode": "def load_from_database(db_path=\"paletten.db\", file_name=None, metadata_id=None) -> Union[Literal[0], Literal[1]]:\n    \"\"\"Load all data from the database to global variables.\n    Args:\n        db_path (str): Path to the database\n        file_name (str, optional): Specific .rob filename to load. If None, loads the most recent entry.\n        metadata_id (int, optional): Specific metadata ID to load. Takes precedence over file_name.\n    Returns:\n        Union[Literal[0], Literal[1]]: 0 if successful, 1 otherwise.\n    \"\"\"\n    try:",
-        "detail": "utils.database",
-        "documentation": {}
-    },
-    {
-        "label": "list_available_files",
-        "kind": 2,
-        "importPath": "utils.database",
-        "description": "utils.database",
-        "peekOfCode": "def list_available_files(db_path=\"paletten.db\") -> List[Dict[str, Any]]:\n    \"\"\"List all .rob files stored in the database.\n    Returns:\n        List[Dict[str, Any]]: A list of dictionaries containing file info (name, timestamp)\n    \"\"\"\n    try:\n        conn = sqlite3.connect(db_path)\n        cursor = conn.cursor()\n        cursor.execute('''\n        SELECT id, file_name, file_timestamp FROM paletten_metadata ",
-        "detail": "utils.database",
-        "documentation": {}
-    },
-    {
-        "label": "find_file_in_database",
-        "kind": 2,
-        "importPath": "utils.database",
-        "description": "utils.database",
-        "peekOfCode": "def find_file_in_database(file_name: str, db_path=\"paletten.db\") -> Optional[Dict[str, Any]]:\n    \"\"\"Find a specific .rob file in the database.\n    Args:\n        file_name (str): Name of the file to find\n        db_path (str): Path to the database\n    Returns:\n        Optional[Dict[str, Any]]: File info or None if not found\n    \"\"\"\n    try:\n        conn = sqlite3.connect(db_path)",
-        "detail": "utils.database",
-        "documentation": {}
-    },
-    {
-        "label": "find_palettplan",
-        "kind": 2,
-        "importPath": "utils.database",
-        "description": "utils.database",
-        "peekOfCode": "def find_palettplan(package_length=0, package_width=0, package_height=0, db_path=\"paletten.db\") -> Optional[List[str]]:\n    \"\"\"Find a palettplan that matches the given package dimensions.\n    Args:\n        package_length (float): Length of the package\n        package_width (float): Width of the package\n        package_height (float): Height of the package\n        db_path (str): Path to the database\n    Returns:\n        Optional[List[str]]: List of file names or None if not found\n    \"\"\"",
-        "detail": "utils.database",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.database",
-        "description": "utils.database",
-        "peekOfCode": "logger = logging.getLogger(__name__)\ndef create_database(db_path=\"paletten.db\"):\n    \"\"\"Create the database and tables if they don't exist.\"\"\"\n    conn = sqlite3.connect(db_path)\n    cursor = conn.cursor()\n    # Create tables for all the global data structures\n    cursor.execute('''\n    CREATE TABLE IF NOT EXISTS paletten_metadata (\n        id INTEGER PRIMARY KEY AUTOINCREMENT,\n        paket_quer INTEGER,",
-        "detail": "utils.database",
-        "documentation": {}
-    },
-    {
         "label": "main_window",
         "kind": 5,
         "importPath": "utils.global_vars",
@@ -3703,69 +3766,6 @@
         "description": "utils.notification_popup",
         "peekOfCode": "zwischenlage_popup = None\ndef check_zwischenlage_status():\n    \"\"\"\n    Check the zwischenlage status and show/hide popup accordingly.\n    \"\"\"\n    global zwischenlage_popup\n    if global_vars.UR20_zwischenlage is True:\n        if zwischenlage_popup is None or not zwischenlage_popup.isVisible():\n            logger.debug(\"Showing zwischenlage popup\")\n            # Create popup with main window as parent",
         "detail": "utils.notification_popup",
-        "documentation": {}
-    },
-    {
-        "label": "Side",
-        "kind": 6,
-        "importPath": "utils.pallet_data",
-        "description": "utils.pallet_data",
-        "peekOfCode": "class Side(Enum):\n    top = 1\n    right = 2\n    bottom = 3\n    left = 4\nclass Corner(Enum):\n    top_right = 1\n    bottom_right = 2\n    bottom_left = 3\n    top_left = 4",
-        "detail": "utils.pallet_data",
-        "documentation": {}
-    },
-    {
-        "label": "Corner",
-        "kind": 6,
-        "importPath": "utils.pallet_data",
-        "description": "utils.pallet_data",
-        "peekOfCode": "class Corner(Enum):\n    top_right = 1\n    bottom_right = 2\n    bottom_left = 3\n    top_left = 4\nclass Rotation(Enum):\n    zero = 0\n    ninety = 90\n    one_eighty = 180\n    two_seventy = 270",
-        "detail": "utils.pallet_data",
-        "documentation": {}
-    },
-    {
-        "label": "Rotation",
-        "kind": 6,
-        "importPath": "utils.pallet_data",
-        "description": "utils.pallet_data",
-        "peekOfCode": "class Rotation(Enum):\n    zero = 0\n    ninety = 90\n    one_eighty = 180\n    two_seventy = 270\nclass Rectangle:\n    def __init__(self, width: int, length: int, x: int, y: int) -> None:\n        self.width: int = width\n        self.length: int = length\n        self.x: int = x",
-        "detail": "utils.pallet_data",
-        "documentation": {}
-    },
-    {
-        "label": "Rectangle",
-        "kind": 6,
-        "importPath": "utils.pallet_data",
-        "description": "utils.pallet_data",
-        "peekOfCode": "class Rectangle:\n    def __init__(self, width: int, length: int, x: int, y: int) -> None:\n        self.width: int = width\n        self.length: int = length\n        self.x: int = x\n        self.y: int = y\nclass Box:\n    def __init__(self, blueNumber: int, blueLine: Union[Side, Corner, None], rotation: Rotation, rect: Rectangle, height: int) -> None:\n        self.blueNumber: int = blueNumber\n        self.blueLine: Union[Side, Corner, None] = blueLine",
-        "detail": "utils.pallet_data",
-        "documentation": {}
-    },
-    {
-        "label": "Box",
-        "kind": 6,
-        "importPath": "utils.pallet_data",
-        "description": "utils.pallet_data",
-        "peekOfCode": "class Box:\n    def __init__(self, blueNumber: int, blueLine: Union[Side, Corner, None], rotation: Rotation, rect: Rectangle, height: int) -> None:\n        self.blueNumber: int = blueNumber\n        self.blueLine: Union[Side, Corner, None] = blueLine\n        self.rotation: Rotation = rotation\n        self.rect: Rectangle = rect\n        self.height: int = height\nclass Layer:\n    def __init__(self, unique_layer_id: int, boxes: List[Box]) -> None:\n        self.unique_layer_id: int = unique_layer_id",
-        "detail": "utils.pallet_data",
-        "documentation": {}
-    },
-    {
-        "label": "Layer",
-        "kind": 6,
-        "importPath": "utils.pallet_data",
-        "description": "utils.pallet_data",
-        "peekOfCode": "class Layer:\n    def __init__(self, unique_layer_id: int, boxes: List[Box]) -> None:\n        self.unique_layer_id: int = unique_layer_id\n        self.boxes: List[Box] = boxes\nclass Pallet:\n    def __init__(self, layers: List[Layer], width: int, length: int):\n        self.layers: List[Layer] = layers\n        self.layer_count: int = len(layers)\n        self.total_boxes: int = sum(map(lambda layer: len(layer.boxes), layers))\n        self.width: int = width",
-        "detail": "utils.pallet_data",
-        "documentation": {}
-    },
-    {
-        "label": "Pallet",
-        "kind": 6,
-        "importPath": "utils.pallet_data",
-        "description": "utils.pallet_data",
-        "peekOfCode": "class Pallet:\n    def __init__(self, layers: List[Layer], width: int, length: int):\n        self.layers: List[Layer] = layers\n        self.layer_count: int = len(layers)\n        self.total_boxes: int = sum(map(lambda layer: len(layer.boxes), layers))\n        self.width: int = width\n        self.length: int = length",
-        "detail": "utils.pallet_data",
         "documentation": {}
     },
     {
