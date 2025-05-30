@@ -16,8 +16,8 @@ from utils import global_vars
 from utils.app_control import show_instant_splash, exception_handler, qt_message_handler
 from utils.logging_config import setup_logger
 from utils.ui.startup_dialogs import show_palette_config_dialog
-from utils.message_manager import MessageManager
-from utils.status_manager import update_status_label
+from .message.message_manager import MessageManager
+from .message.status_manager import update_status_label
 
 # Add a logger for this module
 logger = logging.getLogger(__name__)

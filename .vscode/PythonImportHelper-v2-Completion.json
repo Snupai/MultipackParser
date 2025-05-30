@@ -1588,6 +1588,54 @@
         "documentation": {}
     },
     {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Union",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Set",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Tuple",
         "importPath": "typing",
         "description": "typing",
@@ -1708,107 +1756,27 @@
         "documentation": {}
     },
     {
-        "label": "Optional",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "List",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Optional",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Union",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Set",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Optional",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
         "label": "MessageType",
-        "importPath": "utils.message",
-        "description": "utils.message",
+        "importPath": "utils.message.message",
+        "description": "utils.message.message",
         "isExtraImport": true,
-        "detail": "utils.message",
+        "detail": "utils.message.message",
         "documentation": {}
     },
     {
         "label": "Message",
-        "importPath": "utils.message",
-        "description": "utils.message",
+        "importPath": "utils.message.message",
+        "description": "utils.message.message",
         "isExtraImport": true,
-        "detail": "utils.message",
+        "detail": "utils.message.message",
         "documentation": {}
     },
     {
         "label": "MessageType",
-        "importPath": "utils.message",
-        "description": "utils.message",
+        "importPath": "utils.message.message",
+        "description": "utils.message.message",
         "isExtraImport": true,
-        "detail": "utils.message",
-        "documentation": {}
-    },
-    {
-        "label": "MessageType",
-        "importPath": "utils.message",
-        "description": "utils.message",
-        "isExtraImport": true,
-        "detail": "utils.message",
-        "documentation": {}
-    },
-    {
-        "label": "MessageType",
-        "importPath": "utils.message",
-        "description": "utils.message",
-        "isExtraImport": true,
-        "detail": "utils.message",
-        "documentation": {}
-    },
-    {
-        "label": "MessageType",
-        "importPath": "utils.message",
-        "description": "utils.message",
-        "isExtraImport": true,
-        "detail": "utils.message",
-        "documentation": {}
-    },
-    {
-        "label": "Message",
-        "importPath": "utils.message",
-        "description": "utils.message",
-        "isExtraImport": true,
-        "detail": "utils.message",
+        "detail": "utils.message.message",
         "documentation": {}
     },
     {
@@ -1846,14 +1814,6 @@
     },
     {
         "label": "Settings",
-        "importPath": "utils",
-        "description": "utils",
-        "isExtraImport": true,
-        "detail": "utils",
-        "documentation": {}
-    },
-    {
-        "label": "global_vars",
         "importPath": "utils",
         "description": "utils",
         "isExtraImport": true,
@@ -2063,7 +2023,7 @@
         "documentation": {}
     },
     {
-        "label": "auto",
+        "label": "Enum",
         "importPath": "enum",
         "description": "enum",
         "isExtraImport": true,
@@ -2071,7 +2031,7 @@
         "documentation": {}
     },
     {
-        "label": "Enum",
+        "label": "auto",
         "importPath": "enum",
         "description": "enum",
         "isExtraImport": true,
@@ -2382,46 +2342,6 @@
         "documentation": {}
     },
     {
-        "label": "update_status_label",
-        "importPath": "utils.status_manager",
-        "description": "utils.status_manager",
-        "isExtraImport": true,
-        "detail": "utils.status_manager",
-        "documentation": {}
-    },
-    {
-        "label": "update_status_label",
-        "importPath": "utils.status_manager",
-        "description": "utils.status_manager",
-        "isExtraImport": true,
-        "detail": "utils.status_manager",
-        "documentation": {}
-    },
-    {
-        "label": "update_status_label",
-        "importPath": "utils.status_manager",
-        "description": "utils.status_manager",
-        "isExtraImport": true,
-        "detail": "utils.status_manager",
-        "documentation": {}
-    },
-    {
-        "label": "update_status_label",
-        "importPath": "utils.status_manager",
-        "description": "utils.status_manager",
-        "isExtraImport": true,
-        "detail": "utils.status_manager",
-        "documentation": {}
-    },
-    {
-        "label": "update_status_label",
-        "importPath": "utils.status_manager",
-        "description": "utils.status_manager",
-        "isExtraImport": true,
-        "detail": "utils.status_manager",
-        "documentation": {}
-    },
-    {
         "label": "dataclass",
         "importPath": "dataclasses",
         "description": "dataclasses",
@@ -2678,30 +2598,6 @@
         "documentation": {}
     },
     {
-        "label": "MessageManager",
-        "importPath": "utils.message_manager",
-        "description": "utils.message_manager",
-        "isExtraImport": true,
-        "detail": "utils.message_manager",
-        "documentation": {}
-    },
-    {
-        "label": "MessageManager",
-        "importPath": "utils.message_manager",
-        "description": "utils.message_manager",
-        "isExtraImport": true,
-        "detail": "utils.message_manager",
-        "documentation": {}
-    },
-    {
-        "label": "MessageManager",
-        "importPath": "utils.message_manager",
-        "description": "utils.message_manager",
-        "isExtraImport": true,
-        "detail": "utils.message_manager",
-        "documentation": {}
-    },
-    {
         "label": "setup_server_logger",
         "importPath": "utils.logging_config",
         "description": "utils.logging_config",
@@ -2795,14 +2691,6 @@
         "description": "utils.audio.audio",
         "isExtraImport": true,
         "detail": "utils.audio.audio",
-        "documentation": {}
-    },
-    {
-        "label": "BlinkingLabel",
-        "importPath": "ui_files.BlinkingLabel",
-        "description": "ui_files.BlinkingLabel",
-        "isExtraImport": true,
-        "detail": "ui_files.BlinkingLabel",
         "documentation": {}
     },
     {
@@ -3793,6 +3681,51 @@
         "description": "utils.database.pallet_data",
         "peekOfCode": "class Pallet:\n    def __init__(self, layers: List[Layer], width: int, length: int):\n        self.layers: List[Layer] = layers\n        self.layer_count: int = len(layers)\n        self.total_boxes: int = sum(map(lambda layer: len(layer.boxes), layers))\n        self.width: int = width\n        self.length: int = length",
         "detail": "utils.database.pallet_data",
+        "documentation": {}
+    },
+    {
+        "label": "MessageType",
+        "kind": 6,
+        "importPath": "utils.message.message",
+        "description": "utils.message.message",
+        "peekOfCode": "class MessageType(Enum):\n    \"\"\"Enum for the message types.\n    Args:\n        Enum (Enum): The parent class of the message type\n    \"\"\"\n    INFO = \"info\"\n    WARNING = \"warning\" \n    ERROR = \"error\"\nclass Message:\n    \"\"\"Message class.",
+        "detail": "utils.message.message",
+        "documentation": {}
+    },
+    {
+        "label": "Message",
+        "kind": 6,
+        "importPath": "utils.message.message",
+        "description": "utils.message.message",
+        "peekOfCode": "class Message:\n    \"\"\"Message class.\n    \"\"\"\n    def __init__(self, text: str, type: MessageType, timestamp: Optional[datetime] = None):\n        \"\"\"Initialize the message.\n        Args:\n            text (str): The message text\n            type (MessageType): The message type\n            timestamp (Optional[datetime], optional): The timestamp of the message. Defaults to None.\n        \"\"\"",
+        "detail": "utils.message.message",
+        "documentation": {}
+    },
+    {
+        "label": "MessageManager",
+        "kind": 6,
+        "importPath": "utils.message.message_manager",
+        "description": "utils.message.message_manager",
+        "peekOfCode": "class MessageManager:\n    \"\"\"Manager for messages.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the message manager.\n        \"\"\"\n        logger.debug(\"Initializing MessageManager\")\n        self._messages: List[Message] = []\n        self._active_messages: List[Message] = []\n        self._blocked_messages: Set[str] = set()",
+        "detail": "utils.message.message_manager",
+        "documentation": {}
+    },
+    {
+        "label": "update_status_label",
+        "kind": 2,
+        "importPath": "utils.message.status_manager",
+        "description": "utils.message.status_manager",
+        "peekOfCode": "def update_status_label(text: str, color: str, blink: bool = False, second_color: Optional[str] = None, instant_acknowledge: bool = False, block: bool = False) -> None:\n    \"\"\"Update the status label with the given text and color.\n    Args:\n        text (str): The text to be displayed in the status label.\n        color (str): The color of the status label.\n        blink (bool, optional): Whether the status label should blink. Defaults to False.\n        second_color (Optional[str], optional): The second color of the status label. Defaults to None.\n        instant_acknowledge (bool, optional): Whether the status label should be acknowledged immediately. Defaults to False.\n        block (bool, optional): Whether the status label should be blocked. Defaults to False.\n    \"\"\"",
+        "detail": "utils.message.status_manager",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils.message.status_manager",
+        "description": "utils.message.status_manager",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef update_status_label(text: str, color: str, blink: bool = False, second_color: Optional[str] = None, instant_acknowledge: bool = False, block: bool = False) -> None:\n    \"\"\"Update the status label with the given text and color.\n    Args:\n        text (str): The text to be displayed in the status label.\n        color (str): The color of the status label.\n        blink (bool, optional): Whether the status label should blink. Defaults to False.\n        second_color (Optional[str], optional): The second color of the status label. Defaults to None.\n        instant_acknowledge (bool, optional): Whether the status label should be acknowledged immediately. Defaults to False.\n        block (bool, optional): Whether the status label should be blocked. Defaults to False.",
+        "detail": "utils.message.status_manager",
         "documentation": {}
     },
     {
@@ -4912,57 +4845,12 @@
         "documentation": {}
     },
     {
-        "label": "MessageType",
-        "kind": 6,
-        "importPath": "utils.message",
-        "description": "utils.message",
-        "peekOfCode": "class MessageType(Enum):\n    \"\"\"Enum for the message types.\n    Args:\n        Enum (Enum): The parent class of the message type\n    \"\"\"\n    INFO = \"info\"\n    WARNING = \"warning\" \n    ERROR = \"error\"\nclass Message:\n    \"\"\"Message class.",
-        "detail": "utils.message",
-        "documentation": {}
-    },
-    {
-        "label": "Message",
-        "kind": 6,
-        "importPath": "utils.message",
-        "description": "utils.message",
-        "peekOfCode": "class Message:\n    \"\"\"Message class.\n    \"\"\"\n    def __init__(self, text: str, type: MessageType, timestamp: Optional[datetime] = None):\n        \"\"\"Initialize the message.\n        Args:\n            text (str): The message text\n            type (MessageType): The message type\n            timestamp (Optional[datetime], optional): The timestamp of the message. Defaults to None.\n        \"\"\"",
-        "detail": "utils.message",
-        "documentation": {}
-    },
-    {
-        "label": "MessageManager",
-        "kind": 6,
-        "importPath": "utils.message_manager",
-        "description": "utils.message_manager",
-        "peekOfCode": "class MessageManager:\n    \"\"\"Manager for messages.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the message manager.\n        \"\"\"\n        logger.debug(\"Initializing MessageManager\")\n        self._messages: List[Message] = []\n        self._active_messages: List[Message] = []\n        self._blocked_messages: Set[str] = set()",
-        "detail": "utils.message_manager",
-        "documentation": {}
-    },
-    {
         "label": "Settings",
         "kind": 6,
         "importPath": "utils.settings",
         "description": "utils.settings",
         "peekOfCode": "class Settings:\n    \"\"\"Settings class.\n    \"\"\"\n    def __init__(self):\n        \"\"\"Initialize the settings with QSettings.\n        \"\"\"\n        logger.debug(\"Initializing Settings\")\n        # Create QSettings instance with organization and application name\n        self.qsettings = QSettings(\"Multipack\", \"MultipackParser\")\n        # Define default settings",
         "detail": "utils.settings",
-        "documentation": {}
-    },
-    {
-        "label": "update_status_label",
-        "kind": 2,
-        "importPath": "utils.status_manager",
-        "description": "utils.status_manager",
-        "peekOfCode": "def update_status_label(text: str, color: str, blink: bool = False, second_color: Optional[str] = None, instant_acknowledge: bool = False, block: bool = False) -> None:\n    \"\"\"Update the status label with the given text and color.\n    Args:\n        text (str): The text to be displayed in the status label.\n        color (str): The color of the status label.\n        blink (bool, optional): Whether the status label should blink. Defaults to False.\n        second_color (Optional[str], optional): The second color of the status label. Defaults to None.\n        instant_acknowledge (bool, optional): Whether the status label should be acknowledged immediately. Defaults to False.\n        block (bool, optional): Whether the status label should be blocked. Defaults to False.\n    \"\"\"",
-        "detail": "utils.status_manager",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "utils.status_manager",
-        "description": "utils.status_manager",
-        "peekOfCode": "logger = logging.getLogger(__name__)\ndef update_status_label(text: str, color: str, blink: bool = False, second_color: Optional[str] = None, instant_acknowledge: bool = False, block: bool = False) -> None:\n    \"\"\"Update the status label with the given text and color.\n    Args:\n        text (str): The text to be displayed in the status label.\n        color (str): The color of the status label.\n        blink (bool, optional): Whether the status label should blink. Defaults to False.\n        second_color (Optional[str], optional): The second color of the status label. Defaults to None.\n        instant_acknowledge (bool, optional): Whether the status label should be acknowledged immediately. Defaults to False.\n        block (bool, optional): Whether the status label should be blocked. Defaults to False.",
-        "detail": "utils.status_manager",
         "documentation": {}
     },
     {

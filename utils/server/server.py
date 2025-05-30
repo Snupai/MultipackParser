@@ -21,8 +21,8 @@ from utils.server.UR20_Server_functions import (
     UR20_SetZwischenLageLegen, UR20_GetKlemmungAktiv,
     UR20_GetScannerOverride
 )
-from utils.message import MessageType
-from utils.message_manager import MessageManager
+from ..message.message import MessageType
+from ..message.message_manager import MessageManager
 from utils.logging_config import setup_server_logger
 
 logger = setup_server_logger()

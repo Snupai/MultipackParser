@@ -3,7 +3,7 @@ import logging
 import os
 from utils import global_vars
 from utils.database.database import save_to_database, find_file_in_database, list_available_files
-from utils.status_manager import update_status_label
+from ..message.status_manager import update_status_label
 
 logger = logging.getLogger(__name__)
 

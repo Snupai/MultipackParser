@@ -1,7 +1,7 @@
 from typing import List, Optional, Union, Set
 from datetime import datetime
 from .message import Message, MessageType
-from .logging_config import logger
+from ..logging_config import logger
 
 class MessageManager:
     """Manager for messages.

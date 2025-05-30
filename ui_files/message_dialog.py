@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (QDialog, QVBoxLayout, QTableWidget,
                               QHBoxLayout, QCheckBox)
 from PySide6.QtCore import Qt, QRect
 from PySide6.QtGui import QColor, QFont, QGuiApplication
-from utils.message import Message, MessageType
+from utils.message.message import Message, MessageType
 from utils import global_vars
 import logging
 
