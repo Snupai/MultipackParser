@@ -2746,10 +2746,10 @@
     },
     {
         "label": "check_any_usb_for_key",
-        "importPath": "utils.usb_key_check",
-        "description": "utils.usb_key_check",
+        "importPath": "utils.system.security.usb_key_check",
+        "description": "utils.system.security.usb_key_check",
         "isExtraImport": true,
-        "detail": "utils.usb_key_check",
+        "detail": "utils.system.security.usb_key_check",
         "documentation": {}
     },
     {
