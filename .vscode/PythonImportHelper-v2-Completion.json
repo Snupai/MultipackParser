@@ -3939,7 +3939,7 @@
         "kind": 2,
         "importPath": "utils.robot.robot_control",
         "description": "utils.robot.robot_control",
-        "peekOfCode": "def load() -> None:\n    \"\"\"Load the pallet plan from file.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):\n        logger.error(\"UI not initialized\")\n        return\n    interface_enabled = False\n    from utils.message.status_manager import update_status_label\n    from utils.server.UR_Common_functions import UR\n    # Store the text first, then manually clear focus to avoid keyboard issues",
+        "peekOfCode": "def load() -> None:\n    \"\"\"Load the pallet plan from file.\n    \"\"\"\n    if not global_vars.ui or not hasattr(global_vars.ui, 'EingabePallettenplan'):\n        logger.error(\"UI not initialized\")\n        return\n    interface_enabled = False\n    from utils.message.status_manager import update_status_label\n    import utils.server.UR_Common_functions as UR\n    # Store the text first, then manually clear focus to avoid keyboard issues",
         "detail": "utils.robot.robot_control",
         "documentation": {}
     },
@@ -4614,7 +4614,7 @@
         "kind": 5,
         "importPath": "utils.system.core.global_vars",
         "description": "utils.system.core.global_vars",
-        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN",
+        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.6.0'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN",
         "detail": "utils.system.core.global_vars",
         "documentation": {}
     },
@@ -4623,7 +4623,7 @@
         "kind": 5,
         "importPath": "utils.system.core.global_vars",
         "description": "utils.system.core.global_vars",
-        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN",
+        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.6.0'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN",
         "detail": "utils.system.core.global_vars",
         "documentation": {}
     },
@@ -4632,7 +4632,7 @@
         "kind": 5,
         "importPath": "utils.system.core.global_vars",
         "description": "utils.system.core.global_vars",
-        "peekOfCode": "allow_close = False\n# Variables\nVERSION: str = '1.5.13'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN\nrobot_status_monitor: Optional['RobotStatus'] = None",
+        "peekOfCode": "allow_close = False\n# Variables\nVERSION: str = '1.6.0'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN\nrobot_status_monitor: Optional['RobotStatus'] = None",
         "detail": "utils.system.core.global_vars",
         "documentation": {}
     },
