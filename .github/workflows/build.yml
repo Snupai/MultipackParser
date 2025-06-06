@@ -8,7 +8,7 @@ on:
       - "**.py"
     branches:
       - main
-      - dev-more-class-files
+      - feat/robot-status-check
 
 env:
   IMAGE_NAME: multipackparser-builder
@@ -47,7 +47,7 @@ jobs:
         id: check_version_change
         run: |
           # Get current version from global_vars.py
-          CURR_VERSION=$(grep -m 1 "VERSION: str = '" utils/global_vars.py | cut -d "'" -f 2)
+          CURR_VERSION=$(grep -m 1 "VERSION: str = '" utils/system/core/global_vars.py | cut -d "'" -f 2)
           echo "Current version: $CURR_VERSION"
 
           # Fetch all tags
