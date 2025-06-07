@@ -1508,6 +1508,22 @@
         "documentation": {}
     },
     {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Union",
         "importPath": "typing",
         "description": "typing",
@@ -2339,6 +2355,30 @@
         "documentation": {}
     },
     {
+        "label": "deque",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
         "label": "sqlite3",
         "kind": 6,
         "isExtraImport": true,
@@ -2458,14 +2498,6 @@
         "description": "utils.message.status_manager",
         "isExtraImport": true,
         "detail": "utils.message.status_manager",
-        "documentation": {}
-    },
-    {
-        "label": "dataclass",
-        "importPath": "dataclasses",
-        "description": "dataclasses",
-        "isExtraImport": true,
-        "detail": "dataclasses",
         "documentation": {}
     },
     {
@@ -3647,29 +3679,47 @@
         "documentation": {}
     },
     {
-        "label": "spawn_play_stepback_warning_thread",
-        "kind": 2,
+        "label": "AudioItem",
+        "kind": 6,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "def spawn_play_stepback_warning_thread():\n    \"\"\"Spawn a thread to play the stepback warning.\n    \"\"\"\n    global audio_thread\n    logger.info(\"Starting stepback warning audio thread\")\n    global_vars.audio_thread_running = True\n    audio_thread = threading.Thread(target=play_stepback_warning)\n    audio_thread.daemon = True\n    audio_thread.start()\n    global_vars.audio_thread = audio_thread",
+        "peekOfCode": "class AudioItem:\n    id: str\n    file_path: str\n    playback_count: int  # -1 for infinite, positive number for specific count\n    current_count: int = 0\nclass AudioQueue:\n    def __init__(self):\n        self.queue: deque[AudioItem] = deque()\n        self.current_item: Optional[AudioItem] = None\n        self.is_playing: bool = False",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
     {
-        "label": "kill_play_stepback_warning_thread",
-        "kind": 2,
+        "label": "AudioQueue",
+        "kind": 6,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "def kill_play_stepback_warning_thread():\n    \"\"\"Kill the thread playing the stepback warning.\n    \"\"\"\n    logger.info(\"Stopping stepback warning audio thread\")\n    global_vars.audio_thread_running = False\n    if global_vars.audio_thread:\n        global_vars.audio_thread = None\ndef play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.\n    \"\"\"",
+        "peekOfCode": "class AudioQueue:\n    def __init__(self):\n        self.queue: deque[AudioItem] = deque()\n        self.current_item: Optional[AudioItem] = None\n        self.is_playing: bool = False\n        self._lock = threading.Lock()\n        self._stop_event = threading.Event()\n        self._thread: Optional[threading.Thread] = None\n    def add_to_queue(self, id: str, audio_file: str, playback_count: int) -> None:\n        \"\"\"Add an audio file to the queue with specified playback count.\"\"\"",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
     {
-        "label": "play_stepback_warning",
+        "label": "add_audio_to_queue",
         "kind": 2,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "def play_stepback_warning():\n    \"\"\"Play the stepback warning in a loop using aplay.\n    \"\"\"\n    logger.debug(\"Starting stepback warning playback loop\")\n    try:\n        while global_vars.audio_thread_running:\n            try:\n                # Use aplay to play the audio file\n                logger.debug(f\"Playing audio file: {global_vars.settings.settings['admin']['alarm_sound_file']}\")\n                if os.name != 'nt':",
+        "peekOfCode": "def add_audio_to_queue(id: str, audio_file: str, playback_count: int) -> None:\n    \"\"\"Add an audio file to the queue.\"\"\"\n    if not global_vars.audio_muted:\n        audio_queue.add_to_queue(id, audio_file, playback_count)\ndef stop_audio(id: str) -> None:\n    \"\"\"Stop a specific audio by ID.\"\"\"\n    audio_queue.stop_audio(id)\ndef kill_all_audio() -> None:\n    \"\"\"Stop all audio playback.\"\"\"\n    audio_queue.kill_all()",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "stop_audio",
+        "kind": 2,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "peekOfCode": "def stop_audio(id: str) -> None:\n    \"\"\"Stop a specific audio by ID.\"\"\"\n    audio_queue.stop_audio(id)\ndef kill_all_audio() -> None:\n    \"\"\"Stop all audio playback.\"\"\"\n    audio_queue.kill_all()\ndef set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "kill_all_audio",
+        "kind": 2,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "peekOfCode": "def kill_all_audio() -> None:\n    \"\"\"Stop all audio playback.\"\"\"\n    audio_queue.kill_all()\ndef set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = '0' if not global_vars.audio_muted else '100'\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
@@ -3678,16 +3728,7 @@
         "kind": 2,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "def set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = '0' if not global_vars.audio_muted else '100'\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"\n    logger.info(f\"Setting audio volume to {volume}\")\n    try:",
-        "detail": "utils.audio.audio",
-        "documentation": {}
-    },
-    {
-        "label": "delay_warning_sound",
-        "kind": 2,
-        "importPath": "utils.audio.audio",
-        "description": "utils.audio.audio",
-        "peekOfCode": "def delay_warning_sound():\n    \"\"\"Delay the warning sound start by 40 seconds.\n    \"\"\"\n    logger.debug(\"Starting delay warning sound monitor\")\n    while True:\n        try:\n            if global_vars.timestamp_scanner_fault:\n                # Handle the case where timestamp_scanner_fault might be a float\n                if isinstance(global_vars.timestamp_scanner_fault, float):\n                    # If it's a float, assume it's a timestamp and calculate the difference directly",
+        "peekOfCode": "def set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = '0' if not global_vars.audio_muted else '100'\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"\n    logger.info(f\"Setting audio volume to {volume}\")\n    try:\n        if os.name != 'nt':",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
@@ -3696,7 +3737,16 @@
         "kind": 5,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "logger = logging.getLogger(__name__)\n# TODO: overhaul everything so that it can be used for other sounds as well and stuff\ndef spawn_play_stepback_warning_thread():\n    \"\"\"Spawn a thread to play the stepback warning.\n    \"\"\"\n    global audio_thread\n    logger.info(\"Starting stepback warning audio thread\")\n    global_vars.audio_thread_running = True\n    audio_thread = threading.Thread(target=play_stepback_warning)\n    audio_thread.daemon = True",
+        "peekOfCode": "logger = logging.getLogger(__name__)\n@dataclass\nclass AudioItem:\n    id: str\n    file_path: str\n    playback_count: int  # -1 for infinite, positive number for specific count\n    current_count: int = 0\nclass AudioQueue:\n    def __init__(self):\n        self.queue: deque[AudioItem] = deque()",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "audio_queue",
+        "kind": 5,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "peekOfCode": "audio_queue = AudioQueue()\ndef add_audio_to_queue(id: str, audio_file: str, playback_count: int) -> None:\n    \"\"\"Add an audio file to the queue.\"\"\"\n    if not global_vars.audio_muted:\n        audio_queue.add_to_queue(id, audio_file, playback_count)\ndef stop_audio(id: str) -> None:\n    \"\"\"Stop a specific audio by ID.\"\"\"\n    audio_queue.stop_audio(id)\ndef kill_all_audio() -> None:\n    \"\"\"Stop all audio playback.\"\"\"",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
