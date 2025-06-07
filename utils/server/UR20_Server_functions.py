@@ -9,7 +9,7 @@ from utils.message.status_manager import update_status_label
 from typing import Literal, cast, Union
 from PySide6.QtCore import Qt, QObject, Signal, QTimer
 import logging
-from utils.audio.audio import kill_play_stepback_warning_thread, spawn_play_stepback_warning_thread
+# from utils.audio.audio import kill_play_stepback_warning_thread, spawn_play_stepback_warning_thread
 import time
 
 from utils.system.config.logging_config import setup_server_logger
@@ -69,7 +69,7 @@ def UR20_scannerStatus(status: str) -> int:
             logger.info("Scanner fault cleared")
             global_vars.timestamp_scanner_fault = None
             # Stop any playing warning sound
-            kill_play_stepback_warning_thread()
+            # kill_play_stepback_warning_thread()
 
     image_path = None
     message = "Bitte Arbeitsbereich räumen."  # Default message for unsafe conditions

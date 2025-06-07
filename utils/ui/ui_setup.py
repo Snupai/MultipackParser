@@ -23,8 +23,8 @@ from utils.robot.robot_control import (display_selected_file, load,
                                 send_cmd_play, send_cmd_pause, send_cmd_stop, load_selected_file,
                                 send_remote_control_command)
 from utils.server.server import server_thread, server_stop
-from utils.audio.audio import (spawn_play_stepback_warning_thread, kill_play_stepback_warning_thread, 
-                        set_audio_volume, delay_warning_sound)
+# from utils.audio.audio import (spawn_play_stepback_warning_thread, kill_play_stepback_warning_thread, 
+#                         set_audio_volume, delay_warning_sound)
 from utils.system.updater import check_for_updates
 from utils.system.core.app_control import restart_app, exit_app
 from utils.server.UR20_Server_functions import scanner_signals
@@ -154,7 +154,7 @@ def connect_signal_handlers():
     global_vars.ui.ButtonDatenSenden.clicked.connect(server_thread)
     #global_vars.ui.startaudio.clicked.connect(spawn_play_stepback_warning_thread) # TODO: Temporarily disabled due to fast production push
     #global_vars.ui.stopaudio.clicked.connect(kill_play_stepback_warning_thread) # TODO: Temporarily disabled due to fast production push
-    global_vars.ui.pushButtonVolumeOnOff.clicked.connect(set_audio_volume)
+    #global_vars.ui.pushButtonVolumeOnOff.clicked.connect(set_audio_volume)
 
     # Connect robot control buttons
     global_vars.ui.ButtonZurueck.clicked.connect(lambda: open_page(Page.MAIN_PAGE))

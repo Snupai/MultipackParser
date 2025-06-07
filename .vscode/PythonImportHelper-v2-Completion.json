@@ -2830,54 +2830,6 @@
         "documentation": {}
     },
     {
-        "label": "kill_play_stepback_warning_thread",
-        "importPath": "utils.audio.audio",
-        "description": "utils.audio.audio",
-        "isExtraImport": true,
-        "detail": "utils.audio.audio",
-        "documentation": {}
-    },
-    {
-        "label": "spawn_play_stepback_warning_thread",
-        "importPath": "utils.audio.audio",
-        "description": "utils.audio.audio",
-        "isExtraImport": true,
-        "detail": "utils.audio.audio",
-        "documentation": {}
-    },
-    {
-        "label": "spawn_play_stepback_warning_thread",
-        "importPath": "utils.audio.audio",
-        "description": "utils.audio.audio",
-        "isExtraImport": true,
-        "detail": "utils.audio.audio",
-        "documentation": {}
-    },
-    {
-        "label": "kill_play_stepback_warning_thread",
-        "importPath": "utils.audio.audio",
-        "description": "utils.audio.audio",
-        "isExtraImport": true,
-        "detail": "utils.audio.audio",
-        "documentation": {}
-    },
-    {
-        "label": "set_audio_volume",
-        "importPath": "utils.audio.audio",
-        "description": "utils.audio.audio",
-        "isExtraImport": true,
-        "detail": "utils.audio.audio",
-        "documentation": {}
-    },
-    {
-        "label": "delay_warning_sound",
-        "importPath": "utils.audio.audio",
-        "description": "utils.audio.audio",
-        "isExtraImport": true,
-        "detail": "utils.audio.audio",
-        "documentation": {}
-    },
-    {
         "label": "RotatingFileHandler",
         "importPath": "logging.handlers",
         "description": "logging.handlers",
@@ -4591,7 +4543,7 @@
         "kind": 2,
         "importPath": "utils.system.core.app_control",
         "description": "utils.system.core.app_control",
-        "peekOfCode": "def exit_app():\n    \"\"\"Exit the application.\n    \"\"\"\n    logger.info(\"Exiting application\")\n    # First stop the server if it's running\n    if hasattr(global_vars, 'server') and global_vars.server:\n        server_stop()\n    # Stop any running audio threads\n    if hasattr(global_vars, 'audio_thread_running') and global_vars.audio_thread_running:\n        from utils.audio.audio import kill_play_stepback_warning_thread",
+        "peekOfCode": "def exit_app():\n    \"\"\"Exit the application.\n    \"\"\"\n    logger.info(\"Exiting application\")\n    # First stop the server if it's running\n    if hasattr(global_vars, 'server') and global_vars.server:\n        server_stop()\n    # Stop any running audio threads\n    if hasattr(global_vars, 'audio_thread_running') and global_vars.audio_thread_running:\n        # from utils.audio.audio import kill_play_stepback_warning_thread",
         "detail": "utils.system.core.app_control",
         "documentation": {}
     },
