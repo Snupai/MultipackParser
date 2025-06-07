@@ -273,6 +273,11 @@ def start_background_tasks():
     """Start background tasks and threads."""
     # Start delay warning sound monitor thread
     
+    # Start robot status monitor
+    from utils.robot.robot_status_monitor import RobotStatusMonitor
+    global_vars.robot_status_monitor = RobotStatusMonitor()
+    global_vars.robot_status_monitor.start_monitoring()
+    
     # Start zwischenlage popup monitor
     check_zwischenlage_status()
     
