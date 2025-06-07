@@ -3715,7 +3715,7 @@
         "kind": 2,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "def monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound when in REDUCED mode.\"\"\"\n    WARNING_SOUND = \"/home/snupai/Downloads/beepbeepbeep.wav\"\n    WARNING_SOUND_ID = \"safety_warning\"\n    while True:\n        try:\n            current_status = global_vars.current_safety_status\n            logger.debug(current_status)\n            if current_status == SafetyStatus.REDUCED:\n                # Check if warning sound is not already playing",
+        "peekOfCode": "def monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound when in REDUCED mode.\"\"\"\n    WARNING_SOUND = global_vars.settings.settings['admin']['alarm_sound_file']\n    WARNING_SOUND_ID = \"safety_warning\"\n    while True:\n        try:\n            current_status = global_vars.current_safety_status\n            logger.debug(current_status)\n            if current_status == SafetyStatus.REDUCED:\n                # Check if warning sound is not already playing",
         "detail": "utils.audio.audio",
         "documentation": {}
     },

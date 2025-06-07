@@ -146,7 +146,7 @@ def set_audio_volume() -> None:
 
 def monitor_safety_status():
     """Monitor robot safety status and play warning sound when in REDUCED mode."""
-    WARNING_SOUND = "/home/snupai/Downloads/beepbeepbeep.wav"
+    WARNING_SOUND = global_vars.settings.settings['admin']['alarm_sound_file']
     WARNING_SOUND_ID = "safety_warning"
     
     while True:
