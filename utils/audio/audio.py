@@ -151,8 +151,15 @@ def monitor_safety_status():
     
     while True:
         try:
+            # Check if we should exit
+            if not hasattr(global_vars, 'current_safety_status'):
+                logger.warning("Safety status not available, waiting...")
+                time.sleep(1)
+                continue
+                
             current_status = global_vars.current_safety_status
-            logger.debug(current_status)
+            logger.debug(f"Current safety status: {current_status}")
+            
             if current_status == SafetyStatus.REDUCED:
                 # Check if warning sound is not already playing
                 if not any(item.id == WARNING_SOUND_ID for item in audio_queue.queue):
@@ -164,6 +171,9 @@ def monitor_safety_status():
                 
             time.sleep(1)  # Check every second
             
+        except AttributeError as e:
+            logger.error(f"Missing required attribute: {e}")
+            time.sleep(1)
         except Exception as e:
             logger.error(f"Error in safety status monitor: {e}")
             time.sleep(1)  # Wait before retrying
