@@ -1,6 +1,5 @@
 import logging
 import os
-import subprocess
 import threading
 import time
 from datetime import datetime
@@ -8,11 +7,15 @@ from PySide6.QtGui import QIcon
 from collections import deque
 from dataclasses import dataclass
 from typing import Dict, Optional
+import pygame
 
 from utils.system.core import global_vars
 from utils.robot.robot_enums import SafetyStatus
 
 logger = logging.getLogger(__name__)
+
+# Initialize pygame mixer
+pygame.mixer.init()
 
 @dataclass
 class AudioItem:
@@ -43,6 +46,7 @@ class AudioQueue:
         with self._lock:
             if self.current_item and self.current_item.id == id:
                 self._stop_event.set()
+                pygame.mixer.music.stop()
                 self.current_item = None
             self.queue = deque(item for item in self.queue if item.id != id)
             logger.info(f"Stopped audio {id}")
@@ -51,6 +55,7 @@ class AudioQueue:
         """Stop all audio playback and clear the queue."""
         with self._lock:
             self._stop_event.set()
+            pygame.mixer.music.stop()
             self.queue.clear()
             self.current_item = None
             self.is_playing = False
@@ -68,40 +73,40 @@ class AudioQueue:
     def _playback_loop(self) -> None:
         """Main playback loop that handles the queue."""
         while not self._stop_event.is_set():
+            current_item = None
             with self._lock:
                 if not self.queue:
                     self.is_playing = False
                     break
 
                 self.current_item = self.queue[0]
-                if self.current_item.playback_count != -1 and self.current_item.current_count >= self.current_item.playback_count:
+                current_item = self.current_item
+                if current_item.playback_count != -1 and current_item.current_count >= current_item.playback_count:
                     self.queue.popleft()
                     continue
 
             try:
-                if os.name != 'nt':
-                    subprocess.run(['aplay', self.current_item.file_path],
-                                 check=True,
-                                 stdout=subprocess.DEVNULL,
-                                 stderr=subprocess.DEVNULL)
+                pygame.mixer.music.load(current_item.file_path)
+                pygame.mixer.music.play()
+                
+                # Wait for the sound to finish playing
+                while pygame.mixer.music.get_busy() and not self._stop_event.is_set():
+                    time.sleep(0.1)
                 
                 with self._lock:
-                    if self.current_item.playback_count != -1:
-                        self.current_item.current_count += 1
-                        if self.current_item.current_count >= self.current_item.playback_count:
+                    if current_item.playback_count != -1:
+                        current_item.current_count += 1
+                        if current_item.current_count >= current_item.playback_count:
                             self.queue.popleft()
                     # Move the current item to the end of the queue if it's infinite
-                    if self.current_item.playback_count == -1:
+                    if current_item.playback_count == -1:
                         self.queue.rotate(-1)
 
-            except subprocess.CalledProcessError as e:
+            except Exception as e:
                 logger.error(f"Error during audio playback: {e}")
                 with self._lock:
-                    self.queue.popleft()
-            except Exception as e:
-                logger.error(f"Unexpected error in playback loop: {e}")
-                with self._lock:
-                    self.queue.popleft()
+                    if self.queue and self.queue[0] == current_item:
+                        self.queue.popleft()
 
 # Global audio queue instance
 audio_queue = AudioQueue()
@@ -125,16 +130,12 @@ def set_audio_volume() -> None:
         logger.error("UI not initialized, cannot set audio volume")
         return
         
-    volume = '0' if not global_vars.audio_muted else '100'
+    volume = 0.0 if not global_vars.audio_muted else 1.0
     icon_name = ":/Sound/imgs/volume-off.png" if not global_vars.audio_muted else ":/Sound/imgs/volume-on.png"
     
     logger.info(f"Setting audio volume to {volume}")
     try:
-        if os.name != 'nt':
-            subprocess.run(['amixer', '-c', '3', 'cset', 'name=Max Overclock DAC', volume], 
-                            stdout=subprocess.DEVNULL,
-                            stderr=subprocess.DEVNULL,
-                            check=True)
+        pygame.mixer.music.set_volume(volume)
         global_vars.ui.pushButtonVolumeOnOff.setIcon(QIcon(icon_name))
         global_vars.audio_muted = not global_vars.audio_muted
         if global_vars.audio_muted:
@@ -145,13 +146,13 @@ def set_audio_volume() -> None:
 
 def monitor_safety_status():
     """Monitor robot safety status and play warning sound when in REDUCED mode."""
-    WARNING_SOUND = "/home/sz-ur/Sounds/beepbeepbeep.wav"
+    WARNING_SOUND = "/home/snupai/Downloads/beepbeepbeep.wav"
     WARNING_SOUND_ID = "safety_warning"
     
     while True:
         try:
             current_status = global_vars.current_safety_status
-            
+            logger.debug(current_status)
             if current_status == SafetyStatus.REDUCED:
                 # Check if warning sound is not already playing
                 if not any(item.id == WARNING_SOUND_ID for item in audio_queue.queue):

@@ -4,3 +4,4 @@ python-dotenv
 ffmpeg-python
 matplotlib==3.7.5
 cryptography
+pygame

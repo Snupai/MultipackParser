@@ -2264,15 +2264,6 @@
         "documentation": {}
     },
     {
-        "label": "subprocess",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "subprocess",
-        "description": "subprocess",
-        "detail": "subprocess",
-        "documentation": {}
-    },
-    {
         "label": "threading",
         "kind": 6,
         "isExtraImport": true,
@@ -2376,6 +2367,15 @@
         "description": "dataclasses",
         "isExtraImport": true,
         "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "pygame",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pygame",
+        "description": "pygame",
+        "detail": "pygame",
         "documentation": {}
     },
     {
@@ -2843,6 +2843,15 @@
         "description": "logging.handlers",
         "isExtraImport": true,
         "detail": "logging.handlers",
+        "documentation": {}
+    },
+    {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
         "documentation": {}
     },
     {
@@ -3688,7 +3697,7 @@
         "kind": 2,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "def kill_all_audio() -> None:\n    \"\"\"Stop all audio playback.\"\"\"\n    audio_queue.kill_all()\ndef set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = '0' if not global_vars.audio_muted else '100'\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"",
+        "peekOfCode": "def kill_all_audio() -> None:\n    \"\"\"Stop all audio playback.\"\"\"\n    audio_queue.kill_all()\ndef set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = 0.0 if not global_vars.audio_muted else 1.0\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
@@ -3697,7 +3706,7 @@
         "kind": 2,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "def set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = '0' if not global_vars.audio_muted else '100'\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"\n    logger.info(f\"Setting audio volume to {volume}\")\n    try:\n        if os.name != 'nt':",
+        "peekOfCode": "def set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = 0.0 if not global_vars.audio_muted else 1.0\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"\n    logger.info(f\"Setting audio volume to {volume}\")\n    try:\n        pygame.mixer.music.set_volume(volume)",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
@@ -3706,7 +3715,7 @@
         "kind": 2,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "def monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound when in REDUCED mode.\"\"\"\n    WARNING_SOUND = \"/home/sz-ur/Sounds/beepbeepbeep.wav\"\n    WARNING_SOUND_ID = \"safety_warning\"\n    while True:\n        try:\n            current_status = global_vars.current_safety_status\n            if current_status == SafetyStatus.REDUCED:\n                # Check if warning sound is not already playing\n                if not any(item.id == WARNING_SOUND_ID for item in audio_queue.queue):",
+        "peekOfCode": "def monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound when in REDUCED mode.\"\"\"\n    WARNING_SOUND = \"/home/snupai/Downloads/beepbeepbeep.wav\"\n    WARNING_SOUND_ID = \"safety_warning\"\n    while True:\n        try:\n            current_status = global_vars.current_safety_status\n            logger.debug(current_status)\n            if current_status == SafetyStatus.REDUCED:\n                # Check if warning sound is not already playing",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
@@ -3715,7 +3724,7 @@
         "kind": 5,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "logger = logging.getLogger(__name__)\n@dataclass\nclass AudioItem:\n    id: str\n    file_path: str\n    playback_count: int  # -1 for infinite, positive number for specific count\n    current_count: int = 0\nclass AudioQueue:\n    def __init__(self):\n        self.queue: deque[AudioItem] = deque()",
+        "peekOfCode": "logger = logging.getLogger(__name__)\n# Initialize pygame mixer\npygame.mixer.init()\n@dataclass\nclass AudioItem:\n    id: str\n    file_path: str\n    playback_count: int  # -1 for infinite, positive number for specific count\n    current_count: int = 0\nclass AudioQueue:",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
