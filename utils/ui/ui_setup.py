@@ -272,9 +272,6 @@ def setup_components():
 def start_background_tasks():
     """Start background tasks and threads."""
     # Start delay warning sound monitor thread
-    warning_sound_thread = threading.Thread(target=delay_warning_sound)
-    warning_sound_thread.daemon = True
-    warning_sound_thread.start()
     
     # Start zwischenlage popup monitor
     check_zwischenlage_status()

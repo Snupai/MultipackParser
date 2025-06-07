@@ -5056,7 +5056,7 @@
         "kind": 2,
         "importPath": "utils.ui.ui_setup",
         "description": "utils.ui.ui_setup",
-        "peekOfCode": "def start_background_tasks():\n    \"\"\"Start background tasks and threads.\"\"\"\n    # Start delay warning sound monitor thread\n    warning_sound_thread = threading.Thread(target=delay_warning_sound)\n    warning_sound_thread.daemon = True\n    warning_sound_thread.start()\n    # Start zwischenlage popup monitor\n    check_zwischenlage_status()\n    # Create a timer to check zwischenlage status every 500ms\n    zwischenlage_timer = QTimer(global_vars.main_window)",
+        "peekOfCode": "def start_background_tasks():\n    \"\"\"Start background tasks and threads.\"\"\"\n    # Start delay warning sound monitor thread\n    # Start zwischenlage popup monitor\n    check_zwischenlage_status()\n    # Create a timer to check zwischenlage status every 500ms\n    zwischenlage_timer = QTimer(global_vars.main_window)\n    zwischenlage_timer.timeout.connect(check_zwischenlage_status)\n    zwischenlage_timer.start(500)  # Check every 500ms\n    # Create a timer to check palette clearing status every 1000ms",
         "detail": "utils.ui.ui_setup",
         "documentation": {}
     },
