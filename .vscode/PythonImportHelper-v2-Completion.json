@@ -2379,6 +2379,38 @@
         "documentation": {}
     },
     {
+        "label": "SafetyStatus",
+        "importPath": "utils.robot.robot_enums",
+        "description": "utils.robot.robot_enums",
+        "isExtraImport": true,
+        "detail": "utils.robot.robot_enums",
+        "documentation": {}
+    },
+    {
+        "label": "RobotMode",
+        "importPath": "utils.robot.robot_enums",
+        "description": "utils.robot.robot_enums",
+        "isExtraImport": true,
+        "detail": "utils.robot.robot_enums",
+        "documentation": {}
+    },
+    {
+        "label": "SafetyStatus",
+        "importPath": "utils.robot.robot_enums",
+        "description": "utils.robot.robot_enums",
+        "isExtraImport": true,
+        "detail": "utils.robot.robot_enums",
+        "documentation": {}
+    },
+    {
+        "label": "ProgramState",
+        "importPath": "utils.robot.robot_enums",
+        "description": "utils.robot.robot_enums",
+        "isExtraImport": true,
+        "detail": "utils.robot.robot_enums",
+        "documentation": {}
+    },
+    {
         "label": "sqlite3",
         "kind": 6,
         "isExtraImport": true,
@@ -3139,30 +3171,6 @@
         "documentation": {}
     },
     {
-        "label": "RobotMode",
-        "importPath": "utils.robot.robot_enums",
-        "description": "utils.robot.robot_enums",
-        "isExtraImport": true,
-        "detail": "utils.robot.robot_enums",
-        "documentation": {}
-    },
-    {
-        "label": "SafetyStatus",
-        "importPath": "utils.robot.robot_enums",
-        "description": "utils.robot.robot_enums",
-        "isExtraImport": true,
-        "detail": "utils.robot.robot_enums",
-        "documentation": {}
-    },
-    {
-        "label": "ProgramState",
-        "importPath": "utils.robot.robot_enums",
-        "description": "utils.robot.robot_enums",
-        "isExtraImport": true,
-        "detail": "utils.robot.robot_enums",
-        "documentation": {}
-    },
-    {
         "label": "Fernet",
         "importPath": "cryptography.fernet",
         "description": "cryptography.fernet",
@@ -3733,6 +3741,15 @@
         "documentation": {}
     },
     {
+        "label": "monitor_safety_status",
+        "kind": 2,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "peekOfCode": "def monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound when in REDUCED mode.\"\"\"\n    WARNING_SOUND = \"/home/sz-ur/Sounds/beepbeepbeep.wav\"\n    WARNING_SOUND_ID = \"safety_warning\"\n    while True:\n        try:\n            current_status = global_vars.current_safety_status\n            if current_status == SafetyStatus.REDUCED:\n                # Check if warning sound is not already playing\n                if not any(item.id == WARNING_SOUND_ID for item in audio_queue.queue):",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
         "label": "logger",
         "kind": 5,
         "importPath": "utils.audio.audio",
@@ -3747,6 +3764,15 @@
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
         "peekOfCode": "audio_queue = AudioQueue()\ndef add_audio_to_queue(id: str, audio_file: str, playback_count: int) -> None:\n    \"\"\"Add an audio file to the queue.\"\"\"\n    if not global_vars.audio_muted:\n        audio_queue.add_to_queue(id, audio_file, playback_count)\ndef stop_audio(id: str) -> None:\n    \"\"\"Stop a specific audio by ID.\"\"\"\n    audio_queue.stop_audio(id)\ndef kill_all_audio() -> None:\n    \"\"\"Stop all audio playback.\"\"\"",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "safety_monitor_thread",
+        "kind": 5,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "peekOfCode": "safety_monitor_thread = threading.Thread(target=monitor_safety_status, daemon=True)\nsafety_monitor_thread.start()",
         "detail": "utils.audio.audio",
         "documentation": {}
     },

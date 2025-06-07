@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import Dict, Optional
 
 from utils.system.core import global_vars
+from utils.robot.robot_enums import SafetyStatus
 
 logger = logging.getLogger(__name__)
 
@@ -140,4 +141,32 @@ def set_audio_volume() -> None:
             kill_all_audio()
         logger.debug("Audio volume set successfully")
     except Exception as e:
-        logger.error(f"Failed to set audio volume: {e}") 
+        logger.error(f"Failed to set audio volume: {e}")
+
+def monitor_safety_status():
+    """Monitor robot safety status and play warning sound when in REDUCED mode."""
+    WARNING_SOUND = "/home/sz-ur/Sounds/beepbeepbeep.wav"
+    WARNING_SOUND_ID = "safety_warning"
+    
+    while True:
+        try:
+            current_status = global_vars.current_safety_status
+            
+            if current_status == SafetyStatus.REDUCED:
+                # Check if warning sound is not already playing
+                if not any(item.id == WARNING_SOUND_ID for item in audio_queue.queue):
+                    logger.info("Robot in REDUCED mode, starting warning sound")
+                    add_audio_to_queue(WARNING_SOUND_ID, WARNING_SOUND, -1)
+            else:
+                # Stop warning sound if robot is not in REDUCED mode
+                stop_audio(WARNING_SOUND_ID)
+                
+            time.sleep(1)  # Check every second
+            
+        except Exception as e:
+            logger.error(f"Error in safety status monitor: {e}")
+            time.sleep(1)  # Wait before retrying
+
+# Start the safety status monitor in a daemon thread
+safety_monitor_thread = threading.Thread(target=monitor_safety_status, daemon=True)
+safety_monitor_thread.start() 
