@@ -12,6 +12,7 @@ from PySide6.QtGui import QRegularExpressionValidator, QIntValidator
 
 from ui_files.ui_main_window import Ui_Form
 from ui_files.visualization_3d import initialize_3d_view, clear_canvas, load_rob_files
+import utils
 from utils.system.core import global_vars
 from utils.message.status_manager import update_status_label
 from utils.ui.ui_helpers import (CustomDoubleValidator, handle_scanner_status,
@@ -25,6 +26,7 @@ from utils.robot.robot_control import (display_selected_file, load,
 from utils.server.server import server_thread, server_stop
 # from utils.audio.audio import (spawn_play_stepback_warning_thread, kill_play_stepback_warning_thread, 
 #                         set_audio_volume, delay_warning_sound)
+import utils.audio.audio as audio
 from utils.system.updater import check_for_updates
 from utils.system.core.app_control import restart_app, exit_app
 from utils.server.UR20_Server_functions import scanner_signals

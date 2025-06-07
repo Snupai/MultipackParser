@@ -3230,6 +3230,15 @@
         "documentation": {}
     },
     {
+        "label": "utils.audio.audio",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
         "label": "check_for_updates",
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
