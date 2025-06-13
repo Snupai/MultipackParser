@@ -72,41 +72,56 @@ class AudioQueue:
 
     def _playback_loop(self) -> None:
         """Main playback loop that handles the queue."""
+        logger.debug("Starting audio playback loop")
         while not self._stop_event.is_set():
             current_item = None
             with self._lock:
                 if not self.queue:
+                    logger.debug("Queue is empty, stopping playback loop")
                     self.is_playing = False
                     break
 
                 self.current_item = self.queue[0]
                 current_item = self.current_item
+                logger.debug(f"Processing audio item: {current_item.id} (count: {current_item.current_count}/{current_item.playback_count})")
+                
                 if current_item.playback_count != -1 and current_item.current_count >= current_item.playback_count:
+                    logger.debug(f"Removing {current_item.id} from queue - playback count reached")
                     self.queue.popleft()
                     continue
 
             try:
+                logger.debug(f"Loading audio file: {current_item.file_path}")
                 pygame.mixer.music.load(current_item.file_path)
                 pygame.mixer.music.play()
+                logger.debug(f"Started playing: {current_item.id}")
                 
                 # Wait for the sound to finish playing
                 while pygame.mixer.music.get_busy() and not self._stop_event.is_set():
                     time.sleep(0.1)
                 
+                logger.debug(f"Finished playing: {current_item.id}")
+                
                 with self._lock:
                     if current_item.playback_count != -1:
                         current_item.current_count += 1
+                        logger.debug(f"Incremented play count for {current_item.id}: {current_item.current_count}")
                         if current_item.current_count >= current_item.playback_count:
+                            logger.debug(f"Removing {current_item.id} from queue - reached max plays")
                             self.queue.popleft()
                     # Move the current item to the end of the queue if it's infinite
                     if current_item.playback_count == -1:
+                        logger.debug(f"Rotating infinite playback item: {current_item.id}")
                         self.queue.rotate(-1)
 
             except Exception as e:
                 logger.error(f"Error during audio playback: {e}")
                 with self._lock:
                     if self.queue and self.queue[0] == current_item:
+                        logger.debug(f"Removing failed item from queue: {current_item.id}")
                         self.queue.popleft()
+        
+        logger.debug("Audio playback loop ended")
 
 # Global audio queue instance
 audio_queue = AudioQueue()
@@ -146,8 +161,10 @@ def set_audio_volume() -> None:
 
 def monitor_safety_status():
     """Monitor robot safety status and play warning sound when in REDUCED mode."""
+    logger.info("Starting safety status monitor thread")
     WARNING_SOUND = global_vars.settings.settings['admin']['alarm_sound_file']
     WARNING_SOUND_ID = "safety_warning"
+    logger.debug(f"Warning sound path: {WARNING_SOUND}")
     
     while True:
         try:
@@ -162,11 +179,15 @@ def monitor_safety_status():
             
             if current_status == SafetyStatus.REDUCED:
                 # Check if warning sound is not already playing
-                if not any(item.id == WARNING_SOUND_ID for item in audio_queue.queue):
+                is_playing = any(item.id == WARNING_SOUND_ID for item in audio_queue.queue)
+                logger.debug(f"Warning sound already playing: {is_playing}")
+                
+                if not is_playing:
                     logger.info("Robot in REDUCED mode, starting warning sound")
                     add_audio_to_queue(WARNING_SOUND_ID, WARNING_SOUND, -1)
             else:
                 # Stop warning sound if robot is not in REDUCED mode
+                logger.debug(f"Robot not in REDUCED mode ({current_status}), stopping warning sound if playing")
                 stop_audio(WARNING_SOUND_ID)
                 
             time.sleep(1)  # Check every second
@@ -179,5 +200,7 @@ def monitor_safety_status():
             time.sleep(1)  # Wait before retrying
 
 # Start the safety status monitor in a daemon thread
+logger.info("Initializing safety monitor thread...")
 safety_monitor_thread = threading.Thread(target=monitor_safety_status, daemon=True)
-safety_monitor_thread.start() 
+safety_monitor_thread.start()
+logger.info("Safety monitor thread started") 
