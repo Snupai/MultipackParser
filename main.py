@@ -95,6 +95,8 @@ def main():
         app.processEvents()
         
         init_settings()
+        from utils.audio.audio import start_safety_monitor_thread
+        start_safety_monitor_thread()
         setup_initial_app_state()
         
         # update database

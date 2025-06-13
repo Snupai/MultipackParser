@@ -3711,11 +3711,20 @@
         "documentation": {}
     },
     {
+        "label": "start_safety_monitor_thread",
+        "kind": 2,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "peekOfCode": "def start_safety_monitor_thread():\n    \"\"\"Start the safety status monitor in a daemon thread (call after settings are initialized).\"\"\"\n    logger.info(\"Initializing safety monitor thread...\")\n    thread = threading.Thread(target=monitor_safety_status, daemon=True)\n    thread.start()\n    logger.info(\"Safety monitor thread started\")\n    return thread\ndef monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound when in REDUCED mode.\"\"\"\n    logger.info(\"Starting safety status monitor thread\")",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
         "label": "monitor_safety_status",
         "kind": 2,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "def monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound when in REDUCED mode.\"\"\"\n    logger.info(\"Starting safety status monitor thread\")\n    WARNING_SOUND = global_vars.settings.settings['admin']['alarm_sound_file']\n    WARNING_SOUND_ID = \"safety_warning\"\n    logger.debug(f\"Warning sound path: {WARNING_SOUND}\")\n    while True:\n        try:\n            # Check if we should exit\n            if not hasattr(global_vars, 'current_safety_status'):",
+        "peekOfCode": "def monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound when in REDUCED mode.\"\"\"\n    logger.info(\"Starting safety status monitor thread\")\n    while not hasattr(global_vars, 'settings') or global_vars.settings is None:\n        logger.warning(\"Settings not available, waiting...\")\n        time.sleep(1)\n    WARNING_SOUND = global_vars.settings.settings['admin']['alarm_sound_file']\n    WARNING_SOUND_ID = \"safety_warning\"\n    logger.debug(f\"Warning sound path: {WARNING_SOUND}\")\n    while True:",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
@@ -3734,15 +3743,6 @@
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
         "peekOfCode": "audio_queue = AudioQueue()\ndef add_audio_to_queue(id: str, audio_file: str, playback_count: int) -> None:\n    \"\"\"Add an audio file to the queue.\"\"\"\n    if not global_vars.audio_muted:\n        audio_queue.add_to_queue(id, audio_file, playback_count)\ndef stop_audio(id: str) -> None:\n    \"\"\"Stop a specific audio by ID.\"\"\"\n    audio_queue.stop_audio(id)\ndef kill_all_audio() -> None:\n    \"\"\"Stop all audio playback.\"\"\"",
-        "detail": "utils.audio.audio",
-        "documentation": {}
-    },
-    {
-        "label": "safety_monitor_thread",
-        "kind": 5,
-        "importPath": "utils.audio.audio",
-        "description": "utils.audio.audio",
-        "peekOfCode": "safety_monitor_thread = threading.Thread(target=monitor_safety_status, daemon=True)\nsafety_monitor_thread.start()\nlogger.info(\"Safety monitor thread started\")",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
