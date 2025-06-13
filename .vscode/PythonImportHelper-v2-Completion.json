@@ -4660,7 +4660,7 @@
         "kind": 5,
         "importPath": "utils.system.core.global_vars",
         "description": "utils.system.core.global_vars",
-        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.6.1'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN",
+        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.6.2'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN",
         "detail": "utils.system.core.global_vars",
         "documentation": {}
     },
@@ -4669,7 +4669,7 @@
         "kind": 5,
         "importPath": "utils.system.core.global_vars",
         "description": "utils.system.core.global_vars",
-        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.6.1'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN",
+        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.6.2'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN",
         "detail": "utils.system.core.global_vars",
         "documentation": {}
     },
@@ -4678,7 +4678,7 @@
         "kind": 5,
         "importPath": "utils.system.core.global_vars",
         "description": "utils.system.core.global_vars",
-        "peekOfCode": "allow_close = False\n# Variables\nVERSION: str = '1.6.1'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN\nrobot_status_monitor: Optional['RobotStatus'] = None",
+        "peekOfCode": "allow_close = False\n# Variables\nVERSION: str = '1.6.2'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN\nrobot_status_monitor: Optional['RobotStatus'] = None",
         "detail": "utils.system.core.global_vars",
         "documentation": {}
     },
