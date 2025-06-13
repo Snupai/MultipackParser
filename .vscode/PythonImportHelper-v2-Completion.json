@@ -3733,7 +3733,7 @@
         "kind": 5,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "logger = logging.getLogger(__name__)\n# Initialize pygame mixer\npygame.mixer.init()\n@dataclass\nclass AudioItem:\n    id: str\n    file_path: str\n    playback_count: int  # -1 for infinite, positive number for specific count\n    current_count: int = 0\nclass AudioQueue:",
+        "peekOfCode": "logger = global_vars.logger\nlogger.info(\"audio.py logger initialized\")\n# Initialize pygame mixer\npygame.mixer.init()\n@dataclass\nclass AudioItem:\n    id: str\n    file_path: str\n    playback_count: int  # -1 for infinite, positive number for specific count\n    current_count: int = 0",
         "detail": "utils.audio.audio",
         "documentation": {}
     },

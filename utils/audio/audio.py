@@ -12,7 +12,8 @@ import pygame
 from utils.system.core import global_vars
 from utils.robot.robot_enums import SafetyStatus
 
-logger = logging.getLogger(__name__)
+logger = global_vars.logger
+logger.info("audio.py logger initialized")
 
 # Initialize pygame mixer
 pygame.mixer.init()
@@ -178,7 +179,6 @@ def monitor_safety_status():
     logger.debug(f"Warning sound path: {WARNING_SOUND}")
     while True:
         try:
-            # Check if we should exit
             if not hasattr(global_vars, 'current_safety_status'):
                 logger.warning("Safety status not available, waiting...")
                 time.sleep(1)
@@ -186,9 +186,12 @@ def monitor_safety_status():
             current_status = global_vars.current_safety_status
             logger.debug(f"Current safety status: {current_status}")
             if current_status == SafetyStatus.REDUCED:
-                # Check if warning sound is not already playing
-                is_playing = any(item.id == WARNING_SOUND_ID for item in audio_queue.queue)
-                logger.debug(f"Warning sound already playing: {is_playing}")
+                # Check if warning sound is not already playing or queued
+                is_playing = (
+                    (audio_queue.current_item and audio_queue.current_item.id == WARNING_SOUND_ID)
+                    or any(item.id == WARNING_SOUND_ID for item in audio_queue.queue)
+                )
+                logger.debug(f"Warning sound currently playing or queued: {is_playing}")
                 if not is_playing:
                     logger.info("Robot in REDUCED mode, starting warning sound")
                     add_audio_to_queue(WARNING_SOUND_ID, WARNING_SOUND, -1)
