@@ -39,8 +39,7 @@ class AudioQueue:
         with self._lock:
             self.queue.append(AudioItem(id, audio_file, playback_count))
             logger.info(f"Added audio {id} to queue with {playback_count} plays")
-            if not self.is_playing:
-                self._start_playback()
+        self._start_playback()  # Always try to start playback after adding
 
     def stop_audio(self, id: str) -> None:
         """Stop playback of a specific audio by ID."""
@@ -79,7 +78,6 @@ class AudioQueue:
             with self._lock:
                 if not self.queue:
                     logger.debug("Queue is empty, stopping playback loop")
-                    self.is_playing = False
                     break
 
                 self.current_item = self.queue[0]
@@ -121,7 +119,10 @@ class AudioQueue:
                     if self.queue and self.queue[0] == current_item:
                         logger.debug(f"Removing failed item from queue: {current_item.id}")
                         self.queue.popleft()
-        
+        # Ensure state is reset when playback loop ends
+        with self._lock:
+            self.is_playing = False
+            self._thread = None
         logger.debug("Audio playback loop ended")
 
 # Global audio queue instance
