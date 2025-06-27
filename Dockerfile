@@ -29,7 +29,7 @@ RUN apt-get update -y && apt-get install -y \
 
 # Install PyInstaller and required Python packages
 RUN pip install --upgrade pip
-RUN pip install pyinstaller pyside6 pyinstaller-hooks-contrib tomli_w matplotlib cryptography pygame
+RUN pip install pyinstaller pyside6 pyinstaller-hooks-contrib tomli_w matplotlib cryptography pygame requests packaging
 
 # Set the working directory in the container
 WORKDIR /app
