@@ -492,6 +492,14 @@
         "documentation": {}
     },
     {
+        "label": "QProgressDialog",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QLabel",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -941,6 +949,14 @@
     },
     {
         "label": "QLocale",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
         "isExtraImport": true,
@@ -3167,6 +3183,58 @@
         "documentation": {}
     },
     {
+        "label": "tempfile",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "tempfile",
+        "description": "tempfile",
+        "detail": "tempfile",
+        "documentation": {}
+    },
+    {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "urllib.request",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "urllib.request",
+        "description": "urllib.request",
+        "detail": "urllib.request",
+        "documentation": {}
+    },
+    {
+        "label": "pathlib",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "version",
+        "importPath": "packaging",
+        "description": "packaging",
+        "isExtraImport": true,
+        "detail": "packaging",
+        "documentation": {}
+    },
+    {
         "label": "BlinkingLabel",
         "importPath": "ui_files.BlinkingLabel",
         "description": "ui_files.BlinkingLabel",
@@ -3253,15 +3321,6 @@
         "description": "utils.system.updater",
         "isExtraImport": true,
         "detail": "utils.system.updater",
-        "documentation": {}
-    },
-    {
-        "label": "pathlib",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "pathlib",
-        "description": "pathlib",
-        "detail": "pathlib",
         "documentation": {}
     },
     {
@@ -4728,11 +4787,65 @@
         "documentation": {}
     },
     {
+        "label": "check_internet_connection",
+        "kind": 2,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "def check_internet_connection():\n    \"\"\"Check if we have internet connectivity by trying to reach common sites.\"\"\"\n    test_hosts = [\n        (\"8.8.8.8\", 53),  # Google DNS\n        (\"1.1.1.1\", 53),  # Cloudflare DNS\n        (\"github.com\", 443)  # GitHub\n    ]\n    for host, port in test_hosts:\n        try:\n            socket.create_connection((host, port), timeout=3)",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "get_current_version",
+        "kind": 2,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "def get_current_version():\n    \"\"\"Get current application version.\"\"\"\n    try:\n        return global_vars.VERSION.split(\" \")[-1]\n    except:\n        return \"0.0.0\"\ndef get_latest_github_release():\n    \"\"\"Get latest release info from GitHub.\"\"\"\n    try:\n        response = requests.get(",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "get_latest_github_release",
+        "kind": 2,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "def get_latest_github_release():\n    \"\"\"Get latest release info from GitHub.\"\"\"\n    try:\n        response = requests.get(\n            \"https://api.github.com/repos/Snupai/MultipackParser/releases/latest\",\n            timeout=5\n        )\n        if response.status_code == 200:\n            data = response.json()\n            return {",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "download_file",
+        "kind": 2,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "def download_file(url, progress_dialog):\n    \"\"\"Download a file with progress reporting.\"\"\"\n    try:\n        # Create a temporary file\n        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:\n            # Download with progress\n            response = requests.get(url, stream=True)\n            total_size = int(response.headers.get('content-length', 0))\n            block_size = 8192\n            downloaded = 0",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "install_update",
+        "kind": 2,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "def install_update(update_file, current_binary):\n    \"\"\"Install update with proper error handling and backup.\"\"\"\n    backup_file = None\n    temp_update = None\n    try:\n        # Create backup directory if it doesn't exist\n        backup_dir = os.path.join(os.path.dirname(current_binary), 'backup')\n        os.makedirs(backup_dir, exist_ok=True)\n        # Create backup with timestamp\n        timestamp = subprocess.check_output(['date', '+%Y%m%d_%H%M%S']).decode().strip()",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "check_usb_update",
+        "kind": 2,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "def check_usb_update():\n    \"\"\"Check USB drives for update file.\"\"\"\n    update_file_name = \"MultipackParser\"\n    search_paths = [\"/media\", \"/mnt\"]\n    for base_path in search_paths:\n        if not os.path.exists(base_path):\n            continue\n        for root, _, files in os.walk(base_path):\n            if update_file_name in files:\n                update_path = os.path.join(root, update_file_name)",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
         "label": "check_for_updates",
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def check_for_updates():\n    \"\"\"Check for updates.\n    \"\"\"    \n    # TODO: Add visual feedback to the user so that they know that the application is checking for updates\n    # disable the main window for interaction\n    global_vars.main_window.setDisabled(True)\n    msg_box = QMessageBox()\n    msg_box.setWindowTitle(\"Update suchen\")\n    msg_box.setText(\"Es wird nach einem Update gesucht.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.\")\n    msg_box.setIcon(QMessageBox.Icon.Information)",
+        "peekOfCode": "def check_for_updates():\n    \"\"\"Check for updates from GitHub or USB.\"\"\"\n    # Disable main window and show progress\n    global_vars.main_window.setDisabled(True)\n    progress = QProgressDialog(\"Checking for updates...\", None, 0, 100, global_vars.main_window)\n    progress.setWindowModality(Qt.WindowModal)\n    progress.setAutoClose(True)\n    progress.setValue(0)\n    try:\n        current_version = get_current_version()",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4741,7 +4854,7 @@
         "kind": 5,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "logger = logging.getLogger(__name__)\ndef check_for_updates():\n    \"\"\"Check for updates.\n    \"\"\"    \n    # TODO: Add visual feedback to the user so that they know that the application is checking for updates\n    # disable the main window for interaction\n    global_vars.main_window.setDisabled(True)\n    msg_box = QMessageBox()\n    msg_box.setWindowTitle(\"Update suchen\")\n    msg_box.setText(\"Es wird nach einem Update gesucht.<br>Bitte warten Sie, während der Update-Prozess ausgeführt wird.\")",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef check_internet_connection():\n    \"\"\"Check if we have internet connectivity by trying to reach common sites.\"\"\"\n    test_hosts = [\n        (\"8.8.8.8\", 53),  # Google DNS\n        (\"1.1.1.1\", 53),  # Cloudflare DNS\n        (\"github.com\", 443)  # GitHub\n    ]\n    for host, port in test_hosts:\n        try:",
         "detail": "utils.system.updater",
         "documentation": {}
     },
