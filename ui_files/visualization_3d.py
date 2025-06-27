@@ -60,35 +60,32 @@ def load_rob_files():
         
     global_vars.ui.robFilesListWidget.clear()
     
-    # If any dimension is provided, use find_palettplan to get filtered list
+    # First get all files from database
+    from utils.database.database import list_available_files, find_palettplan
+    files = list_available_files()
+    if not files:
+        logger.info("No palette plans found in database")
+        return
+        
+    # Extract file names without .rob extension and sort them
+    rob_files = [file['file_name'].replace('.rob', '') for file in files]
+    
+    # If any dimension is provided, filter the list
     if global_vars.filter_length > 0 or global_vars.filter_width > 0 or global_vars.filter_height > 0:
-        from utils.database.database import find_palettplan
         filtered_files = find_palettplan(global_vars.filter_length, global_vars.filter_width, global_vars.filter_height)
         if filtered_files:
-            # Sort the filtered list alphabetically
-            filtered_files.sort()
-            # Add sorted items to the list widget
-            for file in filtered_files:
-                global_vars.ui.robFilesListWidget.addItem(file)
-            logger.info(f"Loaded {len(filtered_files)} filtered palette plans")
+            # Only keep files that exist in both lists
+            rob_files = [f for f in filtered_files if f in rob_files]
+            logger.info(f"Found {len(rob_files)} matching palette plans")
         else:
+            rob_files = []
             logger.info("No matching palette plans found for the given dimensions")
-    else:
-        # If no dimensions provided, load all files from database
-        from utils.database.database import list_available_files
-        files = list_available_files()
-        if files:
-            # Extract file names without .rob extension and sort them
-            rob_files = [file['file_name'].replace('.rob', '') for file in files]
-            rob_files.sort()
-            
-            # Add sorted items to the list widget
-            for file in rob_files:
-                global_vars.ui.robFilesListWidget.addItem(file)
-            logger.info(f"Loaded {len(rob_files)} palette plans")
-        else:
-            logger.info("No palette plans found in database")
-
+    
+    # Sort and display the files
+    rob_files.sort()
+    for file in rob_files:
+        global_vars.ui.robFilesListWidget.addItem(file)
+    logger.info(f"Loaded {len(rob_files)} palette plans")
 def update_palette_list():
     """Update the palette list with current wordlist in robFilesListWidget."""
     if global_vars.ui and hasattr(global_vars.ui, 'robFilesListWidget'):

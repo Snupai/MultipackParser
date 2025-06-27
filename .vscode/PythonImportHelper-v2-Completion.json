@@ -3607,7 +3607,7 @@
         "kind": 2,
         "importPath": "ui_files.visualization_3d",
         "description": "ui_files.visualization_3d",
-        "peekOfCode": "def load_rob_files():\n    \"\"\"Load .rob files into the list widget with optional filtering by package dimensions.\"\"\"\n    if not global_vars.ui:\n        return\n    global_vars.ui.robFilesListWidget.clear()\n    # If any dimension is provided, use find_palettplan to get filtered list\n    if global_vars.filter_length > 0 or global_vars.filter_width > 0 or global_vars.filter_height > 0:\n        from utils.database.database import find_palettplan\n        filtered_files = find_palettplan(global_vars.filter_length, global_vars.filter_width, global_vars.filter_height)\n        if filtered_files:",
+        "peekOfCode": "def load_rob_files():\n    \"\"\"Load .rob files into the list widget with optional filtering by package dimensions.\"\"\"\n    if not global_vars.ui:\n        return\n    global_vars.ui.robFilesListWidget.clear()\n    # First get all files from database\n    from utils.database.database import list_available_files, find_palettplan\n    files = list_available_files()\n    if not files:\n        logger.info(\"No palette plans found in database\")",
         "detail": "ui_files.visualization_3d",
         "documentation": {}
     },
@@ -4003,7 +4003,7 @@
         "kind": 2,
         "importPath": "utils.robot.robot_control",
         "description": "utils.robot.robot_control",
-        "peekOfCode": "def update_database_from_usb() -> None:\n    \"\"\"Update the database with any new or modified palette plans from the USB stick.\n    \"\"\"\n    if not os.path.exists(global_vars.PATH_USB_STICK):\n        logger.error(f\"USB stick path {global_vars.PATH_USB_STICK} does not exist\")\n        return\n    # Get all .rob files\n    rob_files = [f for f in os.listdir(global_vars.PATH_USB_STICK) if f.endswith(\".rob\")]\n    logger.info(f\"Found {len(rob_files)} .rob files to process\")\n    for file in rob_files:",
+        "peekOfCode": "def update_database_from_usb() -> None:\n    \"\"\"Update the database with any new or modified palette plans from the USB stick.\"\"\"\n    if not os.path.exists(global_vars.PATH_USB_STICK):\n        logger.error(f\"USB stick path {global_vars.PATH_USB_STICK} does not exist\")\n        return\n    # Get all .rob files\n    rob_files = [f for f in os.listdir(global_vars.PATH_USB_STICK) if f.endswith(\".rob\")]\n    logger.info(f\"Found {len(rob_files)} .rob files to process\")\n    for file in rob_files:\n        file_path = os.path.join(global_vars.PATH_USB_STICK, file)",
         "detail": "utils.robot.robot_control",
         "documentation": {}
     },
