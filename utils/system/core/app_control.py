@@ -82,16 +82,8 @@ def exit_app():
         # kill_play_stepback_warning_thread()
         pass
     
-    # Use Qt's application exit mechanism for proper cleanup
-    from PySide6.QtWidgets import QApplication
-    app = QApplication.instance()
-    if app:
-        # Schedule the application to exit after processing current events
-        app.exit(0)
-    else:
-        # Fallback to sys.exit if there's no Qt application instance
-        sys.exit(0)
-
+    # Force immediate exit for updates to work properly
+    sys.exit(0)
 def init_settings():
     """Initialize the settings
     """

@@ -115,7 +115,9 @@ def install_update(update_file, current_binary):
         # Create update script
         update_script = f"""#!/bin/bash
 # Wait for parent process to exit
-sleep 2
+while ps -p $PPID > /dev/null; do
+    sleep 1
+done
 
 # Replace binary
 cp "{temp_update}" "{current_binary}"
