@@ -128,11 +128,15 @@ class AudioQueue:
 # Global audio queue instance
 audio_queue = AudioQueue()
 
+def play_audio(audio_id: str, audio_file: str, loop: bool = False) -> None:
+    """Helper function to play audio files. Set loop=True for infinite playback."""
+    if not global_vars.audio_muted:
+        audio_queue.add_to_queue(audio_id, audio_file, -1 if loop else 1)
+
 def add_audio_to_queue(id: str, audio_file: str, playback_count: int) -> None:
-    """Add an audio file to the queue."""
+    """Add an audio file to the queue with specific playback count."""
     if not global_vars.audio_muted:
         audio_queue.add_to_queue(id, audio_file, playback_count)
-
 def stop_audio(id: str) -> None:
     """Stop a specific audio by ID."""
     audio_queue.stop_audio(id)
@@ -170,7 +174,7 @@ def start_safety_monitor_thread():
     return thread
 
 def monitor_safety_status():
-    """Monitor robot safety status and play warning sound when in REDUCED mode."""
+    """Monitor robot safety status and play warning sound when in REDUCED mode for 30+ seconds."""
     logger.info("Starting safety status monitor thread")
     while not hasattr(global_vars, 'settings') or global_vars.settings is None:
         logger.warning("Settings not available, waiting...")
@@ -178,6 +182,7 @@ def monitor_safety_status():
     WARNING_SOUND = global_vars.settings.settings['admin']['alarm_sound_file']
     WARNING_SOUND_ID = "safety_warning"
     logger.debug(f"Warning sound path: {WARNING_SOUND}")
+    reduced_start_time = None
     while True:
         try:
             if not hasattr(global_vars, 'current_safety_status'):
@@ -187,16 +192,20 @@ def monitor_safety_status():
             current_status = global_vars.current_safety_status
             logger.debug(f"Current safety status: {current_status}")
             if current_status == SafetyStatus.REDUCED:
-                # Check if warning sound is not already playing or queued
-                is_playing = (
-                    (audio_queue.current_item and audio_queue.current_item.id == WARNING_SOUND_ID)
-                    or any(item.id == WARNING_SOUND_ID for item in audio_queue.queue)
-                )
-                logger.debug(f"Warning sound currently playing or queued: {is_playing}")
-                if not is_playing:
-                    logger.info("Robot in REDUCED mode, starting warning sound")
-                    add_audio_to_queue(WARNING_SOUND_ID, WARNING_SOUND, -1)
+                if reduced_start_time is None:
+                    reduced_start_time = datetime.now()
+                elif (datetime.now() - reduced_start_time).total_seconds() >= 30:
+                    # Check if warning sound is not already playing or queued
+                    is_playing = (
+                        (audio_queue.current_item and audio_queue.current_item.id == WARNING_SOUND_ID)
+                        or any(item.id == WARNING_SOUND_ID for item in audio_queue.queue)
+                    )
+                    logger.debug(f"Warning sound currently playing or queued: {is_playing}")
+                    if not is_playing:
+                        logger.info("Robot in REDUCED mode for 30+ seconds, starting warning sound")
+                        play_audio(WARNING_SOUND_ID, WARNING_SOUND, loop=True)
             else:
+                reduced_start_time = None
                 # Stop warning sound if robot is not in REDUCED mode
                 logger.debug(f"Robot not in REDUCED mode ({current_status}), stopping warning sound if playing")
                 stop_audio(WARNING_SOUND_ID)
@@ -206,4 +215,4 @@ def monitor_safety_status():
             time.sleep(1)
         except Exception as e:
             logger.error(f"Error in safety status monitor: {e}")
-            time.sleep(1)  # Wait before retrying 
+            time.sleep(1)  # Wait before retrying

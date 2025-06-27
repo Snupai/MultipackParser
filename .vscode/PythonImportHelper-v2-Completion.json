@@ -3675,11 +3675,20 @@
         "documentation": {}
     },
     {
+        "label": "play_audio",
+        "kind": 2,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "peekOfCode": "def play_audio(audio_id: str, audio_file: str, loop: bool = False) -> None:\n    \"\"\"Helper function to play audio files. Set loop=True for infinite playback.\"\"\"\n    if not global_vars.audio_muted:\n        audio_queue.add_to_queue(audio_id, audio_file, -1 if loop else 1)\ndef add_audio_to_queue(id: str, audio_file: str, playback_count: int) -> None:\n    \"\"\"Add an audio file to the queue with specific playback count.\"\"\"\n    if not global_vars.audio_muted:\n        audio_queue.add_to_queue(id, audio_file, playback_count)\ndef stop_audio(id: str) -> None:\n    \"\"\"Stop a specific audio by ID.\"\"\"",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
         "label": "add_audio_to_queue",
         "kind": 2,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "def add_audio_to_queue(id: str, audio_file: str, playback_count: int) -> None:\n    \"\"\"Add an audio file to the queue.\"\"\"\n    if not global_vars.audio_muted:\n        audio_queue.add_to_queue(id, audio_file, playback_count)\ndef stop_audio(id: str) -> None:\n    \"\"\"Stop a specific audio by ID.\"\"\"\n    audio_queue.stop_audio(id)\ndef kill_all_audio() -> None:\n    \"\"\"Stop all audio playback.\"\"\"\n    audio_queue.kill_all()",
+        "peekOfCode": "def add_audio_to_queue(id: str, audio_file: str, playback_count: int) -> None:\n    \"\"\"Add an audio file to the queue with specific playback count.\"\"\"\n    if not global_vars.audio_muted:\n        audio_queue.add_to_queue(id, audio_file, playback_count)\ndef stop_audio(id: str) -> None:\n    \"\"\"Stop a specific audio by ID.\"\"\"\n    audio_queue.stop_audio(id)\ndef kill_all_audio() -> None:\n    \"\"\"Stop all audio playback.\"\"\"\n    audio_queue.kill_all()",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
@@ -3715,7 +3724,7 @@
         "kind": 2,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "def start_safety_monitor_thread():\n    \"\"\"Start the safety status monitor in a daemon thread (call after settings are initialized).\"\"\"\n    logger.info(\"Initializing safety monitor thread...\")\n    thread = threading.Thread(target=monitor_safety_status, daemon=True)\n    thread.start()\n    logger.info(\"Safety monitor thread started\")\n    return thread\ndef monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound when in REDUCED mode.\"\"\"\n    logger.info(\"Starting safety status monitor thread\")",
+        "peekOfCode": "def start_safety_monitor_thread():\n    \"\"\"Start the safety status monitor in a daemon thread (call after settings are initialized).\"\"\"\n    logger.info(\"Initializing safety monitor thread...\")\n    thread = threading.Thread(target=monitor_safety_status, daemon=True)\n    thread.start()\n    logger.info(\"Safety monitor thread started\")\n    return thread\ndef monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound when in REDUCED mode for 30+ seconds.\"\"\"\n    logger.info(\"Starting safety status monitor thread\")",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
@@ -3724,7 +3733,7 @@
         "kind": 2,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "def monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound when in REDUCED mode.\"\"\"\n    logger.info(\"Starting safety status monitor thread\")\n    while not hasattr(global_vars, 'settings') or global_vars.settings is None:\n        logger.warning(\"Settings not available, waiting...\")\n        time.sleep(1)\n    WARNING_SOUND = global_vars.settings.settings['admin']['alarm_sound_file']\n    WARNING_SOUND_ID = \"safety_warning\"\n    logger.debug(f\"Warning sound path: {WARNING_SOUND}\")\n    while True:",
+        "peekOfCode": "def monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound when in REDUCED mode for 30+ seconds.\"\"\"\n    logger.info(\"Starting safety status monitor thread\")\n    while not hasattr(global_vars, 'settings') or global_vars.settings is None:\n        logger.warning(\"Settings not available, waiting...\")\n        time.sleep(1)\n    WARNING_SOUND = global_vars.settings.settings['admin']['alarm_sound_file']\n    WARNING_SOUND_ID = \"safety_warning\"\n    logger.debug(f\"Warning sound path: {WARNING_SOUND}\")\n    reduced_start_time = None",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
@@ -3742,7 +3751,7 @@
         "kind": 5,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "audio_queue = AudioQueue()\ndef add_audio_to_queue(id: str, audio_file: str, playback_count: int) -> None:\n    \"\"\"Add an audio file to the queue.\"\"\"\n    if not global_vars.audio_muted:\n        audio_queue.add_to_queue(id, audio_file, playback_count)\ndef stop_audio(id: str) -> None:\n    \"\"\"Stop a specific audio by ID.\"\"\"\n    audio_queue.stop_audio(id)\ndef kill_all_audio() -> None:\n    \"\"\"Stop all audio playback.\"\"\"",
+        "peekOfCode": "audio_queue = AudioQueue()\ndef play_audio(audio_id: str, audio_file: str, loop: bool = False) -> None:\n    \"\"\"Helper function to play audio files. Set loop=True for infinite playback.\"\"\"\n    if not global_vars.audio_muted:\n        audio_queue.add_to_queue(audio_id, audio_file, -1 if loop else 1)\ndef add_audio_to_queue(id: str, audio_file: str, playback_count: int) -> None:\n    \"\"\"Add an audio file to the queue with specific playback count.\"\"\"\n    if not global_vars.audio_muted:\n        audio_queue.add_to_queue(id, audio_file, playback_count)\ndef stop_audio(id: str) -> None:",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
@@ -5101,7 +5110,7 @@
         "kind": 2,
         "importPath": "build",
         "description": "build",
-        "peekOfCode": "def run_command(command, check=True):\n    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)\n    stdout, stderr = process.communicate()\n    if check and process.returncode != 0:\n        raise Exception(f\"Command failed with error code {process.returncode}:\\n{stderr.decode('utf-8')}\")\n    else:\n        return stdout.decode('utf-8')\ndef build_docker_image():\n    build_command = f\"docker buildx build --platform linux/arm64 -t {IMAGE_NAME} --output type=docker -f {DOCKERFILE_PATH} {PROJECT_DIR}\"\n    print(\"Building Docker image...\")",
+        "peekOfCode": "def run_command(command, check=True):\n    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)\n    stdout, stderr = process.communicate()\n    if check and process.returncode != 0:\n        raise Exception(f\"Command failed with error code {process.returncode}:\\n{stderr.decode('utf-8')}\")\n    else:\n        return stdout.decode('utf-8')\ndef build_docker_image():\n    build_command = f\"docker buildx build --platform linux/arm64 -t {IMAGE_NAME} --output type=docker -f {DOCKERFILE_PATH} {PROJECT_DIR}\"\n    print(f\"Building Docker image using {DOCKERFILE_PATH}...\")",
         "detail": "build",
         "documentation": {}
     },
@@ -5110,7 +5119,7 @@
         "kind": 2,
         "importPath": "build",
         "description": "build",
-        "peekOfCode": "def build_docker_image():\n    build_command = f\"docker buildx build --platform linux/arm64 -t {IMAGE_NAME} --output type=docker -f {DOCKERFILE_PATH} {PROJECT_DIR}\"\n    print(\"Building Docker image...\")\n    run_command(build_command)\n    print(\"Docker image built successfully.\")\ndef create_container():\n    create_command = f\"docker create {IMAGE_NAME}\"\n    container_id = run_command(create_command).strip()\n    print(f\"Container created with ID: {container_id}\")\n    return container_id",
+        "peekOfCode": "def build_docker_image():\n    build_command = f\"docker buildx build --platform linux/arm64 -t {IMAGE_NAME} --output type=docker -f {DOCKERFILE_PATH} {PROJECT_DIR}\"\n    print(f\"Building Docker image using {DOCKERFILE_PATH}...\")\n    run_command(build_command)\n    print(\"Docker image built successfully.\")\ndef create_container():\n    create_command = f\"docker create {IMAGE_NAME}\"\n    container_id = run_command(create_command).strip()\n    print(f\"Container created with ID: {container_id}\")\n    return container_id",
         "detail": "build",
         "documentation": {}
     },
@@ -5164,7 +5173,25 @@
         "kind": 5,
         "importPath": "build",
         "description": "build",
-        "peekOfCode": "PROJECT_DIR = pathlib.Path(__file__).parent.resolve()\nDOCKERFILE_PATH = PROJECT_DIR / \"Dockerfile\"\nIMAGE_NAME = \"multipackparser-builder\"\nEXECUTABLE_NAME_IN_DOCKER = \"MultipackParser\"\nEXECUTABLE_DIR_IN_DOCKER  = \"/app/dist\"\nEXECUTABLE_PATH_IN_DOCKER = f\"{EXECUTABLE_DIR_IN_DOCKER}/{EXECUTABLE_NAME_IN_DOCKER}\"\nOUTPUT_DIR_ON_HOST = PROJECT_DIR / \"output\"\nOUTPUT_PATH_ON_HOST = OUTPUT_DIR_ON_HOST / EXECUTABLE_NAME_IN_DOCKER\ndef run_command(command, check=True):\n    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)",
+        "peekOfCode": "PROJECT_DIR = pathlib.Path(__file__).parent.resolve()\nparser = argparse.ArgumentParser(description=\"Build MultipackParser using Docker.\")\nparser.add_argument('--dockerfile', type=str, default='Dockerfile', help='Dockerfile to use (default: Dockerfile)')\nargs = parser.parse_args()\nDOCKERFILE_PATH = PROJECT_DIR / args.dockerfile\nIMAGE_NAME = \"multipackparser-builder\"\nEXECUTABLE_NAME_IN_DOCKER = \"MultipackParser\"\nEXECUTABLE_DIR_IN_DOCKER  = \"/app/dist\"\nEXECUTABLE_PATH_IN_DOCKER = f\"{EXECUTABLE_DIR_IN_DOCKER}/{EXECUTABLE_NAME_IN_DOCKER}\"\nOUTPUT_DIR_ON_HOST = PROJECT_DIR / \"output\"",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "parser",
+        "kind": 5,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "parser = argparse.ArgumentParser(description=\"Build MultipackParser using Docker.\")\nparser.add_argument('--dockerfile', type=str, default='Dockerfile', help='Dockerfile to use (default: Dockerfile)')\nargs = parser.parse_args()\nDOCKERFILE_PATH = PROJECT_DIR / args.dockerfile\nIMAGE_NAME = \"multipackparser-builder\"\nEXECUTABLE_NAME_IN_DOCKER = \"MultipackParser\"\nEXECUTABLE_DIR_IN_DOCKER  = \"/app/dist\"\nEXECUTABLE_PATH_IN_DOCKER = f\"{EXECUTABLE_DIR_IN_DOCKER}/{EXECUTABLE_NAME_IN_DOCKER}\"\nOUTPUT_DIR_ON_HOST = PROJECT_DIR / \"output\"\nOUTPUT_PATH_ON_HOST = OUTPUT_DIR_ON_HOST / EXECUTABLE_NAME_IN_DOCKER",
+        "detail": "build",
+        "documentation": {}
+    },
+    {
+        "label": "args",
+        "kind": 5,
+        "importPath": "build",
+        "description": "build",
+        "peekOfCode": "args = parser.parse_args()\nDOCKERFILE_PATH = PROJECT_DIR / args.dockerfile\nIMAGE_NAME = \"multipackparser-builder\"\nEXECUTABLE_NAME_IN_DOCKER = \"MultipackParser\"\nEXECUTABLE_DIR_IN_DOCKER  = \"/app/dist\"\nEXECUTABLE_PATH_IN_DOCKER = f\"{EXECUTABLE_DIR_IN_DOCKER}/{EXECUTABLE_NAME_IN_DOCKER}\"\nOUTPUT_DIR_ON_HOST = PROJECT_DIR / \"output\"\nOUTPUT_PATH_ON_HOST = OUTPUT_DIR_ON_HOST / EXECUTABLE_NAME_IN_DOCKER\ndef run_command(command, check=True):\n    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)",
         "detail": "build",
         "documentation": {}
     },
@@ -5173,7 +5200,7 @@
         "kind": 5,
         "importPath": "build",
         "description": "build",
-        "peekOfCode": "DOCKERFILE_PATH = PROJECT_DIR / \"Dockerfile\"\nIMAGE_NAME = \"multipackparser-builder\"\nEXECUTABLE_NAME_IN_DOCKER = \"MultipackParser\"\nEXECUTABLE_DIR_IN_DOCKER  = \"/app/dist\"\nEXECUTABLE_PATH_IN_DOCKER = f\"{EXECUTABLE_DIR_IN_DOCKER}/{EXECUTABLE_NAME_IN_DOCKER}\"\nOUTPUT_DIR_ON_HOST = PROJECT_DIR / \"output\"\nOUTPUT_PATH_ON_HOST = OUTPUT_DIR_ON_HOST / EXECUTABLE_NAME_IN_DOCKER\ndef run_command(command, check=True):\n    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)\n    stdout, stderr = process.communicate()",
+        "peekOfCode": "DOCKERFILE_PATH = PROJECT_DIR / args.dockerfile\nIMAGE_NAME = \"multipackparser-builder\"\nEXECUTABLE_NAME_IN_DOCKER = \"MultipackParser\"\nEXECUTABLE_DIR_IN_DOCKER  = \"/app/dist\"\nEXECUTABLE_PATH_IN_DOCKER = f\"{EXECUTABLE_DIR_IN_DOCKER}/{EXECUTABLE_NAME_IN_DOCKER}\"\nOUTPUT_DIR_ON_HOST = PROJECT_DIR / \"output\"\nOUTPUT_PATH_ON_HOST = OUTPUT_DIR_ON_HOST / EXECUTABLE_NAME_IN_DOCKER\ndef run_command(command, check=True):\n    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)\n    stdout, stderr = process.communicate()",
         "detail": "build",
         "documentation": {}
     },
