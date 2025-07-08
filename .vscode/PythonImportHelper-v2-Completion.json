@@ -3210,11 +3210,45 @@
         "documentation": {}
     },
     {
+        "label": "stat",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "stat",
+        "description": "stat",
+        "detail": "stat",
+        "documentation": {}
+    },
+    {
+        "label": "platform",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "platform",
+        "description": "platform",
+        "detail": "platform",
+        "documentation": {}
+    },
+    {
         "label": "pathlib",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "pathlib",
         "description": "pathlib",
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
         "detail": "pathlib",
         "documentation": {}
     },
@@ -3317,6 +3351,110 @@
     },
     {
         "label": "check_for_updates",
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "isExtraImport": true,
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "find_usb_drives",
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "isExtraImport": true,
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "search_for_update_file",
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "isExtraImport": true,
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "verify_executable_file",
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "isExtraImport": true,
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "extract_version_from_output",
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "isExtraImport": true,
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "get_current_version",
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "isExtraImport": true,
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "find_usb_drives",
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "isExtraImport": true,
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "search_for_update_file",
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "isExtraImport": true,
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "verify_executable_file",
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "isExtraImport": true,
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "extract_version_from_output",
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "isExtraImport": true,
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "get_current_version",
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "isExtraImport": true,
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "check_internet_connection",
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "isExtraImport": true,
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "get_latest_github_release",
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "isExtraImport": true,
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "install_update",
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
         "isExtraImport": true,
@@ -4728,7 +4866,7 @@
         "kind": 5,
         "importPath": "utils.system.core.global_vars",
         "description": "utils.system.core.global_vars",
-        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.6.5'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN",
+        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.6.4'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN",
         "detail": "utils.system.core.global_vars",
         "documentation": {}
     },
@@ -4737,7 +4875,7 @@
         "kind": 5,
         "importPath": "utils.system.core.global_vars",
         "description": "utils.system.core.global_vars",
-        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.6.5'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN",
+        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.6.4'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN",
         "detail": "utils.system.core.global_vars",
         "documentation": {}
     },
@@ -4746,7 +4884,7 @@
         "kind": 5,
         "importPath": "utils.system.core.global_vars",
         "description": "utils.system.core.global_vars",
-        "peekOfCode": "allow_close = False\n# Variables\nVERSION: str = '1.6.5'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN\nrobot_status_monitor: Optional['RobotStatus'] = None",
+        "peekOfCode": "allow_close = False\n# Variables\nVERSION: str = '1.6.4'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN\nrobot_status_monitor: Optional['RobotStatus'] = None",
         "detail": "utils.system.core.global_vars",
         "documentation": {}
     },
@@ -4800,7 +4938,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def get_current_version():\n    \"\"\"Get current application version.\"\"\"\n    try:\n        return global_vars.VERSION.split(\" \")[-1]\n    except:\n        return \"0.0.0\"\ndef get_latest_github_release():\n    \"\"\"Get latest release info from GitHub.\"\"\"\n    try:\n        response = requests.get(",
+        "peekOfCode": "def get_current_version():\n    \"\"\"Get current application version.\"\"\"\n    try:\n        return global_vars.VERSION\n    except:\n        return \"0.0.0\"\ndef get_latest_github_release():\n    \"\"\"Get latest release info from GitHub.\"\"\"\n    try:\n        response = requests.get(",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4823,11 +4961,56 @@
         "documentation": {}
     },
     {
+        "label": "get_system_info",
+        "kind": 2,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "def get_system_info():\n    \"\"\"Get system information for compatibility checking.\"\"\"\n    return {\n        'platform': platform.system(),\n        'architecture': platform.machine(),\n        'bits': platform.architecture()[0]\n    }\ndef verify_executable_file(file_path):\n    \"\"\"Verify that a file is a valid executable.\"\"\"\n    try:",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "verify_executable_file",
+        "kind": 2,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "def verify_executable_file(file_path):\n    \"\"\"Verify that a file is a valid executable.\"\"\"\n    try:\n        # Check if file exists\n        if not os.path.exists(file_path):\n            logger.error(f\"File does not exist: {file_path}\")\n            return False, \"File does not exist\"\n        # Check if it's a regular file\n        if not os.path.isfile(file_path):\n            logger.error(f\"Path is not a regular file: {file_path}\")",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "find_usb_drives",
+        "kind": 2,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "def find_usb_drives():\n    \"\"\"Find all mounted USB drives.\"\"\"\n    usb_paths = []\n    # Common mount points for USB drives\n    mount_points = [\n        \"/media\",\n        \"/mnt\", \n        \"/run/media\",\n        \"/Volumes\"  # macOS\n    ]",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "search_for_update_file",
+        "kind": 2,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "def search_for_update_file(usb_paths):\n    \"\"\"Search for update file in USB drives.\"\"\"\n    update_file_names = [\"MultipackParser\", \"multipackparser\"]\n    for usb_path in usb_paths:\n        logger.info(f\"Searching in USB drive: {usb_path}\")\n        try:\n            # Walk through the directory tree\n            for root, dirs, files in os.walk(usb_path):\n                for file_name in files:\n                    if file_name in update_file_names:",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "extract_version_from_output",
+        "kind": 2,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "def extract_version_from_output(version_output):\n    \"\"\"Extract version number from version output.\"\"\"\n    try:\n        # Look for version pattern in the output\n        import re\n        version_pattern = r'Version:\\s*([\\d.]+)'\n        match = re.search(version_pattern, version_output)\n        if match:\n            return match.group(1)\n        # Fallback: try to extract any version-like string",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
         "label": "install_update",
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def install_update(update_file, current_binary):\n    \"\"\"Install update with proper error handling and backup.\"\"\"\n    backup_file = None\n    temp_update = None\n    try:\n        # Create backup directory if it doesn't exist\n        backup_dir = os.path.join(os.path.dirname(current_binary), 'backup')\n        os.makedirs(backup_dir, exist_ok=True)\n        # Create backup with timestamp\n        timestamp = subprocess.check_output(['date', '+%Y%m%d_%H%M%S']).decode().strip()",
+        "peekOfCode": "def install_update(update_file, current_binary):\n    \"\"\"Install update with proper error handling and backup.\"\"\"\n    backup_file = None\n    temp_update = None\n    try:\n        # Get current binary path\n        if not current_binary or not os.path.exists(current_binary):\n            current_binary = sys.executable\n            if not os.path.exists(current_binary):\n                raise Exception(\"Cannot determine current binary path\")",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4836,7 +5019,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def check_usb_update():\n    \"\"\"Check USB drives for update file.\"\"\"\n    update_file_name = \"MultipackParser\"\n    search_paths = [\"/media\", \"/mnt\"]\n    for base_path in search_paths:\n        if not os.path.exists(base_path):\n            continue\n        for root, _, files in os.walk(base_path):\n            if update_file_name in files:\n                update_path = os.path.join(root, update_file_name)",
+        "peekOfCode": "def check_usb_update():\n    \"\"\"Check USB drives for update file with improved error handling.\"\"\"\n    logger.info(\"Starting USB update check...\")\n    # Find USB drives\n    usb_paths = find_usb_drives()\n    if not usb_paths:\n        logger.warning(\"No USB drives found\")\n        return None, None\n    logger.info(f\"Found {len(usb_paths)} potential USB drives\")\n    # Search for update file",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4845,7 +5028,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def check_for_updates():\n    \"\"\"Check for updates from GitHub or USB.\"\"\"\n    # Disable main window and show progress\n    global_vars.main_window.setDisabled(True)\n    progress = QProgressDialog(\"Checking for updates...\", None, 0, 100, global_vars.main_window)\n    progress.setWindowModality(Qt.WindowModal)\n    progress.setAutoClose(True)\n    progress.setValue(0)\n    try:\n        current_version = get_current_version()",
+        "peekOfCode": "def check_for_updates():\n    \"\"\"Check for updates from GitHub or USB with improved error handling.\"\"\"\n    # Disable main window and show progress\n    if global_vars.main_window:\n        global_vars.main_window.setDisabled(True)\n    progress = QProgressDialog(\"Checking for updates...\", None, 0, 100, global_vars.main_window if global_vars.main_window else None)\n    progress.setWindowModality(Qt.WindowModal)\n    progress.setAutoClose(True)\n    progress.setValue(0)\n    try:",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -5396,6 +5579,69 @@
         "description": "main",
         "peekOfCode": "logger = global_vars.logger\ndef main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    try:\n        # Parse command line arguments\n        args = parse_arguments()\n        if args.version:",
         "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "test_usb_update",
+        "kind": 2,
+        "importPath": "test_update",
+        "description": "test_update",
+        "peekOfCode": "def test_usb_update():\n    \"\"\"Test the USB update functionality.\"\"\"\n    print(\"=== USB Update Test ===\")\n    print(f\"Current version: {get_current_version()}\")\n    print()\n    # Find USB drives\n    print(\"1. Searching for USB drives...\")\n    usb_paths = find_usb_drives()\n    if not usb_paths:\n        print(\"   No USB drives found!\")",
+        "detail": "test_update",
+        "documentation": {}
+    },
+    {
+        "label": "test_version_extraction",
+        "kind": 2,
+        "importPath": "test_update",
+        "description": "test_update",
+        "peekOfCode": "def test_version_extraction():\n    \"\"\"Test version extraction from various outputs.\"\"\"\n    print(\"=== Version Extraction Test ===\")\n    test_cases = [\n        \"Multipack Parser Application Version: 1.6.5\",\n        \"Version: 2.0.0\",\n        \"MultipackParser v1.5.2\",\n        \"Some other text with 1.2.3 in it\",\n        \"No version here\",\n        \"Version 3.1.4-beta\"",
+        "detail": "test_update",
+        "documentation": {}
+    },
+    {
+        "label": "project_root",
+        "kind": 5,
+        "importPath": "test_update",
+        "description": "test_update",
+        "peekOfCode": "project_root = Path(__file__).parent\nsys.path.insert(0, str(project_root))\nfrom utils.system.updater import (\n    find_usb_drives, \n    search_for_update_file, \n    verify_executable_file,\n    extract_version_from_output,\n    get_current_version\n)\n# Set up logging",
+        "detail": "test_update",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "test_update",
+        "description": "test_update",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef test_usb_update():\n    \"\"\"Test the USB update functionality.\"\"\"\n    print(\"=== USB Update Test ===\")\n    print(f\"Current version: {get_current_version()}\")\n    print()\n    # Find USB drives\n    print(\"1. Searching for USB drives...\")\n    usb_paths = find_usb_drives()\n    if not usb_paths:",
+        "detail": "test_update",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "update_cli",
+        "description": "update_cli",
+        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(\n        description=\"MultipackParser Update System CLI\",\n        formatter_class=argparse.RawDescriptionHelpFormatter,\n        epilog=\"\"\"\nExamples:\n  %(prog)s --check-usb                    # Check for USB updates\n  %(prog)s --check-github                 # Check for GitHub updates\n  %(prog)s --install /path/to/update      # Install specific update file\n  %(prog)s --test-file /path/to/file      # Test if file is valid update",
+        "detail": "update_cli",
+        "documentation": {}
+    },
+    {
+        "label": "project_root",
+        "kind": 5,
+        "importPath": "update_cli",
+        "description": "update_cli",
+        "peekOfCode": "project_root = Path(__file__).parent\nsys.path.insert(0, str(project_root))\nfrom utils.system.updater import (\n    find_usb_drives,\n    search_for_update_file,\n    verify_executable_file,\n    extract_version_from_output,\n    get_current_version,\n    check_internet_connection,\n    get_latest_github_release,",
+        "detail": "update_cli",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "update_cli",
+        "description": "update_cli",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef main():\n    parser = argparse.ArgumentParser(\n        description=\"MultipackParser Update System CLI\",\n        formatter_class=argparse.RawDescriptionHelpFormatter,\n        epilog=\"\"\"\nExamples:\n  %(prog)s --check-usb                    # Check for USB updates\n  %(prog)s --check-github                 # Check for GitHub updates\n  %(prog)s --install /path/to/update      # Install specific update file",
+        "detail": "update_cli",
         "documentation": {}
     }
 ]
