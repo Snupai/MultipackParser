@@ -1980,14 +1980,6 @@
         "documentation": {}
     },
     {
-        "label": "global_vars",
-        "importPath": "utils.system.core",
-        "description": "utils.system.core",
-        "isExtraImport": true,
-        "detail": "utils.system.core",
-        "documentation": {}
-    },
-    {
         "label": "QtCore",
         "importPath": "PySide6",
         "description": "PySide6",
@@ -2143,14 +2135,6 @@
         "documentation": {}
     },
     {
-        "label": "create_database",
-        "importPath": "utils.database.database",
-        "description": "utils.database.database",
-        "isExtraImport": true,
-        "detail": "utils.database.database",
-        "documentation": {}
-    },
-    {
         "label": "FigureCanvasQTAgg",
         "importPath": "matplotlib.backends.backend_qtagg",
         "description": "matplotlib.backends.backend_qtagg",
@@ -2265,14 +2249,6 @@
     },
     {
         "label": "send_remote_control_command",
-        "importPath": "utils.robot.robot_control",
-        "description": "utils.robot.robot_control",
-        "isExtraImport": true,
-        "detail": "utils.robot.robot_control",
-        "documentation": {}
-    },
-    {
-        "label": "update_database_from_usb",
         "importPath": "utils.robot.robot_control",
         "description": "utils.robot.robot_control",
         "isExtraImport": true,
@@ -2485,14 +2461,6 @@
     },
     {
         "label": "logger",
-        "importPath": "utils.system.config.logging_config",
-        "description": "utils.system.config.logging_config",
-        "isExtraImport": true,
-        "detail": "utils.system.config.logging_config",
-        "documentation": {}
-    },
-    {
-        "label": "setup_logger",
         "importPath": "utils.system.config.logging_config",
         "description": "utils.system.config.logging_config",
         "isExtraImport": true,
@@ -3123,14 +3091,6 @@
         "documentation": {}
     },
     {
-        "label": "init_settings",
-        "importPath": "utils.system.core.app_control",
-        "description": "utils.system.core.app_control",
-        "isExtraImport": true,
-        "detail": "utils.system.core.app_control",
-        "documentation": {}
-    },
-    {
         "label": "show_palette_config_dialog",
         "importPath": "utils.ui.startup_dialogs",
         "description": "utils.ui.startup_dialogs",
@@ -3342,107 +3302,11 @@
         "documentation": {}
     },
     {
-        "label": "MainWindowResources_rc",
-        "importPath": "ui_files",
-        "description": "ui_files",
-        "isExtraImport": true,
-        "detail": "ui_files",
-        "documentation": {}
-    },
-    {
-        "label": "QQmlApplicationEngine",
-        "importPath": "PySide6.QtQml",
-        "description": "PySide6.QtQml",
-        "isExtraImport": true,
-        "detail": "PySide6.QtQml",
-        "documentation": {}
-    },
-    {
-        "label": "QQuickView",
-        "importPath": "PySide6.QtQuick",
-        "description": "PySide6.QtQuick",
-        "isExtraImport": true,
-        "detail": "PySide6.QtQuick",
-        "documentation": {}
-    },
-    {
         "label": "parse_arguments",
         "importPath": "utils.system.core.app_initialization",
         "description": "utils.system.core.app_initialization",
         "isExtraImport": true,
         "detail": "utils.system.core.app_initialization",
-        "documentation": {}
-    },
-    {
-        "label": "initialize_app",
-        "importPath": "utils.system.core.app_initialization",
-        "description": "utils.system.core.app_initialization",
-        "isExtraImport": true,
-        "detail": "utils.system.core.app_initialization",
-        "documentation": {}
-    },
-    {
-        "label": "setup_initial_app_state",
-        "importPath": "utils.system.core.app_initialization",
-        "description": "utils.system.core.app_initialization",
-        "isExtraImport": true,
-        "detail": "utils.system.core.app_initialization",
-        "documentation": {}
-    },
-    {
-        "label": "initialize_main_window",
-        "importPath": "utils.ui.ui_setup",
-        "description": "utils.ui.ui_setup",
-        "isExtraImport": true,
-        "detail": "utils.ui.ui_setup",
-        "documentation": {}
-    },
-    {
-        "label": "setup_input_validation",
-        "importPath": "utils.ui.ui_setup",
-        "description": "utils.ui.ui_setup",
-        "isExtraImport": true,
-        "detail": "utils.ui.ui_setup",
-        "documentation": {}
-    },
-    {
-        "label": "connect_signal_handlers",
-        "importPath": "utils.ui.ui_setup",
-        "description": "utils.ui.ui_setup",
-        "isExtraImport": true,
-        "detail": "utils.ui.ui_setup",
-        "documentation": {}
-    },
-    {
-        "label": "setup_password_handling",
-        "importPath": "utils.ui.ui_setup",
-        "description": "utils.ui.ui_setup",
-        "isExtraImport": true,
-        "detail": "utils.ui.ui_setup",
-        "documentation": {}
-    },
-    {
-        "label": "setup_components",
-        "importPath": "utils.ui.ui_setup",
-        "description": "utils.ui.ui_setup",
-        "isExtraImport": true,
-        "detail": "utils.ui.ui_setup",
-        "documentation": {}
-    },
-    {
-        "label": "start_background_tasks",
-        "importPath": "utils.ui.ui_setup",
-        "description": "utils.ui.ui_setup",
-        "isExtraImport": true,
-        "detail": "utils.ui.ui_setup",
-        "documentation": {}
-    },
-    {
-        "label": "setup_window_handling",
-        "importPath": "utils.ui.ui_setup",
-        "description": "utils.ui.ui_setup",
-        "isExtraImport": true,
-        "detail": "utils.ui.ui_setup",
         "documentation": {}
     },
     {
@@ -3792,7 +3656,7 @@
         "kind": 2,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "def set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = 0.0 if not global_vars.audio_muted else 1.0\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"\n    logger.info(f\"Setting audio volume to {volume}\")\n    try:\n        pygame.mixer.music.set_volume(volume)",
+        "peekOfCode": "def set_audio_volume() -> None:\n    \"\"\"Set the audio volume.\"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized, cannot set audio volume\")\n        return\n    volume = 0.0 if not global_vars.audio_muted else 1.0\n    icon_name = \":/Sound/imgs/volume-off.png\" if not global_vars.audio_muted else \":/Sound/imgs/volume-on.png\"\n    logger.info(f\"Setting audio volume to {volume}\")\n    try:\n        if _pygame_initialized:",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
@@ -3819,7 +3683,16 @@
         "kind": 5,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "logger = global_vars.logger\nlogger.info(\"audio.py logger initialized\")\n# Initialize pygame mixer\npygame.mixer.init()\n@dataclass\nclass AudioItem:\n    id: str\n    file_path: str\n    playback_count: int  # -1 for infinite, positive number for specific count\n    current_count: int = 0",
+        "peekOfCode": "logger = global_vars.logger\nlogger.info(\"audio.py logger initialized\")\n# Don't initialize pygame mixer at import time - only when needed\n_pygame_initialized = False\ndef _ensure_pygame_initialized():\n    \"\"\"Initialize pygame mixer if not already initialized.\"\"\"\n    global _pygame_initialized\n    if not _pygame_initialized:\n        try:\n            pygame.mixer.init()",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "_pygame_initialized",
+        "kind": 5,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "peekOfCode": "_pygame_initialized = False\ndef _ensure_pygame_initialized():\n    \"\"\"Initialize pygame mixer if not already initialized.\"\"\"\n    global _pygame_initialized\n    if not _pygame_initialized:\n        try:\n            pygame.mixer.init()\n            _pygame_initialized = True\n            logger.info(\"Pygame mixer initialized\")\n        except Exception as e:",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
@@ -4881,7 +4754,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def extract_version_from_output(version_output):\n    \"\"\"Extract version number from version output.\"\"\"\n    try:\n        # Look for version pattern in the output\n        import re\n        version_pattern = r'Version:\\s*([\\d.]+)'\n        match = re.search(version_pattern, version_output)\n        if match:\n            return match.group(1)\n        # Fallback: try to extract any version-like string",
+        "peekOfCode": "def extract_version_from_output(version_output):\n    \"\"\"Extract version number from version output.\"\"\"\n    try:\n        import re\n        # Try multiple patterns to extract version\n        version_patterns = [\n            r'Multipack Parser Application Version:\\s*([\\d.]+)',  # Exact format\n            r'Version:\\s*([\\d.]+)',  # Generic version format\n            r'(\\d+\\.\\d+\\.\\d+)',      # Any version number\n        ]",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -5426,11 +5299,20 @@
         "documentation": {}
     },
     {
+        "label": "get_version",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def get_version():\n    \"\"\"Get version without importing heavy modules.\"\"\"\n    try:\n        # Import only the version constant\n        from utils.system.core.global_vars import VERSION\n        return VERSION\n    except ImportError:\n        return \"Unknown\"\ndef main():\n    \"\"\"Main function to run the application.",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
         "label": "main",
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    try:\n        # Parse command line arguments\n        args = parse_arguments()\n        if args.version:\n            print(f\"Multipack Parser Application Version: {global_vars.VERSION}\")",
+        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    try:\n        # Parse command line arguments FIRST - before any heavy imports\n        args = parse_arguments()\n        # Handle version and license flags immediately - no heavy imports needed\n        if args.version:",
         "detail": "main",
         "documentation": {}
     },
@@ -5440,24 +5322,6 @@
         "importPath": "main",
         "description": "main",
         "peekOfCode": "__license__ = '''\n    Multipack Parser Application - to parse the data from the Multipack Robot to an UR Robot\n    Copyright (C) 2025  Yann-Luca Näher\n    This program is free software: you can redistribute it and/or modify\n    it under the terms of the GNU General Public License as published by\n    the Free Software Foundation, either version 3 of the License, or\n    (at your option) any later version.\n    This program is distributed in the hope that it will be useful,\n    but WITHOUT ANY WARRANTY; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "os.environ[\"QT_IM_MODULE\"]",
-        "kind": 5,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "os.environ[\"QT_IM_MODULE\"] = \"qtvirtualkeyboard\"\nlogger = global_vars.logger\ndef main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    try:\n        # Parse command line arguments\n        args = parse_arguments()",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "kind": 5,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "logger = global_vars.logger\ndef main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    try:\n        # Parse command line arguments\n        args = parse_arguments()\n        if args.version:",
         "detail": "main",
         "documentation": {}
     }

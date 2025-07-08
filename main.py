@@ -17,34 +17,21 @@ __license__ = '''
 '''
 
 import os
-from ui_files import MainWindowResources_rc
-################################################################
-# DONT REMOVE these imports
-# This is needed for the virtual keyboard to work
-from PySide6.QtQml import QQmlApplicationEngine
-from PySide6.QtQuick import QQuickView
-################################################################
-#TODO: if start palette is not empty ask the user to confirm if the user wants to continue anyways and ask for the current layer.
-#TODO: Implement seemless palletizing with 2 pallets for UR20 robot.
 import sys
 import logging
-import matplotlib
 
-from utils.system.core import global_vars
-from utils.system.core.app_control import init_settings
-from utils.system.config.logging_config import setup_logger
-from utils.system.core.app_initialization import parse_arguments, initialize_app, setup_initial_app_state
-from utils.database.database import create_database
-from utils.robot.robot_control import update_database_from_usb
-from utils.ui.ui_setup import (initialize_main_window, setup_input_validation, connect_signal_handlers,
-                          setup_password_handling, setup_components, start_background_tasks,
-                          setup_window_handling)
+# Only import what we need for argument parsing and version/license
+from utils.system.core.app_initialization import parse_arguments
 
-# Configure matplotlib backend for 3d view of palettes
-matplotlib.use('qtagg', force=True)
-os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
-
-logger = global_vars.logger
+# Get version from global_vars without importing the full module
+def get_version():
+    """Get version without importing heavy modules."""
+    try:
+        # Import only the version constant
+        from utils.system.core.global_vars import VERSION
+        return VERSION
+    except ImportError:
+        return "Unknown"
 
 def main():
     """Main function to run the application.
@@ -53,15 +40,42 @@ def main():
         int: The exit code of the application.
     """
     try:
-        # Parse command line arguments
+        # Parse command line arguments FIRST - before any heavy imports
         args = parse_arguments()
 
+        # Handle version and license flags immediately - no heavy imports needed
         if args.version:
-            print(f"Multipack Parser Application Version: {global_vars.VERSION}")
+            print(f"Multipack Parser Application Version: {get_version()}")
             return 0
         if args.license:
             print(__license__)
             return 0
+
+        # Only now import the heavy modules for full application
+        from ui_files import MainWindowResources_rc
+        ################################################################
+        # DONT REMOVE these imports
+        # This is needed for the virtual keyboard to work
+        from PySide6.QtQml import QQmlApplicationEngine
+        from PySide6.QtQuick import QQuickView
+        ################################################################
+        import matplotlib
+
+        from utils.system.core import global_vars
+        from utils.system.core.app_control import init_settings
+        from utils.system.config.logging_config import setup_logger
+        from utils.system.core.app_initialization import initialize_app, setup_initial_app_state
+        from utils.database.database import create_database
+        from utils.robot.robot_control import update_database_from_usb
+        from utils.ui.ui_setup import (initialize_main_window, setup_input_validation, connect_signal_handlers,
+                                  setup_password_handling, setup_components, start_background_tasks,
+                                  setup_window_handling)
+
+        # Configure matplotlib backend for 3d view of palettes
+        matplotlib.use('qtagg', force=True)
+        os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
+
+        logger = global_vars.logger
 
         # Setup logging first with verbose flag if specified
         # This ensures logging is properly configured before any other initialization

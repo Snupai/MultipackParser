@@ -238,18 +238,21 @@ def search_for_update_file(usb_paths):
 def extract_version_from_output(version_output):
     """Extract version number from version output."""
     try:
-        # Look for version pattern in the output
         import re
-        version_pattern = r'Version:\s*([\d.]+)'
-        match = re.search(version_pattern, version_output)
-        if match:
-            return match.group(1)
         
-        # Fallback: try to extract any version-like string
-        version_pattern = r'(\d+\.\d+\.\d+)'
-        match = re.search(version_pattern, version_output)
-        if match:
-            return match.group(1)
+        # Try multiple patterns to extract version
+        version_patterns = [
+            r'Multipack Parser Application Version:\s*([\d.]+)',  # Exact format
+            r'Version:\s*([\d.]+)',  # Generic version format
+            r'(\d+\.\d+\.\d+)',      # Any version number
+        ]
+        
+        for pattern in version_patterns:
+            match = re.search(pattern, version_output)
+            if match:
+                version = match.group(1)
+                logger.info(f"Extracted version '{version}' using pattern '{pattern}'")
+                return version
         
         logger.warning(f"Could not extract version from output: {version_output}")
         return None
@@ -445,14 +448,35 @@ def check_usb_update():
                         result = subprocess.run([dst, "--version"], capture_output=True, text=True, timeout=10)
                         if result.returncode == 0:
                             version_output = result.stdout.strip() + result.stderr.strip()
-                            match = re.search(r'(\d+\.\d+\.\d+)', version_output)
-                            if match:
-                                found_version = match.group(1)
+                            logger.info(f"Version output from {dst}: {version_output}")
+                            
+                            # Try multiple patterns to extract version
+                            version_patterns = [
+                                r'Multipack Parser Application Version:\s*([\d.]+)',  # Exact format
+                                r'Version:\s*([\d.]+)',  # Generic version format
+                                r'(\d+\.\d+\.\d+)',      # Any version number
+                            ]
+                            
+                            found_version = None
+                            for pattern in version_patterns:
+                                match = re.search(pattern, version_output)
+                                if match:
+                                    found_version = match.group(1)
+                                    logger.info(f"Extracted version '{found_version}' using pattern '{pattern}'")
+                                    break
+                            
+                            if found_version:
                                 current_version = get_current_version()
+                                logger.info(f"Current version: {current_version}, Found version: {found_version}")
                                 
                                 from packaging import version
                                 if version.parse(found_version) > version.parse(current_version):
+                                    logger.info(f"Newer version found: {found_version} > {current_version}")
                                     return dst, found_version
+                                else:
+                                    logger.info(f"Found version is not newer: {found_version} <= {current_version}")
+                            else:
+                                logger.warning(f"Could not extract version from: {version_output}")
                         
                         return None, None
         except Exception as e:

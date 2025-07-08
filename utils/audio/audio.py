@@ -15,8 +15,20 @@ from utils.robot.robot_enums import SafetyStatus
 logger = global_vars.logger
 logger.info("audio.py logger initialized")
 
-# Initialize pygame mixer
-pygame.mixer.init()
+# Don't initialize pygame mixer at import time - only when needed
+_pygame_initialized = False
+
+def _ensure_pygame_initialized():
+    """Initialize pygame mixer if not already initialized."""
+    global _pygame_initialized
+    if not _pygame_initialized:
+        try:
+            pygame.mixer.init()
+            _pygame_initialized = True
+            logger.info("Pygame mixer initialized")
+        except Exception as e:
+            logger.error(f"Failed to initialize pygame mixer: {e}")
+            raise
 
 @dataclass
 class AudioItem:
@@ -46,7 +58,8 @@ class AudioQueue:
         with self._lock:
             if self.current_item and self.current_item.id == id:
                 self._stop_event.set()
-                pygame.mixer.music.stop()
+                if _pygame_initialized:
+                    pygame.mixer.music.stop()
                 self.current_item = None
             self.queue = deque(item for item in self.queue if item.id != id)
             logger.info(f"Stopped audio {id}")
@@ -55,7 +68,8 @@ class AudioQueue:
         """Stop all audio playback and clear the queue."""
         with self._lock:
             self._stop_event.set()
-            pygame.mixer.music.stop()
+            if _pygame_initialized:
+                pygame.mixer.music.stop()
             self.queue.clear()
             self.current_item = None
             self.is_playing = False
@@ -90,6 +104,9 @@ class AudioQueue:
                     continue
 
             try:
+                # Initialize pygame if not already done
+                _ensure_pygame_initialized()
+                
                 logger.debug(f"Loading audio file: {current_item.file_path}")
                 pygame.mixer.music.load(current_item.file_path)
                 pygame.mixer.music.play()
@@ -156,7 +173,8 @@ def set_audio_volume() -> None:
     
     logger.info(f"Setting audio volume to {volume}")
     try:
-        pygame.mixer.music.set_volume(volume)
+        if _pygame_initialized:
+            pygame.mixer.music.set_volume(volume)
         global_vars.ui.pushButtonVolumeOnOff.setIcon(QIcon(icon_name))
         global_vars.audio_muted = not global_vars.audio_muted
         if global_vars.audio_muted:
