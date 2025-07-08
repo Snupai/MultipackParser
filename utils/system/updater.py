@@ -156,27 +156,47 @@ def find_usb_drives():
     """Find all mounted USB drives."""
     usb_paths = []
     
-    # Common mount points for USB drives
-    mount_points = [
-        "/media",
-        "/mnt", 
-        "/run/media",
-        "/Volumes"  # macOS
-    ]
+    if platform.system() == "Windows":
+        # Windows: Check for removable drives
+        import string
+        for drive_letter in string.ascii_uppercase:
+            drive_path = f"{drive_letter}:\\"
+            if os.path.exists(drive_path):
+                try:
+                    # Check if it's a removable drive
+                    import ctypes
+                    drive_type = ctypes.windll.kernel32.GetDriveTypeW(drive_path)
+                    if drive_type == 2:  # DRIVE_REMOVABLE
+                        usb_paths.append(drive_path)
+                        logger.info(f"Found USB drive on Windows: {drive_path}")
+                except Exception as e:
+                    logger.warning(f"Error checking Windows drive {drive_path}: {e}")
+    else:
+        # Linux/macOS: Common mount points for USB drives
+        mount_points = [
+            "/media",
+            "/mnt", 
+            "/run/media",
+            "/Volumes"  # macOS
+        ]
+        
+        for mount_point in mount_points:
+            if os.path.exists(mount_point):
+                try:
+                    for item in os.listdir(mount_point):
+                        full_path = os.path.join(mount_point, item)
+                        # Check if it's a directory and potentially a mount point
+                        if os.path.isdir(full_path):
+                            # Skip hidden directories
+                            if not item.startswith('.'):
+                                usb_paths.append(full_path)
+                                logger.info(f"Found potential USB drive: {full_path}")
+                except PermissionError:
+                    logger.warning(f"Permission denied accessing {mount_point}")
+                except Exception as e:
+                    logger.warning(f"Error scanning {mount_point}: {e}")
     
-    for mount_point in mount_points:
-        if os.path.exists(mount_point):
-            try:
-                for item in os.listdir(mount_point):
-                    full_path = os.path.join(mount_point, item)
-                    if os.path.ismount(full_path) or os.path.isdir(full_path):
-                        usb_paths.append(full_path)
-                        logger.info(f"Found potential USB drive: {full_path}")
-            except PermissionError:
-                logger.warning(f"Permission denied accessing {mount_point}")
-            except Exception as e:
-                logger.warning(f"Error scanning {mount_point}: {e}")
-    
+    logger.info(f"Total USB drives found: {len(usb_paths)}")
     return usb_paths
 
 def search_for_update_file(usb_paths):
@@ -245,8 +265,22 @@ def install_update(update_file, current_binary):
     try:
         # Get current binary path
         if not current_binary or not os.path.exists(current_binary):
-            current_binary = sys.executable
-            if not os.path.exists(current_binary):
+            # Try multiple possible binary paths
+            possible_paths = [
+                sys.executable,
+                sys.argv[0],
+                os.path.abspath(sys.argv[0]),
+                os.path.join(os.getcwd(), "MultipackParser"),
+                "/usr/local/bin/MultipackParser",
+                "/opt/MultipackParser/MultipackParser"
+            ]
+            
+            for path in possible_paths:
+                if path and os.path.exists(path):
+                    current_binary = path
+                    logger.info(f"Found current binary at: {current_binary}")
+                    break
+            else:
                 raise Exception("Cannot determine current binary path")
         
         logger.info(f"Installing update from {update_file} to {current_binary}")
@@ -378,60 +412,53 @@ rm -f "{temp_update}"
         return False
 
 def check_usb_update():
-    """Simplified: Copy any MultipackParser from USB to ~/.HMI/update/, check version, update if newer."""
+    """Copy any MultipackParser from USB to ~/.HMI/update/, check version, update if newer."""
     import shutil
     import re
+    import subprocess
+    
     local_update_dir = os.path.expanduser("~/.HMI/update/")
     os.makedirs(local_update_dir, exist_ok=True)
     update_file_name = "MultipackParser"
-    found_file = None
+    
     # Find USB drives
     usb_paths = find_usb_drives()
+    if not usb_paths:
+        return None, None
+    
+    # Search for update file in USB drives
     for usb_path in usb_paths:
-        for root, dirs, files in os.walk(usb_path):
-            for file_name in files:
-                if file_name == update_file_name:
-                    src = os.path.join(root, file_name)
-                    dst = os.path.join(local_update_dir, file_name)
-                    try:
+        try:
+            for root, dirs, files in os.walk(usb_path):
+                for file_name in files:
+                    if file_name == update_file_name:
+                        src = os.path.join(root, file_name)
+                        dst = os.path.join(local_update_dir, file_name)
+                        
+                        # Copy file to local directory
                         shutil.copy2(src, dst)
-                        os.chmod(dst, 0o755)
-                        found_file = dst
-                        break
-                    except Exception as e:
-                        continue
-            if found_file:
-                break
-        if found_file:
-            break
-    if not found_file:
-        return None, None
-    # Check version
-    try:
-        import subprocess
-        result = subprocess.run([found_file, "--version"], capture_output=True, text=True, timeout=10)
-        version_output = result.stdout.strip() + result.stderr.strip()
-        match = re.search(r'(\d+\.\d+\.\d+)', version_output)
-        if match:
-            found_version = match.group(1)
-        else:
-            found_version = None
-    except Exception as e:
-        return None, None
-    # Get current version
-    current_version = get_current_version()
-    from packaging import version
-    if found_version and version.parse(found_version) > version.parse(current_version):
-        return found_file, found_version
-    else:
-        # Show message: only found version, not newer
-        from PySide6.QtWidgets import QMessageBox
-        QMessageBox.information(
-            None,
-            "No Newer Update",
-            f"Found version {found_version or '?'} on USB, but current version is {current_version}. No update performed."
-        )
-        return None, None
+                        
+                        # Make executable using sudo chmod +x
+                        subprocess.run(['sudo', 'chmod', '+x', dst], check=True)
+                        
+                        # Check version
+                        result = subprocess.run([dst, "--version"], capture_output=True, text=True, timeout=10)
+                        if result.returncode == 0:
+                            version_output = result.stdout.strip() + result.stderr.strip()
+                            match = re.search(r'(\d+\.\d+\.\d+)', version_output)
+                            if match:
+                                found_version = match.group(1)
+                                current_version = get_current_version()
+                                
+                                from packaging import version
+                                if version.parse(found_version) > version.parse(current_version):
+                                    return dst, found_version
+                        
+                        return None, None
+        except Exception as e:
+            continue
+    
+    return None, None
 
 def check_for_updates():
     """Check for updates from GitHub or USB with improved error handling."""
@@ -499,76 +526,37 @@ def check_for_updates():
                     "You are running the latest version."
                 )
         
-        # Check USB if no internet or GitHub update failed
-        logger.info("Checking USB drives for updates...")
+        # Check USB for updates
         progress.setLabelText("Checking USB drives...")
         progress.setValue(60)
         
         update_path, new_version = check_usb_update()
         
-        if update_path:
-            if new_version and version.parse(new_version) > version.parse(current_version):
-                if QMessageBox.question(
-                    None,
-                    "USB Update Available",
-                    f"Version {new_version} found on USB. Install?",
-                    QMessageBox.Yes | QMessageBox.No
-                ) == QMessageBox.Yes:
-                    progress.setLabelText("Installing update...")
-                    progress.setValue(80)
-                    
-                    if install_update(update_path, sys.argv[0]):
-                        progress.setValue(100)
-                        QMessageBox.information(
-                            None,
-                            "Update Success",
-                            "Update installed successfully.\nApplication will now restart."
-                        )
-                        exit_app()
-                        return
-                    else:
-                        QMessageBox.critical(
-                            None,
-                            "Update Failed",
-                            "Failed to install update.\nPlease try again later."
-                        )
-            elif not new_version:
-                if QMessageBox.question(
-                    None,
-                    "USB Update Found",
-                    "Update file found on USB but version could not be determined. Install anyway?",
-                    QMessageBox.Yes | QMessageBox.No
-                ) == QMessageBox.Yes:
-                    progress.setLabelText("Installing update...")
-                    progress.setValue(80)
-                    
-                    if install_update(update_path, sys.argv[0]):
-                        progress.setValue(100)
-                        QMessageBox.information(
-                            None,
-                            "Update Success",
-                            "Update installed successfully.\nApplication will now restart."
-                        )
-                        exit_app()
-                        return
-                    else:
-                        QMessageBox.critical(
-                            None,
-                            "Update Failed",
-                            "Failed to install update.\nPlease try again later."
-                        )
-            else:
-                QMessageBox.information(
-                    None,
-                    "No Newer Version",
-                    f"USB version {new_version} is not newer than current version {current_version}."
-                )
-        else:
-            QMessageBox.information(
+        if update_path and new_version:
+            if QMessageBox.question(
                 None,
-                "No Update Found",
-                "No valid update files found on USB drives.\n\nMake sure:\n- USB drive is properly mounted\n- File is named 'MultipackParser'\n- File is executable\n- File is a valid binary"
-            )
+                "USB Update Available",
+                f"Version {new_version} found on USB. Install?",
+                QMessageBox.Yes | QMessageBox.No
+            ) == QMessageBox.Yes:
+                progress.setLabelText("Installing update...")
+                progress.setValue(80)
+                
+                if install_update(update_path, sys.argv[0]):
+                    progress.setValue(100)
+                    QMessageBox.information(
+                        None,
+                        "Update Success",
+                        "Update installed successfully.\nApplication will now restart."
+                    )
+                    exit_app()
+                    return
+                else:
+                    QMessageBox.critical(
+                        None,
+                        "Update Failed",
+                        "Failed to install update.\nPlease try again later."
+                    )
     
     except Exception as e:
         logger.error(f"Error during update check: {e}")
@@ -582,3 +570,4 @@ def check_for_updates():
         progress.close()
         if global_vars.main_window:
             global_vars.main_window.setDisabled(False)
+

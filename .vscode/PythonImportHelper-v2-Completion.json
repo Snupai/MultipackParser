@@ -4863,7 +4863,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def find_usb_drives():\n    \"\"\"Find all mounted USB drives.\"\"\"\n    usb_paths = []\n    # Common mount points for USB drives\n    mount_points = [\n        \"/media\",\n        \"/mnt\", \n        \"/run/media\",\n        \"/Volumes\"  # macOS\n    ]",
+        "peekOfCode": "def find_usb_drives():\n    \"\"\"Find all mounted USB drives.\"\"\"\n    usb_paths = []\n    if platform.system() == \"Windows\":\n        # Windows: Check for removable drives\n        import string\n        for drive_letter in string.ascii_uppercase:\n            drive_path = f\"{drive_letter}:\\\\\"\n            if os.path.exists(drive_path):\n                try:",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4890,7 +4890,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def install_update(update_file, current_binary):\n    \"\"\"Install update with proper error handling and backup.\"\"\"\n    backup_file = None\n    temp_update = None\n    try:\n        # Get current binary path\n        if not current_binary or not os.path.exists(current_binary):\n            current_binary = sys.executable\n            if not os.path.exists(current_binary):\n                raise Exception(\"Cannot determine current binary path\")",
+        "peekOfCode": "def install_update(update_file, current_binary):\n    \"\"\"Install update with proper error handling and backup.\"\"\"\n    backup_file = None\n    temp_update = None\n    try:\n        # Get current binary path\n        if not current_binary or not os.path.exists(current_binary):\n            # Try multiple possible binary paths\n            possible_paths = [\n                sys.executable,",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4899,7 +4899,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def check_usb_update():\n    \"\"\"Simplified: Copy any MultipackParser from USB to ~/.HMI/update/, check version, update if newer.\"\"\"\n    import shutil\n    import re\n    local_update_dir = os.path.expanduser(\"~/.HMI/update/\")\n    os.makedirs(local_update_dir, exist_ok=True)\n    update_file_name = \"MultipackParser\"\n    found_file = None\n    # Find USB drives\n    usb_paths = find_usb_drives()",
+        "peekOfCode": "def check_usb_update():\n    \"\"\"Copy any MultipackParser from USB to ~/.HMI/update/, check version, update if newer.\"\"\"\n    import shutil\n    import re\n    import subprocess\n    local_update_dir = os.path.expanduser(\"~/.HMI/update/\")\n    os.makedirs(local_update_dir, exist_ok=True)\n    update_file_name = \"MultipackParser\"\n    # Find USB drives\n    usb_paths = find_usb_drives()",
         "detail": "utils.system.updater",
         "documentation": {}
     },
