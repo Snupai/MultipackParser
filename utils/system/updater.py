@@ -378,31 +378,59 @@ rm -f "{temp_update}"
         return False
 
 def check_usb_update():
-    """Check USB drives for update file with improved error handling."""
-    logger.info("Starting USB update check...")
-    
+    """Simplified: Copy any MultipackParser from USB to ~/.HMI/update/, check version, update if newer."""
+    import shutil
+    import re
+    local_update_dir = os.path.expanduser("~/.HMI/update/")
+    os.makedirs(local_update_dir, exist_ok=True)
+    update_file_name = "MultipackParser"
+    found_file = None
     # Find USB drives
     usb_paths = find_usb_drives()
-    if not usb_paths:
-        logger.warning("No USB drives found")
+    for usb_path in usb_paths:
+        for root, dirs, files in os.walk(usb_path):
+            for file_name in files:
+                if file_name == update_file_name:
+                    src = os.path.join(root, file_name)
+                    dst = os.path.join(local_update_dir, file_name)
+                    try:
+                        shutil.copy2(src, dst)
+                        os.chmod(dst, 0o755)
+                        found_file = dst
+                        break
+                    except Exception as e:
+                        continue
+            if found_file:
+                break
+        if found_file:
+            break
+    if not found_file:
         return None, None
-    
-    logger.info(f"Found {len(usb_paths)} potential USB drives")
-    
-    # Search for update file
-    update_path, version_output = search_for_update_file(usb_paths)
-    
-    if update_path:
-        # Extract version from output
-        new_version = extract_version_from_output(version_output)
-        if new_version:
-            logger.info(f"Found update file with version {new_version}: {update_path}")
-            return update_path, new_version
+    # Check version
+    try:
+        import subprocess
+        result = subprocess.run([found_file, "--version"], capture_output=True, text=True, timeout=10)
+        version_output = result.stdout.strip() + result.stderr.strip()
+        match = re.search(r'(\d+\.\d+\.\d+)', version_output)
+        if match:
+            found_version = match.group(1)
         else:
-            logger.warning(f"Found update file but could not extract version: {update_path}")
-            return update_path, None
+            found_version = None
+    except Exception as e:
+        return None, None
+    # Get current version
+    current_version = get_current_version()
+    from packaging import version
+    if found_version and version.parse(found_version) > version.parse(current_version):
+        return found_file, found_version
     else:
-        logger.info("No valid update file found on USB drives")
+        # Show message: only found version, not newer
+        from PySide6.QtWidgets import QMessageBox
+        QMessageBox.information(
+            None,
+            "No Newer Update",
+            f"Found version {found_version or '?'} on USB, but current version is {current_version}. No update performed."
+        )
         return None, None
 
 def check_for_updates():

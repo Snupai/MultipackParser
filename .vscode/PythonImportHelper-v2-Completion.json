@@ -4899,7 +4899,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def check_usb_update():\n    \"\"\"Check USB drives for update file with improved error handling.\"\"\"\n    logger.info(\"Starting USB update check...\")\n    # Find USB drives\n    usb_paths = find_usb_drives()\n    if not usb_paths:\n        logger.warning(\"No USB drives found\")\n        return None, None\n    logger.info(f\"Found {len(usb_paths)} potential USB drives\")\n    # Search for update file",
+        "peekOfCode": "def check_usb_update():\n    \"\"\"Simplified: Copy any MultipackParser from USB to ~/.HMI/update/, check version, update if newer.\"\"\"\n    import shutil\n    import re\n    local_update_dir = os.path.expanduser(\"~/.HMI/update/\")\n    os.makedirs(local_update_dir, exist_ok=True)\n    update_file_name = \"MultipackParser\"\n    found_file = None\n    # Find USB drives\n    usb_paths = find_usb_drives()",
         "detail": "utils.system.updater",
         "documentation": {}
     },
