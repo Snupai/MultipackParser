@@ -11,6 +11,7 @@ from PySide6.QtCore import Qt, QObject, Signal, QTimer
 import logging
 # from utils.audio.audio import kill_play_stepback_warning_thread, spawn_play_stepback_warning_thread
 import time
+from utils.audio.audio import play_audio, stop_audio
 
 from utils.system.config.logging_config import setup_server_logger
 
@@ -58,11 +59,31 @@ def UR20_scannerStatus(status: str) -> int:
     """
     logger.debug(f"Scanner status update received: {status}")
     
+    # Track previous status for audio changes
+    previous_status = getattr(global_vars, 'previous_scanner_status', "True,True,True")
+    global_vars.previous_scanner_status = status
+    
     # Handle scanner fault detection
     if status != "True,True,True":
         if global_vars.timestamp_scanner_fault is None:
             logger.warning("Scanner fault detected")
             global_vars.timestamp_scanner_fault = datetime.now().timestamp()
+        
+        # Play scanner warning sound if status changed from safe to unsafe
+        if previous_status == "True,True,True":
+            current_time = time.time()
+            # Check if warning sound hasn't been played in the last 15 seconds
+            if (global_vars.last_scanner_warning_time is None or 
+                current_time - global_vars.last_scanner_warning_time >= 15):
+                
+                # Get scanner warning sound file from settings
+                if hasattr(global_vars, 'settings') and global_vars.settings:
+                    scanner_warning_sound = global_vars.settings.settings['admin']['scanner_warning_sound_file']
+                    logger.info(f"Scanner status changed to unsafe, playing warning sound: {scanner_warning_sound}")
+                    play_audio("scanner_warning", scanner_warning_sound, loop=False)
+                    global_vars.last_scanner_warning_time = current_time
+                else:
+                    logger.warning("Settings not available, cannot play scanner warning sound")
     else:
         # Reset scanner fault timestamp when all scanners are safe
         if global_vars.timestamp_scanner_fault is not None:

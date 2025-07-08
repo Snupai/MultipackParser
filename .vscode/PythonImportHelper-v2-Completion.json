@@ -2814,6 +2814,31 @@
         "documentation": {}
     },
     {
+        "label": "utils.audio.audio",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "play_audio",
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "isExtraImport": true,
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
+        "label": "stop_audio",
+        "importPath": "utils.audio.audio",
+        "description": "utils.audio.audio",
+        "isExtraImport": true,
+        "detail": "utils.audio.audio",
+        "documentation": {}
+    },
+    {
         "label": "RotatingFileHandler",
         "importPath": "logging.handlers",
         "description": "logging.handlers",
@@ -2963,6 +2988,14 @@
     },
     {
         "label": "open_file_dialog",
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "isExtraImport": true,
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_scanner_warning_sound_dialog",
         "importPath": "utils.ui.ui_helpers",
         "description": "utils.ui.ui_helpers",
         "isExtraImport": true,
@@ -3282,15 +3315,6 @@
         "description": "ui_files.visualization_3d",
         "isExtraImport": true,
         "detail": "ui_files.visualization_3d",
-        "documentation": {}
-    },
-    {
-        "label": "utils.audio.audio",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "utils.audio.audio",
-        "description": "utils.audio.audio",
-        "detail": "utils.audio.audio",
         "documentation": {}
     },
     {
@@ -3665,7 +3689,7 @@
         "kind": 2,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "def start_safety_monitor_thread():\n    \"\"\"Start the safety status monitor in a daemon thread (call after settings are initialized).\"\"\"\n    logger.info(\"Initializing safety monitor thread...\")\n    thread = threading.Thread(target=monitor_safety_status, daemon=True)\n    thread.start()\n    logger.info(\"Safety monitor thread started\")\n    return thread\ndef monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound when in REDUCED mode for 30+ seconds.\"\"\"\n    logger.info(\"Starting safety status monitor thread\")",
+        "peekOfCode": "def start_safety_monitor_thread():\n    \"\"\"Start the safety status monitor in a daemon thread (call after settings are initialized).\"\"\"\n    logger.info(\"Initializing safety monitor thread...\")\n    thread = threading.Thread(target=monitor_safety_status, daemon=True)\n    thread.start()\n    logger.info(\"Safety monitor thread started\")\n    return thread\ndef monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound once every 30 seconds when in REDUCED mode.\"\"\"\n    logger.info(\"Starting safety status monitor thread\")",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
@@ -3674,7 +3698,7 @@
         "kind": 2,
         "importPath": "utils.audio.audio",
         "description": "utils.audio.audio",
-        "peekOfCode": "def monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound when in REDUCED mode for 30+ seconds.\"\"\"\n    logger.info(\"Starting safety status monitor thread\")\n    while not hasattr(global_vars, 'settings') or global_vars.settings is None:\n        logger.warning(\"Settings not available, waiting...\")\n        time.sleep(1)\n    WARNING_SOUND = global_vars.settings.settings['admin']['alarm_sound_file']\n    WARNING_SOUND_ID = \"safety_warning\"\n    logger.debug(f\"Warning sound path: {WARNING_SOUND}\")\n    reduced_start_time = None",
+        "peekOfCode": "def monitor_safety_status():\n    \"\"\"Monitor robot safety status and play warning sound once every 30 seconds when in REDUCED mode.\"\"\"\n    logger.info(\"Starting safety status monitor thread\")\n    while not hasattr(global_vars, 'settings') or global_vars.settings is None:\n        logger.warning(\"Settings not available, waiting...\")\n        time.sleep(1)\n    WARNING_SOUND = global_vars.settings.settings['admin']['alarm_sound_file']\n    WARNING_SOUND_ID = \"safety_warning\"\n    logger.debug(f\"Warning sound path: {WARNING_SOUND}\")\n    reduced_start_time = None",
         "detail": "utils.audio.audio",
         "documentation": {}
     },
@@ -4196,7 +4220,7 @@
         "kind": 2,
         "importPath": "utils.server.UR20_Server_functions",
         "description": "utils.server.UR20_Server_functions",
-        "peekOfCode": "def UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger.debug(f\"Scanner status update received: {status}\")\n    # Handle scanner fault detection\n    if status != \"True,True,True\":",
+        "peekOfCode": "def UR20_scannerStatus(status: str) -> int:\n    \"\"\"Set the scanner status.\n    Args:\n        status (str): The status of the scanner.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger.debug(f\"Scanner status update received: {status}\")\n    # Track previous status for audio changes\n    previous_status = getattr(global_vars, 'previous_scanner_status', \"True,True,True\")",
         "detail": "utils.server.UR20_Server_functions",
         "documentation": {}
     },
@@ -4997,7 +5021,16 @@
         "kind": 2,
         "importPath": "utils.ui.ui_helpers",
         "description": "utils.ui.ui_helpers",
-        "peekOfCode": "def open_file_dialog() -> None:\n    \"\"\"Open the file dialog.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path = QFileDialog.getOpenFileName(global_vars.main_window, \"Open Audio File\", \"\", \"Audio Files (*.wav)\")\n    if file_path:\n        global_vars.ui.audioPathEdit.setText(file_path[0])\ndef set_wordlist() -> None:",
+        "peekOfCode": "def open_file_dialog() -> None:\n    \"\"\"Open the file dialog for audio files.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path = QFileDialog.getOpenFileName(global_vars.main_window, \"Open Audio File\", \"\", \"Audio Files (*.wav)\")\n    if file_path:\n        global_vars.ui.audioPathEdit.setText(file_path[0])\ndef open_scanner_warning_sound_dialog() -> None:",
+        "detail": "utils.ui.ui_helpers",
+        "documentation": {}
+    },
+    {
+        "label": "open_scanner_warning_sound_dialog",
+        "kind": 2,
+        "importPath": "utils.ui.ui_helpers",
+        "description": "utils.ui.ui_helpers",
+        "peekOfCode": "def open_scanner_warning_sound_dialog() -> None:\n    \"\"\"Open the file dialog for scanner warning sound files.\n    \"\"\"\n    if not global_vars.ui:\n        logger.error(\"UI not initialized\")\n        return\n    file_path = QFileDialog.getOpenFileName(global_vars.main_window, \"Open Scanner Warning Sound File\", \"\", \"Audio Files (*.wav)\")\n    if file_path:\n        global_vars.ui.scannerWarningSoundPathEdit.setText(file_path[0])\ndef set_wordlist() -> None:",
         "detail": "utils.ui.ui_helpers",
         "documentation": {}
     },

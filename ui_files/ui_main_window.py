@@ -620,23 +620,45 @@ class Ui_Form(object):
 
         self.formLayout_3.setLayout(2, QFormLayout.ItemRole.FieldRole, self.horizontalLayout_2)
 
+        self.label_26 = QLabel(self.formLayoutWidget_3)
+        self.label_26.setObjectName(u"label_26")
+
+        self.formLayout_3.setWidget(3, QFormLayout.ItemRole.LabelRole, self.label_26)
+
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setSpacing(3)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.scannerWarningSoundPathEdit = QLineEdit(self.formLayoutWidget_3)
+        self.scannerWarningSoundPathEdit.setObjectName(u"scannerWarningSoundPathEdit")
+
+        self.horizontalLayout_3.addWidget(self.scannerWarningSoundPathEdit)
+
+        self.buttonSelectScannerWarningSoundPath = QToolButton(self.formLayoutWidget_3)
+        self.buttonSelectScannerWarningSoundPath.setObjectName(u"buttonSelectScannerWarningSoundPath")
+        self.buttonSelectScannerWarningSoundPath.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+
+        self.horizontalLayout_3.addWidget(self.buttonSelectScannerWarningSoundPath)
+
+
+        self.formLayout_3.setLayout(3, QFormLayout.ItemRole.FieldRole, self.horizontalLayout_3)
+
         self.checkBoxScanner1Overwrite = QCheckBox(self.formLayoutWidget_3)
         self.checkBoxScanner1Overwrite.setObjectName(u"checkBoxScanner1Overwrite")
         self.checkBoxScanner1Overwrite.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
-        self.formLayout_3.setWidget(3, QFormLayout.ItemRole.SpanningRole, self.checkBoxScanner1Overwrite)
+        self.formLayout_3.setWidget(4, QFormLayout.ItemRole.SpanningRole, self.checkBoxScanner1Overwrite)
 
         self.checkBoxScanner2Overwrite = QCheckBox(self.formLayoutWidget_3)
         self.checkBoxScanner2Overwrite.setObjectName(u"checkBoxScanner2Overwrite")
         self.checkBoxScanner2Overwrite.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
-        self.formLayout_3.setWidget(4, QFormLayout.ItemRole.SpanningRole, self.checkBoxScanner2Overwrite)
+        self.formLayout_3.setWidget(5, QFormLayout.ItemRole.SpanningRole, self.checkBoxScanner2Overwrite)
 
         self.checkBoxScanner3Overwrite = QCheckBox(self.formLayoutWidget_3)
         self.checkBoxScanner3Overwrite.setObjectName(u"checkBoxScanner3Overwrite")
         self.checkBoxScanner3Overwrite.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
-        self.formLayout_3.setWidget(5, QFormLayout.ItemRole.SpanningRole, self.checkBoxScanner3Overwrite)
+        self.formLayout_3.setWidget(6, QFormLayout.ItemRole.SpanningRole, self.checkBoxScanner3Overwrite)
 
         self.formLayoutWidget_4 = QWidget(self.adminSettingsTab)
         self.formLayoutWidget_4.setObjectName(u"formLayoutWidget_4")
@@ -905,6 +927,8 @@ class Ui_Form(object):
         self.buttonSelectRobPath.setText(QCoreApplication.translate("Form", u"...", None))
         self.label_25.setText(QCoreApplication.translate("Form", u"Pfad Audio file", None))
         self.buttonSelectAudioFilePath.setText(QCoreApplication.translate("Form", u"...", None))
+        self.label_26.setText(QCoreApplication.translate("Form", u"Pfad Scanner Warning Sound", None))
+        self.buttonSelectScannerWarningSoundPath.setText(QCoreApplication.translate("Form", u"...", None))
         self.checkBoxScanner1Overwrite.setText(QCoreApplication.translate("Form", u"Overwrite Scanner 1", None))
         self.checkBoxScanner2Overwrite.setText(QCoreApplication.translate("Form", u"Overwrite Scanner 2", None))
         self.checkBoxScanner3Overwrite.setText(QCoreApplication.translate("Form", u"Overwrite Scanner 3", None))

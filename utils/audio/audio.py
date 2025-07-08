@@ -192,7 +192,7 @@ def start_safety_monitor_thread():
     return thread
 
 def monitor_safety_status():
-    """Monitor robot safety status and play warning sound when in REDUCED mode for 30+ seconds."""
+    """Monitor robot safety status and play warning sound once every 30 seconds when in REDUCED mode."""
     logger.info("Starting safety status monitor thread")
     while not hasattr(global_vars, 'settings') or global_vars.settings is None:
         logger.warning("Settings not available, waiting...")
@@ -201,6 +201,7 @@ def monitor_safety_status():
     WARNING_SOUND_ID = "safety_warning"
     logger.debug(f"Warning sound path: {WARNING_SOUND}")
     reduced_start_time = None
+    last_warning_time = None
     while True:
         try:
             if not hasattr(global_vars, 'current_safety_status'):
@@ -212,7 +213,21 @@ def monitor_safety_status():
             if current_status == SafetyStatus.REDUCED:
                 if reduced_start_time is None:
                     reduced_start_time = datetime.now()
-                elif (datetime.now() - reduced_start_time).total_seconds() >= 30:
+                
+                # Check if we should play the warning sound (every 30 seconds)
+                current_time = datetime.now()
+                should_play_warning = False
+                
+                if last_warning_time is None:
+                    # First time in reduced mode, wait 30 seconds before first warning
+                    if (current_time - reduced_start_time).total_seconds() >= 30:
+                        should_play_warning = True
+                else:
+                    # Check if 30 seconds have passed since last warning
+                    if (current_time - last_warning_time).total_seconds() >= 30:
+                        should_play_warning = True
+                
+                if should_play_warning:
                     # Check if warning sound is not already playing or queued
                     is_playing = (
                         (audio_queue.current_item and audio_queue.current_item.id == WARNING_SOUND_ID)
@@ -220,10 +235,12 @@ def monitor_safety_status():
                     )
                     logger.debug(f"Warning sound currently playing or queued: {is_playing}")
                     if not is_playing:
-                        logger.info("Robot in REDUCED mode for 30+ seconds, starting warning sound")
-                        play_audio(WARNING_SOUND_ID, WARNING_SOUND, loop=True)
+                        logger.info("Robot in REDUCED mode, playing warning sound (once every 30 seconds)")
+                        play_audio(WARNING_SOUND_ID, WARNING_SOUND, loop=False)  # Play once, not loop
+                        last_warning_time = current_time
             else:
                 reduced_start_time = None
+                last_warning_time = None
                 # Stop warning sound if robot is not in REDUCED mode
                 logger.debug(f"Robot not in REDUCED mode ({current_status}), stopping warning sound if playing")
                 stop_audio(WARNING_SOUND_ID)

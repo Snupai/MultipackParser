@@ -258,6 +258,7 @@ def set_settings_line_edits() -> None:
     global_vars.ui.lineEditLastRestart.setText(settings.settings['info']['last_restart'])
     global_vars.ui.pathEdit.setText(settings.settings['admin']['path'])
     global_vars.ui.audioPathEdit.setText(settings.settings['admin']['alarm_sound_file'])
+    global_vars.ui.scannerWarningSoundPathEdit.setText(settings.settings['admin']['scanner_warning_sound_file'])
 
 def leave_settings_page():
     """Leave the settings page.
@@ -317,7 +318,7 @@ def open_folder_dialog():
         set_wordlist()
 
 def open_file_dialog() -> None:
-    """Open the file dialog.
+    """Open the file dialog for audio files.
     """
     if not global_vars.ui:
         logger.error("UI not initialized")
@@ -326,6 +327,17 @@ def open_file_dialog() -> None:
     file_path = QFileDialog.getOpenFileName(global_vars.main_window, "Open Audio File", "", "Audio Files (*.wav)")
     if file_path:
         global_vars.ui.audioPathEdit.setText(file_path[0])
+
+def open_scanner_warning_sound_dialog() -> None:
+    """Open the file dialog for scanner warning sound files.
+    """
+    if not global_vars.ui:
+        logger.error("UI not initialized")
+        return
+        
+    file_path = QFileDialog.getOpenFileName(global_vars.main_window, "Open Scanner Warning Sound File", "", "Audio Files (*.wav)")
+    if file_path:
+        global_vars.ui.scannerWarningSoundPathEdit.setText(file_path[0])
 
 def set_wordlist() -> None:
     """Set the wordlist.

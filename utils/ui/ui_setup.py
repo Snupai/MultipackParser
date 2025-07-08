@@ -18,7 +18,7 @@ from utils.message.status_manager import update_status_label
 from utils.ui.ui_helpers import (CustomDoubleValidator, handle_scanner_status,
                              set_wordlist, open_page, Page, open_password_dialog, leave_settings_page,
                              open_file, save_open_file, execute_command, open_folder_dialog, 
-                             open_file_dialog, set_settings_line_edits, check_key_or_password, clear_filters,
+                             open_file_dialog, open_scanner_warning_sound_dialog, set_settings_line_edits, check_key_or_password, clear_filters,
                              show_palette_clear_dialog)
 from utils.robot.robot_control import (display_selected_file, load, 
                                 send_cmd_play, send_cmd_pause, send_cmd_stop, load_selected_file,
@@ -213,10 +213,13 @@ def connect_signal_handlers():
         lambda text: global_vars.settings.settings['admin'].__setitem__('path', text))
     global_vars.ui.audioPathEdit.textChanged.connect(
         lambda text: global_vars.settings.settings['admin'].__setitem__('alarm_sound_file', text))
+    global_vars.ui.scannerWarningSoundPathEdit.textChanged.connect(
+        lambda text: global_vars.settings.settings['admin'].__setitem__('scanner_warning_sound_file', text))
 
     # Connect file dialogs
     global_vars.ui.buttonSelectRobPath.clicked.connect(open_folder_dialog)
     global_vars.ui.buttonSelectAudioFilePath.clicked.connect(open_file_dialog)
+    global_vars.ui.buttonSelectScannerWarningSoundPath.clicked.connect(open_scanner_warning_sound_dialog)
 
     # Set up console
     global_vars.ui.lineEditCommand.setText("> ")

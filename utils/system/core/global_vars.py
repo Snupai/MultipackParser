@@ -51,6 +51,8 @@ UR20_zwischenlage: Optional[bool] = False
 audio_muted: bool = False
 
 timestamp_scanner_fault: Optional[float] = None
+last_scanner_warning_time: Optional[float] = None
+previous_scanner_status: str = "True,True,True"
 
 ##########################
 
