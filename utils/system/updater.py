@@ -180,12 +180,13 @@ def find_usb_drives():
     return usb_paths
 
 def search_for_update_file(usb_paths):
-    """Search for update file in USB drives."""
+    """Search for update file in USB drives, always copying to local dir for checks."""
     update_file_names = ["MultipackParser", "multipackparser"]
+    local_update_dir = os.path.expanduser("~/.HMI/update/")
+    os.makedirs(local_update_dir, exist_ok=True)
     
     for usb_path in usb_paths:
         logger.info(f"Searching in USB drive: {usb_path}")
-        
         try:
             # Walk through the directory tree
             for root, dirs, files in os.walk(usb_path):
@@ -193,20 +194,25 @@ def search_for_update_file(usb_paths):
                     if file_name in update_file_names:
                         file_path = os.path.join(root, file_name)
                         logger.info(f"Found potential update file: {file_path}")
-                        
-                        # Verify the file
-                        is_valid, version_info = verify_executable_file(file_path)
+                        # Always copy to local dir for checks
+                        local_path = os.path.join(local_update_dir, file_name)
+                        try:
+                            shutil.copy2(file_path, local_path)
+                            os.chmod(local_path, 0o755)
+                        except Exception as e:
+                            logger.warning(f"Failed to copy or chmod update file to local dir: {e}")
+                            continue
+                        # Verify the file (now local)
+                        is_valid, version_info = verify_executable_file(local_path)
                         if is_valid:
-                            logger.info(f"Valid update file found: {file_path}")
-                            return file_path, version_info
+                            logger.info(f"Valid update file found: {local_path}")
+                            return local_path, version_info
                         else:
-                            logger.warning(f"Invalid update file {file_path}: {version_info}")
-                            
+                            logger.warning(f"Invalid update file {local_path}: {version_info}")
         except PermissionError:
             logger.warning(f"Permission denied accessing {usb_path}")
         except Exception as e:
             logger.warning(f"Error searching {usb_path}: {e}")
-    
     return None, None
 
 def extract_version_from_output(version_output):
