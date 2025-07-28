@@ -62,9 +62,28 @@ def UR20_scannerStatus(status: str) -> int:
     # Track previous status for audio changes
     previous_status = getattr(global_vars, 'previous_scanner_status', "True,True,True")
     global_vars.previous_scanner_status = status
+
+    # Track when entering safe state
+    if status == "True,True,True":
+        global_vars.timestamp_scanner_safe = time.time()
     
     # Handle scanner fault detection
     if status != "True,True,True":
+        # Play Beth-Bell.wav if transitioning from safe after at least 15 seconds
+        if previous_status == "True,True,True":
+            current_time = time.time()
+            safe_duration = None
+            if hasattr(global_vars, 'timestamp_scanner_safe') and global_vars.timestamp_scanner_safe is not None:
+                safe_duration = current_time - global_vars.timestamp_scanner_safe
+            if safe_duration is not None and safe_duration >= 15:
+                try:
+                    beth_bell_path = "c:/Users/naeher/Desktop/Raspi/MultipackParser/utils/audio/Beth-Bell.wav"
+                    logger.info(f"Status was safe for {safe_duration:.1f}s, now unsafe. Playing Beth-Bell.wav: {beth_bell_path}")
+                    play_audio("beth_bell", beth_bell_path, loop=False)
+                except Exception as e:
+                    logger.error(f"Error playing Beth-Bell.wav: {e}")
+            else:
+                logger.debug(f"Safe duration before unsafe: {safe_duration}. Not playing Beth-Bell.wav.")
         if global_vars.timestamp_scanner_fault is None:
             logger.warning("Scanner fault detected")
             global_vars.timestamp_scanner_fault = datetime.now().timestamp()
