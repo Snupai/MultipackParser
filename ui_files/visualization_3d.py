@@ -85,7 +85,10 @@ def load_rob_files():
     rob_files.sort()
     for file in rob_files:
         global_vars.ui.robFilesListWidget.addItem(file)
-    logger.info(f"Loaded {len(rob_files)} palette plans")
+    # Deduplicate this log: only log once per session
+    if not hasattr(load_rob_files, '_already_logged_loaded_palette_plans'):
+        logger.info(f"Loaded {len(rob_files)} palette plans")
+        load_rob_files._already_logged_loaded_palette_plans = True
 def update_palette_list():
     """Update the palette list with current wordlist in robFilesListWidget."""
     if global_vars.ui and hasattr(global_vars.ui, 'robFilesListWidget'):
