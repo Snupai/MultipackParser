@@ -56,12 +56,17 @@ class AudioQueue:
     def stop_audio(self, id: str) -> None:
         """Stop playback of a specific audio by ID."""
         with self._lock:
-            if self.current_item and self.current_item.id == id:
-                self._stop_event.set()
-                if _pygame_initialized:
-                    pygame.mixer.music.stop()
-                self.current_item = None
-            self.queue = deque(item for item in self.queue if item.id != id)
+            stopped = False
+        if self.current_item and self.current_item.id == id:
+            self._stop_event.set()
+            if _pygame_initialized:
+                pygame.mixer.music.stop()
+            self.current_item = None
+            stopped = True
+        # Check if item existed in queue before removal
+        queue_before = len(self.queue)
+        self.queue = deque(item for item in self.queue if item.id != id)
+        if stopped or queue_before != len(self.queue):
             logger.info(f"Stopped audio {id}")
 
     def kill_all(self) -> None:
