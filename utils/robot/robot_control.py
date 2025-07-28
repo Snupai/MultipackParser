@@ -293,7 +293,7 @@ def update_database_from_usb() -> None:
         if should_update:
             logger.info(f"Processing file: {file}")
             try:
-                save_to_database(file, timestamp=file_timestamp)
+                save_to_database(file)
             except Exception as e:
                 logger.error(f"Error processing {file}: {e}")
                 
