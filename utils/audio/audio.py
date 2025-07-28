@@ -228,17 +228,10 @@ def monitor_safety_status():
                         should_play_warning = True
                 
                 if should_play_warning:
-                    # Check if warning sound is not already playing or queued
-                    is_playing = (
-                        (audio_queue.current_item and audio_queue.current_item.id == WARNING_SOUND_ID)
-                        or any(item.id == WARNING_SOUND_ID for item in audio_queue.queue)
-                    )
-                    logger.debug(f"Warning sound currently playing or queued: {is_playing}")
-                    if not is_playing:
-                        logger.info("Robot in REDUCED mode, playing warning sound (once every 30 seconds)")
-                        # Add to queue with 1 play count - it will be re-added every 30 seconds while in REDUCED mode
-                        add_audio_to_queue(WARNING_SOUND_ID, WARNING_SOUND, 1)
-                        last_warning_time = current_time
+                    logger.info("Robot in REDUCED mode, playing warning sound (once every 30 seconds)")
+                    # Always add to queue with 1 play count - it will be re-added every 30 seconds while in REDUCED mode
+                    add_audio_to_queue(WARNING_SOUND_ID, WARNING_SOUND, 1)
+                    last_warning_time = current_time
             else:
                 reduced_start_time = None
                 last_warning_time = None
