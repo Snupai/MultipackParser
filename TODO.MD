@@ -16,7 +16,7 @@
   - [x] saving palette data into db
   - [x] dimension search palettes
   - [x] loading through database
-- [ ] fix [audio.py](./utils/audio.py)
+- [ ] fix [audio.py](./utils/audio/audio.py)
   - [ ] volume wont work
   - [ ] after changing volume from 100 to 0 to 100 it stops playing
   - [ ] add more signals (audio files) for certain alarm types

@@ -4,10 +4,10 @@
 
 from typing import Literal, List, Optional, Union, Tuple
 
-from utils.database import load_from_database
-from . import global_vars
+from utils.database.database import load_from_database
+from utils.system.core import global_vars
 
-from utils.logging_config import setup_server_logger
+from utils.system.config.logging_config import setup_server_logger
 
 logger = setup_server_logger()
 

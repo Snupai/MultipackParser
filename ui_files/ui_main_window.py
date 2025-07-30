@@ -487,6 +487,17 @@ class Ui_Form(object):
 
         self.formLayout.setWidget(0, QFormLayout.ItemRole.FieldRole, self.comboBoxChooseURModel)
 
+        self.label_current_version = QLabel(self.formLayoutWidget)
+        self.label_current_version.setObjectName(u"label_current_version")
+
+        self.formLayout.setWidget(9, QFormLayout.ItemRole.LabelRole, self.label_current_version)
+
+        self.lineEditCurrentVersion = QLineEdit(self.formLayoutWidget)
+        self.lineEditCurrentVersion.setObjectName(u"lineEditCurrentVersion")
+        self.lineEditCurrentVersion.setEnabled(False)
+
+        self.formLayout.setWidget(9, QFormLayout.ItemRole.FieldRole, self.lineEditCurrentVersion)
+
         self.formLayoutWidget_2 = QWidget(self.PallettiererSpezifisch)
         self.formLayoutWidget_2.setObjectName(u"formLayoutWidget_2")
         self.formLayoutWidget_2.setGeometry(QRect(690, 10, 551, 341))
@@ -620,23 +631,45 @@ class Ui_Form(object):
 
         self.formLayout_3.setLayout(2, QFormLayout.ItemRole.FieldRole, self.horizontalLayout_2)
 
+        self.label_scanner_warning_path = QLabel(self.formLayoutWidget_3)
+        self.label_scanner_warning_path.setObjectName(u"label_scanner_warning_path")
+
+        self.formLayout_3.setWidget(3, QFormLayout.ItemRole.LabelRole, self.label_scanner_warning_path)
+
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setSpacing(3)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.scannerWarningSoundPathEdit = QLineEdit(self.formLayoutWidget_3)
+        self.scannerWarningSoundPathEdit.setObjectName(u"scannerWarningSoundPathEdit")
+
+        self.horizontalLayout_3.addWidget(self.scannerWarningSoundPathEdit)
+
+        self.buttonSelectScannerWarningSoundPath = QToolButton(self.formLayoutWidget_3)
+        self.buttonSelectScannerWarningSoundPath.setObjectName(u"buttonSelectScannerWarningSoundPath")
+        self.buttonSelectScannerWarningSoundPath.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+
+        self.horizontalLayout_3.addWidget(self.buttonSelectScannerWarningSoundPath)
+
+
+        self.formLayout_3.setLayout(3, QFormLayout.ItemRole.FieldRole, self.horizontalLayout_3)
+
         self.checkBoxScanner1Overwrite = QCheckBox(self.formLayoutWidget_3)
         self.checkBoxScanner1Overwrite.setObjectName(u"checkBoxScanner1Overwrite")
         self.checkBoxScanner1Overwrite.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
-        self.formLayout_3.setWidget(3, QFormLayout.ItemRole.SpanningRole, self.checkBoxScanner1Overwrite)
+        self.formLayout_3.setWidget(4, QFormLayout.ItemRole.SpanningRole, self.checkBoxScanner1Overwrite)
 
         self.checkBoxScanner2Overwrite = QCheckBox(self.formLayoutWidget_3)
         self.checkBoxScanner2Overwrite.setObjectName(u"checkBoxScanner2Overwrite")
         self.checkBoxScanner2Overwrite.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
-        self.formLayout_3.setWidget(4, QFormLayout.ItemRole.SpanningRole, self.checkBoxScanner2Overwrite)
+        self.formLayout_3.setWidget(5, QFormLayout.ItemRole.SpanningRole, self.checkBoxScanner2Overwrite)
 
         self.checkBoxScanner3Overwrite = QCheckBox(self.formLayoutWidget_3)
         self.checkBoxScanner3Overwrite.setObjectName(u"checkBoxScanner3Overwrite")
         self.checkBoxScanner3Overwrite.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
-        self.formLayout_3.setWidget(5, QFormLayout.ItemRole.SpanningRole, self.checkBoxScanner3Overwrite)
+        self.formLayout_3.setWidget(6, QFormLayout.ItemRole.SpanningRole, self.checkBoxScanner3Overwrite)
 
         self.formLayoutWidget_4 = QWidget(self.adminSettingsTab)
         self.formLayoutWidget_4.setObjectName(u"formLayoutWidget_4")
@@ -889,6 +922,7 @@ class Ui_Form(object):
         self.comboBoxChooseURModel.setItemText(1, QCoreApplication.translate("Form", u"UR20", None))
 
         self.comboBoxChooseURModel.setCurrentText(QCoreApplication.translate("Form", u"UR10", None))
+        self.label_current_version.setText(QCoreApplication.translate("Form", u"current version:", None))
         self.label_20.setText(QCoreApplication.translate("Form", u"Display Model: ", None))
         self.label_21.setText(QCoreApplication.translate("Form", u"Refresh rate: ", None))
         self.label_22.setText(QCoreApplication.translate("Form", u"Display width: ", None))
@@ -905,6 +939,8 @@ class Ui_Form(object):
         self.buttonSelectRobPath.setText(QCoreApplication.translate("Form", u"...", None))
         self.label_25.setText(QCoreApplication.translate("Form", u"Pfad Audio file", None))
         self.buttonSelectAudioFilePath.setText(QCoreApplication.translate("Form", u"...", None))
+        self.label_scanner_warning_path.setText(QCoreApplication.translate("Form", u"Pfad Scanner Warning Sound", None))
+        self.buttonSelectScannerWarningSoundPath.setText(QCoreApplication.translate("Form", u"...", None))
         self.checkBoxScanner1Overwrite.setText(QCoreApplication.translate("Form", u"Overwrite Scanner 1", None))
         self.checkBoxScanner2Overwrite.setText(QCoreApplication.translate("Form", u"Overwrite Scanner 2", None))
         self.checkBoxScanner3Overwrite.setText(QCoreApplication.translate("Form", u"Overwrite Scanner 3", None))

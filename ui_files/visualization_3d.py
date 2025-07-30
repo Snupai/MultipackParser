@@ -4,17 +4,17 @@ from typing import Union, List
 from enum import Enum
 import matplotlib
 
-from utils.database import load_from_database
+from utils.database.database import load_from_database
 matplotlib.use('qtagg', force=True)
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from PySide6.QtWidgets import QVBoxLayout, QProgressDialog, QHBoxLayout, QListWidget, QSplitter, QWidget
 from PySide6.QtCore import Qt
-from utils import global_vars
+from utils.system.core import global_vars
 import time
-from utils.pallet_data import *
-from utils.robot_control import load_wordlist
+from utils.database.pallet_data import *
+from utils.robot.robot_control import load_wordlist
 logger = global_vars.logger
 
 class MatplotlibCanvas(FigureCanvas):
@@ -60,35 +60,35 @@ def load_rob_files():
         
     global_vars.ui.robFilesListWidget.clear()
     
-    # If any dimension is provided, use find_palettplan to get filtered list
+    # First get all files from database
+    from utils.database.database import list_available_files, find_palettplan
+    files = list_available_files()
+    if not files:
+        logger.info("No palette plans found in database")
+        return
+        
+    # Extract file names without .rob extension and sort them
+    rob_files = [file['file_name'].replace('.rob', '') for file in files]
+    
+    # If any dimension is provided, filter the list
     if global_vars.filter_length > 0 or global_vars.filter_width > 0 or global_vars.filter_height > 0:
-        from utils.database import find_palettplan
         filtered_files = find_palettplan(global_vars.filter_length, global_vars.filter_width, global_vars.filter_height)
         if filtered_files:
-            # Sort the filtered list alphabetically
-            filtered_files.sort()
-            # Add sorted items to the list widget
-            for file in filtered_files:
-                global_vars.ui.robFilesListWidget.addItem(file)
-            logger.info(f"Loaded {len(filtered_files)} filtered palette plans")
+            # Only keep files that exist in both lists
+            rob_files = [f for f in filtered_files if f in rob_files]
+            logger.info(f"Found {len(rob_files)} matching palette plans")
         else:
+            rob_files = []
             logger.info("No matching palette plans found for the given dimensions")
-    else:
-        # If no dimensions provided, load all files from database
-        from utils.database import list_available_files
-        files = list_available_files()
-        if files:
-            # Extract file names without .rob extension and sort them
-            rob_files = [file['file_name'].replace('.rob', '') for file in files]
-            rob_files.sort()
-            
-            # Add sorted items to the list widget
-            for file in rob_files:
-                global_vars.ui.robFilesListWidget.addItem(file)
-            logger.info(f"Loaded {len(rob_files)} palette plans")
-        else:
-            logger.info("No palette plans found in database")
-
+    
+    # Sort and display the files
+    rob_files.sort()
+    for file in rob_files:
+        global_vars.ui.robFilesListWidget.addItem(file)
+    # Deduplicate this log: only log once per session
+    if not hasattr(load_rob_files, '_already_logged_loaded_palette_plans'):
+        logger.info(f"Loaded {len(rob_files)} palette plans")
+        load_rob_files._already_logged_loaded_palette_plans = True
 def update_palette_list():
     """Update the palette list with current wordlist in robFilesListWidget."""
     if global_vars.ui and hasattr(global_vars.ui, 'robFilesListWidget'):

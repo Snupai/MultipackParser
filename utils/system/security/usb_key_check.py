@@ -1,6 +1,6 @@
 import os
 from cryptography.fernet import Fernet
-from utils import global_vars
+from utils.system.core import global_vars
 import string
 import ctypes
 

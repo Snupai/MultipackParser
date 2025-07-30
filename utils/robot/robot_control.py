@@ -1,9 +1,9 @@
 import socket
 import logging
 import os
-from utils import global_vars
-from utils.database import save_to_database, find_file_in_database, list_available_files
-from utils.status_manager import update_status_label
+from utils.system.core import global_vars
+from utils.database.database import save_to_database, find_file_in_database, list_available_files
+from utils.message.status_manager import update_status_label
 
 logger = logging.getLogger(__name__)
 
@@ -178,8 +178,8 @@ def load() -> None:
         return
     interface_enabled = False
     
-    from utils.status_manager import update_status_label
-    from utils import UR_Common_functions as UR
+    from utils.message.status_manager import update_status_label
+    import utils.server.UR_Common_functions as UR
 
     # Store the text first, then manually clear focus to avoid keyboard issues
     Artikelnummer = global_vars.ui.EingabePallettenplan.text().strip()
@@ -266,8 +266,7 @@ def load() -> None:
     global_vars.ui.label_Kartonhoehe_mm.setEnabled(interface_enabled)
 
 def update_database_from_usb() -> None:
-    """Update the database with any new or modified palette plans from the USB stick.
-    """
+    """Update the database with any new or modified palette plans from the USB stick."""
     if not os.path.exists(global_vars.PATH_USB_STICK):
         logger.error(f"USB stick path {global_vars.PATH_USB_STICK} does not exist")
         return
@@ -280,12 +279,28 @@ def update_database_from_usb() -> None:
         file_path = os.path.join(global_vars.PATH_USB_STICK, file)
         file_timestamp = os.path.getmtime(file_path)
         
-        # Always try to load and save to ensure database is up to date
-        logger.info(f"Processing file: {file}")
-        try:
-            save_to_database(file)
-        except Exception as e:
-            logger.error(f"Error processing {file}: {e}")
+        # Check if file exists in database and compare timestamps
+        db_file = find_file_in_database(file)
+        should_update = True
+        
+        if db_file:
+            db_timestamp = db_file.get('timestamp', 0)
+            if file_timestamp <= db_timestamp:
+                logger.debug(f"File {file} is up to date in database")
+                should_update = False
+        
+        # Update if file is new or modified
+        if should_update:
+            logger.info(f"Processing file: {file}")
+            try:
+                save_to_database(file)
+            except Exception as e:
+                logger.error(f"Error processing {file}: {e}")
+                
+    # Update UI if needed
+    if hasattr(global_vars, 'ui') and global_vars.ui:
+        from ui_files.visualization_3d import load_rob_files
+        load_rob_files()
 
 def load_wordlist() -> list:
     """Load the wordlist from the USB stick and update the database.

@@ -5,7 +5,7 @@ import datetime
 import logging
 from typing import Union, List, Dict, Any, Optional, Tuple, Literal
 
-from utils import global_vars
+from utils.system.core import global_vars
 
 logger = logging.getLogger(__name__)
 
@@ -156,87 +156,104 @@ def UR_ReadDataFromUsbStick(filename: str, path_usb_stick: str) -> Union[Literal
     g_CenterOfGravity = [0,0,0]
         
     file_path = path_usb_stick + filename
-    
     try:
         # Get file modification time for database tracking
         file_timestamp = os.path.getmtime(file_path)
         
-        # Read and parse the file line by line
-        with open(file_path) as file:
-            for line in file:
-                # Convert each line to list of integers
-                tmpList = [int(x) for x in line.strip().split('\t')]
-                g_Daten.append(tmpList)
- 
-            # Parse pallet dimensions from first line
-            pl = g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_LENGTH]  # Length
-            pw = g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_WIDTH]   # Width
-            ph = g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_HEIGHT]  # Height
-            g_PalettenDim = [pl, pw, ph]
-            
-            # Parse package dimensions from second line
-            pl = g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_LENGTH]  # Length
-            pw = g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_WIDTH]   # Width
-            ph = g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_HEIGHT]  # Height
-            pr = g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_GAP]     # Gap between packages
-            g_PaketDim = [pl, pw, ph, pr]
+        # Try different encodings in order of likelihood
+        encodings = ['utf-8', 'latin1', 'cp1252', 'ascii']
+        lines = None
+        
+        for encoding in encodings:
+            try:
+                with open(file_path, 'r', encoding=encoding) as f:
+                    # Read and parse the file line by line
+                    for line in f:
+                        # Convert each line to list of integers
+                        tmpList = [int(x) for x in line.strip().split('\t')]
+                        g_Daten.append(tmpList)
+                    # If we get here, the encoding worked
+                    break
+            except UnicodeDecodeError:
+                continue
+            except ValueError as e:
+                logger.error(f"Error parsing values in file {filename}: {e}")
+                return None, None, None, None, None, None, None, None, None, None, None, None, None, None
+        
+        if not g_Daten:
+            logger.error(f"Could not decode file {filename} with any of the attempted encodings")
+            return None, None, None, None, None, None, None, None, None, None, None, None, None, None
 
-            # Get number of layer types from third line
-            g_LageArten = g_Daten[global_vars.LI_LAYERTYPES][0]
+        # Parse pallet dimensions from first line
+        pl = g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_LENGTH]  # Length
+        pw = g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_WIDTH]   # Width
+        ph = g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_HEIGHT]  # Height
+        g_PalettenDim = [pl, pw, ph]
+        
+        # Parse package dimensions from second line
+        pl = g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_LENGTH]  # Length
+        pw = g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_WIDTH]   # Width
+        ph = g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_HEIGHT]  # Height
+        pr = g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_GAP]     # Gap between packages
+        g_PaketDim = [pl, pw, ph, pr]
+
+        # Get number of layer types from third line
+        g_LageArten = g_Daten[global_vars.LI_LAYERTYPES][0]
+        
+        # Get number of layers from fourth line
+        anzLagen = g_Daten[global_vars.LI_NUMBER_OF_LAYERS][0]
+        g_AnzLagen = anzLagen
+
+        # Parse layer assignments and intermediate layers
+        index = global_vars.LI_NUMBER_OF_LAYERS + 2  # Skip header lines
+        end_index = index + anzLagen
+
+        while index < end_index:
+            lagenart = g_Daten[index][0]  # Layer type
+            zwischenlagen = g_Daten[index][1]  # Intermediate layer flag
+
+            g_LageZuordnung.append(lagenart)
+            g_Zwischenlagen.append(zwischenlagen)
+            index = index + 1
+        
+        # Parse package positions
+        ersteLage = 4 + (anzLagen + 1)  # Skip layer data
+        index = ersteLage
+        anzahlPaket = g_Daten[index][0]  # Total packages
+        g_AnzahlPakete = anzahlPaket  # Note: Deprecated - now number of picks for multipick
+        index_paketZuordnung = index
+        
+        # Get number of packages per layer type
+        for i in range(g_LageArten):
+            anzahlPick = g_Daten[index_paketZuordnung][0]
+            g_PaketeZuordnung.append(anzahlPick)
+            index_paketZuordnung = index_paketZuordnung + anzahlPick + 1
+        
+        # Parse individual package positions for each layer type
+        for i in range(g_LageArten):            
+            index = index + 1  # Skip count line
+            anzahlPaket = g_PaketeZuordnung[i]
             
-            # Get number of layers from fourth line
-            anzLagen = g_Daten[global_vars.LI_NUMBER_OF_LAYERS][0]
-            g_AnzLagen = anzLagen
- 
-            # Parse layer assignments and intermediate layers
-            index = global_vars.LI_NUMBER_OF_LAYERS + 2  # Skip header lines
-            end_index = index + anzLagen
- 
-            while index < end_index:
-                lagenart = g_Daten[index][0]  # Layer type
-                zwischenlagen = g_Daten[index][1]  # Intermediate layer flag
- 
-                g_LageZuordnung.append(lagenart)
-                g_Zwischenlagen.append(zwischenlagen)
+            for j in range(anzahlPaket):
+                # Extract position data:
+                xp = g_Daten[index][global_vars.LI_POSITION_XP]    # X pick position
+                yp = g_Daten[index][global_vars.LI_POSITION_YP]    # Y pick position
+                ap = g_Daten[index][global_vars.LI_POSITION_AP]    # Pick angle
+                xd = g_Daten[index][global_vars.LI_POSITION_XD]    # X drop position
+                yd = g_Daten[index][global_vars.LI_POSITION_YD]    # Y drop position
+                ad = g_Daten[index][global_vars.LI_POSITION_AD]    # Drop angle
+                nop = g_Daten[index][global_vars.LI_POSITION_NOP]  # Number of packages
+                xvec = g_Daten[index][global_vars.LI_POSITION_XVEC]  # X vector
+                yvec = g_Daten[index][global_vars.LI_POSITION_YVEC]  # Y vector
+                packagePos = [xp, yp, ap, xd, yd, ad, nop, xvec, yvec]
+                g_PaketPos.append(packagePos)
                 index = index + 1
+        
+        return file_path, file_timestamp, g_Daten, g_LageZuordnung, g_PaketPos, g_PaketeZuordnung, g_Zwischenlagen, g_paket_quer, g_CenterOfGravity, g_PalettenDim, g_PaketDim, g_LageArten, g_AnzLagen, g_AnzahlPakete
             
-            # Parse package positions
-            ersteLage = 4 + (anzLagen + 1)  # Skip layer data
-            index = ersteLage
-            anzahlPaket = g_Daten[index][0]  # Total packages
-            g_AnzahlPakete = anzahlPaket  # Note: Deprecated - now number of picks for multipick
-            index_paketZuordnung = index
-            
-            # Get number of packages per layer type
-            for i in range(g_LageArten):
-                anzahlPick = g_Daten[index_paketZuordnung][0]
-                g_PaketeZuordnung.append(anzahlPick)
-                index_paketZuordnung = index_paketZuordnung + anzahlPick + 1
-                
-            # Parse individual package positions for each layer type
-            for i in range(g_LageArten):            
-                index = index + 1  # Skip count line
-                anzahlPaket = g_PaketeZuordnung[i]
-                
-                for j in range(anzahlPaket):
-                    # Extract position data:
-                    xp = g_Daten[index][global_vars.LI_POSITION_XP]    # X pick position
-                    yp = g_Daten[index][global_vars.LI_POSITION_YP]    # Y pick position
-                    ap = g_Daten[index][global_vars.LI_POSITION_AP]    # Pick angle
-                    xd = g_Daten[index][global_vars.LI_POSITION_XD]    # X drop position
-                    yd = g_Daten[index][global_vars.LI_POSITION_YD]    # Y drop position
-                    ad = g_Daten[index][global_vars.LI_POSITION_AD]    # Drop angle
-                    nop = g_Daten[index][global_vars.LI_POSITION_NOP]  # Number of packages
-                    xvec = g_Daten[index][global_vars.LI_POSITION_XVEC]  # X vector
-                    yvec = g_Daten[index][global_vars.LI_POSITION_YVEC]  # Y vector
-                    packagePos = [xp, yp, ap, xd, yd, ad, nop, xvec, yvec]
-                    g_PaketPos.append(packagePos)
-                    index = index + 1
-            
-            return file_path, file_timestamp, g_Daten, g_LageZuordnung, g_PaketPos, g_PaketeZuordnung, g_Zwischenlagen, g_paket_quer, g_CenterOfGravity, g_PalettenDim, g_PaketDim, g_LageArten, g_AnzLagen, g_AnzahlPakete
     except Exception as e:
-        print(f"Error reading file {filename}: {e}")
-    return 1, None, None
+        logger.error(f"Error reading file {filename}: {e}")
+        return None, None, None, None, None, None, None, None, None, None, None, None, None, None
 
 def save_to_database(file_name, db_path="paletten.db") -> bool:
     """Save all global data to the database.

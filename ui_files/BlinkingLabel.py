@@ -2,8 +2,8 @@ from PySide6.QtWidgets import QLabel, QDialog
 from PySide6.QtCore import QTimer, QRect, Qt
 from PySide6.QtGui import QFont
 from typing import Optional
-from utils.message import MessageType
-from utils import global_vars
+from utils.message.message import MessageType
+from utils.system.core import global_vars
 logger = global_vars.logger
 
 class BlinkingLabel(QLabel):

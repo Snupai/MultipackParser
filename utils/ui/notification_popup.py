@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QLabel, QWidget, QHBoxLayout, QApplication
 from PySide6.QtCore import Qt, QTimer, QPoint, QSize
 from PySide6.QtGui import QPainter, QColor, QPen, QPolygon
 
-from utils import global_vars
+from utils.system.core import global_vars
 
 logger = logging.getLogger(__name__)
 

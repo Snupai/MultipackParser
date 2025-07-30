@@ -6,7 +6,6 @@ import pickle
 import base64
 import copy
 from PySide6.QtCore import QSettings
-from . import global_vars
 from .logging_config import logger
 
 class Settings:
@@ -16,6 +15,7 @@ class Settings:
     def __init__(self):
         """Initialize the settings with QSettings.
         """
+        from utils.system.core import global_vars  # Import here to avoid circular import
         logger.debug("Initializing Settings")
         # Create QSettings instance with organization and application name
         self.qsettings = QSettings("Multipack", "MultipackParser")
@@ -40,6 +40,7 @@ class Settings:
                 "password": "fc2f8726bb317b17a3cb322672818d2d$580c515fc8852dfd6e36faaaf46581c412683135b87dc8750c89efad4a38b54f",
                 "path": "..",
                 "alarm_sound_file": "Sound/output.wav",
+                "scanner_warning_sound_file": "Sound/stepback.wav",
                 "usb_key": "",
                 "usb_expected_value": ""
             },

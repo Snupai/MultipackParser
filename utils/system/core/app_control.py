@@ -6,8 +6,10 @@ import os
 from PySide6.QtWidgets import QMessageBox
 from PySide6.QtCore import Qt
 
-from utils import global_vars
-from utils.ui_helpers import set_settings_line_edits
+from utils.system.core import global_vars
+from utils.ui.ui_helpers import set_settings_line_edits
+from utils.server.server import server_stop
+from utils.system.config.settings import Settings
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +35,6 @@ def restart_app():
     
     logger.info("Rebooting system...")
     if hasattr(global_vars, 'server') and global_vars.server:
-        from utils.server import server_stop
         server_stop()
     subprocess.run(['sudo', 'reboot'], check=True)
 
@@ -73,28 +74,19 @@ def exit_app():
     
     # First stop the server if it's running
     if hasattr(global_vars, 'server') and global_vars.server:
-        from utils.server import server_stop
         server_stop()
     
     # Stop any running audio threads
     if hasattr(global_vars, 'audio_thread_running') and global_vars.audio_thread_running:
-        from utils.audio import kill_play_stepback_warning_thread
-        kill_play_stepback_warning_thread()
+        # from utils.audio.audio import kill_play_stepback_warning_thread
+        # kill_play_stepback_warning_thread()
+        pass
     
-    # Use Qt's application exit mechanism for proper cleanup
-    from PySide6.QtWidgets import QApplication
-    app = QApplication.instance()
-    if app:
-        # Schedule the application to exit after processing current events
-        app.exit(0)
-    else:
-        # Fallback to sys.exit if there's no Qt application instance
-        sys.exit(0)
-
+    # Force immediate exit for updates to work properly
+    sys.exit(0)
 def init_settings():
     """Initialize the settings
     """
-    from utils.settings import Settings
     settings = Settings()
     global_vars.settings = settings
     global_vars.PATH_USB_STICK = settings.settings['admin']['path']

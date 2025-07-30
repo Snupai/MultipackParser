@@ -8,14 +8,16 @@ from PySide6.QtCore import Qt, QProcess, QFileSystemWatcher, QStringListModel
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator
 from typing import Optional
 
-from utils import global_vars
+from utils.system.core import global_vars
 from ui_files.BlinkingLabel import BlinkingLabel
-from utils.message import MessageType
-from utils.message_manager import MessageManager
+from utils.message.message import MessageType
+from utils.message.message_manager import MessageManager
 from ui_files.PasswordDialog import PasswordEntryDialog
-from utils.robot_control import load_rob_files
-from utils.usb_key_check import check_any_usb_for_key
-from utils.status_manager import update_status_label
+from utils.robot.robot_control import load_rob_files
+from utils.system.security.usb_key_check import check_any_usb_for_key
+from utils.message.status_manager import update_status_label
+from utils.robot.robot_control import load_wordlist
+from utils.ui.notification_popup import check_zwischenlage_status
 
 logger = logging.getLogger(__name__)
 
@@ -256,6 +258,7 @@ def set_settings_line_edits() -> None:
     global_vars.ui.lineEditLastRestart.setText(settings.settings['info']['last_restart'])
     global_vars.ui.pathEdit.setText(settings.settings['admin']['path'])
     global_vars.ui.audioPathEdit.setText(settings.settings['admin']['alarm_sound_file'])
+    global_vars.ui.scannerWarningSoundPathEdit.setText(settings.settings['admin']['scanner_warning_sound_file'])
 
 def leave_settings_page():
     """Leave the settings page.
@@ -315,7 +318,7 @@ def open_folder_dialog():
         set_wordlist()
 
 def open_file_dialog() -> None:
-    """Open the file dialog.
+    """Open the file dialog for audio files.
     """
     if not global_vars.ui:
         logger.error("UI not initialized")
@@ -325,6 +328,17 @@ def open_file_dialog() -> None:
     if file_path:
         global_vars.ui.audioPathEdit.setText(file_path[0])
 
+def open_scanner_warning_sound_dialog() -> None:
+    """Open the file dialog for scanner warning sound files.
+    """
+    if not global_vars.ui:
+        logger.error("UI not initialized")
+        return
+        
+    file_path = QFileDialog.getOpenFileName(global_vars.main_window, "Open Scanner Warning Sound File", "", "Audio Files (*.wav)")
+    if file_path:
+        global_vars.ui.scannerWarningSoundPathEdit.setText(file_path[0])
+
 def set_wordlist() -> None:
     """Set the wordlist.
     """
@@ -332,7 +346,7 @@ def set_wordlist() -> None:
         logger.error("UI not initialized")
         return
     
-    from utils.robot_control import load_wordlist
+    from utils.robot.robot_control import load_wordlist
         
     # Load wordlist and create completer
     wordlist = load_wordlist()
@@ -389,7 +403,7 @@ def set_wordlist() -> None:
     
     # Update visualization palette list if it exists
     try:
-        from utils.robot_control import load_rob_files
+        from utils.robot.robot_control import load_rob_files
         # Call load_rob_files to update the list widget
         load_rob_files()
         logger.debug("Updated palette list in robFilesListWidget")
@@ -403,7 +417,7 @@ def set_wordlist() -> None:
 def update_wordlist() -> None:
     """Update the wordlist.
     """
-    from utils.robot_control import load_wordlist
+    from utils.robot.robot_control import load_wordlist
     
     new_wordlist = load_wordlist()
     model = global_vars.completer.model()
@@ -481,7 +495,7 @@ def update_wordlist() -> None:
     
     # Update visualization palette list if it exists
     try:
-        from utils.robot_control import load_rob_files
+        from utils.robot.robot_control import load_rob_files
         # Call load_rob_files to update the list widget
         load_rob_files()
         logger.debug("Updated palette list in robFilesListWidget")
@@ -564,12 +578,12 @@ def test_zwischenlage_popup(enable: bool = True):
     Args:
         enable (bool): Whether to show (True) or hide (False) the popup
     """
-    from utils import global_vars
+    from utils.system.core import global_vars
     # Set the global variable
     global_vars.UR20_zwischenlage = enable
     
     # Force an immediate check without waiting for the timer
-    from utils.notification_popup import check_zwischenlage_status
+    from utils.ui.notification_popup import check_zwischenlage_status
     check_zwischenlage_status()
     
     # Log the action

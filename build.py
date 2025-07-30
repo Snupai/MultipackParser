@@ -1,10 +1,16 @@
 import subprocess
 import os
 import pathlib
+import argparse
 
 # Define the necessary paths and settings
 PROJECT_DIR = pathlib.Path(__file__).parent.resolve()
-DOCKERFILE_PATH = PROJECT_DIR / "Dockerfile"
+
+parser = argparse.ArgumentParser(description="Build MultipackParser using Docker.")
+parser.add_argument('--dockerfile', type=str, default='Dockerfile', help='Dockerfile to use (default: Dockerfile)')
+args = parser.parse_args()
+
+DOCKERFILE_PATH = PROJECT_DIR / args.dockerfile
 IMAGE_NAME = "multipackparser-builder"
 EXECUTABLE_NAME_IN_DOCKER = "MultipackParser"
 EXECUTABLE_DIR_IN_DOCKER  = "/app/dist"
@@ -23,7 +29,7 @@ def run_command(command, check=True):
 
 def build_docker_image():
     build_command = f"docker buildx build --platform linux/arm64 -t {IMAGE_NAME} --output type=docker -f {DOCKERFILE_PATH} {PROJECT_DIR}"
-    print("Building Docker image...")
+    print(f"Building Docker image using {DOCKERFILE_PATH}...")
     run_command(build_command)
     print("Docker image built successfully.")
 

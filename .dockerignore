@@ -1,0 +1,21 @@
+# Exclude version control
+.git
+
+# Exclude build output
+output
+
+# Exclude Python cache and artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.o
+*.a
+*.log
+
+# Exclude editor/project files
+*.swp
+*.swo
+*.idea/
+*.vscode/ 

@@ -1,8 +1,8 @@
 import logging
 from typing import Optional
-from ui_files.BlinkingLabel import BlinkingLabel
-from utils import global_vars
-from utils.message import MessageType, Message
+from .. import global_vars
+from .message import MessageType, Message
+from .message_manager import MessageManager
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +39,9 @@ def update_status_label(text: str, color: str, blink: bool = False, second_color
     if not hasattr(global_vars.ui, 'LabelPalletenplanInfo'):
         logger.error("Label not found in UI")
         return
+
+    # Import here to avoid circular dependency
+    from ui_files.BlinkingLabel import BlinkingLabel
 
     # Create new blinking label only if it doesn't exist
     if global_vars.blinking_label is None:

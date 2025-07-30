@@ -12,21 +12,26 @@ from PySide6.QtGui import QRegularExpressionValidator, QIntValidator
 
 from ui_files.ui_main_window import Ui_Form
 from ui_files.visualization_3d import initialize_3d_view, clear_canvas, load_rob_files
-from utils import global_vars
-from utils.status_manager import update_status_label
-from utils.ui_helpers import (CustomDoubleValidator, handle_scanner_status,
+import utils
+from utils.system.core import global_vars
+from utils.message.status_manager import update_status_label
+from utils.ui.ui_helpers import (CustomDoubleValidator, handle_scanner_status,
                              set_wordlist, open_page, Page, open_password_dialog, leave_settings_page,
                              open_file, save_open_file, execute_command, open_folder_dialog, 
-                             open_file_dialog, set_settings_line_edits, check_key_or_password, clear_filters,
+                             open_file_dialog, open_scanner_warning_sound_dialog, set_settings_line_edits, check_key_or_password, clear_filters,
                              show_palette_clear_dialog)
-from utils.robot_control import (display_selected_file, load, 
+from utils.robot.robot_control import (display_selected_file, load, 
                                 send_cmd_play, send_cmd_pause, send_cmd_stop, load_selected_file,
                                 send_remote_control_command)
-from utils.server import server_thread, server_stop
-from utils.audio import (spawn_play_stepback_warning_thread, kill_play_stepback_warning_thread, 
-                        set_audio_volume, delay_warning_sound)
-from utils.updater import check_for_updates
-from utils.app_control import restart_app, exit_app
+from utils.server.server import server_thread, server_stop
+# from utils.audio.audio import (spawn_play_stepback_warning_thread, kill_play_stepback_warning_thread, 
+#                         set_audio_volume, delay_warning_sound)
+import utils.audio.audio as audio
+from utils.system.updater import check_for_updates
+from utils.system.core.app_control import restart_app, exit_app
+from utils.server.UR20_Server_functions import scanner_signals
+from utils.ui.notification_popup import check_zwischenlage_status
+from utils.ui.ui_helpers import check_palette_clearing_status
 
 # Add logger
 logger = logging.getLogger(__name__)
@@ -151,7 +156,7 @@ def connect_signal_handlers():
     global_vars.ui.ButtonDatenSenden.clicked.connect(server_thread)
     #global_vars.ui.startaudio.clicked.connect(spawn_play_stepback_warning_thread) # TODO: Temporarily disabled due to fast production push
     #global_vars.ui.stopaudio.clicked.connect(kill_play_stepback_warning_thread) # TODO: Temporarily disabled due to fast production push
-    global_vars.ui.pushButtonVolumeOnOff.clicked.connect(set_audio_volume)
+    #global_vars.ui.pushButtonVolumeOnOff.clicked.connect(set_audio_volume)
 
     # Connect robot control buttons
     global_vars.ui.ButtonZurueck.clicked.connect(lambda: open_page(Page.MAIN_PAGE))
@@ -204,14 +209,18 @@ def connect_signal_handlers():
         lambda text: global_vars.settings.settings['info'].__setitem__('number_of_use_cycles', int(text) if text else 0))
     global_vars.ui.lineEditLastRestart.textChanged.connect(
         lambda text: global_vars.settings.settings['info'].__setitem__('last_restart', text))
+    global_vars.ui.lineEditCurrentVersion.setText(global_vars.VERSION)
     global_vars.ui.pathEdit.textChanged.connect(
         lambda text: global_vars.settings.settings['admin'].__setitem__('path', text))
     global_vars.ui.audioPathEdit.textChanged.connect(
         lambda text: global_vars.settings.settings['admin'].__setitem__('alarm_sound_file', text))
+    global_vars.ui.scannerWarningSoundPathEdit.textChanged.connect(
+        lambda text: global_vars.settings.settings['admin'].__setitem__('scanner_warning_sound_file', text))
 
     # Connect file dialogs
     global_vars.ui.buttonSelectRobPath.clicked.connect(open_folder_dialog)
     global_vars.ui.buttonSelectAudioFilePath.clicked.connect(open_file_dialog)
+    global_vars.ui.buttonSelectScannerWarningSoundPath.clicked.connect(open_scanner_warning_sound_dialog)
 
     # Set up console
     global_vars.ui.lineEditCommand.setText("> ")
@@ -223,7 +232,6 @@ def connect_signal_handlers():
     global_vars.ui.pushButtonExitApp.clicked.connect(restart_app)
     
     # Connect scanner signal
-    from utils.UR20_Server_functions import scanner_signals
     scanner_signals.status_changed.connect(handle_scanner_status)
 
 def setup_password_handling():
@@ -270,12 +278,14 @@ def setup_components():
 def start_background_tasks():
     """Start background tasks and threads."""
     # Start delay warning sound monitor thread
-    warning_sound_thread = threading.Thread(target=delay_warning_sound)
-    warning_sound_thread.daemon = True
-    warning_sound_thread.start()
+    
+    # Start robot status monitor
+    from utils.robot.robot_status_monitor import RobotStatusMonitor
+    global_vars.robot_status_monitor = RobotStatusMonitor()
+    global_vars.robot_status_monitor.start_monitoring()
     
     # Start zwischenlage popup monitor
-    from utils.notification_popup import check_zwischenlage_status
+    check_zwischenlage_status()
     
     # Create a timer to check zwischenlage status every 500ms
     zwischenlage_timer = QTimer(global_vars.main_window)
@@ -283,7 +293,6 @@ def start_background_tasks():
     zwischenlage_timer.start(500)  # Check every 500ms
     
     # Create a timer to check palette clearing status every 1000ms
-    from utils.ui_helpers import check_palette_clearing_status
     palette_clear_timer = QTimer(global_vars.main_window)
     palette_clear_timer.timeout.connect(check_palette_clearing_status)
     palette_clear_timer.start(1000)  # Check every 1000ms
@@ -328,10 +337,10 @@ def setup_window_handling():
             messageBox = QMessageBox()
             messageBox.setWindowTitle("Multipack Parser")
             messageBox.setTextFormat(Qt.TextFormat.RichText)
-            messageBox.setText('''
-            <div style="text-align: center;">
-            Yann-Luca Näher - \u00a9 2024<br>
-            <a href="https://github.com/Snupai">Github</a>
+            messageBox.setText(f'''<div style="text-align: center;">
+            Yann-Luca Näher - \u00a9 2024-2025<br>
+            <a href="https://github.com/Snupai">Github</a><br>
+            <span style="font-size: small;">Version: {global_vars.VERSION}</span>
             </div>''')
             messageBox.setStandardButtons(QMessageBox.StandardButton.Ok)
             messageBox.setDefaultButton(QMessageBox.StandardButton.Ok)

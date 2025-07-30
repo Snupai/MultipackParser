@@ -10,12 +10,14 @@ import os
 import sys
 
 if TYPE_CHECKING:
-    from utils.settings import Settings
+    from utils.system.config.settings import Settings
     from ui_files.ui_main_window import Ui_Form
     from ui_files.BlinkingLabel import BlinkingLabel
-    from utils.message_manager import MessageManager
+    from utils.message.message_manager import MessageManager
+    from utils.robot.robot_status_monitor import RobotStatus
 
-from .logging_config import logger
+from utils.system.config.logging_config import logger
+from utils.robot.robot_enums import RobotMode, SafetyStatus, ProgramState
 
 # Global variables
 process: Optional[multiprocessing.Process] = None
@@ -26,10 +28,16 @@ canvas = None
 allow_close = False
 
 # Variables
-VERSION: str = '1.5.13'
+VERSION: str = '1.7.0'
 
 # Network settings
 robot_ip: str = '192.168.0.1'  # DO NOT CHANGE
+
+# Robot Status Variables
+current_robot_mode: RobotMode = RobotMode.UNKNOWN
+current_safety_status: SafetyStatus = SafetyStatus.UNKNOWN
+current_program_state: ProgramState = ProgramState.UNKNOWN
+robot_status_monitor: Optional['RobotStatus'] = None
 
 # UR20 palette place
 UR20_active_palette: int = 0
@@ -43,6 +51,8 @@ UR20_zwischenlage: Optional[bool] = False
 audio_muted: bool = False
 
 timestamp_scanner_fault: Optional[float] = None
+last_scanner_warning_time: Optional[float] = None
+previous_scanner_status: str = "True,True,True"
 
 ##########################
 
