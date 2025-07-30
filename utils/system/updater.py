@@ -45,9 +45,9 @@ import time
 import datetime
 from pathlib import Path
 from packaging import version
-from PySide6.QtWidgets import QMessageBox, QProgressDialog
+from PySide6.QtWidgets import QMessageBox, QProgressDialog, QApplication
 from PySide6.QtCore import Qt, QTimer, QThread, Signal
-from PySide6.QtGui import QApplication
+from PySide6.QtGui import QPixmap
 
 from utils.system.core import global_vars
 from utils.system.core.app_control import exit_app

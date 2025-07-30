@@ -500,6 +500,14 @@
         "documentation": {}
     },
     {
+        "label": "QApplication",
+        "importPath": "PySide6.QtWidgets",
+        "description": "PySide6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PySide6.QtWidgets",
+        "documentation": {}
+    },
+    {
         "label": "QLabel",
         "importPath": "PySide6.QtWidgets",
         "description": "PySide6.QtWidgets",
@@ -1428,7 +1436,7 @@
         "documentation": {}
     },
     {
-        "label": "QApplication",
+        "label": "QPixmap",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
         "isExtraImport": true,
@@ -5413,7 +5421,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    try:\n        # Parse command line arguments FIRST - before any heavy imports\n        args = parse_arguments()\n        # Handle version and license flags immediately - no heavy imports needed\n        if args.version:",
+        "peekOfCode": "def main():\n    \"\"\"Main function to run the application.\n    Returns:\n        int: The exit code of the application.\n    \"\"\"\n    logger = None  # Initialize logger to None to avoid UnboundLocalError\n    try:\n        # Parse command line arguments FIRST - before any heavy imports\n        args = parse_arguments()\n        # Handle version and license flags immediately - no heavy imports needed",
         "detail": "main",
         "documentation": {}
     },

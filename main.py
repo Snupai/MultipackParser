@@ -40,6 +40,7 @@ def main():
     Returns:
         int: The exit code of the application.
     """
+    logger = None  # Initialize logger to None to avoid UnboundLocalError
     try:
         # Parse command line arguments FIRST - before any heavy imports
         args = parse_arguments()
@@ -171,7 +172,10 @@ def main():
             import time
             time.sleep(2)  # Show error for 2 seconds
         
-        logger.critical(f"Fatal error in main: {str(e)}", exc_info=True)
+        if logger is not None:
+            logger.critical(f"Fatal error in main: {str(e)}", exc_info=True)
+        else:
+            print(f"Fatal error in main (logger not initialized): {str(e)}")
         return 1
 
 if __name__ == "__main__":
