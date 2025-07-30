@@ -337,10 +337,10 @@ def setup_window_handling():
             messageBox = QMessageBox()
             messageBox.setWindowTitle("Multipack Parser")
             messageBox.setTextFormat(Qt.TextFormat.RichText)
-            messageBox.setText('''
-            <div style="text-align: center;">
-            Yann-Luca Näher - \u00a9 2024<br>
-            <a href="https://github.com/Snupai">Github</a>
+            messageBox.setText(f'''<div style="text-align: center;">
+            Yann-Luca Näher - \u00a9 2024-2025<br>
+            <a href="https://github.com/Snupai">Github</a><br>
+            <span style="font-size: small;">Version: {global_vars.VERSION}</span>
             </div>''')
             messageBox.setStandardButtons(QMessageBox.StandardButton.Ok)
             messageBox.setDefaultButton(QMessageBox.StandardButton.Ok)
