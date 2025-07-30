@@ -39,7 +39,7 @@ def get_current_version():
     """Get current application version."""
     try:
         return global_vars.VERSION
-    except:
+    except AttributeError:
         return "0.0.0"
 
 def get_latest_github_release():
