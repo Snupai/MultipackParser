@@ -1,34 +1,3 @@
-"""
-MultipackParser Update System
-
-This module provides functionality to check for and install updates from:
-1. GitHub releases (when internet is available)  
-2. USB drives (local offline updates)
-
-Features:
-- Robust error handling and recovery
-- Progress indication with cancellation support
-- Platform-independent executable handling
-- Version comparison and validation
-- Graceful fallback when services are unavailable
-
-The update process:
-1. Check current version
-2. Look for updates on GitHub (if internet available)
-3. Scan USB drives for update files
-4. Validate any found executables
-5. Compare versions and prompt user
-6. Download/copy and install updates
-7. Restart application
-
-Fixed issues:
-- Removed hardcoded sudo usage for portability
-- Improved error handling to prevent UI lockup
-- Better progress feedback and cancellation
-- Consolidated duplicate functions
-- Enhanced GitHub API error handling
-"""
-
 import logging
 import os
 import shutil
