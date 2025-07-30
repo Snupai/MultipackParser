@@ -61,8 +61,8 @@ def send_dashboard_command(command: str, ip: str = robot_ip, port: int = DASHBOA
         error_msg = f"Connection refused to robot at {ip}:{port} - Robot may be powered off"
         logger.error(error_msg)
         return "Error: Connection refused", False, error_msg
-    except Exception as e:
-        error_msg = f"Error sending dashboard command: {str(e)}"
+    except OSError as e:
+        error_msg = f"Socket error while sending dashboard command: {str(e)}"
         logger.error(error_msg)
         return f"Error: {str(e)}", False, error_msg
 
