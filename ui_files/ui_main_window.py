@@ -487,6 +487,17 @@ class Ui_Form(object):
 
         self.formLayout.setWidget(0, QFormLayout.ItemRole.FieldRole, self.comboBoxChooseURModel)
 
+        self.label_current_version = QLabel(self.formLayoutWidget)
+        self.label_current_version.setObjectName(u"label_current_version")
+
+        self.formLayout.setWidget(9, QFormLayout.ItemRole.LabelRole, self.label_current_version)
+
+        self.lineEditCurrentVersion = QLineEdit(self.formLayoutWidget)
+        self.lineEditCurrentVersion.setObjectName(u"lineEditCurrentVersion")
+        self.lineEditCurrentVersion.setEnabled(False)
+
+        self.formLayout.setWidget(9, QFormLayout.ItemRole.FieldRole, self.lineEditCurrentVersion)
+
         self.formLayoutWidget_2 = QWidget(self.PallettiererSpezifisch)
         self.formLayoutWidget_2.setObjectName(u"formLayoutWidget_2")
         self.formLayoutWidget_2.setGeometry(QRect(690, 10, 551, 341))
@@ -620,10 +631,10 @@ class Ui_Form(object):
 
         self.formLayout_3.setLayout(2, QFormLayout.ItemRole.FieldRole, self.horizontalLayout_2)
 
-        self.label_26 = QLabel(self.formLayoutWidget_3)
-        self.label_26.setObjectName(u"label_26")
+        self.label_scanner_warning_path = QLabel(self.formLayoutWidget_3)
+        self.label_scanner_warning_path.setObjectName(u"label_scanner_warning_path")
 
-        self.formLayout_3.setWidget(3, QFormLayout.ItemRole.LabelRole, self.label_26)
+        self.formLayout_3.setWidget(3, QFormLayout.ItemRole.LabelRole, self.label_scanner_warning_path)
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setSpacing(3)
@@ -911,6 +922,7 @@ class Ui_Form(object):
         self.comboBoxChooseURModel.setItemText(1, QCoreApplication.translate("Form", u"UR20", None))
 
         self.comboBoxChooseURModel.setCurrentText(QCoreApplication.translate("Form", u"UR10", None))
+        self.label_current_version.setText(QCoreApplication.translate("Form", u"current version:", None))
         self.label_20.setText(QCoreApplication.translate("Form", u"Display Model: ", None))
         self.label_21.setText(QCoreApplication.translate("Form", u"Refresh rate: ", None))
         self.label_22.setText(QCoreApplication.translate("Form", u"Display width: ", None))
@@ -927,7 +939,7 @@ class Ui_Form(object):
         self.buttonSelectRobPath.setText(QCoreApplication.translate("Form", u"...", None))
         self.label_25.setText(QCoreApplication.translate("Form", u"Pfad Audio file", None))
         self.buttonSelectAudioFilePath.setText(QCoreApplication.translate("Form", u"...", None))
-        self.label_26.setText(QCoreApplication.translate("Form", u"Pfad Scanner Warning Sound", None))
+        self.label_scanner_warning_path.setText(QCoreApplication.translate("Form", u"Pfad Scanner Warning Sound", None))
         self.buttonSelectScannerWarningSoundPath.setText(QCoreApplication.translate("Form", u"...", None))
         self.checkBoxScanner1Overwrite.setText(QCoreApplication.translate("Form", u"Overwrite Scanner 1", None))
         self.checkBoxScanner2Overwrite.setText(QCoreApplication.translate("Form", u"Overwrite Scanner 2", None))
