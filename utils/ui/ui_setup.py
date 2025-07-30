@@ -209,6 +209,7 @@ def connect_signal_handlers():
         lambda text: global_vars.settings.settings['info'].__setitem__('number_of_use_cycles', int(text) if text else 0))
     global_vars.ui.lineEditLastRestart.textChanged.connect(
         lambda text: global_vars.settings.settings['info'].__setitem__('last_restart', text))
+    global_vars.ui.lineEditCurrentVersion.setText(global_vars.VERSION)
     global_vars.ui.pathEdit.textChanged.connect(
         lambda text: global_vars.settings.settings['admin'].__setitem__('path', text))
     global_vars.ui.audioPathEdit.textChanged.connect(
