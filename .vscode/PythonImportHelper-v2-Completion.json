@@ -964,6 +964,30 @@
         "documentation": {}
     },
     {
+        "label": "QTimer",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QThread",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Signal",
+        "importPath": "PySide6.QtCore",
+        "description": "PySide6.QtCore",
+        "isExtraImport": true,
+        "detail": "PySide6.QtCore",
+        "documentation": {}
+    },
+    {
         "label": "Qt",
         "importPath": "PySide6.QtCore",
         "description": "PySide6.QtCore",
@@ -1397,6 +1421,14 @@
     },
     {
         "label": "QColor",
+        "importPath": "PySide6.QtGui",
+        "description": "PySide6.QtGui",
+        "isExtraImport": true,
+        "detail": "PySide6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QApplication",
         "importPath": "PySide6.QtGui",
         "description": "PySide6.QtGui",
         "isExtraImport": true,
@@ -3221,6 +3253,15 @@
         "documentation": {}
     },
     {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
         "label": "pathlib",
         "kind": 6,
         "isExtraImport": true,
@@ -4643,7 +4684,7 @@
         "kind": 5,
         "importPath": "utils.system.core.global_vars",
         "description": "utils.system.core.global_vars",
-        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.6.6'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN",
+        "peekOfCode": "main_window = None\ncanvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.7.0'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN",
         "detail": "utils.system.core.global_vars",
         "documentation": {}
     },
@@ -4652,7 +4693,7 @@
         "kind": 5,
         "importPath": "utils.system.core.global_vars",
         "description": "utils.system.core.global_vars",
-        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.6.6'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN",
+        "peekOfCode": "canvas = None\nallow_close = False\n# Variables\nVERSION: str = '1.7.0'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN",
         "detail": "utils.system.core.global_vars",
         "documentation": {}
     },
@@ -4661,7 +4702,7 @@
         "kind": 5,
         "importPath": "utils.system.core.global_vars",
         "description": "utils.system.core.global_vars",
-        "peekOfCode": "allow_close = False\n# Variables\nVERSION: str = '1.6.6'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN\nrobot_status_monitor: Optional['RobotStatus'] = None",
+        "peekOfCode": "allow_close = False\n# Variables\nVERSION: str = '1.7.0'\n# Network settings\nrobot_ip: str = '192.168.0.1'  # DO NOT CHANGE\n# Robot Status Variables\ncurrent_robot_mode: RobotMode = RobotMode.UNKNOWN\ncurrent_safety_status: SafetyStatus = SafetyStatus.UNKNOWN\ncurrent_program_state: ProgramState = ProgramState.UNKNOWN\nrobot_status_monitor: Optional['RobotStatus'] = None",
         "detail": "utils.system.core.global_vars",
         "documentation": {}
     },
@@ -4702,6 +4743,24 @@
         "documentation": {}
     },
     {
+        "label": "UpdateWorker",
+        "kind": 6,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "class UpdateWorker(QThread):\n    \"\"\"Worker thread for update operations to prevent UI blocking.\"\"\"\n    # Signals for communicating with the main thread\n    progress_updated = Signal(int, str)  # progress value, status text\n    update_found = Signal(str, str, str)  # update_type, version, path_or_url\n    no_updates_found = Signal(str)  # message\n    error_occurred = Signal(str)  # error message\n    update_completed = Signal()  # update installation completed\n    def __init__(self):\n        super().__init__()",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "UpdateDownloadWorker",
+        "kind": 6,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "class UpdateDownloadWorker(QThread):\n    \"\"\"Worker thread for downloading updates.\"\"\"\n    progress_updated = Signal(int, str)  # progress value, status text\n    download_completed = Signal(str)  # downloaded file path\n    download_failed = Signal(str)  # error message\n    def __init__(self, url):\n        super().__init__()\n        self.url = url\n        self.should_cancel = False\n    def cancel(self):",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
         "label": "check_internet_connection",
         "kind": 2,
         "importPath": "utils.system.updater",
@@ -4715,7 +4774,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def get_current_version():\n    \"\"\"Get current application version.\"\"\"\n    try:\n        return global_vars.VERSION\n    except:\n        return \"0.0.0\"\ndef get_latest_github_release():\n    \"\"\"Get latest release info from GitHub.\"\"\"\n    try:\n        response = requests.get(",
+        "peekOfCode": "def get_current_version():\n    \"\"\"Get current application version.\"\"\"\n    try:\n        return global_vars.VERSION\n    except AttributeError:\n        return \"0.0.0\"\ndef get_latest_github_release():\n    \"\"\"Get latest release info from GitHub with improved error handling.\"\"\"\n    try:\n        logger.info(\"Fetching latest GitHub release information...\")",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4724,7 +4783,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def get_latest_github_release():\n    \"\"\"Get latest release info from GitHub.\"\"\"\n    try:\n        response = requests.get(\n            \"https://api.github.com/repos/Snupai/MultipackParser/releases/latest\",\n            timeout=5\n        )\n        if response.status_code == 200:\n            data = response.json()\n            return {",
+        "peekOfCode": "def get_latest_github_release():\n    \"\"\"Get latest release info from GitHub with improved error handling.\"\"\"\n    try:\n        logger.info(\"Fetching latest GitHub release information...\")\n        response = requests.get(\n            \"https://api.github.com/repos/Snupai/MultipackParser/releases/latest\",\n            timeout=10,  # Increased timeout\n            headers={\n                'User-Agent': 'MultipackParser-Updater',\n                'Accept': 'application/vnd.github.v3+json'",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4733,7 +4792,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def download_file(url, progress_dialog):\n    \"\"\"Download a file with progress reporting.\"\"\"\n    try:\n        # Create a temporary file\n        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:\n            # Download with progress\n            response = requests.get(url, stream=True)\n            total_size = int(response.headers.get('content-length', 0))\n            block_size = 8192\n            downloaded = 0",
+        "peekOfCode": "def download_file(url, progress_dialog):\n    \"\"\"Download a file with progress reporting and cancellation support.\"\"\"\n    try:\n        logger.info(f\"Starting download from: {url}\")\n        # Create a temporary file\n        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:\n            # Start download with streaming\n            response = requests.get(url, stream=True, timeout=30)\n            response.raise_for_status()  # Raise exception for bad status codes\n            total_size = int(response.headers.get('content-length', 0))",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4742,7 +4801,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def get_system_info():\n    \"\"\"Get system information for compatibility checking.\"\"\"\n    return {\n        'platform': platform.system(),\n        'architecture': platform.machine(),\n        'bits': platform.architecture()[0]\n    }\ndef verify_executable_file(file_path):\n    \"\"\"Verify that a file is a valid executable.\"\"\"\n    try:",
+        "peekOfCode": "def get_system_info():\n    \"\"\"Get system information for compatibility checking.\"\"\"\n    return {\n        'platform': platform.system(),\n        'architecture': platform.machine(),\n        'bits': platform.architecture()[0]\n    }\ndef verify_executable_file(file_path):\n    \"\"\"Verify that a file is a valid executable (Linux only).\"\"\"\n    try:",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4751,7 +4810,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def verify_executable_file(file_path):\n    \"\"\"Verify that a file is a valid executable.\"\"\"\n    try:\n        # Check if file exists\n        if not os.path.exists(file_path):\n            logger.error(f\"File does not exist: {file_path}\")\n            return False, \"File does not exist\"\n        # Check if it's a regular file\n        if not os.path.isfile(file_path):\n            logger.error(f\"Path is not a regular file: {file_path}\")",
+        "peekOfCode": "def verify_executable_file(file_path):\n    \"\"\"Verify that a file is a valid executable (Linux only).\"\"\"\n    try:\n        # Check if file exists\n        if not os.path.exists(file_path):\n            logger.error(f\"File does not exist: {file_path}\")\n            return False, \"File does not exist\"\n        # Check if it's a regular file\n        if not os.path.isfile(file_path):\n            logger.error(f\"Path is not a regular file: {file_path}\")",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4760,7 +4819,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def find_usb_drives():\n    \"\"\"Find all mounted USB drives.\"\"\"\n    usb_paths = []\n    if platform.system() == \"Windows\":\n        # Windows: Check for removable drives\n        import string\n        for drive_letter in string.ascii_uppercase:\n            drive_path = f\"{drive_letter}:\\\\\"\n            if os.path.exists(drive_path):\n                try:",
+        "peekOfCode": "def find_usb_drives():\n    \"\"\"Find all mounted USB drives on Linux (Raspberry Pi).\"\"\"\n    usb_paths = []\n    try:\n        # Linux mount points for USB drives\n        mount_points = [\n            \"/media\",\n            \"/mnt\", \n            \"/run/media\"\n        ]",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4769,7 +4828,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def search_for_update_file(usb_paths):\n    \"\"\"Search for update file in USB drives, always copying to local dir for checks.\"\"\"\n    update_file_names = [\"MultipackParser\", \"multipackparser\"]\n    local_update_dir = os.path.expanduser(\"~/.HMI/update/\")\n    os.makedirs(local_update_dir, exist_ok=True)\n    for usb_path in usb_paths:\n        logger.info(f\"Searching in USB drive: {usb_path}\")\n        try:\n            # Walk through the directory tree\n            for root, dirs, files in os.walk(usb_path):",
+        "peekOfCode": "def search_for_update_file(usb_paths):\n    \"\"\"Search for update file in USB drives, copying to local dir for checks.\"\"\"\n    update_file_names = [\"MultipackParser\", \"multipackparser\"]\n    local_update_dir = os.path.expanduser(\"~/.HMI/update/\")\n    try:\n        os.makedirs(local_update_dir, exist_ok=True)\n    except Exception as e:\n        logger.error(f\"Cannot create local update directory: {e}\")\n        return None, None\n    for usb_path in usb_paths:",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4778,7 +4837,16 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def extract_version_from_output(version_output):\n    \"\"\"Extract version number from version output.\"\"\"\n    try:\n        import re\n        # Try multiple patterns to extract version\n        version_patterns = [\n            r'Multipack Parser Application Version:\\s*([\\d.]+)',  # Exact format\n            r'Version:\\s*([\\d.]+)',  # Generic version format\n            r'(\\d+\\.\\d+\\.\\d+)',      # Any version number\n        ]",
+        "peekOfCode": "def extract_version_from_output(version_output):\n    \"\"\"Extract version number from version output.\"\"\"\n    if not version_output:\n        return None\n    # Clean up the output\n    version_output = version_output.strip()\n    # Try multiple patterns to extract version\n    version_patterns = [\n        r'Multipack Parser Application Version:\\s*v?([\\d.]+)',  # Exact format\n        r'Version:\\s*v?([\\d.]+)',  # Generic version format  ",
+        "detail": "utils.system.updater",
+        "documentation": {}
+    },
+    {
+        "label": "get_current_binary_path",
+        "kind": 2,
+        "importPath": "utils.system.updater",
+        "description": "utils.system.updater",
+        "peekOfCode": "def get_current_binary_path():\n    \"\"\"Determine the current binary path on Linux.\"\"\"\n    # Try multiple possible binary paths for Linux\n    possible_paths = [\n        sys.executable if getattr(sys, 'frozen', False) else None,  # For PyInstaller\n        sys.argv[0] if sys.argv else None,\n        os.path.abspath(sys.argv[0]) if sys.argv else None,\n        os.path.join(os.getcwd(), \"MultipackParser\"),\n        \"/usr/local/bin/MultipackParser\",\n        \"/opt/MultipackParser/MultipackParser\",",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4787,7 +4855,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def install_update(update_file, current_binary):\n    \"\"\"Install update with proper error handling and backup.\"\"\"\n    backup_file = None\n    temp_update = None\n    try:\n        # Get current binary path\n        if not current_binary or not os.path.exists(current_binary):\n            # Try multiple possible binary paths\n            possible_paths = [\n                sys.executable,",
+        "peekOfCode": "def install_update(update_file, current_binary=None):\n    \"\"\"Install update with proper error handling and backup.\"\"\"\n    backup_file = None\n    try:\n        # Get current binary path\n        if not current_binary or not os.path.exists(current_binary):\n            current_binary = get_current_binary_path()\n        logger.info(f\"Installing update from {update_file} to {current_binary}\")\n        # Verify update file is valid\n        is_valid, version_info = verify_executable_file(update_file)",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4796,7 +4864,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def check_usb_update():\n    \"\"\"Copy any MultipackParser from USB to ~/.HMI/update/, check version, update if newer.\"\"\"\n    import shutil\n    import re\n    import subprocess\n    local_update_dir = os.path.expanduser(\"~/.HMI/update/\")\n    os.makedirs(local_update_dir, exist_ok=True)\n    update_file_name = \"MultipackParser\"\n    # Find USB drives\n    usb_paths = find_usb_drives()",
+        "peekOfCode": "def check_usb_update():\n    \"\"\"Check USB drives for MultipackParser updates and return path and version if newer.\"\"\"\n    try:\n        logger.info(\"Checking USB drives for updates...\")\n        # Find USB drives\n        usb_paths = find_usb_drives()\n        if not usb_paths:\n            logger.info(\"No USB drives found\")\n            return None, None\n        # Search for update file in USB drives",
         "detail": "utils.system.updater",
         "documentation": {}
     },
@@ -4805,7 +4873,7 @@
         "kind": 2,
         "importPath": "utils.system.updater",
         "description": "utils.system.updater",
-        "peekOfCode": "def check_for_updates():\n    \"\"\"Check for updates from GitHub or USB with improved error handling.\"\"\"\n    # Disable main window and show progress\n    if global_vars.main_window:\n        global_vars.main_window.setDisabled(True)\n    progress = QProgressDialog(\"Checking for updates...\", None, 0, 100, global_vars.main_window if global_vars.main_window else None)\n    progress.setWindowModality(Qt.WindowModal)\n    progress.setAutoClose(True)\n    progress.setValue(0)\n    try:",
+        "peekOfCode": "def check_for_updates():\n    \"\"\"Check for updates using a worker thread to prevent UI blocking.\"\"\"\n    # Disable main window during update check\n    if global_vars.main_window:\n        global_vars.main_window.setDisabled(True)\n    # Create progress dialog\n    progress = QProgressDialog(\"Checking for updates...\", \"Cancel\", 0, 100, global_vars.main_window)\n    progress.setWindowModality(Qt.WindowModal)\n    progress.setAutoClose(False)\n    progress.setValue(0)",
         "detail": "utils.system.updater",
         "documentation": {}
     },
