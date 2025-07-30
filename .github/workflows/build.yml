@@ -8,7 +8,6 @@ on:
       - "**.py"
     branches:
       - main
-      - feat/robot-status-check
 
 env:
   IMAGE_NAME: multipackparser-builder
