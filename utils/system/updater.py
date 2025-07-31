@@ -415,41 +415,96 @@ def install_update(update_file, current_binary=None):
         # Create update script that will run after app closes
         update_script_path = os.path.join(tempfile.gettempdir(), 'multipack_update.sh')
         
+        # Create log file for update script debugging
+        update_log_path = os.path.join(tempfile.gettempdir(), 'multipack_update.log')
+        
         with open(update_script_path, 'w') as script:
             script.write(f'''#!/bin/bash
 # MultipackParser Update Script
 
+# Log file for debugging
+LOG_FILE="{update_log_path}"
+echo "$(date): Update script started" >> "$LOG_FILE"
+echo "Update file: {update_file}" >> "$LOG_FILE"
+echo "Current binary: {current_binary}" >> "$LOG_FILE"
+echo "Backup file: {backup_file}" >> "$LOG_FILE"
+
 # Wait for main process to fully exit
+echo "$(date): Waiting 3 seconds for process to exit" >> "$LOG_FILE"
 sleep 3
 
 # Check if main process is still running
+echo "$(date): Checking for running MultipackParser processes" >> "$LOG_FILE"
 while pgrep -f "MultipackParser" > /dev/null; do
-    echo "Waiting for MultipackParser to exit..."
+    echo "$(date): Waiting for MultipackParser to exit..." >> "$LOG_FILE"
     sleep 1
 done
+echo "$(date): No MultipackParser processes found" >> "$LOG_FILE"
 
 # Replace the binary
+echo "$(date): Attempting to replace binary" >> "$LOG_FILE"
 cp "{update_file}" "{current_binary}"
 if [ $? -eq 0 ]; then
-    echo "Binary updated successfully"
+    echo "$(date): Binary updated successfully" >> "$LOG_FILE"
     chmod +x "{current_binary}"
+    echo "$(date): Made binary executable" >> "$LOG_FILE"
     
     # Clean up update file
     rm -f "{update_file}"
+    echo "$(date): Cleaned up update file" >> "$LOG_FILE"
     
-    # Start the new version
-    nohup "{current_binary}" > /dev/null 2>&1 &
-    echo "Application restarted"
+    # Restart using the proper startup script
+    echo "$(date): Attempting to restart application using startup script" >> "$LOG_FILE"
+    STARTUP_SCRIPT="/home/sz-ur/.HMI/start-multipackparser.sh"
+    
+    if [ -f "$STARTUP_SCRIPT" ]; then
+        echo "$(date): Found startup script: $STARTUP_SCRIPT" >> "$LOG_FILE"
+        
+        # Make sure startup script is executable
+        chmod +x "$STARTUP_SCRIPT"
+        
+        # Run the startup script in background
+        if nohup "$STARTUP_SCRIPT" >> "$LOG_FILE" 2>&1 &
+        then
+            echo "$(date): Startup script executed successfully" >> "$LOG_FILE"
+        else
+            echo "$(date): Failed to execute startup script" >> "$LOG_FILE"
+        fi
+    else
+        echo "$(date): Startup script not found at $STARTUP_SCRIPT, trying direct binary execution" >> "$LOG_FILE"
+        
+        # Fallback: try direct execution
+        if nohup "{current_binary}" >> "$LOG_FILE" 2>&1 &
+        then
+            echo "$(date): Application restarted directly" >> "$LOG_FILE"
+        else
+            echo "$(date): Direct restart failed" >> "$LOG_FILE"
+        fi
+    fi
+    
+    # Give it a moment to start
+    sleep 2
+    
+    # Check if the process started
+    if pgrep -f "MultipackParser" > /dev/null; then
+        echo "$(date): Confirmed: MultipackParser is now running" >> "$LOG_FILE"
+    else
+        echo "$(date): Warning: MultipackParser process not detected after restart attempt" >> "$LOG_FILE"
+    fi
+    
 else
-    echo "Failed to update binary"
+    echo "$(date): Failed to update binary" >> "$LOG_FILE"
     # Restore backup if available
     if [ -f "{backup_file}" ]; then
         cp "{backup_file}" "{current_binary}"
-        echo "Restored from backup"
+        echo "$(date): Restored from backup" >> "$LOG_FILE"
     fi
 fi
 
-# Clean up this script
+echo "$(date): Update script completed" >> "$LOG_FILE"
+
+# Clean up this script after a delay (keep log for debugging)
+sleep 5
 rm -f "{update_script_path}"
 ''')
         
