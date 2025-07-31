@@ -453,61 +453,15 @@ if [ $? -eq 0 ]; then
     rm -f "{update_file}"
     echo "$(date): Cleaned up update file" >> "$LOG_FILE"
     
-    # Restart using the proper startup script
-    echo "$(date): Attempting to restart application using startup script" >> "$LOG_FILE"
-    STARTUP_SCRIPT="/home/sz-ur/.HMI/start-multipackparser.sh"
+    # Reboot the system to ensure clean restart with new binary
+    echo "$(date): Binary update completed successfully. Rebooting system to start new version." >> "$LOG_FILE"
+    echo "$(date): System will reboot in 5 seconds..." >> "$LOG_FILE"
     
-    if [ -f "$STARTUP_SCRIPT" ]; then
-        echo "$(date): Found startup script: $STARTUP_SCRIPT" >> "$LOG_FILE"
-        
-        # Make sure startup script is executable
-        chmod +x "$STARTUP_SCRIPT"
-        
-        # Change to the .HMI directory before running the script
-        HMI_DIR="/home/sz-ur/.HMI"
-        echo "$(date): Changing to directory: $HMI_DIR" >> "$LOG_FILE"
-        
-        # Set up display environment for GUI application
-        export DISPLAY=:0
-        export XDG_RUNTIME_DIR=/run/user/1000
-        echo "$(date): Set DISPLAY=$DISPLAY and XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR" >> "$LOG_FILE"
-        
-        # Run the startup script from the correct directory with proper environment
-        if cd "$HMI_DIR" && DISPLAY=:0 XDG_RUNTIME_DIR=/run/user/1000 nohup "./start-multipackparser.sh" >> "$LOG_FILE" 2>&1 &
-        then
-            echo "$(date): Startup script executed successfully from $HMI_DIR with display environment" >> "$LOG_FILE"
-        else
-            echo "$(date): Failed to execute startup script from $HMI_DIR" >> "$LOG_FILE"
-            # Try absolute path as fallback
-            echo "$(date): Trying absolute path as fallback" >> "$LOG_FILE"
-            if nohup "$STARTUP_SCRIPT" >> "$LOG_FILE" 2>&1 &
-            then
-                echo "$(date): Startup script executed with absolute path" >> "$LOG_FILE"
-            else
-                echo "$(date): All startup script methods failed" >> "$LOG_FILE"
-            fi
-        fi
-    else
-        echo "$(date): Startup script not found at $STARTUP_SCRIPT, trying direct binary execution" >> "$LOG_FILE"
-        
-        # Fallback: try direct execution
-        if nohup "{current_binary}" >> "$LOG_FILE" 2>&1 &
-        then
-            echo "$(date): Application restarted directly" >> "$LOG_FILE"
-        else
-            echo "$(date): Direct restart failed" >> "$LOG_FILE"
-        fi
-    fi
-    
-    # Give it a moment to start
+    # Give a moment for the log to be written
     sleep 2
     
-    # Check if the process started
-    if pgrep -f "MultipackParser" > /dev/null; then
-        echo "$(date): Confirmed: MultipackParser is now running" >> "$LOG_FILE"
-    else
-        echo "$(date): Warning: MultipackParser process not detected after restart attempt" >> "$LOG_FILE"
-    fi
+    # Reboot the system
+    sudo reboot
     
 else
     echo "$(date): Failed to update binary" >> "$LOG_FILE"
