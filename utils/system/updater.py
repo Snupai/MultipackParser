@@ -467,10 +467,15 @@ if [ $? -eq 0 ]; then
         HMI_DIR="/home/sz-ur/.HMI"
         echo "$(date): Changing to directory: $HMI_DIR" >> "$LOG_FILE"
         
-        # Run the startup script from the correct directory
-        if cd "$HMI_DIR" && nohup "./start-multipackparser.sh" >> "$LOG_FILE" 2>&1 &
+        # Set up display environment for GUI application
+        export DISPLAY=:0
+        export XDG_RUNTIME_DIR=/run/user/1000
+        echo "$(date): Set DISPLAY=$DISPLAY and XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR" >> "$LOG_FILE"
+        
+        # Run the startup script from the correct directory with proper environment
+        if cd "$HMI_DIR" && DISPLAY=:0 XDG_RUNTIME_DIR=/run/user/1000 nohup "./start-multipackparser.sh" >> "$LOG_FILE" 2>&1 &
         then
-            echo "$(date): Startup script executed successfully from $HMI_DIR" >> "$LOG_FILE"
+            echo "$(date): Startup script executed successfully from $HMI_DIR with display environment" >> "$LOG_FILE"
         else
             echo "$(date): Failed to execute startup script from $HMI_DIR" >> "$LOG_FILE"
             # Try absolute path as fallback
