@@ -412,51 +412,65 @@ def install_update(update_file, current_binary=None):
             logger.warning(f"Could not create backup: {e}")
             backup_file = None
         
+        # Create update script that will run after app closes
+        update_script_path = os.path.join(tempfile.gettempdir(), 'multipack_update.sh')
+        
+        with open(update_script_path, 'w') as script:
+            script.write(f'''#!/bin/bash
+# MultipackParser Update Script
+
+# Wait for main process to fully exit
+sleep 3
+
+# Check if main process is still running
+while pgrep -f "MultipackParser" > /dev/null; do
+    echo "Waiting for MultipackParser to exit..."
+    sleep 1
+done
+
+# Replace the binary
+cp "{update_file}" "{current_binary}"
+if [ $? -eq 0 ]; then
+    echo "Binary updated successfully"
+    chmod +x "{current_binary}"
+    
+    # Clean up update file
+    rm -f "{update_file}"
+    
+    # Start the new version
+    nohup "{current_binary}" > /dev/null 2>&1 &
+    echo "Application restarted"
+else
+    echo "Failed to update binary"
+    # Restore backup if available
+    if [ -f "{backup_file}" ]; then
+        cp "{backup_file}" "{current_binary}"
+        echo "Restored from backup"
+    fi
+fi
+
+# Clean up this script
+rm -f "{update_script_path}"
+''')
+        
+        # Make script executable
+        os.chmod(update_script_path, 0o755)
+        
         # Show message to user about restart
         if hasattr(global_vars, 'main_window') and global_vars.main_window:
             QMessageBox.information(
                 global_vars.main_window,
                 "Update Ready",
-                "Update will be applied when you restart the application.\n\n"
-                "The application will now close. Please restart it manually to complete the update."
+                "The application will now close and update automatically.\n\n"
+                "Please wait a few seconds for the application to restart with the new version."
             )
         
-        # Schedule the update using a simple delayed replacement
-        def delayed_update():
-            try:
-                # Wait a moment for the application to close
-                time.sleep(2)
-                
-                # Replace the binary
-                shutil.copy2(update_file, current_binary)
-                logger.info(f"Successfully updated {current_binary}")
-                
-                # Make executable
-                os.chmod(current_binary, 0o755)
-                
-                # Clean up update file
-                try:
-                    os.remove(update_file)
-                except:
-                    pass
-                    
-                # Try to restart the application
-                subprocess.Popen([current_binary])
-                    
-            except Exception as e:
-                logger.error(f"Error in delayed update: {e}")
-                # Try to restore backup
-                if backup_file and os.path.exists(backup_file):
-                    try:
-                        shutil.copy2(backup_file, current_binary)
-                        logger.info("Restored from backup after failed update")
-                    except Exception as restore_error:
-                        logger.error(f"Failed to restore from backup: {restore_error}")
+        # Start the update script in background
+        subprocess.Popen(['/bin/bash', update_script_path], 
+                        stdout=subprocess.DEVNULL, 
+                        stderr=subprocess.DEVNULL)
         
-        # Start the delayed update in a separate thread
-        import threading
-        update_thread = threading.Thread(target=delayed_update, daemon=True)
-        update_thread.start()
+        logger.info(f"Update script started: {update_script_path}")
         
         # Exit the application to allow update
         QTimer.singleShot(1000, exit_app)  # Exit after 1 second
