@@ -463,12 +463,24 @@ if [ $? -eq 0 ]; then
         # Make sure startup script is executable
         chmod +x "$STARTUP_SCRIPT"
         
-        # Run the startup script in background
-        if nohup "$STARTUP_SCRIPT" >> "$LOG_FILE" 2>&1 &
+        # Change to the .HMI directory before running the script
+        HMI_DIR="/home/sz-ur/.HMI"
+        echo "$(date): Changing to directory: $HMI_DIR" >> "$LOG_FILE"
+        
+        # Run the startup script from the correct directory
+        if cd "$HMI_DIR" && nohup "./start-multipackparser.sh" >> "$LOG_FILE" 2>&1 &
         then
-            echo "$(date): Startup script executed successfully" >> "$LOG_FILE"
+            echo "$(date): Startup script executed successfully from $HMI_DIR" >> "$LOG_FILE"
         else
-            echo "$(date): Failed to execute startup script" >> "$LOG_FILE"
+            echo "$(date): Failed to execute startup script from $HMI_DIR" >> "$LOG_FILE"
+            # Try absolute path as fallback
+            echo "$(date): Trying absolute path as fallback" >> "$LOG_FILE"
+            if nohup "$STARTUP_SCRIPT" >> "$LOG_FILE" 2>&1 &
+            then
+                echo "$(date): Startup script executed with absolute path" >> "$LOG_FILE"
+            else
+                echo "$(date): All startup script methods failed" >> "$LOG_FILE"
+            fi
         fi
     else
         echo "$(date): Startup script not found at $STARTUP_SCRIPT, trying direct binary execution" >> "$LOG_FILE"
