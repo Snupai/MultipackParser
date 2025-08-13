@@ -4,6 +4,8 @@ import os
 from utils.system.core import global_vars
 from utils.database.database import save_to_database, find_file_in_database, list_available_files
 from utils.message.status_manager import update_status_label
+from PySide6.QtCore import Qt, QTimer
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QListWidget, QPushButton
 
 logger = logging.getLogger(__name__)
 
@@ -265,42 +267,140 @@ def load() -> None:
     global_vars.ui.label_Gewicht_kg.setEnabled(interface_enabled)
     global_vars.ui.label_Kartonhoehe_mm.setEnabled(interface_enabled)
 
-def update_database_from_usb() -> None:
-    """Update the database with any new or modified palette plans from the USB stick."""
-    if not os.path.exists(global_vars.PATH_USB_STICK):
-        logger.error(f"USB stick path {global_vars.PATH_USB_STICK} does not exist")
+def _schedule_db_update_popup(new_files) -> None:
+    """Accumulate updated filenames and show up to 3 popups after debounce.
+
+    Groups rapid consecutive updates: a single popup sequence appears after
+    a short quiet period, listing all unique filenames (split across max 3 popups).
+    """
+    if not (getattr(global_vars, 'main_window', None) and global_vars.main_window.isVisible()):
         return
-        
-    # Get all .rob files
-    rob_files = [f for f in os.listdir(global_vars.PATH_USB_STICK) if f.endswith(".rob")]
-    logger.info(f"Found {len(rob_files)} .rob files to process")
-    
-    for file in rob_files:
-        file_path = os.path.join(global_vars.PATH_USB_STICK, file)
-        file_timestamp = os.path.getmtime(file_path)
-        
-        # Check if file exists in database and compare timestamps
-        db_file = find_file_in_database(file)
-        should_update = True
-        
-        if db_file:
-            db_timestamp = db_file.get('timestamp', 0)
-            if file_timestamp <= db_timestamp:
-                logger.debug(f"File {file} is up to date in database")
-                should_update = False
-        
-        # Update if file is new or modified
-        if should_update:
-            logger.info(f"Processing file: {file}")
+
+    # Initialize accumulator
+    if not hasattr(global_vars, 'db_update_accumulator') or global_vars.db_update_accumulator is None:
+        global_vars.db_update_accumulator = set()
+
+    # Add new files
+    for f in new_files:
+        global_vars.db_update_accumulator.add(f)
+
+    # Create or restart debounce timer
+    def show_popups():
+        try:
+            files = sorted(global_vars.db_update_accumulator) if getattr(global_vars, 'db_update_accumulator', None) else []
+            global_vars.db_update_accumulator = set()  # reset
+            if not files:
+                return
+
+            # Single scrollable dialog with all filenames
+            dialog = QDialog(global_vars.main_window)
+            dialog.setWindowTitle("Datenbank aktualisiert")
+            layout = QVBoxLayout(dialog)
+
+            title = QLabel("<b>Folgende Dateien wurden aktualisiert/neu hinzugefügt:</b>")
+            title.setTextFormat(Qt.TextFormat.RichText)
+            layout.addWidget(title)
+
+            list_widget = QListWidget(dialog)
+            # Populate list
+            for fn in files:
+                list_widget.addItem(fn)
+            # Make sure it's scrollable by constraining size
+            list_widget.setMinimumSize(500, 300)
+            layout.addWidget(list_widget)
+
+            ok_button = QPushButton("OK", dialog)
+            ok_button.clicked.connect(dialog.accept)
+            layout.addWidget(ok_button)
+
+            dialog.setMinimumSize(520, 380)
+            dialog.exec()
+        finally:
+            # Clean up timer reference
+            if getattr(global_vars, 'db_update_timer', None):
+                global_vars.db_update_timer.stop()
+                global_vars.db_update_timer.deleteLater()
+                global_vars.db_update_timer = None
+
+    # Restart single-shot timer (debounce 2000 ms)
+    if getattr(global_vars, 'db_update_timer', None) is None:
+        global_vars.db_update_timer = QTimer(global_vars.main_window)
+        global_vars.db_update_timer.setSingleShot(True)
+        global_vars.db_update_timer.timeout.connect(show_popups)
+    else:
+        global_vars.db_update_timer.stop()
+    global_vars.db_update_timer.start(2000)
+
+
+def update_database_from_usb() -> None:
+    """Update the database with any new or modified palette plans from the USB stick.
+
+    Provides UI feedback when the main window is available:
+    - Shows a blinking orange status while updating
+    - Sets a wait cursor during the operation
+    - Shows a green status on completion or red on errors
+    """
+    # Determine if we can give UI feedback (only when main window exists and is visible)
+    ui_ready = bool(getattr(global_vars, 'main_window', None)) and global_vars.main_window.isVisible()
+
+    try:
+        if not os.path.exists(global_vars.PATH_USB_STICK):
+            logger.error(f"USB stick path {global_vars.PATH_USB_STICK} does not exist")
+            # Do not show status messages; silently return if no UI
+            return
+
+        # Start UI feedback
+        if ui_ready:
             try:
-                save_to_database(file)
-            except Exception as e:
-                logger.error(f"Error processing {file}: {e}")
-                
-    # Update UI if needed
-    if hasattr(global_vars, 'ui') and global_vars.ui:
-        from ui_files.visualization_3d import load_rob_files
-        load_rob_files()
+                global_vars.main_window.setCursor(Qt.CursorShape.WaitCursor)
+            except Exception:
+                pass
+
+        # Get all .rob files
+        rob_files = [f for f in os.listdir(global_vars.PATH_USB_STICK) if f.endswith(".rob")]
+        logger.info(f"Found {len(rob_files)} .rob files to process")
+        updated_files = []
+
+        for file in rob_files:
+            file_path = os.path.join(global_vars.PATH_USB_STICK, file)
+            file_timestamp = os.path.getmtime(file_path)
+
+            # Check if file exists in database and compare timestamps
+            db_file = find_file_in_database(file)
+            should_update = True
+
+            if db_file:
+                db_timestamp = db_file.get('timestamp', 0)
+                if file_timestamp <= db_timestamp:
+                    logger.debug(f"File {file} is up to date in database")
+                    should_update = False
+
+            # Update if file is new or modified
+            if should_update:
+                logger.info(f"Processing file: {file}")
+                try:
+                    save_to_database(file)
+                    updated_files.append(file)
+                except Exception as e:
+                    logger.error(f"Error processing {file}: {e}")
+
+        # Update UI 3D list if needed
+        if hasattr(global_vars, 'ui') and global_vars.ui:
+            from ui_files.visualization_3d import load_rob_files
+            load_rob_files()
+
+        # After processing, batch filenames into the grouped popup flow (debounced)
+        if ui_ready and updated_files:
+            _schedule_db_update_popup(updated_files)
+
+    except Exception as e:
+        logger.error(f"Unexpected error while updating database: {e}")
+    finally:
+        if ui_ready:
+            try:
+                global_vars.main_window.setCursor(Qt.CursorShape.ArrowCursor)
+            except Exception:
+                pass
 
 def load_wordlist() -> list:
     """Load the wordlist from the USB stick and update the database.
