@@ -3,7 +3,7 @@ import time
 import threading
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 from utils.system.core.global_vars import robot_ip, logger
 from .robot_enums import RobotMode, SafetyStatus, ProgramState
 
@@ -77,6 +77,30 @@ def get_polyscope_version() -> Tuple[str, bool, Optional[str]]:
             - Error message if any
     """
     response, success, error = send_dashboard_command("PolyscopeVersion")
+    return response, success, error
+
+def get_loaded_program() -> Tuple[str, bool, Optional[str]]:
+    """
+    Gets the currently loaded program.
+    Returns the dashboard raw string (e.g., path or a message) and success flag.
+    """
+    response, success, error = send_dashboard_command("get loaded program")
+    return response, success, error
+
+def list_available_programs() -> Tuple[List[str], bool, Optional[str]]:
+    """
+    Gets a list of available programs from the dashboard.
+    Returns a tuple of (program_names, success, error_msg).
+    """
+    # UR Dashboard server does not provide a generic 'programs' listing command on all versions.
+    # Return an informative message and False to indicate unsupported.
+    return [], False, "Listing programs via Dashboard is not supported on this controller/version"
+
+def get_serial_number() -> Tuple[str, bool, Optional[str]]:
+    """
+    Gets the robot serial number via the dashboard command.
+    """
+    response, success, error = send_dashboard_command("get serial number")
     return response, success, error
 
 class RobotStatusMonitor:

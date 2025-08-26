@@ -6,7 +6,7 @@ import os
 import hashlib
 import threading
 import logging
-from PySide6.QtWidgets import QMainWindow, QMessageBox
+from PySide6.QtWidgets import QMainWindow, QMessageBox, QPushButton, QWidget, QFormLayout, QLabel, QVBoxLayout, QHBoxLayout, QListWidget
 from PySide6.QtCore import Qt, QRegularExpression, QTimer
 from PySide6.QtGui import QRegularExpressionValidator, QIntValidator
 
@@ -234,6 +234,23 @@ def connect_signal_handlers():
     # Connect scanner signal
     scanner_signals.status_changed.connect(handle_scanner_status)
 
+    # Create and connect Status button to open the Status tab directly
+    try:
+        if not hasattr(global_vars.ui, 'openStatusTab'):
+            global_vars.ui.openStatusTab = QPushButton(global_vars.ui.MainMenu)
+            global_vars.ui.openStatusTab.setObjectName("openStatusTab")
+            # Place next to Experimental button
+            global_vars.ui.openStatusTab.setGeometry(1020, 660, 121, 41)
+            global_vars.ui.openStatusTab.setText("Status")
+            global_vars.ui.openStatusTab.setCursor(Qt.PointingHandCursor)
+        def _open_status_tab():
+            open_page(Page.PARAMETER_PAGE)
+            if hasattr(global_vars, 'status_tab_index'):
+                global_vars.ui.tabWidget.setCurrentIndex(global_vars.status_tab_index)
+        global_vars.ui.openStatusTab.clicked.connect(_open_status_tab)
+    except Exception as e:
+        logger.error(f"Failed to create/connect Status button: {e}")
+
 def setup_password_handling():
     """Set up password handling functionality."""
     def hash_password(password, salt=None):
@@ -275,6 +292,12 @@ def setup_components():
         
     global_vars.ui.EingabePallettenplan.keyPressEvent = custom_key_press
 
+    # Create Status tab UI under RoboParameter tabWidget
+    try:
+        _create_status_tab()
+    except Exception as e:
+        logger.error(f"Failed to create Status tab: {e}")
+
 def start_background_tasks():
     """Start background tasks and threads."""
     # Start delay warning sound monitor thread
@@ -296,6 +319,11 @@ def start_background_tasks():
     palette_clear_timer = QTimer(global_vars.main_window)
     palette_clear_timer.timeout.connect(check_palette_clearing_status)
     palette_clear_timer.start(1000)  # Check every 1000ms
+    
+    # Create a timer to update the Status tab every 1000ms
+    status_timer = QTimer(global_vars.main_window)
+    status_timer.timeout.connect(_update_status_tab)
+    status_timer.start(1000)  # Update every 1000ms
     
     # Check zwischenlage status immediately (don't wait for timer)
     check_zwischenlage_status()
@@ -349,3 +377,160 @@ def setup_window_handling():
 
     global_vars.main_window.closeEvent = allow_close_event
     global_vars.main_window.keyPressEvent = handle_key_press_event
+
+def _create_status_tab():
+    """Create the Status tab under the RoboParameter tabWidget."""
+    from utils.system.core import global_vars as gv
+    if not hasattr(gv.ui, 'tabWidget'):
+        raise RuntimeError("tabWidget not found on UI")
+
+    status_widget = QWidget()
+    root_layout = QVBoxLayout(status_widget)
+
+    # Back button row
+    top_bar = QHBoxLayout()
+    back_btn = QPushButton("Zurück", status_widget)
+    back_btn.setCursor(Qt.PointingHandCursor)
+    back_btn.setFlat(True)
+    back_btn.clicked.connect(lambda: open_page(Page.MAIN_PAGE))
+    top_bar.addWidget(back_btn)
+    top_bar.addStretch(1)
+    root_layout.addLayout(top_bar)
+
+    # Form area
+    form_container = QWidget(status_widget)
+    form = QFormLayout(form_container)
+    form.setLabelAlignment(Qt.AlignRight)
+
+    # Create labels and store globally for easy update
+    gv.lbl_robot_ip = QLabel()
+    gv.lbl_connection = QLabel()
+    gv.lbl_robot_mode = QLabel()
+    gv.lbl_safety_status = QLabel()
+    gv.lbl_program_state = QLabel()
+    gv.lbl_last_update = QLabel()
+    gv.lbl_polyscope_version = QLabel("-")
+    gv.lbl_serial_number = QLabel("-")
+    gv.lbl_loaded_program = QLabel("-")
+    gv.list_programs = QListWidget()
+    gv.list_programs.setMinimumHeight(120)
+
+    form.addRow("Robot IP:", gv.lbl_robot_ip)
+    form.addRow("Connection:", gv.lbl_connection)
+    form.addRow("Robot Mode:", gv.lbl_robot_mode)
+    form.addRow("Safety Status:", gv.lbl_safety_status)
+    form.addRow("Program State:", gv.lbl_program_state)
+    form.addRow("Last Update:", gv.lbl_last_update)
+    form.addRow("Polyscope Version:", gv.lbl_polyscope_version)
+    form.addRow("Serial Number:", gv.lbl_serial_number)
+    form.addRow("Loaded Program:", gv.lbl_loaded_program)
+    form.addRow("Available Programs:", gv.list_programs)
+
+    # Add the form to root layout
+    root_layout.addWidget(form_container)
+
+    # Optional: manual refresh button for programs
+    refresh_bar = QHBoxLayout()
+    btn_refresh_programs = QPushButton("Refresh Programs", status_widget)
+    btn_refresh_programs.setCursor(Qt.PointingHandCursor)
+    refresh_bar.addStretch(1)
+    refresh_bar.addWidget(btn_refresh_programs)
+    root_layout.addLayout(refresh_bar)
+
+    # Add the tab and remember its index
+    idx = gv.ui.tabWidget.addTab(status_widget, "Status")
+    gv.status_tab_index = idx
+
+    # Counter for program refresh cadence
+    gv._programs_counter = 0
+
+    def _manual_refresh():
+        try:
+            from utils.system.core import global_vars as gvi
+            gvi._programs_counter = 0
+            _refresh_programs()
+        except Exception as e:
+            logger.error(f"Failed to refresh programs: {e}")
+    btn_refresh_programs.clicked.connect(_manual_refresh)
+
+    # Initialize with current known values
+    _update_status_tab()
+
+def _set_label_state(label: QLabel, text: str, ok: bool | None = None):
+    """Helper to set label text and color based on state."""
+    label.setText(text)
+    if ok is None:
+        label.setStyleSheet("")
+    else:
+        label.setStyleSheet(f"color: {'green' if ok else 'red'};")
+
+def _update_status_tab():
+    """Update the Status tab labels from RobotStatusMonitor."""
+    try:
+        from utils.system.core import global_vars as gv
+        from utils.robot.robot_enums import RobotMode, SafetyStatus, ProgramState
+        from utils.robot.robot_status_monitor import get_polyscope_version, get_serial_number
+
+        # Robot IP
+        if hasattr(gv, 'robot_ip'):
+            gv.lbl_robot_ip.setText(str(gv.robot_ip))
+        else:
+            gv.lbl_robot_ip.setText("-")
+
+        mon = getattr(gv, 'robot_status_monitor', None)
+        status = mon.get_current_status() if mon else None
+
+        if status:
+            _set_label_state(gv.lbl_connection, "Connected" if status.is_connected else (status.connection_error or "Disconnected"), status.is_connected)
+            gv.lbl_robot_mode.setText(status.robot_mode.name)
+            gv.lbl_safety_status.setText(status.safety_status.name)
+            gv.lbl_program_state.setText(status.program_state.name)
+            gv.lbl_last_update.setText(status.last_update.strftime('%Y-%m-%d %H:%M:%S') if status.last_update else "-")
+        else:
+            _set_label_state(gv.lbl_connection, "Monitor not running", False)
+            gv.lbl_robot_mode.setText("-")
+            gv.lbl_safety_status.setText("-")
+            gv.lbl_program_state.setText("-")
+            gv.lbl_last_update.setText("-")
+
+        # Polyscope version (query occasionally to avoid spam). Here we fetch once if unknown
+        if gv.lbl_polyscope_version.text() in ("-", ""):
+            resp, success, _ = get_polyscope_version()
+            if success:
+                gv.lbl_polyscope_version.setText(resp)
+            else:
+                gv.lbl_polyscope_version.setText("Unknown")
+
+        # Serial number (fetch once and cache)
+        if gv.lbl_serial_number.text() in ("-", ""):
+            resp, success, _ = get_serial_number()
+            gv.lbl_serial_number.setText(resp if success else "Unknown")
+
+        # Refresh loaded program and program list occasionally
+        gv._programs_counter = getattr(gv, '_programs_counter', 0) + 1
+        if gv._programs_counter % 5 == 0:
+            _refresh_programs()
+    except Exception as e:
+        logger.error(f"Failed to update Status tab: {e}")
+
+def _refresh_programs():
+    """Fetch and update loaded program and available programs list."""
+    try:
+        from utils.system.core import global_vars as gv
+        from utils.robot.robot_status_monitor import get_loaded_program, list_available_programs
+
+        # Loaded program
+        resp, success, _ = get_loaded_program()
+        gv.lbl_loaded_program.setText(resp if success else "Unknown")
+
+        # Programs list
+        programs, success, err = list_available_programs()
+        gv.list_programs.clear()
+        if success and programs:
+            gv.list_programs.addItems(programs)
+        else:
+            # Show helpful message instead of leaving it empty
+            msg = err or "Program listing not supported on this controller/version"
+            gv.list_programs.addItem(msg)
+    except Exception as e:
+        logger.error(f"Failed to refresh programs: {e}")
