@@ -22,12 +22,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up QEMU (ARM emulation)
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image
         run: |
-          docker buildx build --platform linux/arm64 -t ${{ env.IMAGE_NAME }} --output type=docker .
+          docker buildx build --platform linux/arm64 -t ${{ env.IMAGE_NAME }} --load -f Dockerfile .
 
       - name: Create container and extract binary
         run: |

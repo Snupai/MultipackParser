@@ -1,7 +1,7 @@
 # Dockerfile for building a Linux ARM64 executable
 
 # Stage 1: Build the executable
-FROM arm64v8/python:3.12 AS builder
+FROM python:3.12-bookworm AS builder
 
 # Install required dependencies
 RUN apt-get update -y && apt-get install -y \
@@ -44,7 +44,7 @@ RUN mkdir -p ./hooks
 RUN pyinstaller MultipackParser.spec
 
 # Stage 2: Copy the executable to a minimal base image
-FROM arm64v8/python:3.12-slim
+FROM python:3.12-slim-bookworm
 
 WORKDIR /app
 
