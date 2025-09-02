@@ -271,6 +271,17 @@ def save_to_database(file_name, db_path="paletten.db") -> bool:
     logger.info(f"Handling file: {file_name}")
     _, file_timestamp, g_Daten, g_LageZuordnung, g_PaketPos, g_PaketeZuordnung, g_Zwischenlagen, g_paket_quer, g_CenterOfGravity, g_PalettenDim, g_PaketDim, g_LageArten, g_AnzLagen, g_AnzahlPakete = UR_ReadDataFromUsbStick(file_name, global_vars.PATH_USB_STICK)
     
+    # If parsing failed, skip updating the database
+    if (
+        file_timestamp is None or
+        g_Daten is None or len(g_Daten) == 0 or
+        g_LageZuordnung is None or g_PaketPos is None or
+        g_PaketeZuordnung is None or g_Zwischenlagen is None or
+        g_PalettenDim is None or g_PaketDim is None
+    ):
+        logger.error(f"Skipping database update for '{file_name}' due to parse failure or missing data")
+        return False
+    
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     

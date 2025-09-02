@@ -361,7 +361,15 @@ def update_database_from_usb() -> None:
         logger.info(f"Found {len(rob_files)} .rob files to process")
         updated_files = []
 
+        # Session cache of failed files to avoid retry loops
+        if not hasattr(global_vars, 'failed_rob_files') or global_vars.failed_rob_files is None:
+            global_vars.failed_rob_files = set()
+
         for file in rob_files:
+            # Skip files previously detected as broken in this session
+            if file in getattr(global_vars, 'failed_rob_files', set()):
+                logger.debug(f"Skipping previously failed file: {file}")
+                continue
             file_path = os.path.join(global_vars.PATH_USB_STICK, file)
             file_timestamp = os.path.getmtime(file_path)
 
@@ -379,10 +387,17 @@ def update_database_from_usb() -> None:
             if should_update:
                 logger.info(f"Processing file: {file}")
                 try:
-                    save_to_database(file)
-                    updated_files.append(file)
+                    saved = save_to_database(file)
+                    if saved:
+                        updated_files.append(file)
+                    else:
+                        # Mark as failed to avoid repeated attempts within this session
+                        getattr(global_vars, 'failed_rob_files', set()).add(file)
+                        logger.warning(f"File '{file}' not saved (parse/validation failed). Will be skipped for this session.")
                 except Exception as e:
                     logger.error(f"Error processing {file}: {e}")
+                    # Mark as failed to avoid repeated attempts within this session
+                    getattr(global_vars, 'failed_rob_files', set()).add(file)
 
         # Update UI 3D list if needed
         if hasattr(global_vars, 'ui') and global_vars.ui:
