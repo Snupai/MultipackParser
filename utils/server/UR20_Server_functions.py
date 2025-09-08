@@ -308,7 +308,7 @@ def UR20_GetAllowedPalettes() -> list[int]:
 
 
 def UR20_SimulatePaletteFinished(pallet_number: int) -> int:
-    """Simulate that a palette has been finished.
+    """UI helper to simulate a finished palette and signal the robot to stop.
 
     Args:
         pallet_number (int): Palette to mark as finished.
@@ -322,6 +322,19 @@ def UR20_SimulatePaletteFinished(pallet_number: int) -> int:
     mark_palette_not_empty(pallet_number)
     if global_vars.UR20_active_palette == pallet_number:
         global_vars.UR20_active_palette = 0
+    global_vars.UR20_simulate_finished = True
     logger.info(f"Simulated finishing of palette {pallet_number}")
     return 1
+
+
+def UR20_GetSimulatePaletteFinished() -> int:
+    """Check if a simulated palette finish was requested via the UI.
+
+    Returns:
+        int: 1 if the robot should stop due to a simulated finish, 0 otherwise.
+    """
+    if global_vars.UR20_simulate_finished:
+        global_vars.UR20_simulate_finished = False
+        return 1
+    return 0
 

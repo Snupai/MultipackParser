@@ -26,7 +26,7 @@ from utils.server.UR20_Server_functions import (
     UR20_GetScannerOverride,
     UR20_GetAutoPaletteSwitch,
     UR20_GetAllowedPalettes,
-    UR20_SimulatePaletteFinished,
+    UR20_GetSimulatePaletteFinished,
 )
 from utils.message.message import MessageType
 from utils.message.message_manager import MessageManager
@@ -114,7 +114,7 @@ def server_start() -> Literal[0]:
             (UR20_GetScannerOverride, "UR_GetScannerOverwrite"),
             (UR20_GetAutoPaletteSwitch, "UR_GetAutoPaletteSwitch"),
             (UR20_GetAllowedPalettes, "UR_GetAllowedPalettes"),
-            (UR20_SimulatePaletteFinished, "UR_SimulatePaletteFinished"),
+            (UR20_GetSimulatePaletteFinished, "UR_GetSimulatePaletteFinished"),
         ]
         for func, name in ur20_functions:
             global_vars.server.register_function(log_rpc_call(func, name), name)

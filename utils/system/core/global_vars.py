@@ -45,6 +45,7 @@ UR20_palette1_empty: bool = False
 UR20_palette2_empty: bool = False
 UR20_auto_switch: bool = False
 UR20_allowed_palettes: set[int] = {1, 2}
+UR20_simulate_finished: bool = False
 
 # UR20 zwischenlage
 UR20_zwischenlage: Optional[bool] = False
