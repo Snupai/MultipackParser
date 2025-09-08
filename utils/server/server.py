@@ -24,8 +24,8 @@ from utils.server.UR20_Server_functions import (
     UR20_SetZwischenLageLegen,
     UR20_GetKlemmungAktiv,
     UR20_GetScannerOverride,
-    UR20_SetAutoPaletteSwitch,
-    UR20_SetAllowedPalettes,
+    UR20_GetAutoPaletteSwitch,
+    UR20_GetAllowedPalettes,
     UR20_SimulatePaletteFinished,
 )
 from utils.message.message import MessageType
@@ -112,8 +112,8 @@ def server_start() -> Literal[0]:
             (UR20_SetZwischenLageLegen, "UR_SetZwischenLageLegen"),
             (UR20_GetKlemmungAktiv, "UR_GetKlemmungAktiv"),
             (UR20_GetScannerOverride, "UR_GetScannerOverwrite"),
-            (UR20_SetAutoPaletteSwitch, "UR_SetAutoPaletteSwitch"),
-            (UR20_SetAllowedPalettes, "UR_SetAllowedPalettes"),
+            (UR20_GetAutoPaletteSwitch, "UR_GetAutoPaletteSwitch"),
+            (UR20_GetAllowedPalettes, "UR_GetAllowedPalettes"),
             (UR20_SimulatePaletteFinished, "UR_SimulatePaletteFinished"),
         ]
         for func, name in ur20_functions:

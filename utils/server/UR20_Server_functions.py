@@ -297,36 +297,14 @@ def UR20_GetScannerOverride() -> list[bool]:
     return scanner_override
 
 
-def UR20_SetAutoPaletteSwitch(enabled: bool) -> int:
-    """Enable or disable automatic palette switching.
-
-    Args:
-        enabled (bool): True to enable automatic switching.
-
-    Returns:
-        int: 1 if enabled, 0 otherwise.
-    """
-    logger.info(f"Setting auto palette switch to {enabled}")
-    global_vars.UR20_auto_switch = bool(enabled)
-    return 1 if global_vars.UR20_auto_switch else 0
+def UR20_GetAutoPaletteSwitch() -> bool:
+    """Return whether automatic palette switching is enabled."""
+    return global_vars.UR20_auto_switch
 
 
-def UR20_SetAllowedPalettes(pallets: list[int]) -> int:
-    """Restrict which palettes may be used.
-
-    Args:
-        pallets (list[int]): List of allowed palette numbers.
-
-    Returns:
-        int: 1 if at least one valid palette was set, 0 otherwise.
-    """
-    allowed = {p for p in pallets if p in {1, 2}}
-    if not allowed:
-        logger.warning("No valid palettes provided")
-        return 0
-    global_vars.UR20_allowed_palettes = allowed
-    logger.info(f"Allowed palettes set to {allowed}")
-    return 1
+def UR20_GetAllowedPalettes() -> list[int]:
+    """Return the list of pallets that may be used."""
+    return sorted(global_vars.UR20_allowed_palettes)
 
 
 def UR20_SimulatePaletteFinished(pallet_number: int) -> int:
