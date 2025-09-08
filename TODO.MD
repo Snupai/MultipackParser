@@ -21,9 +21,9 @@
   - [ ] after changing volume from 100 to 0 to 100 it stops playing
   - [ ] add more signals (audio files) for certain alarm types
 - [ ] generate report
-- [ ] automatisch wechseln aus/an
-- [ ] palette fertig simulieren (palette ist fertig auch wenn nicht fertig)
-- [ ] Nur auf Palette1/2 palettieren
+- [x] automatisch wechseln aus/an
+- [x] palette fertig simulieren (palette ist fertig auch wenn nicht fertig)
+- [x] Nur auf Palette1/2 palettieren
 
 Maybe:
 

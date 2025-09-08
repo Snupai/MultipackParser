@@ -16,10 +16,17 @@ from utils.server.UR10_Server_functions import (
     UR10_scanner2bild, UR10_scanner1and2iobild
 )
 from utils.server.UR20_Server_functions import (
-    UR20_scannerStatus, UR20_SetActivePalette, UR20_RequestPaletteChange,
-    UR20_GetActivePaletteNumber, UR20_GetPaletteStatus,
-    UR20_SetZwischenLageLegen, UR20_GetKlemmungAktiv,
-    UR20_GetScannerOverride
+    UR20_scannerStatus,
+    UR20_SetActivePalette,
+    UR20_RequestPaletteChange,
+    UR20_GetActivePaletteNumber,
+    UR20_GetPaletteStatus,
+    UR20_SetZwischenLageLegen,
+    UR20_GetKlemmungAktiv,
+    UR20_GetScannerOverride,
+    UR20_SetAutoPaletteSwitch,
+    UR20_SetAllowedPalettes,
+    UR20_SimulatePaletteFinished,
 )
 from utils.message.message import MessageType
 from utils.message.message_manager import MessageManager
@@ -104,7 +111,10 @@ def server_start() -> Literal[0]:
             (UR20_GetPaletteStatus, "UR_GetPaletteStatus"),
             (UR20_SetZwischenLageLegen, "UR_SetZwischenLageLegen"),
             (UR20_GetKlemmungAktiv, "UR_GetKlemmungAktiv"),
-            (UR20_GetScannerOverride, "UR_GetScannerOverwrite")
+            (UR20_GetScannerOverride, "UR_GetScannerOverwrite"),
+            (UR20_SetAutoPaletteSwitch, "UR_SetAutoPaletteSwitch"),
+            (UR20_SetAllowedPalettes, "UR_SetAllowedPalettes"),
+            (UR20_SimulatePaletteFinished, "UR_SimulatePaletteFinished"),
         ]
         for func, name in ur20_functions:
             global_vars.server.register_function(log_rpc_call(func, name), name)

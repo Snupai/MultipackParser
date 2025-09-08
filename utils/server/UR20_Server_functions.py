@@ -138,6 +138,9 @@ def UR20_SetActivePalette(pallet_number) -> Union[Literal[0], Literal[1]]:
     """
     logger.debug(f"Request to set active palette to {pallet_number}")
     
+    if pallet_number not in global_vars.UR20_allowed_palettes:
+        logger.warning(f"Palette {pallet_number} not allowed")
+        return 503
     if pallet_number == 1 and not global_vars.UR20_palette1_empty:
         logger.warning("Cannot set palette 1 as active - not empty")
         return 503
@@ -173,6 +176,9 @@ def UR20_RequestPaletteChange(old_pallet_number: int, new_pallet_number: int) ->
     if new_pallet_number not in [1, 2]:
         logger.error(f"Invalid new palette number: {new_pallet_number}")
         return 404
+    if new_pallet_number not in global_vars.UR20_allowed_palettes:
+        logger.warning(f"Palette {new_pallet_number} not allowed - cannot change to it")
+        return 0
     
     # Only check if the new palette is empty
     new_palette_empty = (global_vars.UR20_palette1_empty if new_pallet_number == 1 
@@ -200,6 +206,16 @@ def UR20_GetActivePaletteNumber() -> int:
     Returns:
         int: The number of the active pallet.
     """
+    if global_vars.UR20_auto_switch and global_vars.UR20_active_palette == 0:
+        for p in sorted(global_vars.UR20_allowed_palettes):
+            if (p == 1 and global_vars.UR20_palette1_empty) or (
+                p == 2 and global_vars.UR20_palette2_empty
+            ):
+                global_vars.UR20_active_palette = p
+                mark_palette_not_empty(p)
+                logger.info(f"Auto-switched to palette {p}")
+                break
+
     if global_vars.UR20_active_palette in [1, 2]:
         match global_vars.UR20_active_palette:
             case 1:
@@ -279,4 +295,55 @@ def UR20_GetScannerOverride() -> list[bool]:
     scanner_override: list[bool] = [global_vars.ui.checkBoxScanner1Overwrite.isChecked(), global_vars.ui.checkBoxScanner2Overwrite.isChecked(), global_vars.ui.checkBoxScanner3Overwrite.isChecked()]
     logger.debug(f"Checking scanner override: {scanner_override=}")
     return scanner_override
+
+
+def UR20_SetAutoPaletteSwitch(enabled: bool) -> int:
+    """Enable or disable automatic palette switching.
+
+    Args:
+        enabled (bool): True to enable automatic switching.
+
+    Returns:
+        int: 1 if enabled, 0 otherwise.
+    """
+    logger.info(f"Setting auto palette switch to {enabled}")
+    global_vars.UR20_auto_switch = bool(enabled)
+    return 1 if global_vars.UR20_auto_switch else 0
+
+
+def UR20_SetAllowedPalettes(pallets: list[int]) -> int:
+    """Restrict which palettes may be used.
+
+    Args:
+        pallets (list[int]): List of allowed palette numbers.
+
+    Returns:
+        int: 1 if at least one valid palette was set, 0 otherwise.
+    """
+    allowed = {p for p in pallets if p in {1, 2}}
+    if not allowed:
+        logger.warning("No valid palettes provided")
+        return 0
+    global_vars.UR20_allowed_palettes = allowed
+    logger.info(f"Allowed palettes set to {allowed}")
+    return 1
+
+
+def UR20_SimulatePaletteFinished(pallet_number: int) -> int:
+    """Simulate that a palette has been finished.
+
+    Args:
+        pallet_number (int): Palette to mark as finished.
+
+    Returns:
+        int: 1 if successful, 404 if invalid palette number.
+    """
+    if pallet_number not in [1, 2]:
+        logger.error(f"Invalid palette number: {pallet_number}")
+        return 404
+    mark_palette_not_empty(pallet_number)
+    if global_vars.UR20_active_palette == pallet_number:
+        global_vars.UR20_active_palette = 0
+    logger.info(f"Simulated finishing of palette {pallet_number}")
+    return 1
 

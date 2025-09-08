@@ -43,6 +43,8 @@ robot_status_monitor: Optional['RobotStatus'] = None
 UR20_active_palette: int = 0
 UR20_palette1_empty: bool = False
 UR20_palette2_empty: bool = False
+UR20_auto_switch: bool = False
+UR20_allowed_palettes: set[int] = {1, 2}
 
 # UR20 zwischenlage
 UR20_zwischenlage: Optional[bool] = False
