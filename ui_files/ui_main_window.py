@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.0
+## Created by: Qt User Interface Compiler version 6.8.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -20,8 +20,8 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFormLayout,
     QHeaderView, QLabel, QLineEdit, QListWidget,
     QListWidgetItem, QPushButton, QSizePolicy, QSpinBox,
     QStackedWidget, QTabWidget, QTextEdit, QToolButton,
-    QTreeView, QWidget)
-from . import MainWindowResources_rc
+    QTreeView, QVBoxLayout, QWidget)
+import MainWindowResources_rc
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -33,20 +33,20 @@ class Ui_Form(object):
         Form.setMaximumSize(QSize(1280, 720))
         palette = QPalette()
         brush = QBrush(QColor(85, 85, 255, 255))
-        brush.setStyle(Qt.BrushStyle.SolidPattern)
-        palette.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Highlight, brush)
-        palette.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Link, brush)
+        brush.setStyle(Qt.SolidPattern)
+        palette.setBrush(QPalette.Active, QPalette.Highlight, brush)
+        palette.setBrush(QPalette.Active, QPalette.Link, brush)
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
-        palette.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Accent, brush)
+        palette.setBrush(QPalette.Active, QPalette.Accent, brush)
 #endif
-        palette.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Highlight, brush)
-        palette.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Link, brush)
+        palette.setBrush(QPalette.Inactive, QPalette.Highlight, brush)
+        palette.setBrush(QPalette.Inactive, QPalette.Link, brush)
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
-        palette.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Accent, brush)
+        palette.setBrush(QPalette.Inactive, QPalette.Accent, brush)
 #endif
-        palette.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Link, brush)
+        palette.setBrush(QPalette.Disabled, QPalette.Link, brush)
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
-        palette.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Accent, brush)
+        palette.setBrush(QPalette.Disabled, QPalette.Accent, brush)
 #endif
         Form.setPalette(palette)
         font = QFont()
@@ -395,108 +395,108 @@ class Ui_Form(object):
         self.label_11 = QLabel(self.formLayoutWidget)
         self.label_11.setObjectName(u"label_11")
 
-        self.formLayout.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label_11)
+        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label_11)
 
         self.label_12 = QLabel(self.formLayoutWidget)
         self.label_12.setObjectName(u"label_12")
 
-        self.formLayout.setWidget(1, QFormLayout.ItemRole.LabelRole, self.label_12)
+        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.label_12)
 
         self.lineEditURSerialNo = QLineEdit(self.formLayoutWidget)
         self.lineEditURSerialNo.setObjectName(u"lineEditURSerialNo")
 
-        self.formLayout.setWidget(1, QFormLayout.ItemRole.FieldRole, self.lineEditURSerialNo)
+        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.lineEditURSerialNo)
 
         self.label_13 = QLabel(self.formLayoutWidget)
         self.label_13.setObjectName(u"label_13")
 
-        self.formLayout.setWidget(2, QFormLayout.ItemRole.LabelRole, self.label_13)
+        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.label_13)
 
         self.lineEditURManufacturingDate = QLineEdit(self.formLayoutWidget)
         self.lineEditURManufacturingDate.setObjectName(u"lineEditURManufacturingDate")
 
-        self.formLayout.setWidget(2, QFormLayout.ItemRole.FieldRole, self.lineEditURManufacturingDate)
+        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.lineEditURManufacturingDate)
 
         self.label_14 = QLabel(self.formLayoutWidget)
         self.label_14.setObjectName(u"label_14")
 
-        self.formLayout.setWidget(3, QFormLayout.ItemRole.LabelRole, self.label_14)
+        self.formLayout.setWidget(3, QFormLayout.LabelRole, self.label_14)
 
         self.lineEditURSoftwareVer = QLineEdit(self.formLayoutWidget)
         self.lineEditURSoftwareVer.setObjectName(u"lineEditURSoftwareVer")
 
-        self.formLayout.setWidget(3, QFormLayout.ItemRole.FieldRole, self.lineEditURSoftwareVer)
+        self.formLayout.setWidget(3, QFormLayout.FieldRole, self.lineEditURSoftwareVer)
 
         self.label_15 = QLabel(self.formLayoutWidget)
         self.label_15.setObjectName(u"label_15")
 
-        self.formLayout.setWidget(4, QFormLayout.ItemRole.LabelRole, self.label_15)
+        self.formLayout.setWidget(4, QFormLayout.LabelRole, self.label_15)
 
         self.lineEditURName = QLineEdit(self.formLayoutWidget)
         self.lineEditURName.setObjectName(u"lineEditURName")
 
-        self.formLayout.setWidget(4, QFormLayout.ItemRole.FieldRole, self.lineEditURName)
+        self.formLayout.setWidget(4, QFormLayout.FieldRole, self.lineEditURName)
 
         self.label_16 = QLabel(self.formLayoutWidget)
         self.label_16.setObjectName(u"label_16")
 
-        self.formLayout.setWidget(5, QFormLayout.ItemRole.LabelRole, self.label_16)
+        self.formLayout.setWidget(5, QFormLayout.LabelRole, self.label_16)
 
         self.lineEditURStandort = QLineEdit(self.formLayoutWidget)
         self.lineEditURStandort.setObjectName(u"lineEditURStandort")
 
-        self.formLayout.setWidget(5, QFormLayout.ItemRole.FieldRole, self.lineEditURStandort)
+        self.formLayout.setWidget(5, QFormLayout.FieldRole, self.lineEditURStandort)
 
         self.label_17 = QLabel(self.formLayoutWidget)
         self.label_17.setObjectName(u"label_17")
 
-        self.formLayout.setWidget(6, QFormLayout.ItemRole.LabelRole, self.label_17)
+        self.formLayout.setWidget(6, QFormLayout.LabelRole, self.label_17)
 
         self.lineEditNumberPlans = QLineEdit(self.formLayoutWidget)
         self.lineEditNumberPlans.setObjectName(u"lineEditNumberPlans")
         self.lineEditNumberPlans.setEnabled(False)
 
-        self.formLayout.setWidget(6, QFormLayout.ItemRole.FieldRole, self.lineEditNumberPlans)
+        self.formLayout.setWidget(6, QFormLayout.FieldRole, self.lineEditNumberPlans)
 
         self.label_18 = QLabel(self.formLayoutWidget)
         self.label_18.setObjectName(u"label_18")
 
-        self.formLayout.setWidget(7, QFormLayout.ItemRole.LabelRole, self.label_18)
+        self.formLayout.setWidget(7, QFormLayout.LabelRole, self.label_18)
 
         self.lineEditNumberCycles = QLineEdit(self.formLayoutWidget)
         self.lineEditNumberCycles.setObjectName(u"lineEditNumberCycles")
         self.lineEditNumberCycles.setEnabled(False)
 
-        self.formLayout.setWidget(7, QFormLayout.ItemRole.FieldRole, self.lineEditNumberCycles)
+        self.formLayout.setWidget(7, QFormLayout.FieldRole, self.lineEditNumberCycles)
 
         self.label_19 = QLabel(self.formLayoutWidget)
         self.label_19.setObjectName(u"label_19")
 
-        self.formLayout.setWidget(8, QFormLayout.ItemRole.LabelRole, self.label_19)
+        self.formLayout.setWidget(8, QFormLayout.LabelRole, self.label_19)
 
         self.lineEditLastRestart = QLineEdit(self.formLayoutWidget)
         self.lineEditLastRestart.setObjectName(u"lineEditLastRestart")
         self.lineEditLastRestart.setEnabled(False)
 
-        self.formLayout.setWidget(8, QFormLayout.ItemRole.FieldRole, self.lineEditLastRestart)
+        self.formLayout.setWidget(8, QFormLayout.FieldRole, self.lineEditLastRestart)
 
         self.comboBoxChooseURModel = QComboBox(self.formLayoutWidget)
         self.comboBoxChooseURModel.addItem("")
         self.comboBoxChooseURModel.addItem("")
         self.comboBoxChooseURModel.setObjectName(u"comboBoxChooseURModel")
 
-        self.formLayout.setWidget(0, QFormLayout.ItemRole.FieldRole, self.comboBoxChooseURModel)
+        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.comboBoxChooseURModel)
 
         self.label_current_version = QLabel(self.formLayoutWidget)
         self.label_current_version.setObjectName(u"label_current_version")
 
-        self.formLayout.setWidget(9, QFormLayout.ItemRole.LabelRole, self.label_current_version)
+        self.formLayout.setWidget(9, QFormLayout.LabelRole, self.label_current_version)
 
         self.lineEditCurrentVersion = QLineEdit(self.formLayoutWidget)
         self.lineEditCurrentVersion.setObjectName(u"lineEditCurrentVersion")
         self.lineEditCurrentVersion.setEnabled(False)
 
-        self.formLayout.setWidget(9, QFormLayout.ItemRole.FieldRole, self.lineEditCurrentVersion)
+        self.formLayout.setWidget(9, QFormLayout.FieldRole, self.lineEditCurrentVersion)
 
         self.formLayoutWidget_2 = QWidget(self.PallettiererSpezifisch)
         self.formLayoutWidget_2.setObjectName(u"formLayoutWidget_2")
@@ -508,45 +508,45 @@ class Ui_Form(object):
         self.label_20 = QLabel(self.formLayoutWidget_2)
         self.label_20.setObjectName(u"label_20")
 
-        self.formLayout_2.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label_20)
+        self.formLayout_2.setWidget(0, QFormLayout.LabelRole, self.label_20)
 
         self.lineEditDisplayModel = QLineEdit(self.formLayoutWidget_2)
         self.lineEditDisplayModel.setObjectName(u"lineEditDisplayModel")
 
-        self.formLayout_2.setWidget(0, QFormLayout.ItemRole.FieldRole, self.lineEditDisplayModel)
+        self.formLayout_2.setWidget(0, QFormLayout.FieldRole, self.lineEditDisplayModel)
 
         self.label_21 = QLabel(self.formLayoutWidget_2)
         self.label_21.setObjectName(u"label_21")
 
-        self.formLayout_2.setWidget(1, QFormLayout.ItemRole.LabelRole, self.label_21)
+        self.formLayout_2.setWidget(1, QFormLayout.LabelRole, self.label_21)
 
         self.lineEditDisplayRefreshRate = QLineEdit(self.formLayoutWidget_2)
         self.lineEditDisplayRefreshRate.setObjectName(u"lineEditDisplayRefreshRate")
         self.lineEditDisplayRefreshRate.setEnabled(False)
 
-        self.formLayout_2.setWidget(1, QFormLayout.ItemRole.FieldRole, self.lineEditDisplayRefreshRate)
+        self.formLayout_2.setWidget(1, QFormLayout.FieldRole, self.lineEditDisplayRefreshRate)
 
         self.label_22 = QLabel(self.formLayoutWidget_2)
         self.label_22.setObjectName(u"label_22")
 
-        self.formLayout_2.setWidget(2, QFormLayout.ItemRole.LabelRole, self.label_22)
+        self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.label_22)
 
         self.lineEditDisplayWidth = QLineEdit(self.formLayoutWidget_2)
         self.lineEditDisplayWidth.setObjectName(u"lineEditDisplayWidth")
         self.lineEditDisplayWidth.setEnabled(False)
 
-        self.formLayout_2.setWidget(2, QFormLayout.ItemRole.FieldRole, self.lineEditDisplayWidth)
+        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.lineEditDisplayWidth)
 
         self.label_23 = QLabel(self.formLayoutWidget_2)
         self.label_23.setObjectName(u"label_23")
 
-        self.formLayout_2.setWidget(3, QFormLayout.ItemRole.LabelRole, self.label_23)
+        self.formLayout_2.setWidget(3, QFormLayout.LabelRole, self.label_23)
 
         self.lineEditDisplayHeight = QLineEdit(self.formLayoutWidget_2)
         self.lineEditDisplayHeight.setObjectName(u"lineEditDisplayHeight")
         self.lineEditDisplayHeight.setEnabled(False)
 
-        self.formLayout_2.setWidget(3, QFormLayout.ItemRole.FieldRole, self.lineEditDisplayHeight)
+        self.formLayout_2.setWidget(3, QFormLayout.FieldRole, self.lineEditDisplayHeight)
 
         self.pushButtonSpeichern = QPushButton(self.PallettiererSpezifisch)
         self.pushButtonSpeichern.setObjectName(u"pushButtonSpeichern")
@@ -576,7 +576,7 @@ class Ui_Form(object):
         self.label_8 = QLabel(self.formLayoutWidget_3)
         self.label_8.setObjectName(u"label_8")
 
-        self.formLayout_3.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label_8)
+        self.formLayout_3.setWidget(0, QFormLayout.LabelRole, self.label_8)
 
         self.passwordEdit = QLineEdit(self.formLayoutWidget_3)
         self.passwordEdit.setObjectName(u"passwordEdit")
@@ -585,12 +585,12 @@ class Ui_Form(object):
         self.passwordEdit.setEchoMode(QLineEdit.EchoMode.PasswordEchoOnEdit)
         self.passwordEdit.setClearButtonEnabled(True)
 
-        self.formLayout_3.setWidget(0, QFormLayout.ItemRole.FieldRole, self.passwordEdit)
+        self.formLayout_3.setWidget(0, QFormLayout.FieldRole, self.passwordEdit)
 
         self.label_24 = QLabel(self.formLayoutWidget_3)
         self.label_24.setObjectName(u"label_24")
 
-        self.formLayout_3.setWidget(1, QFormLayout.ItemRole.LabelRole, self.label_24)
+        self.formLayout_3.setWidget(1, QFormLayout.LabelRole, self.label_24)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setSpacing(3)
@@ -607,12 +607,12 @@ class Ui_Form(object):
         self.horizontalLayout.addWidget(self.buttonSelectRobPath)
 
 
-        self.formLayout_3.setLayout(1, QFormLayout.ItemRole.FieldRole, self.horizontalLayout)
+        self.formLayout_3.setLayout(1, QFormLayout.FieldRole, self.horizontalLayout)
 
         self.label_25 = QLabel(self.formLayoutWidget_3)
         self.label_25.setObjectName(u"label_25")
 
-        self.formLayout_3.setWidget(2, QFormLayout.ItemRole.LabelRole, self.label_25)
+        self.formLayout_3.setWidget(2, QFormLayout.LabelRole, self.label_25)
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setSpacing(3)
@@ -629,12 +629,12 @@ class Ui_Form(object):
         self.horizontalLayout_2.addWidget(self.buttonSelectAudioFilePath)
 
 
-        self.formLayout_3.setLayout(2, QFormLayout.ItemRole.FieldRole, self.horizontalLayout_2)
+        self.formLayout_3.setLayout(2, QFormLayout.FieldRole, self.horizontalLayout_2)
 
         self.label_scanner_warning_path = QLabel(self.formLayoutWidget_3)
         self.label_scanner_warning_path.setObjectName(u"label_scanner_warning_path")
 
-        self.formLayout_3.setWidget(3, QFormLayout.ItemRole.LabelRole, self.label_scanner_warning_path)
+        self.formLayout_3.setWidget(3, QFormLayout.LabelRole, self.label_scanner_warning_path)
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setSpacing(3)
@@ -651,25 +651,25 @@ class Ui_Form(object):
         self.horizontalLayout_3.addWidget(self.buttonSelectScannerWarningSoundPath)
 
 
-        self.formLayout_3.setLayout(3, QFormLayout.ItemRole.FieldRole, self.horizontalLayout_3)
+        self.formLayout_3.setLayout(3, QFormLayout.FieldRole, self.horizontalLayout_3)
 
         self.checkBoxScanner1Overwrite = QCheckBox(self.formLayoutWidget_3)
         self.checkBoxScanner1Overwrite.setObjectName(u"checkBoxScanner1Overwrite")
         self.checkBoxScanner1Overwrite.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
-        self.formLayout_3.setWidget(4, QFormLayout.ItemRole.SpanningRole, self.checkBoxScanner1Overwrite)
+        self.formLayout_3.setWidget(4, QFormLayout.SpanningRole, self.checkBoxScanner1Overwrite)
 
         self.checkBoxScanner2Overwrite = QCheckBox(self.formLayoutWidget_3)
         self.checkBoxScanner2Overwrite.setObjectName(u"checkBoxScanner2Overwrite")
         self.checkBoxScanner2Overwrite.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
-        self.formLayout_3.setWidget(5, QFormLayout.ItemRole.SpanningRole, self.checkBoxScanner2Overwrite)
+        self.formLayout_3.setWidget(5, QFormLayout.SpanningRole, self.checkBoxScanner2Overwrite)
 
         self.checkBoxScanner3Overwrite = QCheckBox(self.formLayoutWidget_3)
         self.checkBoxScanner3Overwrite.setObjectName(u"checkBoxScanner3Overwrite")
         self.checkBoxScanner3Overwrite.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
-        self.formLayout_3.setWidget(6, QFormLayout.ItemRole.SpanningRole, self.checkBoxScanner3Overwrite)
+        self.formLayout_3.setWidget(6, QFormLayout.SpanningRole, self.checkBoxScanner3Overwrite)
 
         self.formLayoutWidget_4 = QWidget(self.adminSettingsTab)
         self.formLayoutWidget_4.setObjectName(u"formLayoutWidget_4")
@@ -680,7 +680,7 @@ class Ui_Form(object):
         self.pushButtonSendCommandRemoteControl = QPushButton(self.formLayoutWidget_4)
         self.pushButtonSendCommandRemoteControl.setObjectName(u"pushButtonSendCommandRemoteControl")
 
-        self.formLayout_4.setWidget(0, QFormLayout.ItemRole.LabelRole, self.pushButtonSendCommandRemoteControl)
+        self.formLayout_4.setWidget(0, QFormLayout.LabelRole, self.pushButtonSendCommandRemoteControl)
 
         self.comboBoxCommandRemoteControl = QComboBox(self.formLayoutWidget_4)
         self.comboBoxCommandRemoteControl.addItem("")
@@ -690,7 +690,7 @@ class Ui_Form(object):
         self.comboBoxCommandRemoteControl.addItem("")
         self.comboBoxCommandRemoteControl.setObjectName(u"comboBoxCommandRemoteControl")
 
-        self.formLayout_4.setWidget(0, QFormLayout.ItemRole.FieldRole, self.comboBoxCommandRemoteControl)
+        self.formLayout_4.setWidget(0, QFormLayout.FieldRole, self.comboBoxCommandRemoteControl)
 
         self.pushButtonSpeichern_2 = QPushButton(self.adminSettingsTab)
         self.pushButtonSpeichern_2.setObjectName(u"pushButtonSpeichern_2")
@@ -845,6 +845,31 @@ class Ui_Form(object):
         self.pushButtonClearFilters = QPushButton(self.Experimental)
         self.pushButtonClearFilters.setObjectName(u"pushButtonClearFilters")
         self.pushButtonClearFilters.setGeometry(QRect(10, 140, 191, 41))
+        self.groupBoxUR20 = QGroupBox(self.Experimental)
+        self.groupBoxUR20.setObjectName(u"groupBoxUR20")
+        self.groupBoxUR20.setGeometry(QRect(10, 380, 194, 120))
+        self.verticalLayoutUR20 = QVBoxLayout(self.groupBoxUR20)
+        self.verticalLayoutUR20.setObjectName(u"verticalLayoutUR20")
+        self.checkBoxUR20AutoSwitch = QCheckBox(self.groupBoxUR20)
+        self.checkBoxUR20AutoSwitch.setObjectName(u"checkBoxUR20AutoSwitch")
+
+        self.verticalLayoutUR20.addWidget(self.checkBoxUR20AutoSwitch)
+
+        self.checkBoxUR20Palette1 = QCheckBox(self.groupBoxUR20)
+        self.checkBoxUR20Palette1.setObjectName(u"checkBoxUR20Palette1")
+
+        self.verticalLayoutUR20.addWidget(self.checkBoxUR20Palette1)
+
+        self.checkBoxUR20Palette2 = QCheckBox(self.groupBoxUR20)
+        self.checkBoxUR20Palette2.setObjectName(u"checkBoxUR20Palette2")
+
+        self.verticalLayoutUR20.addWidget(self.checkBoxUR20Palette2)
+
+        self.pushButtonUR20SimulateFinished = QPushButton(self.groupBoxUR20)
+        self.pushButtonUR20SimulateFinished.setObjectName(u"pushButtonUR20SimulateFinished")
+
+        self.verticalLayoutUR20.addWidget(self.pushButtonUR20SimulateFinished)
+
         self.stackedWidget.addWidget(self.Experimental)
         self.MatplotLibCanvasFrame.raise_()
         self.availableRobFiles.raise_()
@@ -983,5 +1008,10 @@ class Ui_Form(object):
         self.lineEditFilterHeight.setText("")
         self.lineEditFilterHeight.setPlaceholderText(QCoreApplication.translate("Form", u"0", None))
         self.pushButtonClearFilters.setText(QCoreApplication.translate("Form", u"Clear Filter", None))
+        self.groupBoxUR20.setTitle(QCoreApplication.translate("Form", u"UR20", None))
+        self.checkBoxUR20AutoSwitch.setText(QCoreApplication.translate("Form", u"Automatisch wechseln", None))
+        self.checkBoxUR20Palette1.setText(QCoreApplication.translate("Form", u"Palette 1 erlauben", None))
+        self.checkBoxUR20Palette2.setText(QCoreApplication.translate("Form", u"Palette 2 erlauben", None))
+        self.pushButtonUR20SimulateFinished.setText(QCoreApplication.translate("Form", u"Palette fertig simulieren", None))
     # retranslateUi
 

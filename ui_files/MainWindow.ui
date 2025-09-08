@@ -2177,6 +2177,49 @@ Application</string>
       <string>Clear Filter</string>
      </property>
     </widget>
+    <widget class="QGroupBox" name="groupBoxUR20">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>380</y>
+       <width>194</width>
+       <height>120</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>UR20</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayoutUR20">
+      <item>
+       <widget class="QCheckBox" name="checkBoxUR20AutoSwitch">
+        <property name="text">
+         <string>Automatisch wechseln</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBoxUR20Palette1">
+        <property name="text">
+         <string>Palette 1 erlauben</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBoxUR20Palette2">
+        <property name="text">
+         <string>Palette 2 erlauben</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonUR20SimulateFinished">
+        <property name="text">
+         <string>Palette fertig simulieren</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
     <zorder>MatplotLibCanvasFrame</zorder>
     <zorder>availableRobFiles</zorder>
     <zorder>ButtonZurueck_8</zorder>

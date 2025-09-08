@@ -29,7 +29,7 @@ from utils.server.server import server_thread, server_stop
 import utils.audio.audio as audio
 from utils.system.updater import check_for_updates
 from utils.system.core.app_control import restart_app, exit_app
-from utils.server.UR20_Server_functions import scanner_signals
+from utils.server.UR20_Server_functions import scanner_signals, UR20_SimulatePaletteFinished
 from utils.ui.notification_popup import check_zwischenlage_status
 from utils.ui.ui_helpers import check_palette_clearing_status
 
@@ -166,9 +166,36 @@ def connect_signal_handlers():
     global_vars.ui.ButtonStopRPCServer.clicked.connect(server_stop)
     global_vars.ui.ButtonZurueck_2.clicked.connect(lambda: open_page(Page.MAIN_PAGE))
     global_vars.ui.ButtonDatenSenden_2.clicked.connect(server_thread)
-    
+
     # Connect remote control button
     global_vars.ui.pushButtonSendCommandRemoteControl.clicked.connect(send_remote_control_command)
+
+    # UR20 controls
+    global_vars.ui.checkBoxUR20AutoSwitch.toggled.connect(
+        lambda state: setattr(global_vars, "UR20_auto_switch", state)
+    )
+
+    def _toggle_allowed_palette(pallet: int, state: bool) -> None:
+        if state:
+            global_vars.UR20_allowed_palettes.add(pallet)
+        else:
+            global_vars.UR20_allowed_palettes.discard(pallet)
+
+    global_vars.ui.checkBoxUR20Palette1.toggled.connect(
+        lambda state: _toggle_allowed_palette(1, state)
+    )
+    global_vars.ui.checkBoxUR20Palette2.toggled.connect(
+        lambda state: _toggle_allowed_palette(2, state)
+    )
+
+    def _simulate_finish() -> None:
+        active = getattr(global_vars, "UR20_active_palette", 0)
+        if active in (1, 2):
+            UR20_SimulatePaletteFinished(active)
+        else:
+            logger.warning("No active palette to simulate finish")
+
+    global_vars.ui.pushButtonUR20SimulateFinished.clicked.connect(_simulate_finish)
 
     # Connect settings page buttons
     global_vars.ui.ButtonZurueck_3.clicked.connect(leave_settings_page)
@@ -297,6 +324,11 @@ def setup_components():
         _create_status_tab()
     except Exception as e:
         logger.error(f"Failed to create Status tab: {e}")
+
+    # Initialize UR20 control states
+    global_vars.ui.checkBoxUR20AutoSwitch.setChecked(global_vars.UR20_auto_switch)
+    global_vars.ui.checkBoxUR20Palette1.setChecked(1 in global_vars.UR20_allowed_palettes)
+    global_vars.ui.checkBoxUR20Palette2.setChecked(2 in global_vars.UR20_allowed_palettes)
 
 def start_background_tasks():
     """Start background tasks and threads."""
