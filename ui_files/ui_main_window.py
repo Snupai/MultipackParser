@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFormLayout,
     QListWidgetItem, QPushButton, QSizePolicy, QSpinBox,
     QStackedWidget, QTabWidget, QTextEdit, QToolButton,
     QTreeView, QVBoxLayout, QWidget)
-import MainWindowResources_rc
+from . import MainWindowResources_rc
 
 class Ui_Form(object):
     def setupUi(self, Form):
