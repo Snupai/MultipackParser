@@ -1,0 +1,296 @@
+# User Guide
+
+This guide provides comprehensive instructions for using MultipackParser in your daily operations.
+
+## Table of Contents
+
+1. [Getting Started](#getting-started)
+2. [Main Interface](#main-interface)
+3. [Loading Pallet Data](#loading-pallet-data)
+4. [Robot Communication](#robot-communication)
+5. [Settings and Configuration](#settings-and-configuration)
+6. [3D Visualization](#3d-visualization)
+7. [Troubleshooting](#troubleshooting)
+
+## Getting Started
+
+### Launching the Application
+
+1. **Start the Application**
+   ```bash
+   python main.py
+   ```
+
+2. **First Launch**
+   - The application will show a splash screen during initialization
+   - Database and configuration files are created automatically
+   - For UR20 robots, a palette configuration dialog will appear
+
+3. **Main Window**
+   - The main interface will appear after initialization
+   - Status bar shows current system state
+
+### Command Line Options
+
+- `--version` or `-v`: Display version information
+- `--license` or `-l`: Display license information
+- `--verbose` or `-V`: Enable verbose (debug) logging
+
+## Main Interface
+
+### Overview
+
+![Main Interface](assets/MultipackParser-MainUI.png)
+
+*Main interface of MultipackParser after startup*
+
+The main window consists of several key areas:
+
+1. **Menu Bar**: Access to settings and system functions
+2. **Status Display**: Current system status and messages
+3. **Pallet Information**: Loaded pallet data and dimensions
+4. **Robot Control**: Robot status and control buttons
+5. **3D Visualization**: Interactive 3D view of pallet layout
+
+### Status Indicators
+
+- **Green**: Normal operation
+- **Yellow**: Warning condition
+- **Red**: Error or critical issue
+- **Black**: No data loaded
+
+### Navigation
+
+The interface uses a page-based navigation system:
+- Main page: Primary operations
+- Settings page: Configuration (password-protected)
+- Experimental page: Advanced features
+
+## Loading Pallet Data
+
+### From USB Stick
+
+1. **Insert USB Stick**
+   - Ensure the USB stick contains valid pallet data files
+   - The application automatically scans for data on startup
+
+2. **Automatic Detection**
+   - The application checks the USB path (`../` by default)
+   - Database is updated automatically when new data is detected
+
+3. **Manual Update**
+   - Use the refresh button to manually check for new data
+   - Status will update to show if new data was found
+
+### File Format
+
+Pallet data files should contain:
+- Palette dimensions (length, width, height)
+- Package dimensions and gaps
+- Layer information
+- Package positions and orientations
+
+## Robot Communication
+
+### Connection Setup
+
+1. **Network Configuration**
+   - Default robot IP: `192.168.0.1`
+   - Ensure network connectivity to the robot
+
+2. **Robot Model Selection**
+   - Configure robot model (UR10 or UR20) in settings
+   - Different models have different available functions
+
+### Robot Status Monitoring
+
+The application continuously monitors:
+- **Robot Mode**: Manual, Automatic, Remote Control
+- **Safety Status**: Normal, Reduced, Protective Stop, etc.
+- **Program State**: Stopped, Playing, Paused
+
+### Remote Control
+
+1. **Enter Remote Control Mode**
+   - Robot must be in remote control mode
+   - Status indicator shows current mode
+
+2. **Send Commands**
+   - Select command from dropdown
+   - Click send button
+   - Status updates to show command result
+
+### Scanner Status (UR20)
+
+For UR20 robots, the application monitors:
+- Scanner 1, 2, and 3 status
+- Scanner override states
+- Automatic warnings for scanner faults
+
+## Settings and Configuration
+
+### Accessing Settings
+
+1. **Password Protection**
+   - Settings are password-protected
+   - Enter password when prompted
+
+2. **Settings Categories**
+   - **Info**: System information and robot model
+   - **Network**: Connection settings
+   - **Audio**: Sound notification preferences
+   - **Security**: Password management
+
+### Robot Model Configuration
+
+- **UR10**: Standard configuration with 2 scanners
+- **UR20**: Extended configuration with 3 scanners and dual palette support
+
+### Audio Settings
+
+- **Mute/Unmute**: Toggle audio notifications
+- **Volume Control**: Adjust notification volume
+- **Sound Types**: Different sounds for different events
+
+## 3D Visualization
+
+### Viewing Pallet Layout
+
+1. **Load Pallet Data**
+   - Data must be loaded before visualization is available
+
+2. **3D Canvas**
+   - Interactive 3D view of pallet layout
+   - Rotate, zoom, and pan to examine the layout
+
+3. **Layer Navigation**
+   - View individual layers
+   - See package positions and orientations
+
+### Visualization Features
+
+- **Color Coding**: Different colors for different layers
+- **Package Representation**: 3D boxes showing package positions
+- **Coordinate System**: Visual reference for positioning
+
+## Pallet Management
+
+### UR20 Dual Palette Support
+
+For UR20 robots with dual palette capability:
+
+1. **Palette Selection**
+   - Choose active palette (1 or 2)
+   - Monitor palette empty status
+
+2. **Palette Change Request**
+   - Request palette change when needed
+   - System coordinates the change process
+
+3. **Zwischenlage (Intermediate Layer)**
+   - Configure intermediate layer placement
+   - Monitor clamping status
+
+## Database Management
+
+### Automatic Updates
+
+- Database updates automatically from USB stick
+- Pallet data is stored in SQLite database
+- Historical data is preserved
+
+### Data Filtering
+
+- Filter pallets by dimensions
+- Search for specific pallet configurations
+- View pallet history
+
+## Troubleshooting
+
+### Common Issues
+
+#### Robot Not Connecting
+
+**Symptoms**: Status shows "Connection Error" or "Robot not in remote control mode"
+
+**Solutions**:
+1. Verify robot IP address in settings
+2. Check network connectivity
+3. Ensure robot is powered on
+4. Verify robot is in remote control mode
+
+#### Scanner Warnings
+
+**Symptoms**: Scanner status shows warnings or errors
+
+**Solutions**:
+1. Check physical scanner connections
+2. Verify scanner override settings
+3. Review scanner status in robot interface
+4. Clear scanner faults if possible
+
+#### Data Not Loading
+
+**Symptoms**: "No pallet plan loaded" message
+
+**Solutions**:
+1. Verify USB stick is inserted
+2. Check file format compatibility
+3. Manually refresh database
+4. Check log files for errors
+
+#### Audio Not Working
+
+**Symptoms**: No sound notifications
+
+**Solutions**:
+1. Check audio mute status
+2. Verify system audio is enabled
+3. Check audio file paths
+4. Review audio settings
+
+### Log Files
+
+Check log files for detailed error information:
+- Location: `logs/` directory
+- Format: `multipack_parser_YYYYMMDD_HHMMSS.log`
+- Contains: Detailed operation logs and error messages
+
+### Getting Help
+
+1. **Check Logs**: Review log files for error details
+2. **Verbose Mode**: Run with `--verbose` flag for detailed output
+3. **Status Messages**: Check status bar for current system state
+4. **Documentation**: Refer to [Architecture Documentation](architecture.md) for technical details
+
+## Best Practices
+
+1. **Regular Backups**: Backup database and settings regularly
+2. **Monitor Status**: Keep an eye on robot status indicators
+3. **Update Data**: Regularly update pallet data from USB
+4. **Check Logs**: Review logs periodically for warnings
+5. **Network Stability**: Ensure stable network connection to robot
+
+## Keyboard Shortcuts
+
+- **F1**: Help (if implemented)
+- **Ctrl+Q**: Quit application
+- **Esc**: Close dialogs
+
+## Advanced Features
+
+### Experimental Page
+
+The experimental page contains advanced features:
+- Additional robot functions
+- Extended diagnostics
+- Development tools
+
+> **Warning**: Use experimental features with caution. They may not be fully tested.
+
+## Next Steps
+
+- Review the [Architecture Documentation](architecture.md) for technical details
+- Check the [API Reference](api-reference.md) for integration information
+- Refer to the [Installation Guide](installation.md) for setup questions
+

@@ -20,6 +20,16 @@ MultipackParser is a tool designed to efficiently parse and manage multi-pack fi
 - Lightweight and performant.
 - Compatible with standard Raspberry Pi distributions.
 
+## Documentation
+
+Comprehensive documentation is available in the [`docs/`](docs/) directory:
+
+- **[Documentation Index](docs/index.md)** - Overview and navigation
+- **[Installation Guide](docs/installation.md)** - Setup and installation instructions
+- **[User Guide](docs/user-guide.md)** - Complete user manual and workflows
+- **[Architecture Documentation](docs/architecture.md)** - Technical documentation for developers
+- **[API Reference](docs/api-reference.md)** - XML-RPC API function reference
+
 ## Contributing
 
 To edit the code, clone the repository and open the folder in your preferred IDE. The code is written in Python and uses the PySide6 framework for the GUI. To run the application, you will need to install the required dependencies using pip. You can do this by running the following command in the root directory of the project:
