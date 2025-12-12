@@ -355,7 +355,7 @@ def set_wordlist() -> None:
     # Configure completer
     completer.setCompletionMode(QCompleter.PopupCompletion)  # Use popup mode instead of inline completion
     completer.setCaseSensitivity(Qt.CaseInsensitive)
-    completer.setFilterMode(Qt.MatchExactly)  # Only show exact matches
+    completer.setFilterMode(Qt.MatchStartsWith)  # Show matches that start with the input
     
     # Customize the popup appearance
     popup = completer.popup()
