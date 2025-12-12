@@ -216,7 +216,8 @@ Robot Dashboard → Status Monitor → Global Variables → UI Status Display
 
 ## Communication Protocols
 
-> **⚠️ Important**: The communication protocols described below require robot-side components (UR Program and URscript) that are **not included** in this repository. These must be obtained separately and installed on the Universal Robot controller.
+> [!IMPORTANT]
+> The communication protocols described below require robot-side components (UR Program and URscript) that are **not included** in this repository. These must be obtained separately and installed on the Universal Robot controller.
 
 ### XML-RPC Server
 

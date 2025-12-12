@@ -92,7 +92,8 @@ Pallet data files should contain:
 
 ## Robot Communication
 
-> **⚠️ Prerequisites**: Before using robot communication features, ensure that:
+> [!IMPORTANT]
+> Before using robot communication features, ensure that:
 > - The required **UR Program** is installed and running on your Universal Robot controller
 > - The **URscript** code is properly configured on the robot to interact with the XML-RPC server
 > - These robot-side components are **not included** in this repository and must be obtained separately

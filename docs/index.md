@@ -58,7 +58,8 @@ Complete reference for the XML-RPC API functions available for robot communicati
 - **Dependencies**: See `requirements.txt` for complete list
 - **Hardware**: Compatible with Universal Robots UR10 and UR20
 
-> **Important**: This application requires robot-side components that are **not included** in this repository:
+> [!IMPORTANT]
+> This application requires robot-side components that are **not included** in this repository:
 > - A specific **UR Program** must be installed and running on the Universal Robot
 > - **URscript** code is required on the robot to interact with the XML-RPC server
 > - These robot-side components must be obtained separately and configured on your Universal Robot controller

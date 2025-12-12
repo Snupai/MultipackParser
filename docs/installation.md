@@ -21,13 +21,13 @@ This guide will walk you through installing and setting up MultipackParser on yo
 
 ### Robot-Side Requirements
 
-> **⚠️ Important**: MultipackParser requires robot-side components that are **not provided** in this repository:
-
-- **UR Program**: A specific Universal Robot program must be installed and running on your UR10 or UR20 controller
-- **URscript**: Scripts on the robot controller that interact with the XML-RPC server
-- These components must be obtained separately and properly configured on your robot
-
-Without these robot-side components, the application will not be able to communicate with the Universal Robot, even if MultipackParser is correctly installed.
+> [!IMPORTANT]
+> MultipackParser requires robot-side components that are **not provided** in this repository:
+> - **UR Program**: A specific Universal Robot program must be installed and running on your UR10 or UR20 controller
+> - **URscript**: Scripts on the robot controller that interact with the XML-RPC server
+> - These components must be obtained separately and properly configured on your robot
+>
+> Without these robot-side components, the application will not be able to communicate with the Universal Robot, even if MultipackParser is correctly installed.
 
 ## Installation Methods
 
@@ -85,7 +85,8 @@ For building a custom binary using Docker:
 
    The resulting binary will be placed in the `local_dist` directory.
 
-   > **Note**: The Docker build process creates an ARM64-compatible binary.
+   > [!NOTE]
+   > The Docker build process creates an ARM64-compatible binary.
 
 ## Configuration
 

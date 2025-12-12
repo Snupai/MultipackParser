@@ -6,7 +6,8 @@ This document provides a complete reference for the XML-RPC API functions availa
 
 MultipackParser exposes an XML-RPC server that allows Universal Robots to communicate with the application. The server runs on port 50000 by default and provides functions for data exchange and robot control.
 
-> **⚠️ Important**: To use this API, you must have:
+> [!IMPORTANT]
+> To use this API, you must have:
 > - A **UR Program** installed and running on your Universal Robot controller
 > - **URscript** code on the robot that calls these XML-RPC functions
 > - These robot-side components are **not included** in this repository and must be obtained separately
@@ -305,7 +306,8 @@ print("Pallet data:", data)
 
 ### UR Robot Script (URScript)
 
-> **Note**: The following is a simplified example. The actual URscript implementation must be obtained separately and is not included in this repository. The robot-side UR Program and URscript are required for the robot to communicate with MultipackParser.
+> [!NOTE]
+> The following is a simplified example. The actual URscript implementation must be obtained separately and is not included in this repository. The robot-side UR Program and URscript are required for the robot to communicate with MultipackParser.
 
 ```python
 # Example URscript structure (actual implementation must be obtained separately)
