@@ -33,7 +33,7 @@ MultipackParser follows a modular architecture with clear separation of concerns
 └───┬────┘         └──────┬─────┘
     │                     │
     │              ┌──────┴──────┐
-    │              │              │
+    │              │             │
 ┌───▼──────────┐ ┌─▼──────┐ ┌───▼────────┐
 │  Database    │ │ Robot  │ │  Server    │
 │  Layer       │ │ Control│ │  Layer     │
