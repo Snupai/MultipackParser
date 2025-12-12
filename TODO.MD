@@ -4,7 +4,10 @@
 - [ ] Palettieren fortsetzen ja nein (wenn palette nicht frei und programm abbruch mitten in lage)
   - [ ] maybe automatically continue???
 - [ ] Palette leeren wenn palettierung erfolgreich beendet wurde.
+  - [x] Manual palette clearing implemented (`clear_palette`, `check_palette_clearing_status`)
+  - [ ] Automatic clearing when palletization finishes successfully
 - [ ] rename Invert label to something more fitting (label facing op _checked by default_)
+  - Still named "Invert Label" in UI files
 
 # Ideas
 
@@ -17,12 +20,13 @@
   - [x] dimension search palettes
   - [x] loading through database
 - [ ] fix [audio.py](./utils/audio/audio.py)
-  - [ ] volume wont work
+  - [ ] volume wont work (volume control exists but may have issues)
   - [ ] after changing volume from 100 to 0 to 100 it stops playing
+  - [x] Safety status monitoring with audio signals implemented
   - [ ] add more signals (audio files) for certain alarm types
 - [ ] generate report
 - [ ] automatisch wechseln aus/an
-- [ ] palette fertig simulieren (palette ist fertig auch wenn nicht fertig)
+- [ ] palette fertig simulieren (palette ist "fertig" auch wenn nicht fertig)
 - [ ] Nur auf Palette1/2 palettieren
 
 Maybe:
