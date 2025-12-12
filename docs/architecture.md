@@ -216,9 +216,16 @@ Robot Dashboard → Status Monitor → Global Variables → UI Status Display
 
 ## Communication Protocols
 
+> **⚠️ Important**: The communication protocols described below require robot-side components (UR Program and URscript) that are **not included** in this repository. These must be obtained separately and installed on the Universal Robot controller.
+
 ### XML-RPC Server
 
 **Port**: 50000 (configurable)
+
+**Robot-Side Requirements**:
+- The robot must have a UR Program installed that includes URscript code
+- The URscript must be configured to connect to the XML-RPC server
+- The robot-side implementation is not provided in this repository
 
 **Common Functions** (all robot types):
 - `UR_SetFileName(Artikelnummer)`: Set pallet file name

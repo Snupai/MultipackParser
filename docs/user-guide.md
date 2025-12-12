@@ -92,6 +92,11 @@ Pallet data files should contain:
 
 ## Robot Communication
 
+> **⚠️ Prerequisites**: Before using robot communication features, ensure that:
+> - The required **UR Program** is installed and running on your Universal Robot controller
+> - The **URscript** code is properly configured on the robot to interact with the XML-RPC server
+> - These robot-side components are **not included** in this repository and must be obtained separately
+
 ### Connection Setup
 
 1. **Network Configuration**
@@ -101,6 +106,11 @@ Pallet data files should contain:
 2. **Robot Model Selection**
    - Configure robot model (UR10 or UR20) in settings
    - Different models have different available functions
+
+3. **Robot-Side Setup**
+   - Verify the UR Program is running on the robot controller
+   - Ensure URscript is configured to connect to the XML-RPC server (port 50000)
+   - Test connectivity before attempting operations
 
 ### Robot Status Monitoring
 
