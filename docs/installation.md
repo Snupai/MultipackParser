@@ -18,6 +18,7 @@ This guide will walk you through installing and setting up MultipackParser on yo
 - Python 3.13+
 - pip (Python package manager)
 - Git (for cloning the repository)
+- **[Multipack](https://multiscience.de/multipack-ihre-optimierungssoftware/)** (commercial optimization software from Multiscience GmbH) - Required to generate palette plan files (`.rob` format) that MultipackParser processes
 
 ### Robot-Side Requirements
 
