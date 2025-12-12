@@ -19,25 +19,20 @@ This document provides technical documentation for developers working on or inte
 
 MultipackParser follows a modular architecture with clear separation of concerns:
 
-```
-┌─────────────────────────────────────────┐
-│         Main Application                │
-│         (main.py)                       │
-└──────────────┬──────────────────────────┘
-               │
-    ┌──────────┴──────────┐
-    │                     │
-┌───▼────┐         ┌──────▼─────┐
-│   UI   │         │   Core     │
-│ Layer  │         │  Services  │
-└───┬────┘         └──────┬─────┘
-    │                     │
-    │              ┌──────┴──────┐
-    │              │             │
-┌───▼──────────┐ ┌─▼──────┐ ┌───▼────────┐
-│  Database    │ │ Robot  │ │  Server    │
-│  Layer       │ │ Control│ │  Layer     │
-└──────────────┘ └────────┘ └────────────┘
+```mermaid
+graph TD
+    A[Main Application<br/>main.py] --> B[UI Layer]
+    A --> C[Core Services]
+    B --> D[Database Layer]
+    C --> E[Robot Control]
+    C --> F[Server Layer]
+    
+    style A fill:#2563eb,stroke:#1e40af,stroke-width:2px,color:#fff
+    style B fill:#dc2626,stroke:#991b1b,stroke-width:2px,color:#fff
+    style C fill:#dc2626,stroke:#991b1b,stroke-width:2px,color:#fff
+    style D fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#fff
+    style E fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#fff
+    style F fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#fff
 ```
 
 ### Technology Stack
@@ -182,8 +177,18 @@ MultipackParser/
 
 ### System Context
 
-```
-Box Dimensions → Multipack Software → CSV/Palette Plan Files (.rob) → MultipackParser → Custom Palletizing App (UR Robot)
+```mermaid
+flowchart LR
+    A[Box Dimensions<br/>Input Parameters] --> B[Multipack Software]
+    B --> C[CSV/Palette Plan Files<br/>.rob format]
+    C --> D[MultipackParser]
+    D --> E[Custom Palletizing App<br/>UR Robot]
+    
+    style A fill:#2563eb,stroke:#1e40af,stroke-width:2px,color:#fff
+    style B fill:#dc2626,stroke:#991b1b,stroke-width:2px,color:#fff
+    style C fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#fff
+    style D fill:#ca8a04,stroke:#a16207,stroke-width:2px,color:#fff
+    style E fill:#9333ea,stroke:#7e22ce,stroke-width:2px,color:#fff
 ```
 
 MultipackParser operates in the middle of this workflow:
@@ -193,8 +198,18 @@ MultipackParser operates in the middle of this workflow:
 
 ### Pallet Data Loading
 
-```
-USB Stick → File Reading → Database Update → Global Variables → UI Display
+```mermaid
+flowchart LR
+    A[USB Stick] --> B[File Reading]
+    B --> C[Database Update]
+    C --> D[Global Variables]
+    D --> E[UI Display]
+    
+    style A fill:#2563eb,stroke:#1e40af,stroke-width:2px,color:#fff
+    style B fill:#dc2626,stroke:#991b1b,stroke-width:2px,color:#fff
+    style C fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#fff
+    style D fill:#ca8a04,stroke:#a16207,stroke-width:2px,color:#fff
+    style E fill:#9333ea,stroke:#7e22ce,stroke-width:2px,color:#fff
 ```
 
 1. **USB Detection**: Application checks USB path for palette plan files (`.rob` format)
@@ -205,8 +220,16 @@ USB Stick → File Reading → Database Update → Global Variables → UI Displ
 
 ### Robot Communication
 
-```
-Custom Palletizing App (UR Robot) ←→ XML-RPC Server ←→ Application Core ←→ UI
+```mermaid
+flowchart LR
+    A[Custom Palletizing App<br/>UR Robot] <--> B[XML-RPC Server]
+    B <--> C[Application Core]
+    C <--> D[UI]
+    
+    style A fill:#2563eb,stroke:#1e40af,stroke-width:2px,color:#fff
+    style B fill:#dc2626,stroke:#991b1b,stroke-width:2px,color:#fff
+    style C fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#fff
+    style D fill:#ca8a04,stroke:#a16207,stroke-width:2px,color:#fff
 ```
 
 1. **Robot Request**: Custom palletizing application on robot calls XML-RPC function
@@ -217,8 +240,16 @@ Custom Palletizing App (UR Robot) ←→ XML-RPC Server ←→ Application Core 
 
 ### Status Monitoring
 
-```
-Robot Dashboard → Status Monitor → Global Variables → UI Status Display
+```mermaid
+flowchart LR
+    A[Robot Dashboard] --> B[Status Monitor]
+    B --> C[Global Variables]
+    C --> D[UI Status Display]
+    
+    style A fill:#2563eb,stroke:#1e40af,stroke-width:2px,color:#fff
+    style B fill:#dc2626,stroke:#991b1b,stroke-width:2px,color:#fff
+    style C fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#fff
+    style D fill:#ca8a04,stroke:#a16207,stroke-width:2px,color:#fff
 ```
 
 1. **Polling**: Periodic status checks
