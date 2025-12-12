@@ -18,6 +18,15 @@ __license__ = '''
 
 import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
+# Force software rendering to avoid GLX/OpenGL initialization issues
+# This must be set before any Qt imports
+os.environ["QT_X11_NO_MITSHM"] = "1"  # Disable MIT-SHM extension
+os.environ["LIBGL_ALWAYS_SOFTWARE"] = "1"  # Force software rendering for OpenGL
+os.environ["QT_OPENGL"] = "software"  # Use software OpenGL implementation
+os.environ["QT_QUICK_BACKEND"] = "software"  # Force Qt Quick to use software rendering
+os.environ["QSG_RHI_BACKEND"] = "software"  # Force Qt Scene Graph to use software rendering
+# Force xcb platform with software OpenGL
+os.environ["QT_QPA_PLATFORM"] = "xcb"  # Use xcb platform (Linux)
 import sys
 import logging
 
