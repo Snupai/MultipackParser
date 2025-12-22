@@ -1,7 +1,7 @@
 # VeryImportant
 
-- [ ] Add box weight to db 
-- [ ] Add Update db function to update db box height and box weight
+- [x] Add box weight to db 
+- [x] Add Update db function to update db box height and box weight
 
 
 # Important:

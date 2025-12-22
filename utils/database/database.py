@@ -65,9 +65,16 @@ def create_database(db_path="paletten.db"):
         width INTEGER, 
         height INTEGER,
         gap INTEGER,
+        weight REAL,
         FOREIGN KEY (metadata_id) REFERENCES paletten_metadata(id) ON DELETE CASCADE
     )
     ''')
+    
+    # Add weight column if it doesn't exist (migration for existing databases)
+    try:
+        cursor.execute("ALTER TABLE paket_dim ADD COLUMN weight REAL")
+    except sqlite3.OperationalError:
+        pass  # Column already exists
     
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS lage_zuordnung (
@@ -348,10 +355,10 @@ def save_to_database(file_name, db_path="paletten.db") -> bool:
     # Save package dimensions if available
     if g_PaketDim:
         cursor.execute('''
-        INSERT INTO paket_dim (metadata_id, length, width, height, gap) 
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO paket_dim (metadata_id, length, width, height, gap, weight) 
+        VALUES (?, ?, ?, ?, ?, ?)
         ''', (metadata_id, g_PaketDim[0], g_PaketDim[1], 
-              g_PaketDim[2], g_PaketDim[3]))
+              g_PaketDim[2], g_PaketDim[3], None))
     
     # Save layer type assignments (which type is each layer)
     for i, value in enumerate(g_LageZuordnung):
@@ -501,14 +508,16 @@ def load_from_database(db_path="paletten.db", file_name=None, metadata_id=None) 
         if result:
             g_PalettenDim = list(result)
         
-        # Load package dimensions [length,width,height,gap]
+        # Load package dimensions [length,width,height,gap] and weight
         cursor.execute('''
-        SELECT length, width, height, gap FROM paket_dim 
+        SELECT length, width, height, gap, weight FROM paket_dim 
         WHERE metadata_id = ?
         ''', (metadata_id,))
         result = cursor.fetchone()
+        g_BoxWeight = None
         if result:
-            g_PaketDim = list(result)
+            g_PaketDim = list(result[:4])  # Only first 4 values for dimensions
+            g_BoxWeight = result[4] if len(result) > 4 else None
         
         # Load layer type assignments
         cursor.execute('''
@@ -544,9 +553,7 @@ def load_from_database(db_path="paletten.db", file_name=None, metadata_id=None) 
         
         conn.close()
         
-        return g_Daten, g_LageZuordnung, g_PaketPos, g_PaketeZuordnung, g_Zwischenlagen, g_paket_quer, g_CenterOfGravity, g_PalettenDim, g_PaketDim, g_LageArten, g_AnzLagen, g_AnzahlPakete
-        
-        return 0
+        return g_Daten, g_LageZuordnung, g_PaketPos, g_PaketeZuordnung, g_Zwischenlagen, g_paket_quer, g_CenterOfGravity, g_PalettenDim, g_PaketDim, g_LageArten, g_AnzLagen, g_AnzahlPakete, g_BoxWeight
     except Exception as e:
         logger.error(f"Error loading data from database: {e}")
         return 1
@@ -683,5 +690,115 @@ def find_palettplan(package_length=0, package_width=0, package_height=0, db_path
         logger.error(f"Error finding palettplan in database: {e}")
         return None
 
-# TODO: add update function which updates database when any value in ui is being changed.
-# updates Height of box as well as box weight 
+def update_box_dimensions(file_name: str, height: Optional[int] = None, weight: Optional[float] = None, db_path: str = "paletten.db") -> bool:
+    """Update box height and/or weight in the database for a specific file.
+    
+    This function should be called immediately when values change in the UI.
+    
+    Args:
+        file_name (str): Name of the .rob file to update
+        height (Optional[int]): New box height in mm, or None to keep current value
+        weight (Optional[float]): New box weight in kg, or None to keep current value
+        db_path (str): Path to the database
+        
+    Returns:
+        bool: True if update was successful, False otherwise
+    """
+    if not file_name:
+        logger.warning("Cannot update box dimensions: no file name provided")
+        return False
+    
+    # Ensure file_name ends with .rob
+    if not file_name.endswith('.rob'):
+        file_name = file_name + '.rob'
+    
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        
+        # Enable foreign key support
+        cursor.execute("PRAGMA foreign_keys = ON")
+        
+        # Find metadata_id for this file
+        cursor.execute('''
+        SELECT id FROM paletten_metadata 
+        WHERE file_name = ? OR file_name LIKE ?
+        ''', (file_name, f"%{file_name}%"))
+        result = cursor.fetchone()
+        
+        if not result:
+            logger.warning(f"File '{file_name}' not found in database, cannot update box dimensions")
+            conn.close()
+            return False
+        
+        metadata_id = result[0]
+        
+        # Build update query based on which values are provided
+        update_parts = []
+        params = []
+        
+        if height is not None:
+            update_parts.append("height = ?")
+            params.append(height)
+            
+        if weight is not None:
+            update_parts.append("weight = ?")
+            params.append(weight)
+        
+        if not update_parts:
+            logger.debug("No values to update for box dimensions")
+            conn.close()
+            return True
+        
+        params.append(metadata_id)
+        query = f"UPDATE paket_dim SET {', '.join(update_parts)} WHERE metadata_id = ?"
+        
+        cursor.execute(query, params)
+        conn.commit()
+        
+        logger.info(f"Updated box dimensions for '{file_name}': height={height}, weight={weight}")
+        conn.close()
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error updating box dimensions: {e}")
+        return False
+
+
+def get_box_weight(file_name: str, db_path: str = "paletten.db") -> Optional[float]:
+    """Get the box weight for a specific file from the database.
+    
+    Args:
+        file_name (str): Name of the .rob file
+        db_path (str): Path to the database
+        
+    Returns:
+        Optional[float]: Box weight in kg, or None if not found
+    """
+    if not file_name:
+        return None
+    
+    # Ensure file_name ends with .rob
+    if not file_name.endswith('.rob'):
+        file_name = file_name + '.rob'
+    
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+        SELECT pd.weight FROM paket_dim pd
+        JOIN paletten_metadata pm ON pd.metadata_id = pm.id
+        WHERE pm.file_name = ? OR pm.file_name LIKE ?
+        ''', (file_name, f"%{file_name}%"))
+        result = cursor.fetchone()
+        
+        conn.close()
+        
+        if result and result[0] is not None:
+            return float(result[0])
+        return None
+        
+    except Exception as e:
+        logger.error(f"Error getting box weight: {e}")
+        return None

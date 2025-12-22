@@ -242,14 +242,26 @@ def load() -> None:
             if global_vars.g_PaketDim is None:
                 logger.error("Package dimensions not initialized")
                 return
-            Volumen = (global_vars.g_PaketDim[0] * global_vars.g_PaketDim[1] * global_vars.g_PaketDim[2]) / 1E+9 # in m³
-            logger.debug(f"{Volumen=}")
-            Dichte = 1000 # Dichte von Wasser in kg/m³
-            logger.debug(f"{Dichte=}")
-            Ausnutzung = 0.4 # Empirsch ermittelter Faktor - nicht für Gasflaschen
-            logger.debug(f"{Ausnutzung=}")
-            Gewicht = round(Volumen * Dichte * Ausnutzung, 1) # Gewicht in kg
-            logger.debug(f"{Gewicht=}")
+            
+            # Try to load saved weight from database first
+            from utils.database.database import get_box_weight
+            saved_weight = get_box_weight(global_vars.FILENAME)
+            
+            if saved_weight is not None:
+                # Use saved weight from database
+                Gewicht = saved_weight
+                logger.debug(f"Loaded saved weight from database: {Gewicht}")
+            else:
+                # Calculate default weight based on volume
+                Volumen = (global_vars.g_PaketDim[0] * global_vars.g_PaketDim[1] * global_vars.g_PaketDim[2]) / 1E+9 # in m³
+                logger.debug(f"{Volumen=}")
+                Dichte = 1000 # Dichte von Wasser in kg/m³
+                logger.debug(f"{Dichte=}")
+                Ausnutzung = 0.4 # Empirsch ermittelter Faktor - nicht für Gasflaschen
+                logger.debug(f"{Ausnutzung=}")
+                Gewicht = round(Volumen * Dichte * Ausnutzung, 1) # Gewicht in kg
+                logger.debug(f"Calculated default weight: {Gewicht}")
+            
             global_vars.ui.EingabeKartonGewicht.setText(str(Gewicht))
             global_vars.ui.EingabeKartonhoehe.setText(str(global_vars.g_PaketDim[2]))
             Check_Einzelpaket_längs_greifen(global_vars.g_PaketDim[0])

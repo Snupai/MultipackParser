@@ -23,6 +23,7 @@ from utils.ui.ui_helpers import (CustomDoubleValidator, handle_scanner_status,
 from utils.robot.robot_control import (display_selected_file, load, 
                                 send_cmd_play, send_cmd_pause, send_cmd_stop, load_selected_file,
                                 send_remote_control_command)
+from utils.database.database import update_box_dimensions
 from utils.server.server import server_thread, server_stop
 # from utils.audio.audio import (spawn_play_stepback_warning_thread, kill_play_stepback_warning_thread, 
 #                         set_audio_volume, delay_warning_sound)
@@ -148,6 +149,35 @@ def connect_signal_handlers():
         load_rob_files()
     global_vars.ui.lineEditFilterHeight.textChanged.connect(update_filter_height)
     global_vars.ui.pushButtonClearFilters.clicked.connect(clear_filters)
+
+    # Connect box dimension inputs to update database immediately on change
+    def update_box_height_in_db(text_value):
+        """Update box height in database when UI value changes."""
+        if not text_value or not global_vars.FILENAME:
+            return
+        try:
+            height = int(text_value)
+            # Also update g_PaketDim if it exists
+            if global_vars.g_PaketDim and len(global_vars.g_PaketDim) > 2:
+                global_vars.g_PaketDim[2] = height
+            update_box_dimensions(global_vars.FILENAME, height=height)
+        except ValueError:
+            pass  # Invalid value, skip update
+    
+    def update_box_weight_in_db(text_value):
+        """Update box weight in database when UI value changes."""
+        if not text_value or not global_vars.FILENAME:
+            return
+        try:
+            # Handle both comma and period as decimal separator
+            weight = float(text_value.replace(',', '.'))
+            global_vars.g_MassePaket = weight
+            update_box_dimensions(global_vars.FILENAME, weight=weight)
+        except ValueError:
+            pass  # Invalid value, skip update
+    
+    global_vars.ui.EingabeKartonhoehe.textChanged.connect(update_box_height_in_db)
+    global_vars.ui.EingabeKartonGewicht.textChanged.connect(update_box_weight_in_db)
 
     # Connect all buttons
     global_vars.ui.ButtonSettings.clicked.connect(check_key_or_password)
