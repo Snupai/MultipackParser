@@ -49,7 +49,8 @@ def UR_ReadDataFromUsbStick() -> Union[Literal[0], Literal[1]]:
     
     try:
         # Load all data from database, including saved box dimensions
-        db_result = load_from_database(file_name=global_vars.FILENAME)
+        db_manager = getattr(global_vars, 'db_manager', None)
+        db_result = load_from_database(file_name=global_vars.FILENAME, db_manager=db_manager)
         
         # Unpack the result - load_from_database returns a tuple with all the data
         (global_vars.g_Daten, _, _, _, _, _, _, 

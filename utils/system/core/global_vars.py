@@ -123,3 +123,6 @@ audio_thread: Optional[threading.Thread] = None
 
 # XMLRPC Server instance
 server = None
+
+# Database manager instance
+db_manager = None

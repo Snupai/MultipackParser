@@ -6,3 +6,4 @@ matplotlib==3.7.5
 cryptography
 pygame
 requests
+psycopg2-binary>=2.9.0

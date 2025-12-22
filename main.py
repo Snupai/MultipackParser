@@ -120,6 +120,14 @@ def main():
         app.processEvents()
         
         init_settings()
+        
+        # Initialize database manager
+        progress.setValue(55)
+        loading_label.setText("Initializing database...")
+        app.processEvents()
+        from utils.system.core.app_control import init_database_manager
+        init_database_manager()
+        
         from utils.audio.audio import start_safety_monitor_thread
         start_safety_monitor_thread()
         setup_initial_app_state()

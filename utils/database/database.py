@@ -83,6 +83,22 @@ def create_database(db_path="paletten.db"):
     except sqlite3.OperationalError:
         pass  # Column already exists
     
+    # Add sync tracking columns if they don't exist (migration for existing databases)
+    try:
+        cursor.execute("ALTER TABLE paletten_metadata ADD COLUMN sync_status TEXT")
+    except sqlite3.OperationalError:
+        pass  # Column already exists
+    
+    try:
+        cursor.execute("ALTER TABLE paletten_metadata ADD COLUMN sync_timestamp REAL")
+    except sqlite3.OperationalError:
+        pass  # Column already exists
+    
+    try:
+        cursor.execute("ALTER TABLE paletten_metadata ADD COLUMN last_modified REAL")
+    except sqlite3.OperationalError:
+        pass  # Column already exists
+    
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS lage_zuordnung (
         id INTEGER PRIMARY KEY,
@@ -136,6 +152,137 @@ def create_database(db_path="paletten.db"):
     
     conn.commit()
     conn.close()
+
+def create_remote_database(db_manager):
+    """Create PostgreSQL database schema if it doesn't exist.
+    
+    Args:
+        db_manager: HybridDatabaseManager instance
+    """
+    if not db_manager or not db_manager.is_online():
+        return
+    
+    try:
+        conn = db_manager.remote_pool.getconn()
+        cursor = conn.cursor()
+        
+        # Create paletten_metadata table with PostgreSQL syntax
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS paletten_metadata (
+            id SERIAL PRIMARY KEY,
+            paket_quer INTEGER,
+            center_of_gravity_x DOUBLE PRECISION,
+            center_of_gravity_y DOUBLE PRECISION,
+            center_of_gravity_z DOUBLE PRECISION,
+            lage_arten INTEGER,
+            anz_lagen INTEGER,
+            anzahl_pakete INTEGER,
+            file_timestamp DOUBLE PRECISION,
+            file_name TEXT,
+            sync_status VARCHAR(20) DEFAULT 'synced',
+            sync_timestamp DOUBLE PRECISION,
+            last_modified DOUBLE PRECISION DEFAULT EXTRACT(EPOCH FROM NOW()),
+            UNIQUE(file_name)
+        )
+        ''')
+        
+        # Create index on file_name
+        cursor.execute('''
+        CREATE INDEX IF NOT EXISTS idx_file_name ON paletten_metadata(file_name)
+        ''')
+        
+        # Create other tables with PostgreSQL syntax
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS daten (
+            id SERIAL PRIMARY KEY,
+            metadata_id INTEGER,
+            row_index INTEGER,
+            col_index INTEGER,
+            value INTEGER,
+            FOREIGN KEY (metadata_id) REFERENCES paletten_metadata(id) ON DELETE CASCADE
+        )
+        ''')
+        
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS paletten_dim (
+            id SERIAL PRIMARY KEY,
+            metadata_id INTEGER,
+            length INTEGER,
+            width INTEGER, 
+            height INTEGER,
+            FOREIGN KEY (metadata_id) REFERENCES paletten_metadata(id) ON DELETE CASCADE
+        )
+        ''')
+        
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS paket_dim (
+            id SERIAL PRIMARY KEY,
+            metadata_id INTEGER,
+            length INTEGER,
+            width INTEGER, 
+            height INTEGER,
+            gap INTEGER,
+            weight DOUBLE PRECISION,
+            einzelpaket_laengs INTEGER,
+            FOREIGN KEY (metadata_id) REFERENCES paletten_metadata(id) ON DELETE CASCADE
+        )
+        ''')
+        
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS lage_zuordnung (
+            id SERIAL PRIMARY KEY,
+            metadata_id INTEGER,
+            lage_index INTEGER,
+            value INTEGER,
+            FOREIGN KEY (metadata_id) REFERENCES paletten_metadata(id) ON DELETE CASCADE
+        )
+        ''')
+        
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS zwischenlagen (
+            id SERIAL PRIMARY KEY,
+            metadata_id INTEGER,
+            lage_index INTEGER,
+            value INTEGER,
+            FOREIGN KEY (metadata_id) REFERENCES paletten_metadata(id) ON DELETE CASCADE
+        )
+        ''')
+        
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS pakete_zuordnung (
+            id SERIAL PRIMARY KEY,
+            metadata_id INTEGER,
+            lage_index INTEGER,
+            value INTEGER,
+            FOREIGN KEY (metadata_id) REFERENCES paletten_metadata(id) ON DELETE CASCADE
+        )
+        ''')
+        
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS paket_pos (
+            id SERIAL PRIMARY KEY,
+            metadata_id INTEGER,
+            paket_index INTEGER,
+            xp INTEGER,
+            yp INTEGER,
+            ap INTEGER,
+            xd INTEGER,
+            yd INTEGER,
+            ad INTEGER,
+            nop INTEGER,
+            xvec INTEGER,
+            yvec INTEGER,
+            FOREIGN KEY (metadata_id) REFERENCES paletten_metadata(id) ON DELETE CASCADE
+        )
+        ''')
+        
+        conn.commit()
+        db_manager.return_connection(conn, 'remote')
+        logger.info("Remote database schema created/verified")
+    except Exception as e:
+        logger.error(f"Error creating remote database schema: {e}")
+        if conn:
+            db_manager.return_connection(conn, 'remote')
 
 def UR_ReadDataFromUsbStick(filename: str, path_usb_stick: str) -> Union[Literal[0], Literal[1]]:
     """Read data from a .rob file on the USB stick and parse it into global variables.
@@ -269,17 +416,25 @@ def UR_ReadDataFromUsbStick(filename: str, path_usb_stick: str) -> Union[Literal
         logger.error(f"Error reading file {filename}: {e}")
         return None, None, None, None, None, None, None, None, None, None, None, None, None, None
 
-def save_to_database(file_name, db_path="paletten.db") -> bool:
+def save_to_database(file_name, db_path="paletten.db", db_manager=None) -> bool:
     """Save all global data to the database.
     
     Args:
-        db_path (str): Path to the database
-        file_path (str): Path to the source .rob file that was parsed
-        file_timestamp (float): Timestamp of when the source file was last modified
+        file_name (str): Name of the file to save
+        db_path (str): Path to the database (deprecated if db_manager provided)
+        db_manager: Optional HybridDatabaseManager instance for hybrid sync
         
     Returns:
         bool: True if data was saved, False if skipped due to older timestamp
     """
+    # Use db_manager if provided, otherwise use legacy SQLite-only mode
+    if db_manager:
+        return _save_with_sync(file_name, db_manager)
+    else:
+        return _save_sqlite_only(file_name, db_path)
+
+def _save_sqlite_only(file_name, db_path="paletten.db") -> bool:
+    """Legacy SQLite-only save function."""
     # Create database tables if they don't exist
     create_database(db_path)
     logger.info(f"Handling file: {file_name}")
@@ -400,17 +555,327 @@ def save_to_database(file_name, db_path="paletten.db") -> bool:
     conn.close()
     return True
 
-def load_from_database(db_path="paletten.db", file_name=None, metadata_id=None) -> Union[Literal[0], Literal[1]]:
+def _save_with_sync(file_name: str, db_manager) -> bool:
+    """Save to database with sync support (offline-first approach).
+    
+    Args:
+        file_name: Name of the file to save
+        db_manager: HybridDatabaseManager instance
+        
+    Returns:
+        bool: True if saved successfully
+    """
+    logger.info(f"Handling file: {file_name}")
+    _, file_timestamp, g_Daten, g_LageZuordnung, g_PaketPos, g_PaketeZuordnung, g_Zwischenlagen, g_paket_quer, g_CenterOfGravity, g_PalettenDim, g_PaketDim, g_LageArten, g_AnzLagen, g_AnzahlPakete = UR_ReadDataFromUsbStick(file_name, global_vars.PATH_USB_STICK)
+    
+    # If parsing failed, skip updating the database
+    if (
+        file_timestamp is None or
+        g_Daten is None or len(g_Daten) == 0 or
+        g_LageZuordnung is None or g_PaketPos is None or
+        g_PaketeZuordnung is None or g_Zwischenlagen is None or
+        g_PalettenDim is None or g_PaketDim is None
+    ):
+        logger.error(f"Skipping database update for '{file_name}' due to parse failure or missing data")
+        return False
+    
+    # Always save to local first (offline-first)
+    local_conn = sqlite3.connect(db_manager.local_db_path)
+    local_cursor = local_conn.cursor()
+    local_cursor.execute("PRAGMA foreign_keys = ON")
+    
+    # Check if exists
+    local_cursor.execute('''
+        SELECT id, file_timestamp, sync_status FROM paletten_metadata 
+        WHERE file_name = ?
+    ''', (file_name,))
+    existing = local_cursor.fetchone()
+    
+    sync_status = 'pending'  # New or modified, needs sync
+    if existing:
+        existing_id, existing_ts, existing_sync = existing
+        if existing_ts and file_timestamp and existing_ts >= file_timestamp:
+            local_conn.close()
+            return False  # No update needed
+        sync_status = 'modified'
+        # Delete existing data
+        local_cursor.execute("DELETE FROM paletten_metadata WHERE id = ?", (existing_id,))
+    
+    current_time = time.time()
+    
+    # Insert main metadata record
+    local_cursor.execute('''
+    INSERT INTO paletten_metadata (
+        paket_quer, center_of_gravity_x, center_of_gravity_y, center_of_gravity_z, 
+        lage_arten, anz_lagen, anzahl_pakete, file_timestamp, file_name,
+        sync_status, sync_timestamp, last_modified
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (g_paket_quer, g_CenterOfGravity[0], g_CenterOfGravity[1], 
+          g_CenterOfGravity[2], g_LageArten, g_AnzLagen, 
+          g_AnzahlPakete, file_timestamp, file_name,
+          sync_status, None, current_time))
+    
+    metadata_id = local_cursor.lastrowid
+    
+    # Save all related data (same as _save_sqlite_only)
+    for i, row in enumerate(g_Daten):
+        for j, value in enumerate(row):
+            local_cursor.execute('''
+            INSERT INTO daten (metadata_id, row_index, col_index, value) 
+            VALUES (?, ?, ?, ?)
+            ''', (metadata_id, i, j, value))
+    
+    if g_PalettenDim:
+        local_cursor.execute('''
+        INSERT INTO paletten_dim (metadata_id, length, width, height) 
+        VALUES (?, ?, ?, ?)
+        ''', (metadata_id, g_PalettenDim[0], g_PalettenDim[1], g_PalettenDim[2]))
+    
+    if g_PaketDim:
+        local_cursor.execute('''
+        INSERT INTO paket_dim (metadata_id, length, width, height, gap, weight) 
+        VALUES (?, ?, ?, ?, ?, ?)
+        ''', (metadata_id, g_PaketDim[0], g_PaketDim[1], 
+              g_PaketDim[2], g_PaketDim[3], None))
+    
+    for i, value in enumerate(g_LageZuordnung):
+        local_cursor.execute('''
+        INSERT INTO lage_zuordnung (metadata_id, lage_index, value) 
+        VALUES (?, ?, ?)
+        ''', (metadata_id, i, value))
+    
+    for i, value in enumerate(g_Zwischenlagen):
+        local_cursor.execute('''
+        INSERT INTO zwischenlagen (metadata_id, lage_index, value) 
+        VALUES (?, ?, ?)
+        ''', (metadata_id, i, value))
+    
+    for i, value in enumerate(g_PaketeZuordnung):
+        local_cursor.execute('''
+        INSERT INTO pakete_zuordnung (metadata_id, lage_index, value) 
+        VALUES (?, ?, ?)
+        ''', (metadata_id, i, value))
+    
+    for i, pos in enumerate(g_PaketPos):
+        local_cursor.execute('''
+        INSERT INTO paket_pos (metadata_id, paket_index, xp, yp, ap, xd, yd, ad, nop, xvec, yvec) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (metadata_id, i, pos[0], pos[1], pos[2], pos[3], pos[4], pos[5], pos[6], pos[7], pos[8]))
+    
+    local_conn.commit()
+    local_conn.close()
+    
+    # Try to save to remote immediately if online
+    if db_manager.is_online():
+        try:
+            _save_to_remote(db_manager, file_name, file_timestamp, 
+                          g_Daten, g_LageZuordnung, g_PaketPos, 
+                          g_PaketeZuordnung, g_Zwischenlagen, 
+                          g_paket_quer, g_CenterOfGravity, 
+                          g_PalettenDim, g_PaketDim, 
+                          g_LageArten, g_AnzLagen, g_AnzahlPakete)
+            
+            # Mark as synced
+            local_conn = sqlite3.connect(db_manager.local_db_path)
+            local_cursor = local_conn.cursor()
+            local_cursor.execute('''
+                UPDATE paletten_metadata 
+                SET sync_status = 'synced', sync_timestamp = ?
+                WHERE file_name = ?
+            ''', (time.time(), file_name))
+            local_conn.commit()
+            local_conn.close()
+            logger.info(f"Saved and synced file: {file_name}")
+        except Exception as e:
+            logger.warning(f"Failed to save to remote, will sync later: {e}")
+            logger.info(f"Saved file: {file_name} to local database (pending sync)")
+    else:
+        logger.info(f"Saved file: {file_name} to local database (offline)")
+    
+    return True
+
+def _save_to_remote(db_manager, file_name: str, file_timestamp: float, 
+                   g_Daten, g_LageZuordnung, g_PaketPos, 
+                   g_PaketeZuordnung, g_Zwischenlagen,
+                   g_paket_quer, g_CenterOfGravity, g_PalettenDim,
+                   g_PaketDim, g_LageArten, g_AnzLagen, g_AnzahlPakete):
+    """Save data to remote PostgreSQL database."""
+    if not db_manager.is_online():
+        return
+    
+    # Ensure remote schema exists
+    create_remote_database(db_manager)
+    
+    remote_conn = db_manager.remote_pool.getconn()
+    try:
+        remote_cursor = remote_conn.cursor()
+        
+        # Check if exists
+        remote_cursor.execute('''
+            SELECT id, file_timestamp FROM paletten_metadata 
+            WHERE file_name = %s
+        ''', (file_name,))
+        existing = remote_cursor.fetchone()
+        
+        if existing:
+            existing_id, existing_ts = existing
+            if existing_ts and file_timestamp and existing_ts >= file_timestamp:
+                # Remote is newer, skip
+                return
+            # Delete existing
+            remote_cursor.execute("DELETE FROM paletten_metadata WHERE id = %s", (existing_id,))
+        
+        # Insert metadata with PostgreSQL syntax
+        remote_cursor.execute('''
+            INSERT INTO paletten_metadata (
+                paket_quer, center_of_gravity_x, center_of_gravity_y,
+                center_of_gravity_z, lage_arten, anz_lagen, anzahl_pakete,
+                file_timestamp, file_name, sync_status, last_modified
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'synced', EXTRACT(EPOCH FROM NOW()))
+            RETURNING id
+        ''', (g_paket_quer, g_CenterOfGravity[0], g_CenterOfGravity[1],
+              g_CenterOfGravity[2], g_LageArten, g_AnzLagen,
+              g_AnzahlPakete, file_timestamp, file_name))
+        
+        remote_metadata_id = remote_cursor.fetchone()[0]
+        
+        # Save related data
+        for i, row in enumerate(g_Daten):
+            for j, value in enumerate(row):
+                remote_cursor.execute('''
+                INSERT INTO daten (metadata_id, row_index, col_index, value) 
+                VALUES (%s, %s, %s, %s)
+                ''', (remote_metadata_id, i, j, value))
+        
+        if g_PalettenDim:
+            remote_cursor.execute('''
+            INSERT INTO paletten_dim (metadata_id, length, width, height) 
+            VALUES (%s, %s, %s, %s)
+            ''', (remote_metadata_id, g_PalettenDim[0], g_PalettenDim[1], g_PalettenDim[2]))
+        
+        if g_PaketDim:
+            remote_cursor.execute('''
+            INSERT INTO paket_dim (metadata_id, length, width, height, gap, weight) 
+            VALUES (%s, %s, %s, %s, %s, %s)
+            ''', (remote_metadata_id, g_PaketDim[0], g_PaketDim[1], 
+                  g_PaketDim[2], g_PaketDim[3], None))
+        
+        for i, value in enumerate(g_LageZuordnung):
+            remote_cursor.execute('''
+            INSERT INTO lage_zuordnung (metadata_id, lage_index, value) 
+            VALUES (%s, %s, %s)
+            ''', (remote_metadata_id, i, value))
+        
+        for i, value in enumerate(g_Zwischenlagen):
+            remote_cursor.execute('''
+            INSERT INTO zwischenlagen (metadata_id, lage_index, value) 
+            VALUES (%s, %s, %s)
+            ''', (remote_metadata_id, i, value))
+        
+        for i, value in enumerate(g_PaketeZuordnung):
+            remote_cursor.execute('''
+            INSERT INTO pakete_zuordnung (metadata_id, lage_index, value) 
+            VALUES (%s, %s, %s)
+            ''', (remote_metadata_id, i, value))
+        
+        for i, pos in enumerate(g_PaketPos):
+            remote_cursor.execute('''
+            INSERT INTO paket_pos (metadata_id, paket_index, xp, yp, ap, xd, yd, ad, nop, xvec, yvec) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ''', (remote_metadata_id, i, pos[0], pos[1], pos[2], pos[3], pos[4], pos[5], pos[6], pos[7], pos[8]))
+        
+        remote_conn.commit()
+    except Exception as e:
+        remote_conn.rollback()
+        raise e
+    finally:
+        db_manager.return_connection(remote_conn, 'remote')
+    for i, row in enumerate(g_Daten):
+        for j, value in enumerate(row):
+            cursor.execute('''
+            INSERT INTO daten (metadata_id, row_index, col_index, value) 
+            VALUES (?, ?, ?, ?)
+            ''', (metadata_id, i, j, value))
+    
+    # Save pallet dimensions if available
+    if g_PalettenDim:
+        cursor.execute('''
+        INSERT INTO paletten_dim (metadata_id, length, width, height) 
+        VALUES (?, ?, ?, ?)
+        ''', (metadata_id, g_PalettenDim[0], g_PalettenDim[1], 
+              g_PalettenDim[2]))
+    
+    # Save package dimensions if available
+    if g_PaketDim:
+        cursor.execute('''
+        INSERT INTO paket_dim (metadata_id, length, width, height, gap, weight) 
+        VALUES (?, ?, ?, ?, ?, ?)
+        ''', (metadata_id, g_PaketDim[0], g_PaketDim[1], 
+              g_PaketDim[2], g_PaketDim[3], None))
+    
+    # Save layer type assignments (which type is each layer)
+    for i, value in enumerate(g_LageZuordnung):
+        cursor.execute('''
+        INSERT INTO lage_zuordnung (metadata_id, lage_index, value) 
+        VALUES (?, ?, ?)
+        ''', (metadata_id, i, value))
+    
+    # Save intermediate layer flags (whether each layer has separator)
+    for i, value in enumerate(g_Zwischenlagen):
+        cursor.execute('''
+        INSERT INTO zwischenlagen (metadata_id, lage_index, value) 
+        VALUES (?, ?, ?)
+        ''', (metadata_id, i, value))
+    
+    # Save number of packages per layer type
+    for i, value in enumerate(g_PaketeZuordnung):
+        cursor.execute('''
+        INSERT INTO pakete_zuordnung (metadata_id, lage_index, value) 
+        VALUES (?, ?, ?)
+        ''', (metadata_id, i, value))
+    
+    # Save package positions with pick/place coordinates and angles
+    for i, pos in enumerate(g_PaketPos):
+        cursor.execute('''
+        INSERT INTO paket_pos (metadata_id, paket_index, xp, yp, ap, xd, yd, ad, nop, xvec, yvec) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (metadata_id, i, pos[0], pos[1], pos[2], pos[3], pos[4], pos[5], pos[6], pos[7], pos[8]))
+    
+    logger.info(f"Saved file: {file_name} to database")
+    conn.commit()
+    conn.close()
+    return True
+
+def load_from_database(db_path="paletten.db", file_name=None, metadata_id=None, db_manager=None) -> Union[Literal[0], Literal[1]]:
     """Load all data from the database to global variables.
     
     Args:
-        db_path (str): Path to the database
+        db_path (str): Path to the database (deprecated if db_manager provided)
         file_name (str, optional): Specific .rob filename to load. If None, loads the most recent entry.
         metadata_id (int, optional): Specific metadata ID to load. Takes precedence over file_name.
+        db_manager: Optional HybridDatabaseManager instance for hybrid sync
         
     Returns:
         Union[Literal[0], Literal[1]]: 0 if successful, 1 otherwise.
     """
+    # Use db_manager if provided, otherwise use legacy SQLite-only mode
+    if db_manager:
+        # Try remote first if online, fallback to local
+        if db_manager.is_online():
+            try:
+                result = _load_from_remote(db_manager, file_name, metadata_id)
+                if result != 1:  # Success
+                    return result
+            except Exception as e:
+                logger.warning(f"Failed to load from remote, using local: {e}")
+        
+        # Fallback to local
+        return _load_from_local(db_manager.local_db_path, file_name, metadata_id)
+    else:
+        return _load_from_local(db_path, file_name, metadata_id)
+
+def _load_from_local(db_path, file_name=None, metadata_id=None):
+    """Load from local SQLite database."""
     try:
         # Initialize all globals to empty/default values
         g_Daten = []                  # 2D array containing all data from .rob file
@@ -565,6 +1030,230 @@ def load_from_database(db_path="paletten.db", file_name=None, metadata_id=None) 
         logger.error(f"Error loading data from database: {e}")
         return 1
 
+def _load_from_remote(db_manager, file_name=None, metadata_id=None):
+    """Load from remote PostgreSQL database."""
+    try:
+        remote_conn = db_manager.remote_pool.getconn()
+        remote_cursor = remote_conn.cursor()
+        
+        # Find metadata entry
+        if metadata_id is not None:
+            remote_cursor.execute('''
+            SELECT id, paket_quer, center_of_gravity_x, center_of_gravity_y, center_of_gravity_z, 
+                   lage_arten, anz_lagen, anzahl_pakete, file_timestamp, file_name 
+            FROM paletten_metadata 
+            WHERE id = %s
+            ''', (metadata_id,))
+            result = remote_cursor.fetchone()
+            if not result:
+                db_manager.return_connection(remote_conn, 'remote')
+                return 1
+        elif file_name:
+            remote_cursor.execute('''
+            SELECT id, paket_quer, center_of_gravity_x, center_of_gravity_y, center_of_gravity_z, 
+                   lage_arten, anz_lagen, anzahl_pakete, file_timestamp, file_name 
+            FROM paletten_metadata 
+            WHERE file_name LIKE %s
+            ''', (f"%{file_name}%",))
+            result = remote_cursor.fetchone()
+            if not result:
+                db_manager.return_connection(remote_conn, 'remote')
+                return 1
+        else:
+            remote_cursor.execute('''
+            SELECT id, paket_quer, center_of_gravity_x, center_of_gravity_y, center_of_gravity_z, 
+                   lage_arten, anz_lagen, anzahl_pakete, file_timestamp, file_name 
+            FROM paletten_metadata 
+            ORDER BY file_timestamp DESC
+            LIMIT 1
+            ''')
+            result = remote_cursor.fetchone()
+            if not result:
+                db_manager.return_connection(remote_conn, 'remote')
+                return 1
+        
+        metadata_id = result[0]
+        g_paket_quer = result[1]
+        g_CenterOfGravity = [result[2], result[3], result[4]]
+        g_LageArten = result[5]
+        g_AnzLagen = result[6]
+        g_AnzahlPakete = result[7]
+        file_timestamp = result[8]
+        file_name = result[9]
+        
+        # Load g_Daten
+        remote_cursor.execute('''
+        SELECT row_index, col_index, value FROM daten 
+        WHERE metadata_id = %s
+        ORDER BY row_index, col_index
+        ''', (metadata_id,))
+        results = remote_cursor.fetchall()
+        
+        g_Daten = []
+        max_row = max([r[0] for r in results]) if results else -1
+        for i in range(max_row + 1):
+            g_Daten.append([])
+        
+        for row_idx, col_idx, value in results:
+            while len(g_Daten[row_idx]) <= col_idx:
+                g_Daten[row_idx].append(0)
+            g_Daten[row_idx][col_idx] = value
+        
+        # Load other data (similar to _load_from_local but with %s placeholders)
+        remote_cursor.execute('''
+        SELECT length, width, height FROM paletten_dim 
+        WHERE metadata_id = %s
+        ''', (metadata_id,))
+        result = remote_cursor.fetchone()
+        g_PalettenDim = list(result) if result else []
+        
+        remote_cursor.execute('''
+        SELECT length, width, height, gap, weight FROM paket_dim 
+        WHERE metadata_id = %s
+        ''', (metadata_id,))
+        result = remote_cursor.fetchone()
+        g_BoxWeight = None
+        if result:
+            g_PaketDim = list(result[:4])
+            g_BoxWeight = result[4] if len(result) > 4 else None
+        else:
+            g_PaketDim = []
+        
+        remote_cursor.execute('''
+        SELECT value FROM lage_zuordnung
+        WHERE metadata_id = %s
+        ORDER BY lage_index
+        ''', (metadata_id,))
+        g_LageZuordnung = [r[0] for r in remote_cursor.fetchall()]
+        
+        remote_cursor.execute('''
+        SELECT value FROM zwischenlagen
+        WHERE metadata_id = %s
+        ORDER BY lage_index
+        ''', (metadata_id,))
+        g_Zwischenlagen = [r[0] for r in remote_cursor.fetchall()]
+        
+        remote_cursor.execute('''
+        SELECT value FROM pakete_zuordnung
+        WHERE metadata_id = %s
+        ORDER BY lage_index
+        ''', (metadata_id,))
+        g_PaketeZuordnung = [r[0] for r in remote_cursor.fetchall()]
+        
+        remote_cursor.execute('''
+        SELECT xp, yp, ap, xd, yd, ad, nop, xvec, yvec FROM paket_pos
+        WHERE metadata_id = %s
+        ORDER BY paket_index
+        ''', (metadata_id,))
+        g_PaketPos = [list(r) for r in remote_cursor.fetchall()]
+        
+        db_manager.return_connection(remote_conn, 'remote')
+        
+        return g_Daten, g_LageZuordnung, g_PaketPos, g_PaketeZuordnung, g_Zwischenlagen, g_paket_quer, g_CenterOfGravity, g_PalettenDim, g_PaketDim, g_LageArten, g_AnzLagen, g_AnzahlPakete, g_BoxWeight
+    except Exception as e:
+        logger.error(f"Error loading data from remote database: {e}")
+        return 1
+
+def sync_local_to_remote(db_manager) -> bool:
+    """Sync all local pending changes to remote database.
+    
+    Args:
+        db_manager: HybridDatabaseManager instance
+        
+    Returns:
+        bool: True if sync was successful
+    """
+    if not db_manager.is_online():
+        return False
+    
+    with db_manager.sync_lock:
+        try:
+            local_conn = sqlite3.connect(db_manager.local_db_path)
+            local_cursor = local_conn.cursor()
+            
+            # Get all pending sync items
+            local_cursor.execute('''
+                SELECT id, file_name, file_timestamp, sync_status, sync_timestamp
+                FROM paletten_metadata
+                WHERE sync_status IN ('pending', 'modified') OR sync_status IS NULL
+                ORDER BY file_timestamp DESC
+            ''')
+            
+            pending_items = local_cursor.fetchall()
+            local_conn.close()
+            
+            if not pending_items:
+                return True
+            
+            logger.info(f"Syncing {len(pending_items)} items to remote database")
+            
+            # Sync each item by re-saving it (which will sync to remote)
+            synced_count = 0
+            for item in pending_items:
+                local_metadata_id, file_name, file_timestamp, sync_status, sync_timestamp = item
+                try:
+                    # Re-parse and save to trigger sync
+                    # This is a simplified approach - in production you might want to
+                    # directly copy the data instead of re-parsing
+                    if file_name:
+                        # Mark as syncing to prevent duplicate syncs
+                        local_conn = sqlite3.connect(db_manager.local_db_path)
+                        local_cursor = local_conn.cursor()
+                        local_cursor.execute('''
+                            UPDATE paletten_metadata 
+                            SET sync_status = 'syncing'
+                            WHERE id = ?
+                        ''', (local_metadata_id,))
+                        local_conn.commit()
+                        local_conn.close()
+                        
+                        # Re-save will trigger remote sync
+                        from utils.database.database import save_to_database
+                        if save_to_database(file_name, db_manager=db_manager):
+                            synced_count += 1
+                except Exception as e:
+                    logger.error(f"Error syncing item {file_name}: {e}")
+            
+            logger.info(f"Synced {synced_count}/{len(pending_items)} items successfully")
+            db_manager.last_sync_time = time.time()
+            return True
+        except Exception as e:
+            logger.error(f"Error during sync: {e}")
+            return False
+
+def get_sync_status(db_manager) -> Dict[str, Any]:
+    """Get sync status information.
+    
+    Args:
+        db_manager: HybridDatabaseManager instance
+        
+    Returns:
+        dict with sync status information
+    """
+    if not db_manager:
+        return {"online": False, "pending_count": 0}
+    
+    try:
+        local_conn = sqlite3.connect(db_manager.local_db_path)
+        local_cursor = local_conn.cursor()
+        
+        local_cursor.execute('''
+            SELECT COUNT(*) FROM paletten_metadata
+            WHERE sync_status IN ('pending', 'modified') OR sync_status IS NULL
+        ''')
+        pending_count = local_cursor.fetchone()[0]
+        
+        local_conn.close()
+        
+        return {
+            "online": db_manager.is_online(),
+            "pending_count": pending_count,
+            "last_sync": db_manager.last_sync_time
+        }
+    except Exception as e:
+        logger.error(f"Error getting sync status: {e}")
+        return {"online": False, "pending_count": 0}
+
 def list_available_files(db_path="paletten.db") -> List[Dict[str, Any]]:
     """List all .rob files stored in the database.
     
@@ -698,7 +1387,8 @@ def find_palettplan(package_length=0, package_width=0, package_height=0, db_path
         return None
 
 def update_box_dimensions(file_name: str, height: Optional[int] = None, weight: Optional[float] = None, 
-                          einzelpaket_laengs: Optional[bool] = None, db_path: str = "paletten.db") -> bool:
+                          einzelpaket_laengs: Optional[bool] = None, db_path: str = "paletten.db", 
+                          db_manager=None) -> bool:
     """Update box height, weight, and/or einzelpaket_laengs setting in the database for a specific file.
     
     This function should be called immediately when values change in the UI.
@@ -708,7 +1398,8 @@ def update_box_dimensions(file_name: str, height: Optional[int] = None, weight: 
         height (Optional[int]): New box height in mm, or None to keep current value
         weight (Optional[float]): New box weight in kg, or None to keep current value
         einzelpaket_laengs (Optional[bool]): Single package lengthwise setting, or None to keep current value
-        db_path (str): Path to the database
+        db_path (str): Path to the database (deprecated if db_manager provided)
+        db_manager: Optional HybridDatabaseManager instance
         
     Returns:
         bool: True if update was successful, False otherwise
@@ -721,8 +1412,14 @@ def update_box_dimensions(file_name: str, height: Optional[int] = None, weight: 
     if not file_name.endswith('.rob'):
         file_name = file_name + '.rob'
     
+    # Use db_manager if provided
+    if db_manager:
+        local_db_path = db_manager.local_db_path
+    else:
+        local_db_path = db_path
+    
     try:
-        conn = sqlite3.connect(db_path)
+        conn = sqlite3.connect(local_db_path)
         cursor = conn.cursor()
         
         # Enable foreign key support
@@ -767,10 +1464,27 @@ def update_box_dimensions(file_name: str, height: Optional[int] = None, weight: 
         query = f"UPDATE paket_dim SET {', '.join(update_parts)} WHERE metadata_id = ?"
         
         cursor.execute(query, params)
+        
+        # Mark metadata as modified for sync
+        if db_manager:
+            cursor.execute('''
+                UPDATE paletten_metadata 
+                SET sync_status = 'modified', last_modified = ?
+                WHERE id = ?
+            ''', (time.time(), metadata_id))
+        
         conn.commit()
+        conn.close()
         
         logger.info(f"Updated box dimensions for '{file_name}': height={height}, weight={weight}, einzelpaket_laengs={einzelpaket_laengs}")
-        conn.close()
+        
+        # Try to sync immediately if online
+        if db_manager and db_manager.is_online():
+            try:
+                db_manager.sync_now()
+            except Exception as e:
+                logger.warning(f"Failed to sync after box dimension update: {e}")
+        
         return True
         
     except Exception as e:

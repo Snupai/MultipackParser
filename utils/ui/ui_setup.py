@@ -160,7 +160,8 @@ def connect_signal_handlers():
             # Also update g_PaketDim if it exists
             if global_vars.g_PaketDim and len(global_vars.g_PaketDim) > 2:
                 global_vars.g_PaketDim[2] = height
-            update_box_dimensions(global_vars.FILENAME, height=height)
+            db_manager = getattr(global_vars, 'db_manager', None)
+            update_box_dimensions(global_vars.FILENAME, height=height, db_manager=db_manager)
         except ValueError:
             pass  # Invalid value, skip update
     
@@ -172,7 +173,8 @@ def connect_signal_handlers():
             # Handle both comma and period as decimal separator
             weight = float(text_value.replace(',', '.'))
             global_vars.g_MassePaket = weight
-            update_box_dimensions(global_vars.FILENAME, weight=weight)
+            db_manager = getattr(global_vars, 'db_manager', None)
+            update_box_dimensions(global_vars.FILENAME, weight=weight, db_manager=db_manager)
         except ValueError:
             pass  # Invalid value, skip update
     
@@ -184,7 +186,8 @@ def connect_signal_handlers():
         if not global_vars.FILENAME:
             return
         is_checked = state == 2  # Qt.Checked = 2
-        update_box_dimensions(global_vars.FILENAME, einzelpaket_laengs=is_checked)
+        db_manager = getattr(global_vars, 'db_manager', None)
+        update_box_dimensions(global_vars.FILENAME, einzelpaket_laengs=is_checked, db_manager=db_manager)
     
     global_vars.ui.checkBoxEinzelpaket.stateChanged.connect(update_einzelpaket_in_db)
 

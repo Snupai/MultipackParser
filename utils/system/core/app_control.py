@@ -76,6 +76,13 @@ def exit_app():
     if hasattr(global_vars, 'server') and global_vars.server:
         server_stop()
     
+    # Close database manager if it exists
+    if hasattr(global_vars, 'db_manager') and global_vars.db_manager:
+        try:
+            global_vars.db_manager.close()
+        except Exception as e:
+            logger.error(f"Error closing database manager: {e}")
+    
     # Stop any running audio threads
     if hasattr(global_vars, 'audio_thread_running') and global_vars.audio_thread_running:
         # from utils.audio.audio import kill_play_stepback_warning_thread
@@ -91,6 +98,37 @@ def init_settings():
     global_vars.settings = settings
     global_vars.PATH_USB_STICK = settings.settings['admin']['path']
     logger.debug(f"Settings initialized: {settings}")
+
+def init_database_manager():
+    """Initialize the hybrid database manager.
+    """
+    try:
+        from utils.database.db_manager import HybridDatabaseManager
+        
+        db_config = global_vars.settings.settings.get('database', {})
+        
+        if db_config.get('enabled', False):
+            remote_config = {
+                'enabled': True,
+                'host': db_config.get('host', 'localhost'),
+                'port': db_config.get('port', 5432),
+                'database': db_config.get('database', 'multipack_parser'),
+                'user': db_config.get('user', 'multipack_user'),
+                'password': db_config.get('password', '')
+            }
+            logger.info("Initializing hybrid database manager with remote database")
+        else:
+            remote_config = None
+            logger.info("Initializing database manager (local only)")
+        
+        global_vars.db_manager = HybridDatabaseManager(
+            local_db_path="paletten.db",
+            remote_config=remote_config
+        )
+        logger.debug("Database manager initialized")
+    except Exception as e:
+        logger.error(f"Failed to initialize database manager: {e}")
+        global_vars.db_manager = None
 
 def exception_handler(exc_type, exc_value, exc_traceback):
     """Global exception handler to log unhandled exceptions

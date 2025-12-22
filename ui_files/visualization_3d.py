@@ -126,7 +126,8 @@ from typing import Tuple
 def parse_rob_file(file_path) -> Tuple[Pallet, int]:
     
     start_time = time.time()
-    lines, *_ = load_from_database(file_name=file_path)
+    db_manager = getattr(global_vars, 'db_manager', None)
+    lines, *_ = load_from_database(file_name=file_path, db_manager=db_manager)
     pallet_length, pallet_width = lines[0][0:2]
     package_width, package_length, package_height, einlauf_richtung = lines[1][0:4]
     if einlauf_richtung == 1:

@@ -414,7 +414,8 @@ def update_database_from_usb() -> None:
             if should_update:
                 logger.info(f"Processing file: {file}")
                 try:
-                    saved = save_to_database(file)
+                    db_manager = getattr(global_vars, 'db_manager', None)
+                    saved = save_to_database(file, db_manager=db_manager)
                     if saved:
                         updated_files.append(file)
                     else:

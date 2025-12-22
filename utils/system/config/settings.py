@@ -54,6 +54,14 @@ class Settings:
                 "number_of_plans": 0,
                 "number_of_use_cycles": 0,
                 "last_restart": "Never"
+            },
+            "database": {
+                "enabled": False,
+                "host": "localhost",
+                "port": 5432,
+                "database": "multipack_parser",
+                "user": "multipack_user",
+                "password": ""
             }
         }
         
