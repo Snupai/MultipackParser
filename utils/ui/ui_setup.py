@@ -179,6 +179,15 @@ def connect_signal_handlers():
     global_vars.ui.EingabeKartonhoehe.textChanged.connect(update_box_height_in_db)
     global_vars.ui.EingabeKartonGewicht.textChanged.connect(update_box_weight_in_db)
 
+    def update_einzelpaket_in_db(state):
+        """Update einzelpaket_laengs setting in database when checkbox state changes."""
+        if not global_vars.FILENAME:
+            return
+        is_checked = state == 2  # Qt.Checked = 2
+        update_box_dimensions(global_vars.FILENAME, einzelpaket_laengs=is_checked)
+    
+    global_vars.ui.checkBoxEinzelpaket.stateChanged.connect(update_einzelpaket_in_db)
+
     # Connect all buttons
     global_vars.ui.ButtonSettings.clicked.connect(check_key_or_password)
     global_vars.ui.LadePallettenplan.clicked.connect(load)

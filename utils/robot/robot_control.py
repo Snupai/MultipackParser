@@ -268,7 +268,18 @@ def load() -> None:
             
             global_vars.ui.EingabeKartonGewicht.setText(str(Gewicht))
             global_vars.ui.EingabeKartonhoehe.setText(str(box_height))
-            Check_Einzelpaket_längs_greifen(global_vars.g_PaketDim[0])
+            
+            # Load saved einzelpaket_laengs setting, or use auto-check if not saved
+            from utils.database.database import get_einzelpaket_laengs
+            saved_einzelpaket = get_einzelpaket_laengs(global_vars.FILENAME)
+            
+            if saved_einzelpaket is not None:
+                # Use saved setting
+                global_vars.ui.checkBoxEinzelpaket.setChecked(saved_einzelpaket)
+                logger.debug(f"Loaded saved einzelpaket_laengs: {saved_einzelpaket}")
+            else:
+                # No saved setting, use auto-check based on package length
+                Check_Einzelpaket_längs_greifen(global_vars.g_PaketDim[0])
     global_vars.ui.ButtonOpenParameterRoboter.setEnabled(interface_enabled)
     global_vars.ui.ButtonDatenSenden.setEnabled(interface_enabled)
     global_vars.ui.EingabeKartonGewicht.setEnabled(interface_enabled)

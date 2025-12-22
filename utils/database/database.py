@@ -66,6 +66,7 @@ def create_database(db_path="paletten.db"):
         height INTEGER,
         gap INTEGER,
         weight REAL,
+        einzelpaket_laengs INTEGER,
         FOREIGN KEY (metadata_id) REFERENCES paletten_metadata(id) ON DELETE CASCADE
     )
     ''')
@@ -73,6 +74,12 @@ def create_database(db_path="paletten.db"):
     # Add weight column if it doesn't exist (migration for existing databases)
     try:
         cursor.execute("ALTER TABLE paket_dim ADD COLUMN weight REAL")
+    except sqlite3.OperationalError:
+        pass  # Column already exists
+    
+    # Add einzelpaket_laengs column if it doesn't exist (migration for existing databases)
+    try:
+        cursor.execute("ALTER TABLE paket_dim ADD COLUMN einzelpaket_laengs INTEGER")
     except sqlite3.OperationalError:
         pass  # Column already exists
     
@@ -690,8 +697,9 @@ def find_palettplan(package_length=0, package_width=0, package_height=0, db_path
         logger.error(f"Error finding palettplan in database: {e}")
         return None
 
-def update_box_dimensions(file_name: str, height: Optional[int] = None, weight: Optional[float] = None, db_path: str = "paletten.db") -> bool:
-    """Update box height and/or weight in the database for a specific file.
+def update_box_dimensions(file_name: str, height: Optional[int] = None, weight: Optional[float] = None, 
+                          einzelpaket_laengs: Optional[bool] = None, db_path: str = "paletten.db") -> bool:
+    """Update box height, weight, and/or einzelpaket_laengs setting in the database for a specific file.
     
     This function should be called immediately when values change in the UI.
     
@@ -699,6 +707,7 @@ def update_box_dimensions(file_name: str, height: Optional[int] = None, weight: 
         file_name (str): Name of the .rob file to update
         height (Optional[int]): New box height in mm, or None to keep current value
         weight (Optional[float]): New box weight in kg, or None to keep current value
+        einzelpaket_laengs (Optional[bool]): Single package lengthwise setting, or None to keep current value
         db_path (str): Path to the database
         
     Returns:
@@ -745,6 +754,10 @@ def update_box_dimensions(file_name: str, height: Optional[int] = None, weight: 
             update_parts.append("weight = ?")
             params.append(weight)
         
+        if einzelpaket_laengs is not None:
+            update_parts.append("einzelpaket_laengs = ?")
+            params.append(1 if einzelpaket_laengs else 0)
+        
         if not update_parts:
             logger.debug("No values to update for box dimensions")
             conn.close()
@@ -756,7 +769,7 @@ def update_box_dimensions(file_name: str, height: Optional[int] = None, weight: 
         cursor.execute(query, params)
         conn.commit()
         
-        logger.info(f"Updated box dimensions for '{file_name}': height={height}, weight={weight}")
+        logger.info(f"Updated box dimensions for '{file_name}': height={height}, weight={weight}, einzelpaket_laengs={einzelpaket_laengs}")
         conn.close()
         return True
         
@@ -840,4 +853,43 @@ def get_box_height(file_name: str, db_path: str = "paletten.db") -> Optional[int
         
     except Exception as e:
         logger.error(f"Error getting box height: {e}")
+        return None
+
+
+def get_einzelpaket_laengs(file_name: str, db_path: str = "paletten.db") -> Optional[bool]:
+    """Get the einzelpaket_laengs (single package lengthwise) setting for a specific file.
+    
+    Args:
+        file_name (str): Name of the .rob file
+        db_path (str): Path to the database
+        
+    Returns:
+        Optional[bool]: True if checked, False if unchecked, None if not saved yet
+    """
+    if not file_name:
+        return None
+    
+    # Ensure file_name ends with .rob
+    if not file_name.endswith('.rob'):
+        file_name = file_name + '.rob'
+    
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+        SELECT pd.einzelpaket_laengs FROM paket_dim pd
+        JOIN paletten_metadata pm ON pd.metadata_id = pm.id
+        WHERE pm.file_name = ? OR pm.file_name LIKE ?
+        ''', (file_name, f"%{file_name}%"))
+        result = cursor.fetchone()
+        
+        conn.close()
+        
+        if result and result[0] is not None:
+            return bool(result[0])
+        return None
+        
+    except Exception as e:
+        logger.error(f"Error getting einzelpaket_laengs: {e}")
         return None
