@@ -682,3 +682,6 @@ def find_palettplan(package_length=0, package_width=0, package_height=0, db_path
     except Exception as e:
         logger.error(f"Error finding palettplan in database: {e}")
         return None
+
+# TODO: add update function which updates database when any value in ui is being changed.
+# updates Height of box as well as box weight 
