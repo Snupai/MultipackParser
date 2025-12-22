@@ -802,3 +802,42 @@ def get_box_weight(file_name: str, db_path: str = "paletten.db") -> Optional[flo
     except Exception as e:
         logger.error(f"Error getting box weight: {e}")
         return None
+
+
+def get_box_height(file_name: str, db_path: str = "paletten.db") -> Optional[int]:
+    """Get the box height for a specific file from the database.
+    
+    Args:
+        file_name (str): Name of the .rob file
+        db_path (str): Path to the database
+        
+    Returns:
+        Optional[int]: Box height in mm, or None if not found
+    """
+    if not file_name:
+        return None
+    
+    # Ensure file_name ends with .rob
+    if not file_name.endswith('.rob'):
+        file_name = file_name + '.rob'
+    
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+        SELECT pd.height FROM paket_dim pd
+        JOIN paletten_metadata pm ON pd.metadata_id = pm.id
+        WHERE pm.file_name = ? OR pm.file_name LIKE ?
+        ''', (file_name, f"%{file_name}%"))
+        result = cursor.fetchone()
+        
+        conn.close()
+        
+        if result and result[0] is not None:
+            return int(result[0])
+        return None
+        
+    except Exception as e:
+        logger.error(f"Error getting box height: {e}")
+        return None

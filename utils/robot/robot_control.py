@@ -243,6 +243,10 @@ def load() -> None:
                 logger.error("Package dimensions not initialized")
                 return
             
+            # Box height is already loaded from database by UR_ReadDataFromUsbStick()
+            box_height = global_vars.g_PaketDim[2]
+            logger.debug(f"Using box height: {box_height}")
+            
             # Try to load saved weight from database first
             from utils.database.database import get_box_weight
             saved_weight = get_box_weight(global_vars.FILENAME)
@@ -253,7 +257,7 @@ def load() -> None:
                 logger.debug(f"Loaded saved weight from database: {Gewicht}")
             else:
                 # Calculate default weight based on volume
-                Volumen = (global_vars.g_PaketDim[0] * global_vars.g_PaketDim[1] * global_vars.g_PaketDim[2]) / 1E+9 # in m³
+                Volumen = (global_vars.g_PaketDim[0] * global_vars.g_PaketDim[1] * box_height) / 1E+9 # in m³
                 logger.debug(f"{Volumen=}")
                 Dichte = 1000 # Dichte von Wasser in kg/m³
                 logger.debug(f"{Dichte=}")
@@ -263,7 +267,7 @@ def load() -> None:
                 logger.debug(f"Calculated default weight: {Gewicht}")
             
             global_vars.ui.EingabeKartonGewicht.setText(str(Gewicht))
-            global_vars.ui.EingabeKartonhoehe.setText(str(global_vars.g_PaketDim[2]))
+            global_vars.ui.EingabeKartonhoehe.setText(str(box_height))
             Check_Einzelpaket_längs_greifen(global_vars.g_PaketDim[0])
     global_vars.ui.ButtonOpenParameterRoboter.setEnabled(interface_enabled)
     global_vars.ui.ButtonDatenSenden.setEnabled(interface_enabled)

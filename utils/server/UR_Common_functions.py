@@ -48,20 +48,31 @@ def UR_ReadDataFromUsbStick() -> Union[Literal[0], Literal[1]]:
     logger.debug(f"Trying to read file {global_vars.FILENAME}")
     
     try:
-        global_vars.g_Daten, *_ = load_from_database(file_name=global_vars.FILENAME)
-    
-    
-        pl = global_vars.g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_LENGTH]
-        pw = global_vars.g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_WIDTH]
-        ph = global_vars.g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_HEIGHT]
-        global_vars.g_PalettenDim = [pl, pw, ph]
+        # Load all data from database, including saved box dimensions
+        db_result = load_from_database(file_name=global_vars.FILENAME)
         
-        #Kartondaten
-        pl = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_LENGTH]
-        pw = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_WIDTH]
-        ph = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_HEIGHT]
-        pr = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_GAP]
-        global_vars.g_PaketDim = [pl, pw, ph, pr]
+        # Unpack the result - load_from_database returns a tuple with all the data
+        (global_vars.g_Daten, _, _, _, _, _, _, 
+         g_PalettenDim_db, g_PaketDim_db, _, _, _, _) = db_result
+    
+        # Use palette dimensions from database
+        if g_PalettenDim_db:
+            global_vars.g_PalettenDim = g_PalettenDim_db
+        else:
+            pl = global_vars.g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_LENGTH]
+            pw = global_vars.g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_WIDTH]
+            ph = global_vars.g_Daten[global_vars.LI_PALETTE_DATA][global_vars.LI_PALETTE_DATA_HEIGHT]
+            global_vars.g_PalettenDim = [pl, pw, ph]
+        
+        # Use package dimensions from database (includes saved height!)
+        if g_PaketDim_db:
+            global_vars.g_PaketDim = g_PaketDim_db
+        else:
+            pl = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_LENGTH]
+            pw = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_WIDTH]
+            ph = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_HEIGHT]
+            pr = global_vars.g_Daten[global_vars.LI_PACKAGE_DATA][global_vars.LI_PACKAGE_DATA_GAP]
+            global_vars.g_PaketDim = [pl, pw, ph, pr]
 
         #Lagearten
         global_vars.g_LageArten = global_vars.g_Daten[global_vars.LI_LAYERTYPES][0]
