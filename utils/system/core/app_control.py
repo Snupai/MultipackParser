@@ -103,7 +103,20 @@ def init_database_manager():
     """Initialize the hybrid database manager.
     """
     try:
+        import sys
+        import os
         from utils.database.db_manager import HybridDatabaseManager
+        
+        # Resolve paletten.db path relative to executable directory (same as logging)
+        if getattr(sys, 'frozen', False):
+            # Running as compiled executable
+            base_path = os.path.dirname(sys.executable)
+        else:
+            # Running as script
+            base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        
+        local_db_path = os.path.join(base_path, "paletten.db")
+        logger.debug("Database path resolved to: %s", local_db_path)
         
         db_config = global_vars.settings.settings.get('database', {})
         
@@ -122,7 +135,7 @@ def init_database_manager():
             logger.info("Initializing database manager (local only)")
         
         global_vars.db_manager = HybridDatabaseManager(
-            local_db_path="paletten.db",
+            local_db_path=local_db_path,
             remote_config=remote_config
         )
         logger.debug("Database manager initialized")

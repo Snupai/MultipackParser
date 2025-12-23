@@ -1171,9 +1171,23 @@ def sync_local_to_remote(db_manager) -> bool:
         remote_conn = None
         try:
             # Open local connection
+            logger.debug("Sync: Opening local database at %s", db_manager.local_db_path)
             local_conn = sqlite3.connect(db_manager.local_db_path)
             local_cursor = local_conn.cursor()
             local_cursor.execute("PRAGMA foreign_keys = ON")
+
+            # Debug: Check total count and sync_status distribution
+            local_cursor.execute("SELECT COUNT(*) FROM paletten_metadata")
+            total_count = local_cursor.fetchone()[0]
+            logger.debug("Sync: Total rows in paletten_metadata: %s", total_count)
+            
+            local_cursor.execute("""
+                SELECT sync_status, COUNT(*) 
+                FROM paletten_metadata 
+                GROUP BY sync_status
+            """)
+            status_counts = local_cursor.fetchall()
+            logger.debug("Sync: sync_status distribution: %s", dict(status_counts))
 
             # Fetch all metadata rows that need syncing
             local_cursor.execute("""
@@ -1183,6 +1197,8 @@ def sync_local_to_remote(db_manager) -> bool:
                 ORDER BY file_timestamp DESC
             """)
             pending_items = local_cursor.fetchall()
+            logger.debug("Sync: Query returned %s pending items", len(pending_items))
+            
             if not pending_items:
                 logger.info("Sync: No pending items to sync to remote database")
                 return True
