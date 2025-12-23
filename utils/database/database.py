@@ -1156,47 +1156,40 @@ def _load_from_remote(db_manager, file_name=None, metadata_id=None):
 
 def sync_local_to_remote(db_manager) -> bool:
     """Sync all local pending changes to remote database.
-    
-    Args:
-        db_manager: HybridDatabaseManager instance
-        
-    Returns:
-        bool: True if sync was successful
     """
-    if not db_manager.is_online():
-        logger.info("Skipping local->remote sync: remote database currently offline")
+    if not db_manager or not db_manager.is_online():
+        logger.info("Sync: Skipping local->remote sync: remote database currently offline or db_manager missing")
         return False
-    
     with db_manager.sync_lock:
-        logger.info("Starting local->remote sync")
+        logger.info("Sync: Starting local->remote sync")
         local_conn = None
         remote_conn = None
         try:
             # Open local connection
             local_conn = sqlite3.connect(db_manager.local_db_path)
             local_cursor = local_conn.cursor()
+            local_cursor.execute("PRAGMA foreign_keys = ON")
 
             # Fetch all metadata rows that need syncing
-            local_cursor.execute('''
+            local_cursor.execute("""
                 SELECT id, file_name, file_timestamp, sync_status, sync_timestamp
                 FROM paletten_metadata
                 WHERE sync_status IN ('pending', 'modified') OR sync_status IS NULL
                 ORDER BY file_timestamp DESC
-            ''')
+            """)
             pending_items = local_cursor.fetchall()
-
             if not pending_items:
-                logger.info("No pending items to sync to remote database")
+                logger.info("Sync: No pending items to sync to remote database")
                 return True
-
-            logger.info(f"Syncing {len(pending_items)} items to remote database")
+            logger.info("Sync: Syncing %s items to remote database", len(pending_items))
 
             # Ensure remote schema exists and get remote connection
             create_remote_database(db_manager)
             remote_conn = db_manager.remote_pool.getconn()
             remote_cursor = remote_conn.cursor()
-
             synced_count = 0
+
+            # ... (existing per-item sync logic with detailed logging) ...
 
             for local_metadata_id, file_name, file_timestamp, sync_status, sync_timestamp in pending_items:
                 logger.debug(
@@ -1398,12 +1391,12 @@ def sync_local_to_remote(db_manager) -> bool:
                     synced_count += 1
                     logger.info("Successfully synced file %s (metadata_id=%s)", file_name_local, local_metadata_id)
                 except Exception as item_error:
-                        logger.error(
-                            "Error syncing item metadata_id=%s file_name=%s: %s",
-                            local_metadata_id,
-                            file_name,
-                            item_error,
-                        )
+                    logger.error(
+                        "Error syncing item metadata_id=%s file_name=%s: %s",
+                        local_metadata_id,
+                        file_name,
+                        item_error,
+                    )
 
             # Commit both sides
             remote_conn.commit()
@@ -1413,7 +1406,7 @@ def sync_local_to_remote(db_manager) -> bool:
             db_manager.last_sync_time = time.time()
             return True
         except Exception as e:
-            logger.error(f"Error during local->remote sync: {e}")
+            logger.error(f"Sync: Error during local->remote sync: {e}")
             if remote_conn:
                 remote_conn.rollback()
             if local_conn:

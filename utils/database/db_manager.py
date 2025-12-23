@@ -78,11 +78,17 @@ class HybridDatabaseManager:
     def _init_remote_db(self):
         """Initialize remote PostgreSQL connection pool."""
         if not PSYCOPG2_AVAILABLE:
-            logger.warning("psycopg2 not available, cannot initialize remote database")
+            logger.warning("HybridDatabaseManager: psycopg2 not available, cannot initialize remote database")
             return
-        
         try:
             self.connection_status = ConnectionStatus.CONNECTING
+            logger.info(
+                "HybridDatabaseManager: Connecting to remote DB host=%s port=%s db=%s user=%s",
+                self.remote_config.get('host', 'localhost'),
+                self.remote_config.get('port', 5432),
+                self.remote_config.get('database', 'multipack_parser'),
+                self.remote_config.get('user', 'postgres'),
+            )
             self.remote_pool = pool.ThreadedConnectionPool(
                 1, 10,
                 host=self.remote_config.get('host', 'localhost'),
@@ -90,36 +96,30 @@ class HybridDatabaseManager:
                 database=self.remote_config.get('database', 'multipack_parser'),
                 user=self.remote_config.get('user', 'postgres'),
                 password=self.remote_config.get('password', ''),
-                connect_timeout=5  # 5 second timeout
+                connect_timeout=5,
             )
             # Test connection
             conn = self.remote_pool.getconn()
+            cur = conn.cursor()
+            cur.execute("SELECT 1")
+            cur.close()
             conn.close()
             self.remote_pool.putconn(conn)
             self.connection_status = ConnectionStatus.ONLINE
-            logger.info("Remote database connection established")
-            
+            logger.info("HybridDatabaseManager: Remote database connection established")
             # Create remote schema if it doesn't exist
-            try:
-                from utils.database.database import create_remote_database
-                create_remote_database(self)
-            except Exception as e:
-                logger.warning(f"Failed to create remote schema: {e}")
+            from utils.database.database import create_remote_database
+            create_remote_database(self)
+            logger.info("HybridDatabaseManager: Remote database schema created/verified")
         except Exception as e:
             self.connection_status = ConnectionStatus.OFFLINE
-            logger.warning(f"Remote database unavailable, using local only: {e}")
+            logger.warning(f"HybridDatabaseManager: Remote database unavailable, using local only: {e}")
             self.remote_pool = None
     
     def _check_remote_connection(self) -> bool:
-        """Check if remote database is accessible.
-        
-        Returns:
-            True if connection is available, False otherwise
-        """
+        """Check if remote database is accessible."""
         if not self.remote_pool or not PSYCOPG2_AVAILABLE:
-            # Remote not configured or psycopg2 missing
             return False
-        
         try:
             conn = self.remote_pool.getconn()
             cursor = conn.cursor()
@@ -127,15 +127,13 @@ class HybridDatabaseManager:
             cursor.close()
             self.remote_pool.putconn(conn)
             if self.connection_status != ConnectionStatus.ONLINE:
-                logger.info("Remote database connection restored")
+                logger.info("HybridDatabaseManager: Remote database connection restored")
             self.connection_status = ConnectionStatus.ONLINE
-            logger.debug("Remote connection health check OK")
             return True
         except Exception as e:
             if self.connection_status == ConnectionStatus.ONLINE:
-                logger.warning(f"Remote database connection lost: {e}")
+                logger.warning(f"HybridDatabaseManager: Remote database connection lost: {e}")
             self.connection_status = ConnectionStatus.OFFLINE
-            logger.debug("Remote connection health check FAILED")
             return False
     
     def get_connection(self, prefer_remote: bool = True) -> Tuple:
@@ -182,32 +180,23 @@ class HybridDatabaseManager:
         """Start background thread for syncing changes."""
         if self.sync_running:
             return
-        logger.info(
-            "Starting sync thread (remote enabled=%s, psycopg2_available=%s)",
-            bool(self.remote_config and self.remote_config.get('enabled', False)),
-            PSYCOPG2_AVAILABLE,
-        )
         self.sync_running = True
         self.sync_thread = threading.Thread(target=self._sync_worker, daemon=True)
         self.sync_thread.start()
-        logger.info("Sync thread started")
+        logger.info("HybridDatabaseManager: Sync thread started")
     
     def _sync_worker(self):
         """Background worker that periodically syncs local changes to remote."""
         while self.sync_running:
             try:
-                logger.debug("Sync worker tick - sleeping before next check")
-                time.sleep(30)  # Check every 30 seconds
-                logger.debug("Sync worker awake - checking remote connection")
+                time.sleep(30)
+                logger.debug("HybridDatabaseManager: Sync tick")
                 if self._check_remote_connection():
-                    logger.info("Starting periodic sync to remote database")
-                    # Import here to avoid circular imports
                     from utils.database.database import sync_local_to_remote
+                    logger.info("HybridDatabaseManager: Starting periodic sync to remote")
                     sync_local_to_remote(self)
-                else:
-                    logger.debug("Skipping periodic sync - remote currently offline")
             except Exception as e:
-                logger.error(f"Error in sync worker: {e}")
+                logger.error(f"HybridDatabaseManager: Error in sync worker: {e}")
     
     def sync_now(self) -> bool:
         """Attempt immediate sync of pending changes.
