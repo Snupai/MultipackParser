@@ -7,7 +7,12 @@ from typing import Union, List, Dict, Any, Optional, Tuple, Literal
 
 from utils.system.core import global_vars
 
-logger = logging.getLogger(__name__)
+# Prefer the central application logger so sync-related messages appear
+# in the main "multipack_parser" log stream.
+try:
+    logger = global_vars.logger
+except Exception:  # Fallback for early imports or test contexts
+    logger = logging.getLogger(__name__)
 
 def create_database(db_path="paletten.db"):
     """Create the database and tables if they don't exist."""
