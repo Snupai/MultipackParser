@@ -117,6 +117,7 @@ class HybridDatabaseManager:
             True if connection is available, False otherwise
         """
         if not self.remote_pool or not PSYCOPG2_AVAILABLE:
+            # Remote not configured or psycopg2 missing
             return False
         
         try:
@@ -128,11 +129,13 @@ class HybridDatabaseManager:
             if self.connection_status != ConnectionStatus.ONLINE:
                 logger.info("Remote database connection restored")
             self.connection_status = ConnectionStatus.ONLINE
+            logger.debug("Remote connection health check OK")
             return True
         except Exception as e:
             if self.connection_status == ConnectionStatus.ONLINE:
                 logger.warning(f"Remote database connection lost: {e}")
             self.connection_status = ConnectionStatus.OFFLINE
+            logger.debug("Remote connection health check FAILED")
             return False
     
     def get_connection(self, prefer_remote: bool = True) -> Tuple:
@@ -179,6 +182,11 @@ class HybridDatabaseManager:
         """Start background thread for syncing changes."""
         if self.sync_running:
             return
+        logger.info(
+            "Starting sync thread (remote enabled=%s, psycopg2_available=%s)",
+            bool(self.remote_config and self.remote_config.get('enabled', False)),
+            PSYCOPG2_AVAILABLE,
+        )
         self.sync_running = True
         self.sync_thread = threading.Thread(target=self._sync_worker, daemon=True)
         self.sync_thread.start()
@@ -188,11 +196,16 @@ class HybridDatabaseManager:
         """Background worker that periodically syncs local changes to remote."""
         while self.sync_running:
             try:
+                logger.debug("Sync worker tick - sleeping before next check")
                 time.sleep(30)  # Check every 30 seconds
+                logger.debug("Sync worker awake - checking remote connection")
                 if self._check_remote_connection():
+                    logger.info("Starting periodic sync to remote database")
                     # Import here to avoid circular imports
                     from utils.database.database import sync_local_to_remote
                     sync_local_to_remote(self)
+                else:
+                    logger.debug("Skipping periodic sync - remote currently offline")
             except Exception as e:
                 logger.error(f"Error in sync worker: {e}")
     

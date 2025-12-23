@@ -1164,62 +1164,518 @@ def sync_local_to_remote(db_manager) -> bool:
         bool: True if sync was successful
     """
     if not db_manager.is_online():
+        logger.info("Skipping local->remote sync: remote database currently offline")
         return False
     
     with db_manager.sync_lock:
+        logger.info("Starting local->remote sync")
+        local_conn = None
+        remote_conn = None
         try:
+            # Open local connection
             local_conn = sqlite3.connect(db_manager.local_db_path)
             local_cursor = local_conn.cursor()
-            
-            # Get all pending sync items
+
+            # Fetch all metadata rows that need syncing
             local_cursor.execute('''
                 SELECT id, file_name, file_timestamp, sync_status, sync_timestamp
                 FROM paletten_metadata
                 WHERE sync_status IN ('pending', 'modified') OR sync_status IS NULL
                 ORDER BY file_timestamp DESC
             ''')
-            
             pending_items = local_cursor.fetchall()
-            local_conn.close()
-            
+
             if not pending_items:
+                logger.info("No pending items to sync to remote database")
                 return True
-            
+
             logger.info(f"Syncing {len(pending_items)} items to remote database")
-            
-            # Sync each item by re-saving it (which will sync to remote)
+
+            # Ensure remote schema exists and get remote connection
+            create_remote_database(db_manager)
+            remote_conn = db_manager.remote_pool.getconn()
+            remote_cursor = remote_conn.cursor()
+
             synced_count = 0
-            for item in pending_items:
-                local_metadata_id, file_name, file_timestamp, sync_status, sync_timestamp = item
+
+            for local_metadata_id, file_name, file_timestamp, sync_status, sync_timestamp in pending_items:
+                logger.debug(
+                    "Syncing metadata_id=%s file_name=%s status=%s",
+                    local_metadata_id,
+                    file_name,
+                    sync_status,
+                )
                 try:
-                    # Re-parse and save to trigger sync
-                    # This is a simplified approach - in production you might want to
-                    # directly copy the data instead of re-parsing
-                    if file_name:
-                        # Mark as syncing to prevent duplicate syncs
-                        local_conn = sqlite3.connect(db_manager.local_db_path)
-                        local_cursor = local_conn.cursor()
-                        local_cursor.execute('''
-                            UPDATE paletten_metadata 
-                            SET sync_status = 'syncing'
-                            WHERE id = ?
-                        ''', (local_metadata_id,))
-                        local_conn.commit()
-                        local_conn.close()
-                        
-                        # Re-save will trigger remote sync
-                        from utils.database.database import save_to_database
-                        if save_to_database(file_name, db_manager=db_manager):
-                            synced_count += 1
-                except Exception as e:
-                    logger.error(f"Error syncing item {file_name}: {e}")
-            
-            logger.info(f"Synced {synced_count}/{len(pending_items)} items successfully")
+                    # Load full dataset for this metadata_id from local SQLite
+                    # 1) Paletten metadata
+                    local_cursor.execute('''
+                        SELECT paket_quer, center_of_gravity_x, center_of_gravity_y,
+                               center_of_gravity_z, lage_arten, anz_lagen, anzahl_pakete,
+                               file_timestamp, file_name, last_modified
+                        FROM paletten_metadata
+                        WHERE id = ?
+                    ''', (local_metadata_id,))
+                    meta_row = local_cursor.fetchone()
+                    if not meta_row:
+                        logger.warning(f"Skipping metadata_id={local_metadata_id}: not found in local DB")
+                        continue
+
+                    (paket_quer, cog_x, cog_y, cog_z,
+                     lage_arten, anz_lagen, anzahl_pakete,
+                     file_ts, file_name_local, last_modified) = meta_row
+
+                    # 2) Raw daten rows
+                    local_cursor.execute('''
+                        SELECT row_index, col_index, value
+                        FROM daten
+                        WHERE metadata_id = ?
+                        ORDER BY row_index, col_index
+                    ''', (local_metadata_id,))
+                    daten_rows = local_cursor.fetchall()
+
+                    # 3) paletten_dim
+                    local_cursor.execute('''
+                        SELECT length, width, height
+                        FROM paletten_dim
+                        WHERE metadata_id = ?
+                    ''', (local_metadata_id,))
+                    paletten_dim_row = local_cursor.fetchone()
+
+                    # 4) paket_dim
+                    local_cursor.execute('''
+                        SELECT length, width, height, gap, weight, einzelpaket_laengs
+                        FROM paket_dim
+                        WHERE metadata_id = ?
+                    ''', (local_metadata_id,))
+                    paket_dim_row = local_cursor.fetchone()
+
+                    # 5) lage_zuordnung
+                    local_cursor.execute('''
+                        SELECT lage_index, value
+                        FROM lage_zuordnung
+                        WHERE metadata_id = ?
+                        ORDER BY lage_index
+                    ''', (local_metadata_id,))
+                    lage_zuordnung_rows = local_cursor.fetchall()
+
+                    # 6) zwischenlagen
+                    local_cursor.execute('''
+                        SELECT lage_index, value
+                        FROM zwischenlagen
+                        WHERE metadata_id = ?
+                        ORDER BY lage_index
+                    ''', (local_metadata_id,))
+                    zwischenlagen_rows = local_cursor.fetchall()
+
+                    # 7) pakete_zuordnung
+                    local_cursor.execute('''
+                        SELECT lage_index, value
+                        FROM pakete_zuordnung
+                        WHERE metadata_id = ?
+                        ORDER BY lage_index
+                    ''', (local_metadata_id,))
+                    pakete_zuordnung_rows = local_cursor.fetchall()
+
+                    # 8) paket_pos
+                    local_cursor.execute('''
+                        SELECT paket_index, xp, yp, ap, xd, yd, ad, nop, xvec, yvec
+                        FROM paket_pos
+                        WHERE metadata_id = ?
+                        ORDER BY paket_index
+                    ''', (local_metadata_id,))
+                    paket_pos_rows = local_cursor.fetchall()
+
+                    # Upsert into remote:
+                    # First check if remote already has this file_name and if it is newer
+                    remote_cursor.execute('''
+                        SELECT id, file_timestamp
+                        FROM paletten_metadata
+                        WHERE file_name = %s
+                    ''', (file_name_local,))
+                    existing_remote = remote_cursor.fetchone()
+
+                    if existing_remote:
+                        remote_id, remote_ts = existing_remote
+                        if remote_ts is not None and file_ts is not None and remote_ts >= file_ts:
+                            logger.info(
+                                "Skipping sync for file %s: remote is newer or same age",
+                                file_name_local,
+                            )
+                            continue
+                        # Delete existing remote record (CASCADE will clear children)
+                        remote_cursor.execute(
+                            "DELETE FROM paletten_metadata WHERE id = %s",
+                            (remote_id,),
+                        )
+
+                    # Insert metadata in remote
+                    remote_cursor.execute('''
+                        INSERT INTO paletten_metadata (
+                            paket_quer, center_of_gravity_x, center_of_gravity_y,
+                            center_of_gravity_z, lage_arten, anz_lagen, anzahl_pakete,
+                            file_timestamp, file_name, sync_status, sync_timestamp, last_modified
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s,
+                                  'synced', EXTRACT(EPOCH FROM NOW()), %s)
+                        RETURNING id
+                    ''', (
+                        paket_quer, cog_x, cog_y, cog_z,
+                        lage_arten, anz_lagen, anzahl_pakete,
+                        file_ts, file_name_local, last_modified or time.time(),
+                    ))
+                    remote_metadata_id = remote_cursor.fetchone()[0]
+
+                    # Insert daten rows
+                    for row_index, col_index, value in daten_rows:
+                        remote_cursor.execute('''
+                            INSERT INTO daten (metadata_id, row_index, col_index, value)
+                            VALUES (%s, %s, %s, %s)
+                        ''', (remote_metadata_id, row_index, col_index, value))
+
+                    # Insert paletten_dim
+                    if paletten_dim_row:
+                        length, width, height = paletten_dim_row
+                        remote_cursor.execute('''
+                            INSERT INTO paletten_dim (metadata_id, length, width, height)
+                            VALUES (%s, %s, %s, %s)
+                        ''', (remote_metadata_id, length, width, height))
+
+                    # Insert paket_dim
+                    if paket_dim_row:
+                        length, width, height, gap, weight, einzelpaket_laengs = paket_dim_row
+                        remote_cursor.execute('''
+                            INSERT INTO paket_dim (
+                                metadata_id, length, width, height, gap, weight, einzelpaket_laengs
+                            )
+                            VALUES (%s, %s, %s, %s, %s, %s, %s)
+                        ''', (
+                            remote_metadata_id, length, width, height, gap, weight, einzelpaket_laengs,
+                        ))
+
+                    # Insert lage_zuordnung
+                    for lage_index, value in lage_zuordnung_rows:
+                        remote_cursor.execute('''
+                            INSERT INTO lage_zuordnung (metadata_id, lage_index, value)
+                            VALUES (%s, %s, %s)
+                        ''', (remote_metadata_id, lage_index, value))
+
+                    # Insert zwischenlagen
+                    for lage_index, value in zwischenlagen_rows:
+                        remote_cursor.execute('''
+                            INSERT INTO zwischenlagen (metadata_id, lage_index, value)
+                            VALUES (%s, %s, %s)
+                        ''', (remote_metadata_id, lage_index, value))
+
+                    # Insert pakete_zuordnung
+                    for lage_index, value in pakete_zuordnung_rows:
+                        remote_cursor.execute('''
+                            INSERT INTO pakete_zuordnung (metadata_id, lage_index, value)
+                            VALUES (%s, %s, %s)
+                        ''', (remote_metadata_id, lage_index, value))
+
+                    # Insert paket_pos
+                    for (paket_index, xp, yp, ap, xd, yd, ad,
+                         nop, xvec, yvec) in paket_pos_rows:
+                        remote_cursor.execute('''
+                            INSERT INTO paket_pos (
+                                metadata_id, paket_index, xp, yp, ap, xd, yd, ad,
+                                nop, xvec, yvec
+                            )
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        ''', (
+                            remote_metadata_id, paket_index, xp, yp, ap, xd, yd,
+                            ad, nop, xvec, yvec,
+                        ))
+
+                    # Mark local row as synced
+                    local_cursor.execute('''
+                        UPDATE paletten_metadata
+                        SET sync_status = 'synced',
+                            sync_timestamp = ?,
+                            last_modified = ?
+                        WHERE id = ?
+                    ''', (time.time(), last_modified or time.time(), local_metadata_id))
+
+                    synced_count += 1
+                    logger.info("Successfully synced file %s (metadata_id=%s)", file_name_local, local_metadata_id)
+                except Exception as item_error:
+                        logger.error(
+                            "Error syncing item metadata_id=%s file_name=%s: %s",
+                            local_metadata_id,
+                            file_name,
+                            item_error,
+                        )
+
+            # Commit both sides
+            remote_conn.commit()
+            local_conn.commit()
+
+            logger.info("Synced %s/%s items successfully", synced_count, len(pending_items))
             db_manager.last_sync_time = time.time()
             return True
         except Exception as e:
-            logger.error(f"Error during sync: {e}")
+            logger.error(f"Error during local->remote sync: {e}")
+            if remote_conn:
+                remote_conn.rollback()
+            if local_conn:
+                local_conn.rollback()
             return False
+        finally:
+            if remote_conn:
+                db_manager.return_connection(remote_conn, 'remote')
+            if local_conn:
+                local_conn.close()
+
+
+def sync_remote_to_local(db_manager) -> bool:
+    """Sync newer records from remote PostgreSQL back to local SQLite (last-write-wins).
+
+    This is a simple, optional helper that can be used on startup or on demand to
+    ensure that plans created on another machine appear locally as well.
+    """
+    if not db_manager or not db_manager.is_online():
+        logger.info("Skipping remote->local sync: remote database currently offline or db_manager missing")
+        return False
+
+    with db_manager.sync_lock:
+        logger.info("Starting remote->local sync")
+        local_conn = None
+        remote_conn = None
+        try:
+            # Open connections
+            local_conn = sqlite3.connect(db_manager.local_db_path)
+            local_cursor = local_conn.cursor()
+            local_cursor.execute("PRAGMA foreign_keys = ON")
+
+            remote_conn = db_manager.remote_pool.getconn()
+            remote_cursor = remote_conn.cursor()
+
+            # Build a map of local files and their last_modified timestamp
+            local_cursor.execute('''
+                SELECT file_name, last_modified
+                FROM paletten_metadata
+                WHERE file_name IS NOT NULL
+            ''')
+            local_rows = local_cursor.fetchall()
+            local_index = {fn: lm for (fn, lm) in local_rows if fn}
+
+            # Fetch all remote metadata rows (for now keep it simple)
+            remote_cursor.execute('''
+                SELECT id, file_name, file_timestamp, last_modified
+                FROM paletten_metadata
+                WHERE file_name IS NOT NULL
+            ''')
+            remote_meta_rows = remote_cursor.fetchall()
+
+            if not remote_meta_rows:
+                logger.info("No remote records found for remote->local sync")
+                return True
+
+            synced_count = 0
+
+            for remote_id, file_name, file_ts, remote_last_modified in remote_meta_rows:
+                if not file_name:
+                    continue
+
+                local_last_modified = local_index.get(file_name)
+                # Last-write-wins: only pull if remote is newer or local missing
+                if local_last_modified is not None and remote_last_modified is not None:
+                    if local_last_modified >= remote_last_modified:
+                        logger.debug(
+                            "Skipping remote->local for %s (local is newer or same)",
+                            file_name,
+                        )
+                        continue
+
+                logger.info(
+                    "Remote->local: importing file %s (remote_last_modified=%s, local_last_modified=%s)",
+                    file_name,
+                    remote_last_modified,
+                    local_last_modified,
+                )
+
+                # Load full dataset for this remote_id
+                # 1) metadata
+                remote_cursor.execute('''
+                    SELECT paket_quer, center_of_gravity_x, center_of_gravity_y,
+                           center_of_gravity_z, lage_arten, anz_lagen, anzahl_pakete,
+                           file_timestamp, file_name, sync_status, sync_timestamp, last_modified
+                    FROM paletten_metadata
+                    WHERE id = %s
+                ''', (remote_id,))
+                meta_row = remote_cursor.fetchone()
+                if not meta_row:
+                    logger.warning("Remote->local: metadata id %s not found, skipping", remote_id)
+                    continue
+
+                (paket_quer, cog_x, cog_y, cog_z,
+                 lage_arten, anz_lagen, anzahl_pakete,
+                 file_ts_full, file_name_full, sync_status,
+                 sync_timestamp, last_modified_full) = meta_row
+
+                # 2) daten
+                remote_cursor.execute('''
+                    SELECT row_index, col_index, value
+                    FROM daten
+                    WHERE metadata_id = %s
+                    ORDER BY row_index, col_index
+                ''', (remote_id,))
+                daten_rows = remote_cursor.fetchall()
+
+                # 3) paletten_dim
+                remote_cursor.execute('''
+                    SELECT length, width, height
+                    FROM paletten_dim
+                    WHERE metadata_id = %s
+                ''', (remote_id,))
+                paletten_dim_row = remote_cursor.fetchone()
+
+                # 4) paket_dim
+                remote_cursor.execute('''
+                    SELECT length, width, height, gap, weight, einzelpaket_laengs
+                    FROM paket_dim
+                    WHERE metadata_id = %s
+                ''', (remote_id,))
+                paket_dim_row = remote_cursor.fetchone()
+
+                # 5) lage_zuordnung
+                remote_cursor.execute('''
+                    SELECT lage_index, value
+                    FROM lage_zuordnung
+                    WHERE metadata_id = %s
+                    ORDER BY lage_index
+                ''', (remote_id,))
+                lage_zuordnung_rows = remote_cursor.fetchall()
+
+                # 6) zwischenlagen
+                remote_cursor.execute('''
+                    SELECT lage_index, value
+                    FROM zwischenlagen
+                    WHERE metadata_id = %s
+                    ORDER BY lage_index
+                ''', (remote_id,))
+                zwischenlagen_rows = remote_cursor.fetchall()
+
+                # 7) pakete_zuordnung
+                remote_cursor.execute('''
+                    SELECT lage_index, value
+                    FROM pakete_zuordnung
+                    WHERE metadata_id = %s
+                    ORDER BY lage_index
+                ''', (remote_id,))
+                pakete_zuordnung_rows = remote_cursor.fetchall()
+
+                # 8) paket_pos
+                remote_cursor.execute('''
+                    SELECT paket_index, xp, yp, ap, xd, yd, ad, nop, xvec, yvec
+                    FROM paket_pos
+                    WHERE metadata_id = %s
+                    ORDER BY paket_index
+                ''', (remote_id,))
+                paket_pos_rows = remote_cursor.fetchall()
+
+                # Remove existing local record for this file_name to avoid duplicates
+                local_cursor.execute(
+                    "DELETE FROM paletten_metadata WHERE file_name = ?",
+                    (file_name_full,),
+                )
+
+                # Insert new metadata row locally
+                local_cursor.execute('''
+                    INSERT INTO paletten_metadata (
+                        paket_quer, center_of_gravity_x, center_of_gravity_y,
+                        center_of_gravity_z, lage_arten, anz_lagen, anzahl_pakete,
+                        file_timestamp, file_name, sync_status, sync_timestamp, last_modified
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    paket_quer, cog_x, cog_y, cog_z,
+                    lage_arten, anz_lagen, anzahl_pakete,
+                    file_ts_full, file_name_full,
+                    sync_status or 'synced',
+                    sync_timestamp,
+                    last_modified_full or time.time(),
+                ))
+                new_local_id = local_cursor.lastrowid
+
+                # Insert daten
+                for row_index, col_index, value in daten_rows:
+                    local_cursor.execute('''
+                        INSERT INTO daten (metadata_id, row_index, col_index, value)
+                        VALUES (?, ?, ?, ?)
+                    ''', (new_local_id, row_index, col_index, value))
+
+                # Insert paletten_dim
+                if paletten_dim_row:
+                    length, width, height = paletten_dim_row
+                    local_cursor.execute('''
+                        INSERT INTO paletten_dim (metadata_id, length, width, height)
+                        VALUES (?, ?, ?, ?)
+                    ''', (new_local_id, length, width, height))
+
+                # Insert paket_dim
+                if paket_dim_row:
+                    length, width, height, gap, weight, einzelpaket_laengs = paket_dim_row
+                    local_cursor.execute('''
+                        INSERT INTO paket_dim (
+                            metadata_id, length, width, height, gap, weight, einzelpaket_laengs
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ''', (
+                        new_local_id, length, width, height, gap, weight, einzelpaket_laengs,
+                    ))
+
+                # Insert lage_zuordnung
+                for lage_index, value in lage_zuordnung_rows:
+                    local_cursor.execute('''
+                        INSERT INTO lage_zuordnung (metadata_id, lage_index, value)
+                        VALUES (?, ?, ?)
+                    ''', (new_local_id, lage_index, value))
+
+                # Insert zwischenlagen
+                for lage_index, value in zwischenlagen_rows:
+                    local_cursor.execute('''
+                        INSERT INTO zwischenlagen (metadata_id, lage_index, value)
+                        VALUES (?, ?, ?)
+                    ''', (new_local_id, lage_index, value))
+
+                # Insert pakete_zuordnung
+                for lage_index, value in pakete_zuordnung_rows:
+                    local_cursor.execute('''
+                        INSERT INTO pakete_zuordnung (metadata_id, lage_index, value)
+                        VALUES (?, ?, ?)
+                    ''', (new_local_id, lage_index, value))
+
+                # Insert paket_pos
+                for (paket_index, xp, yp, ap, xd, yd, ad,
+                     nop, xvec, yvec) in paket_pos_rows:
+                    local_cursor.execute('''
+                        INSERT INTO paket_pos (
+                            metadata_id, paket_index, xp, yp, ap, xd, yd, ad,
+                            nop, xvec, yvec
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ''', (
+                        new_local_id, paket_index, xp, yp, ap, xd, yd,
+                        ad, nop, xvec, yvec,
+                    ))
+
+                synced_count += 1
+
+            remote_conn.commit()
+            local_conn.commit()
+            logger.info("Remote->local sync completed, imported %s items", synced_count)
+            return True
+        except Exception as e:
+            logger.error(f"Error during remote->local sync: {e}")
+            if remote_conn:
+                remote_conn.rollback()
+            if local_conn:
+                local_conn.rollback()
+            return False
+        finally:
+            if remote_conn:
+                db_manager.return_connection(remote_conn, 'remote')
+            if local_conn:
+                local_conn.close()
 
 def get_sync_status(db_manager) -> Dict[str, Any]:
     """Get sync status information.

@@ -127,6 +127,22 @@ def main():
         app.processEvents()
         from utils.system.core.app_control import init_database_manager
         init_database_manager()
+
+        # Perform an explicit initial sync to remote if available
+        try:
+            from utils.system.core import global_vars as gv_for_db
+            from utils.database.database import sync_local_to_remote
+            if getattr(gv_for_db, "db_manager", None) is not None:
+                db_manager = gv_for_db.db_manager
+                if db_manager.is_online():
+                    logger.info("HybridDatabaseManager: Running initial sync on startup")
+                    sync_local_to_remote(db_manager)
+                else:
+                    logger.info("HybridDatabaseManager: Initial sync skipped (remote offline)")
+            else:
+                logger.debug("HybridDatabaseManager not initialized, skipping initial sync")
+        except Exception as e:
+            logger.error(f"Error during initial startup sync: {e}")
         
         from utils.audio.audio import start_safety_monitor_thread
         start_safety_monitor_thread()
