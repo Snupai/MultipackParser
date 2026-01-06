@@ -185,7 +185,7 @@ def connect_signal_handlers():
     
     def update_weight_info_label():
         """Update the weight info label based on current weight status."""
-        global _calculated_weight
+        nonlocal _calculated_weight
         
         if not hasattr(global_vars.ui, 'label_GewichtInfo'):
             return
@@ -226,7 +226,7 @@ def connect_signal_handlers():
     # Helper function to set height programmatically without triggering dialog
     def set_height_programmatically(value):
         """Set height value programmatically without showing confirmation dialog."""
-        global _programmatic_height_update, _previous_height
+        nonlocal _programmatic_height_update, _previous_height
         _programmatic_height_update = True
         global_vars.ui.EingabeKartonhoehe.blockSignals(True)
         global_vars.ui.EingabeKartonhoehe.setText(str(value))
@@ -237,7 +237,7 @@ def connect_signal_handlers():
     # Helper function to set weight programmatically without triggering dialog
     def set_weight_programmatically(value):
         """Set weight value programmatically without showing confirmation dialog."""
-        global _programmatic_weight_update, _previous_weight, _calculated_weight
+        nonlocal _programmatic_weight_update, _previous_weight, _calculated_weight
         _programmatic_weight_update = True
         global_vars.ui.EingabeKartonGewicht.blockSignals(True)
         global_vars.ui.EingabeKartonGewicht.setText(str(value))
@@ -264,7 +264,7 @@ def connect_signal_handlers():
     # Connect box dimension inputs to update database with confirmation dialog
     def _update_box_height_in_db():
         """Update box height in database when UI value changes, with confirmation dialog."""
-        global _previous_height, _programmatic_height_update
+        nonlocal _previous_height, _programmatic_height_update
         
         # Don't show dialog if this is a programmatic update
         if _programmatic_height_update:
@@ -314,13 +314,16 @@ def connect_signal_handlers():
     def update_box_height_in_db():
         """Debounced wrapper for height update."""
         _height_debounce_timer.stop()
-        _height_debounce_timer.timeout.disconnect()
+        try:
+            _height_debounce_timer.timeout.disconnect()
+        except RuntimeError:
+            pass  # Ignore if no connections exist
         _height_debounce_timer.timeout.connect(_update_box_height_in_db)
         _height_debounce_timer.start(DEBOUNCE_TIME)  # 300ms debounce
     
     def _update_box_weight_in_db():
         """Update box weight in database when UI value changes, with confirmation dialog."""
-        global _previous_weight, _programmatic_weight_update
+        nonlocal _previous_weight, _programmatic_weight_update, _calculated_weight
         
         # Don't show dialog if this is a programmatic update
         if _programmatic_weight_update:
@@ -360,7 +363,6 @@ def connect_signal_handlers():
                 update_box_dimensions(global_vars.FILENAME, weight=weight)
                 _previous_weight = weight
                 # User has set weight manually, clear calculated weight flag
-                global _calculated_weight
                 _calculated_weight = None
                 update_weight_info_label()
             else:
@@ -373,7 +375,10 @@ def connect_signal_handlers():
     def update_box_weight_in_db():
         """Debounced wrapper for weight update."""
         _weight_debounce_timer.stop()
-        _weight_debounce_timer.timeout.disconnect()
+        try:
+            _weight_debounce_timer.timeout.disconnect()
+        except RuntimeError:
+            pass  # Ignore if no connections exist
         _weight_debounce_timer.timeout.connect(_update_box_weight_in_db)
         _weight_debounce_timer.start(DEBOUNCE_TIME)  # 300ms debounce
     
