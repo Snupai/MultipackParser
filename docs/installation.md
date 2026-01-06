@@ -22,16 +22,16 @@ This guide provides comprehensive instructions for installing and configuring Mu
 
 | Component | Minimum | Recommended |
 |-----------|---------|-------------|
-| **Python** | 3.13 | 3.13+ |
+| **Python** | 3.12 | 3.12+ |
 | **RAM** | 512 MB | 1 GB |
-| **Storage** | 100 MB | 200 MB |
-| **OS** | Linux / Windows 10 | Raspberry Pi OS / Windows 11 |
+| **Storage** | 300 MB | 500 MB |
+| **OS** | Linux | Raspberry Pi OS |
 
 ### Required Software
 
 | Software | Purpose |
 |----------|---------|
-| Python 3.13+ | Runtime environment |
+| Python 3.12+ | Runtime environment |
 | pip | Python package manager |
 | Git | Repository cloning (optional) |
 | [Multipack](https://multiscience.de/multipack-ihre-optimierungssoftware/) | Palette plan generation (commercial) |
@@ -79,12 +79,16 @@ uv run main.py --version
 For Raspberry Pi (ARM64) systems, download the pre-built binary:
 
 1. **Download the Latest Release**
-   - Visit the [Releases page](https://github.com/Snupai/MultipackParser/releases)
-   - Download the binary matching your architecture
-
-2. **Extract and Run**
+   - Visit the [Releases page](https://github.com/Snupai/MultipackParser/releases/latest)
+   - Download the binary
+   or:
    ```bash
-   chmod +x MultipackParser
+   curl -O https://github.com/Snupai/MultipackParser/releases/latest/download/MultipackParser
+   ```
+
+2. **Make executable and Run**
+   ```bash
+   sudo chmod +x MultipackParser
    ./MultipackParser
    ```
 
