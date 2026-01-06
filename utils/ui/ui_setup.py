@@ -161,6 +161,10 @@ def connect_signal_handlers():
     _height_debounce_timer.setSingleShot(True)
     _weight_debounce_timer = QTimer()
     _weight_debounce_timer.setSingleShot(True)
+    _height_revert_timer = QTimer()
+    _height_revert_timer.setSingleShot(True)
+    _weight_revert_timer = QTimer()
+    _weight_revert_timer.setSingleShot(True)
     _calculated_weight = None  # Track calculated weight to detect if current weight matches
     
     # Define helper functions first (before they're used)
@@ -226,8 +230,14 @@ def connect_signal_handlers():
     # Helper function to set height programmatically without triggering dialog
     def set_height_programmatically(value):
         """Set height value programmatically without showing confirmation dialog."""
-        nonlocal _programmatic_height_update, _previous_height
+        nonlocal _programmatic_height_update, _previous_height, _height_revert_timer
         _programmatic_height_update = True
+        # Stop revert timer when setting programmatically
+        _height_revert_timer.stop()
+        try:
+            _height_revert_timer.timeout.disconnect()
+        except RuntimeError:
+            pass  # Ignore if no connections exist
         global_vars.ui.EingabeKartonhoehe.blockSignals(True)
         global_vars.ui.EingabeKartonhoehe.setText(str(value))
         global_vars.ui.EingabeKartonhoehe.blockSignals(False)
@@ -237,8 +247,14 @@ def connect_signal_handlers():
     # Helper function to set weight programmatically without triggering dialog
     def set_weight_programmatically(value):
         """Set weight value programmatically without showing confirmation dialog."""
-        nonlocal _programmatic_weight_update, _previous_weight, _calculated_weight
+        nonlocal _programmatic_weight_update, _previous_weight, _calculated_weight, _weight_revert_timer
         _programmatic_weight_update = True
+        # Stop revert timer when setting programmatically
+        _weight_revert_timer.stop()
+        try:
+            _weight_revert_timer.timeout.disconnect()
+        except RuntimeError:
+            pass  # Ignore if no connections exist
         global_vars.ui.EingabeKartonGewicht.blockSignals(True)
         global_vars.ui.EingabeKartonGewicht.setText(str(value))
         global_vars.ui.EingabeKartonGewicht.blockSignals(False)
@@ -264,7 +280,7 @@ def connect_signal_handlers():
     # Connect box dimension inputs to update database with confirmation dialog
     def _update_box_height_in_db():
         """Update box height in database when UI value changes, with confirmation dialog."""
-        nonlocal _previous_height, _programmatic_height_update
+        nonlocal _previous_height, _programmatic_height_update, _height_revert_timer
         
         # Don't show dialog if this is a programmatic update
         if _programmatic_height_update:
@@ -276,6 +292,28 @@ def connect_signal_handlers():
         
         try:
             height = int(text_value)
+
+            # Plausibility check: height must be > 0 and < 600
+            if height <= 0 or height >= 600:
+                QMessageBox.warning(
+                    global_vars.main_window,
+                    "Ungültige Kartonhöhe",
+                    "Die Kartonhöhe muss größer als 0 und kleiner als 600 mm sein."
+                )
+                # Revert to previous value or clear field
+                if _previous_height is not None:
+                    set_height_programmatically(_previous_height)
+                else:
+                    global_vars.ui.EingabeKartonhoehe.clear()
+                return
+            
+            # Stop revert timer if we have a valid value
+            if height != 0:
+                _height_revert_timer.stop()
+                try:
+                    _height_revert_timer.timeout.disconnect()
+                except RuntimeError:
+                    pass
             
             # Only show dialog if value actually changed
             if _previous_height is not None and _previous_height == height:
@@ -311,8 +349,61 @@ def connect_signal_handlers():
         except ValueError:
             pass  # Invalid value, skip update
     
+    def _check_and_revert_height():
+        """Check if height is empty or 0 and revert to previous value if so."""
+        nonlocal _previous_height, _programmatic_height_update
+        
+        # Don't revert if this is a programmatic update
+        if _programmatic_height_update:
+            return
+        
+        text_value = global_vars.ui.EingabeKartonhoehe.text()
+        
+        # Check if field is empty or effectively 0
+        is_empty_or_zero = False
+        if not text_value or not text_value.strip():
+            is_empty_or_zero = True
+        else:
+            try:
+                height = int(text_value)
+                if height == 0:
+                    is_empty_or_zero = True
+            except ValueError:
+                # Invalid value, treat as empty
+                is_empty_or_zero = True
+        
+        # If empty/zero and we have a previous value, revert it
+        if is_empty_or_zero and _previous_height is not None:
+            set_height_programmatically(_previous_height)
+    
     def update_box_height_in_db():
         """Debounced wrapper for height update."""
+        nonlocal _height_revert_timer
+        
+        # Stop and restart revert timer
+        _height_revert_timer.stop()
+        try:
+            _height_revert_timer.timeout.disconnect()
+        except RuntimeError:
+            pass  # Ignore if no connections exist
+        
+        # Check if current value is valid (not empty/zero)
+        text_value = global_vars.ui.EingabeKartonhoehe.text()
+        is_valid = False
+        if text_value and text_value.strip():
+            try:
+                height = int(text_value)
+                if height != 0:
+                    is_valid = True
+            except ValueError:
+                pass
+        
+        # Only start revert timer if value is invalid
+        if not is_valid and _previous_height is not None:
+            _height_revert_timer.timeout.connect(_check_and_revert_height)
+            _height_revert_timer.start(5000)  # 5 seconds
+        
+        # Handle debounced update
         _height_debounce_timer.stop()
         try:
             _height_debounce_timer.timeout.disconnect()
@@ -323,7 +414,7 @@ def connect_signal_handlers():
     
     def _update_box_weight_in_db():
         """Update box weight in database when UI value changes, with confirmation dialog."""
-        nonlocal _previous_weight, _programmatic_weight_update, _calculated_weight
+        nonlocal _previous_weight, _programmatic_weight_update, _calculated_weight, _weight_revert_timer
         
         # Don't show dialog if this is a programmatic update
         if _programmatic_weight_update:
@@ -336,6 +427,28 @@ def connect_signal_handlers():
         try:
             # Handle both comma and period as decimal separator
             weight = float(text_value.replace(',', '.'))
+
+            # Plausibility check: weight must be > 0 and < 15.0
+            if weight <= 0 or weight >= 15.0:
+                QMessageBox.warning(
+                    global_vars.main_window,
+                    "Ungültiges Kartongewicht",
+                    "Das Kartongewicht muss größer als 0 und kleiner als 15,0 kg sein."
+                )
+                # Revert to previous value or clear field
+                if _previous_weight is not None:
+                    set_weight_programmatically(_previous_weight)
+                else:
+                    global_vars.ui.EingabeKartonGewicht.clear()
+                return
+            
+            # Stop revert timer if we have a valid value
+            if abs(weight) >= 0.001:  # Not effectively zero
+                _weight_revert_timer.stop()
+                try:
+                    _weight_revert_timer.timeout.disconnect()
+                except RuntimeError:
+                    pass
             
             # Only show dialog if value actually changed
             if _previous_weight is not None and abs(_previous_weight - weight) < 0.001:  # Float comparison with tolerance
@@ -372,8 +485,61 @@ def connect_signal_handlers():
         except ValueError:
             pass  # Invalid value, skip update
     
+    def _check_and_revert_weight():
+        """Check if weight is empty or 0 and revert to previous value if so."""
+        nonlocal _previous_weight, _programmatic_weight_update
+        
+        # Don't revert if this is a programmatic update
+        if _programmatic_weight_update:
+            return
+        
+        text_value = global_vars.ui.EingabeKartonGewicht.text()
+        
+        # Check if field is empty or effectively 0
+        is_empty_or_zero = False
+        if not text_value or not text_value.strip():
+            is_empty_or_zero = True
+        else:
+            try:
+                weight = float(text_value.replace(',', '.'))
+                if abs(weight) < 0.001:  # Effectively zero
+                    is_empty_or_zero = True
+            except ValueError:
+                # Invalid value, treat as empty
+                is_empty_or_zero = True
+        
+        # If empty/zero and we have a previous value, revert it
+        if is_empty_or_zero and _previous_weight is not None:
+            set_weight_programmatically(_previous_weight)
+    
     def update_box_weight_in_db():
         """Debounced wrapper for weight update."""
+        nonlocal _weight_revert_timer
+        
+        # Stop and restart revert timer
+        _weight_revert_timer.stop()
+        try:
+            _weight_revert_timer.timeout.disconnect()
+        except RuntimeError:
+            pass  # Ignore if no connections exist
+        
+        # Check if current value is valid (not empty/zero)
+        text_value = global_vars.ui.EingabeKartonGewicht.text()
+        is_valid = False
+        if text_value and text_value.strip():
+            try:
+                weight = float(text_value.replace(',', '.'))
+                if abs(weight) >= 0.001:  # Not effectively zero
+                    is_valid = True
+            except ValueError:
+                pass
+        
+        # Only start revert timer if value is invalid
+        if not is_valid and _previous_weight is not None:
+            _weight_revert_timer.timeout.connect(_check_and_revert_weight)
+            _weight_revert_timer.start(5000)  # 5 seconds
+        
+        # Handle debounced update
         _weight_debounce_timer.stop()
         try:
             _weight_debounce_timer.timeout.disconnect()
