@@ -203,7 +203,7 @@
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>310</y>
+       <y>350</y>
        <width>251</width>
        <height>61</height>
       </rect>
@@ -231,7 +231,7 @@
      <property name="geometry">
       <rect>
        <x>610</x>
-       <y>310</y>
+       <y>350</y>
        <width>261</width>
        <height>61</height>
       </rect>
@@ -256,7 +256,7 @@
      <property name="geometry">
       <rect>
        <x>330</x>
-       <y>310</y>
+       <y>350</y>
        <width>261</width>
        <height>61</height>
       </rect>
@@ -616,6 +616,32 @@
       <set>Qt::InputMethodHint::ImhDigitsOnly|Qt::InputMethodHint::ImhFormattedNumbersOnly</set>
      </property>
     </widget>
+    <widget class="QLabel" name="label_GewichtInfo">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>330</x>
+       <y>290</y>
+       <width>511</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Sans Serif</family>
+       <pointsize>16</pointsize>
+       <underline>true</underline>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+     </property>
+    </widget>
     <widget class="QLineEdit" name="EingabeKartonhoehe">
      <property name="enabled">
       <bool>false</bool>
@@ -722,7 +748,7 @@
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>370</y>
+       <y>410</y>
        <width>251</width>
        <height>31</height>
       </rect>
@@ -743,6 +769,7 @@
       <string>Invert Label</string>
      </property>
     </widget>
+    <zorder>label_GewichtInfo</zorder>
     <zorder>checkBoxEinzelpaket</zorder>
     <zorder>ButtonDatenSenden</zorder>
     <zorder>ButtonOpenParameterRoboter</zorder>

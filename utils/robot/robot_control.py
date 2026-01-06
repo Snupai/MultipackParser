@@ -251,23 +251,41 @@ def load() -> None:
             from utils.database.database import get_box_weight
             saved_weight = get_box_weight(global_vars.FILENAME)
             
+            # Calculate expected weight for comparison
+            calculated_weight = None
+            if global_vars.g_PaketDim and len(global_vars.g_PaketDim) >= 3:
+                Volumen = (global_vars.g_PaketDim[0] * global_vars.g_PaketDim[1] * box_height) / 1E+9 # in m³
+                Dichte = 1000 # Dichte von Wasser in kg/m³
+                Ausnutzung = 0.4 # Empirsch ermittelter Faktor - nicht für Gasflaschen
+                calculated_weight = round(Volumen * Dichte * Ausnutzung, 1) # Gewicht in kg
+            
             if saved_weight is not None:
                 # Use saved weight from database
                 Gewicht = saved_weight
                 logger.debug(f"Loaded saved weight from database: {Gewicht}")
+                
+                # Check if saved weight matches calculated weight
+                if calculated_weight is not None and abs(Gewicht - calculated_weight) < 0.05:
+                    logger.debug(f"Loaded weight matches calculated weight: {calculated_weight}")
             else:
                 # Calculate default weight based on volume
-                Volumen = (global_vars.g_PaketDim[0] * global_vars.g_PaketDim[1] * box_height) / 1E+9 # in m³
-                logger.debug(f"{Volumen=}")
-                Dichte = 1000 # Dichte von Wasser in kg/m³
-                logger.debug(f"{Dichte=}")
-                Ausnutzung = 0.4 # Empirsch ermittelter Faktor - nicht für Gasflaschen
-                logger.debug(f"{Ausnutzung=}")
-                Gewicht = round(Volumen * Dichte * Ausnutzung, 1) # Gewicht in kg
+                Gewicht = calculated_weight
                 logger.debug(f"Calculated default weight: {Gewicht}")
             
-            global_vars.ui.EingabeKartonGewicht.setText(str(Gewicht))
-            global_vars.ui.EingabeKartonhoehe.setText(str(box_height))
+            # Use helper functions to set values programmatically without triggering confirmation dialog
+            if hasattr(global_vars, 'set_weight_programmatically'):
+                global_vars.set_weight_programmatically(Gewicht)
+            else:
+                global_vars.ui.EingabeKartonGewicht.setText(str(Gewicht))
+            
+            # Update weight info label after setting weight
+            if hasattr(global_vars, 'update_weight_info_label'):
+                global_vars.update_weight_info_label()
+            
+            if hasattr(global_vars, 'set_height_programmatically'):
+                global_vars.set_height_programmatically(box_height)
+            else:
+                global_vars.ui.EingabeKartonhoehe.setText(str(box_height))
             
             # Load saved einzelpaket_laengs setting, or use auto-check if not saved
             from utils.database.database import get_einzelpaket_laengs
