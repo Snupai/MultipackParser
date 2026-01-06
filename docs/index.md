@@ -26,20 +26,20 @@ MultipackParser serves as the communication layer between:
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
-│                           MULTIPACKPARSER WORKFLOW                        │
+│                           MULTIPACKPARSER WORKFLOW                       │
 ├──────────────────────────────────────────────────────────────────────────┤
 │                                                                          │
-│   ┌─────────────┐        ┌──────────────────┐        ┌─────────────┐    │
-│   │  MULTIPACK  │  .rob  │  MULTIPACKPARSER │  RPC   │  UR ROBOT   │    │
-│   │  Software   │ ─────► │    Application   │ ◄────► │   Program   │    │
-│   └─────────────┘        └──────────────────┘        └─────────────┘    │
-│         │                        │                          │           │
-│         ▼                        ▼                          ▼           │
-│   ┌─────────────┐        ┌──────────────────┐        ┌─────────────┐    │
-│   │ Box/Palette │        │  • USB Loading   │        │ Palletizing │    │
-│   │ Dimensions  │        │  • 3D Preview    │        │  Execution  │    │
-│   │    Input    │        │  • DB Storage    │        │             │    │
-│   └─────────────┘        └──────────────────┘        └─────────────┘    │
+│   ┌─────────────┐        ┌──────────────────┐        ┌─────────────┐     │
+│   │  MULTIPACK  │  .rob  │  MULTIPACKPARSER │  RPC   │  UR ROBOT   │     │
+│   │  Software   │ ─────► │    Application   │ ◄────► │   Program   │     │
+│   └─────────────┘        └──────────────────┘        └─────────────┘     │
+│         │                        │                          │            │
+│         ▼                        ▼                          ▼            │
+│   ┌─────────────┐        ┌──────────────────┐        ┌─────────────┐     │
+│   │ Box/Palette │        │  • USB Loading   │        │ Palletizing │     │
+│   │ Dimensions  │        │  • 3D Preview    │        │  Execution  │     │
+│   │    Input    │        │  • DB Storage    │        │             │     │
+│   └─────────────┘        └──────────────────┘        └─────────────┘     │
 │                                                                          │
 └──────────────────────────────────────────────────────────────────────────┘
 ```
