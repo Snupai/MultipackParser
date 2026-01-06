@@ -84,7 +84,8 @@ def main():
 
         # Configure matplotlib backend for 3d view of palettes
         matplotlib.use('qtagg', force=True)
-        os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
+        if not args.no_virtual_keyboard:
+            os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
 
         logger = global_vars.logger
 

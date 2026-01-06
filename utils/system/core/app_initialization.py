@@ -46,6 +46,11 @@ Examples:
         action='store_true',
         help='Enable verbose (debug) logging output'
     )
+    debug_group.add_argument(
+        '--no-virtual-keyboard',
+        action='store_true',
+        help='Disable Qt virtual keyboard'
+    )
     info_group.add_argument(
         '-v', '--version',
         action='store_true',
