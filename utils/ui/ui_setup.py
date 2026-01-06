@@ -34,6 +34,8 @@ from utils.server.UR20_Server_functions import scanner_signals
 from utils.ui.notification_popup import check_zwischenlage_status
 from utils.ui.ui_helpers import check_palette_clearing_status
 
+DEBOUNCE_TIME = 800
+
 # Add logger
 logger = logging.getLogger(__name__)
 
@@ -159,6 +161,67 @@ def connect_signal_handlers():
     _height_debounce_timer.setSingleShot(True)
     _weight_debounce_timer = QTimer()
     _weight_debounce_timer.setSingleShot(True)
+    _calculated_weight = None  # Track calculated weight to detect if current weight matches
+    
+    # Define helper functions first (before they're used)
+    def calculate_expected_weight():
+        """Calculate expected weight based on package dimensions.
+        
+        Returns:
+            Optional[float]: Calculated weight in kg, or None if dimensions are not available
+        """
+        if not global_vars.g_PaketDim or len(global_vars.g_PaketDim) < 3:
+            return None
+        
+        try:
+            box_height = global_vars.g_PaketDim[2]
+            Volumen = (global_vars.g_PaketDim[0] * global_vars.g_PaketDim[1] * box_height) / 1E+9  # in m³
+            Dichte = 1000  # Dichte von Wasser in kg/m³
+            Ausnutzung = 0.4  # Empirsch ermittelter Faktor - nicht für Gasflaschen
+            Gewicht = round(Volumen * Dichte * Ausnutzung, 1)  # Gewicht in kg
+            return Gewicht
+        except (IndexError, TypeError, ValueError):
+            return None
+    
+    def update_weight_info_label():
+        """Update the weight info label based on current weight status."""
+        global _calculated_weight
+        
+        if not hasattr(global_vars.ui, 'label_GewichtInfo'):
+            return
+        
+        text_value = global_vars.ui.EingabeKartonGewicht.text()
+        
+        # If weight field is empty, show warning
+        if not text_value or not text_value.strip():
+            global_vars.ui.label_GewichtInfo.setText("Bitte 1 Paket wiegen und Gewicht eingeben.")
+            global_vars.ui.label_GewichtInfo.setStyleSheet("color: #FF5F15;")
+            return
+        
+        try:
+            current_weight = float(text_value.replace(',', '.'))
+            
+            # Calculate expected weight
+            expected_weight = calculate_expected_weight()
+            
+            # If we have expected weight and current weight matches (within tolerance)
+            if expected_weight is not None:
+                weight_diff = abs(current_weight - expected_weight)
+                if weight_diff < 0.05:  # Tolerance of 0.05 kg
+                    global_vars.ui.label_GewichtInfo.setText("Paket Gewicht errechnet!\nBitte 1 Paket wiegen und Gewicht eingeben.")
+                    global_vars.ui.label_GewichtInfo.setStyleSheet("color: #FF5F15;")
+                    _calculated_weight = expected_weight
+                    return
+            
+            # Weight is user-set (different from calculated or no calculation possible)
+            global_vars.ui.label_GewichtInfo.setText("")
+            global_vars.ui.label_GewichtInfo.setStyleSheet("")
+            _calculated_weight = None
+            
+        except ValueError:
+            # Invalid weight value
+            global_vars.ui.label_GewichtInfo.setText("Bitte 1 Paket wiegen und Gewicht eingeben.")
+            global_vars.ui.label_GewichtInfo.setStyleSheet("color: #FF5F15;")
     
     # Helper function to set height programmatically without triggering dialog
     def set_height_programmatically(value):
@@ -174,17 +237,29 @@ def connect_signal_handlers():
     # Helper function to set weight programmatically without triggering dialog
     def set_weight_programmatically(value):
         """Set weight value programmatically without showing confirmation dialog."""
-        global _programmatic_weight_update, _previous_weight
+        global _programmatic_weight_update, _previous_weight, _calculated_weight
         _programmatic_weight_update = True
         global_vars.ui.EingabeKartonGewicht.blockSignals(True)
         global_vars.ui.EingabeKartonGewicht.setText(str(value))
         global_vars.ui.EingabeKartonGewicht.blockSignals(False)
         _previous_weight = value
+        
+        # Check if this matches calculated weight
+        expected_weight = calculate_expected_weight()
+        if expected_weight is not None and abs(float(value) - expected_weight) < 0.05:
+            _calculated_weight = expected_weight
+        else:
+            _calculated_weight = None
+        
+        # Update info label
+        update_weight_info_label()
         _programmatic_weight_update = False
     
     # Store helper functions in global_vars for use in other modules
     global_vars.set_height_programmatically = set_height_programmatically
     global_vars.set_weight_programmatically = set_weight_programmatically
+    global_vars.calculate_expected_weight = calculate_expected_weight
+    global_vars.update_weight_info_label = update_weight_info_label
     
     # Connect box dimension inputs to update database with confirmation dialog
     def _update_box_height_in_db():
@@ -241,7 +316,7 @@ def connect_signal_handlers():
         _height_debounce_timer.stop()
         _height_debounce_timer.timeout.disconnect()
         _height_debounce_timer.timeout.connect(_update_box_height_in_db)
-        _height_debounce_timer.start(300)  # 300ms debounce
+        _height_debounce_timer.start(DEBOUNCE_TIME)  # 300ms debounce
     
     def _update_box_weight_in_db():
         """Update box weight in database when UI value changes, with confirmation dialog."""
@@ -284,6 +359,10 @@ def connect_signal_handlers():
                 global_vars.g_MassePaket = weight
                 update_box_dimensions(global_vars.FILENAME, weight=weight)
                 _previous_weight = weight
+                # User has set weight manually, clear calculated weight flag
+                global _calculated_weight
+                _calculated_weight = None
+                update_weight_info_label()
             else:
                 # Revert to previous value if user cancels
                 if old_weight is not None:
@@ -296,10 +375,14 @@ def connect_signal_handlers():
         _weight_debounce_timer.stop()
         _weight_debounce_timer.timeout.disconnect()
         _weight_debounce_timer.timeout.connect(_update_box_weight_in_db)
-        _weight_debounce_timer.start(300)  # 300ms debounce
+        _weight_debounce_timer.start(DEBOUNCE_TIME)  # 300ms debounce
     
     global_vars.ui.EingabeKartonhoehe.textChanged.connect(update_box_height_in_db)
     global_vars.ui.EingabeKartonGewicht.textChanged.connect(update_box_weight_in_db)
+    # Also update weight info label when weight changes
+    global_vars.ui.EingabeKartonGewicht.textChanged.connect(update_weight_info_label)
+    # Update weight info label when height changes (affects calculated weight)
+    global_vars.ui.EingabeKartonhoehe.textChanged.connect(update_weight_info_label)
 
     def update_einzelpaket_in_db(state):
         """Update einzelpaket_laengs setting in database when checkbox state changes."""
@@ -437,6 +520,10 @@ def setup_components():
     
     # Add palette clear dialog function to UI
     global_vars.ui.show_palette_clear_dialog = show_palette_clear_dialog
+    
+    # Initialize weight info label
+    if hasattr(global_vars, 'update_weight_info_label'):
+        global_vars.update_weight_info_label()
     
     # Override the keyPressEvent handler for the EingabePallettenplan input field
     original_key_press = global_vars.ui.EingabePallettenplan.keyPressEvent
