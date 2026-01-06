@@ -1,142 +1,189 @@
 # Installation Guide
 
-This guide will walk you through installing and setting up MultipackParser on your system.
+This guide provides comprehensive instructions for installing and configuring MultipackParser on your system.
+
+---
+
+## Table of Contents
+
+1. [Prerequisites](#prerequisites)
+2. [Installation Methods](#installation-methods)
+3. [Configuration](#configuration)
+4. [Verification](#verification)
+5. [Troubleshooting](#troubleshooting)
+6. [Updating](#updating)
+7. [Uninstallation](#uninstallation)
+
+---
 
 ## Prerequisites
 
 ### System Requirements
 
-- **Python**: Version 3.13 or higher
-- **Operating System**: 
-  - Linux (optimized for Raspberry Pi)
-  - Windows 10/11
-- **Memory**: Minimum 512MB RAM (1GB recommended)
-- **Storage**: At least 100MB free disk space
+| Component | Minimum | Recommended |
+|-----------|---------|-------------|
+| **Python** | 3.13 | 3.13+ |
+| **RAM** | 512 MB | 1 GB |
+| **Storage** | 100 MB | 200 MB |
+| **OS** | Linux / Windows 10 | Raspberry Pi OS / Windows 11 |
 
 ### Required Software
 
-- Python 3.13+
-- pip (Python package manager)
-- Git (for cloning the repository)
-- **[Multipack](https://multiscience.de/multipack-ihre-optimierungssoftware/)** (commercial optimization software from Multiscience GmbH) - Required to generate palette plan files (`.rob` format) that MultipackParser processes
+| Software | Purpose |
+|----------|---------|
+| Python 3.13+ | Runtime environment |
+| pip | Python package manager |
+| Git | Repository cloning (optional) |
+| [Multipack](https://multiscience.de/multipack-ihre-optimierungssoftware/) | Palette plan generation (commercial) |
 
 ### Robot-Side Requirements
 
 > [!IMPORTANT]
 > MultipackParser requires robot-side components that are **not provided** in this repository:
-> - **UR Program**: A specific Universal Robot program must be installed and running on your UR10 or UR20 controller
-> - **URscript**: Scripts on the robot controller that interact with the XML-RPC server
-> - These components must be obtained separately and properly configured on your robot
->
-> Without these robot-side components, the application will not be able to communicate with the Universal Robot, even if MultipackParser is correctly installed.
+> 
+> | Component | Description |
+> |-----------|-------------|
+> | **UR Program** | A specific Universal Robot program installed on the UR10/UR20 controller |
+> | **URscript** | Scripts on the robot controller that interact with the XML-RPC server |
+> 
+> These components must be obtained separately and properly configured on your robot. Without them, the application cannot communicate with the Universal Robot.
+
+---
 
 ## Installation Methods
 
 ### Method 1: From Source (Development)
 
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/Snupai/MultipackParser.git
-   cd MultipackParser
-   ```
+Recommended for developers and users who want the latest features.
 
-2. **Install Dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+# 1. Clone the repository
+git clone https://github.com/Snupai/MultipackParser.git
+cd MultipackParser
 
-   Or using `uv` (if available):
-   ```bash
-   uv pip install -r requirements.txt
-   ```
+# 2. Install dependencies
+pip install -r requirements.txt
 
-3. **Verify Installation**
-   ```bash
-   python main.py --version
-   ```
+# Or using uv (faster alternative)
+uv sync
 
-### Method 2: Using Pre-built Binary
+# 3. Verify installation
+python main.py --version
 
-For Raspberry Pi (ARM64) systems, you can use the pre-built binary:
+# Or using uv
+uv run main.py --version
+```
+
+### Method 2: Pre-built Binary
+
+For Raspberry Pi (ARM64) systems, download the pre-built binary:
 
 1. **Download the Latest Release**
    - Visit the [Releases page](https://github.com/Snupai/MultipackParser/releases)
-   - Download the appropriate binary for your architecture
+   - Download the binary matching your architecture
 
 2. **Extract and Run**
    ```bash
-   tar -xzf MultipackParser-*.tar.gz
-   cd MultipackParser
+   chmod +x MultipackParser
    ./MultipackParser
    ```
 
 ### Method 3: Docker Build
 
-For building a custom binary using Docker:
+Build a custom ARM64 binary using Docker:
 
-1. **Ensure Docker is Installed**
-   ```bash
-   docker --version
-   ```
+```bash
+# Ensure Docker is installed
+docker --version
 
-2. **Build the Application**
-   ```bash
-   python build.py
-   ```
+# Build the application
+python build.py
+```
 
-   The resulting binary will be placed in the `local_dist` directory.
+The resulting binary will be placed in the `local_dist` directory.
 
-   > [!NOTE]
-   > The Docker build process creates an ARM64-compatible binary.
+> [!NOTE]
+> The Docker build creates an ARM64-compatible binary for Raspberry Pi deployment.
+
+---
 
 ## Configuration
 
 ### Initial Setup
 
-1. **First Run**
-   - Launch the application: `python main.py`
-   - The application will create necessary directories and configuration files
-   - Database will be automatically initialized
+On first run, the application automatically:
+- Creates the `logs/` directory for application logs
+- Initializes the SQLite database (`paletten.db`)
+- Generates default configuration files
 
-2. **Settings Configuration**
-   - Access settings through the application UI (password-protected)
-   - Configure robot model (UR10 or UR20)
-   - Set network parameters if needed
+```bash
+# First run
+python main.py
+```
+
+### Settings Configuration
+
+Access settings through the application UI (password-protected):
+
+| Setting Category | Description |
+|------------------|-------------|
+| **Info** | Robot model selection (UR10/UR20), system information |
+| **Network** | Connection parameters |
+| **Audio** | Sound notification preferences |
+| **Security** | Password management |
+
+### Robot Model Configuration
+
+| Model | Features |
+|-------|----------|
+| **UR10** | 2 scanners, standard palette support |
+| **UR20** | 3 scanners, dual palette support, intermediate layers |
 
 ### Environment Variables
 
-The application uses several environment variables for configuration:
+The application sets these automatically, but they can be overridden if needed:
 
-- `QT_X11_NO_MITSHM`: Disables MIT-SHM extension (Linux)
-- `LIBGL_ALWAYS_SOFTWARE`: Forces software rendering
-- `QT_OPENGL`: Set to "software" for software OpenGL
-- `QT_QPA_PLATFORM`: Set to "xcb" for Linux
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `QT_X11_NO_MITSHM` | 1 | Disable MIT-SHM extension (Linux) |
+| `LIBGL_ALWAYS_SOFTWARE` | 1 | Force software rendering |
+| `QT_OPENGL` | software | Use software OpenGL |
+| `QT_QPA_PLATFORM` | xcb | Linux display platform |
+| `QT_IM_MODULE` | qtvirtualkeyboard | Enable virtual keyboard |
 
-These are automatically set by the application, but can be overridden if needed.
+### Database
 
-### Database Setup
+The application uses SQLite for data storage:
+- **Location**: `paletten.db` in the application directory
+- **Purpose**: Stores pallet configurations and metadata
+- **Management**: Automatic creation and updates
 
-The application uses SQLite for data storage. The database file (`paletten.db`) is automatically created in the application directory on first run.
+---
 
 ## Verification
 
 ### Test Installation
 
-1. **Check Version**
-   ```bash
-   python main.py --version
-   ```
-   Should display: `MultipackParser Application Version: 1.7.6`
+```bash
+# Check version
+python main.py --version
+# Expected output: Multipack Parser Application Version: 1.7.9
 
-2. **Check License**
-   ```bash
-   python main.py --license
-   ```
+# Check license
+python main.py --license
 
-3. **Run with Verbose Logging**
-   ```bash
-   python main.py --verbose
-   ```
+# Run with verbose logging
+python main.py --verbose
+```
+
+### Command Line Options
+
+| Option | Short | Description |
+|--------|-------|-------------|
+| `--version` | `-v` | Display version information |
+| `--license` | `-l` | Display license information |
+| `--verbose` | `-V` | Enable debug logging |
+| `--no-virtual-keyboard` | | Disable virtual keyboard |
 
 ### Verify Dependencies
 
@@ -146,78 +193,176 @@ Check that all required packages are installed:
 pip list | grep -E "PySide6|matplotlib|cryptography|pydub|pygame|requests"
 ```
 
+Expected output should include:
+- PySide6 >= 6.7.2
+- matplotlib == 3.7.5
+- cryptography
+- pydub
+- pygame
+- requests
+
+---
+
 ## Troubleshooting
 
 ### Common Issues
 
-#### Issue: Import Errors
+#### Import Errors
 
-**Solution**: Ensure all dependencies are installed:
+**Symptoms**: `ModuleNotFoundError` when starting the application
+
+**Solution**:
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt --upgrade
 ```
 
-#### Issue: Qt/OpenGL Errors on Linux
+#### Qt/OpenGL Errors on Linux
 
-**Solution**: The application automatically sets software rendering. If issues persist:
+**Symptoms**: OpenGL initialization errors, black screen, or display issues
+
+**Solution**:
 ```bash
 export QT_X11_NO_MITSHM=1
 export LIBGL_ALWAYS_SOFTWARE=1
 export QT_OPENGL=software
+python main.py
 ```
 
-#### Issue: Database Permission Errors
+#### Database Permission Errors
 
-**Solution**: Ensure the application directory is writable:
+**Symptoms**: Cannot create or write to database file
+
+**Solution**:
 ```bash
 chmod 755 /path/to/MultipackParser
+chmod 644 /path/to/MultipackParser/paletten.db
 ```
 
-#### Issue: Virtual Keyboard Not Appearing
+#### Virtual Keyboard Not Appearing
 
-**Solution**: Ensure Qt virtual keyboard module is available:
+**Symptoms**: No on-screen keyboard on touch devices
+
+**Solution**:
 ```bash
 pip install PySide6 --upgrade
+# Ensure QT_IM_MODULE is set
+export QT_IM_MODULE=qtvirtualkeyboard
 ```
+
+#### Application Startup Freeze
+
+**Symptoms**: Application hangs during splash screen
+
+**Solution**:
+1. Run with verbose logging to identify the issue:
+   ```bash
+   python main.py --verbose
+   ```
+2. Check log files in `logs/` directory
 
 ### Log Files
 
-Log files are stored in the `logs/` directory:
-- Application logs: `multipack_parser_YYYYMMDD_HHMMSS.log`
-- Server logs: `server_YYYYMMDD_HHMMSS.log`
+Application logs are stored in the `logs/` directory:
 
-Check these files for detailed error information.
+| Log File | Purpose |
+|----------|---------|
+| `multipack_parser_YYYYMMDD_HHMMSS.log` | Application events and errors |
+| `server_YYYYMMDD_HHMMSS.log` | XML-RPC server requests and responses |
+
+To enable debug logging:
+```bash
+python main.py --verbose
+```
+
+---
 
 ## Updating
 
 ### Update from Source
 
 ```bash
+cd /path/to/MultipackParser
 git pull origin main
 pip install -r requirements.txt --upgrade
 ```
 
 ### Update Binary
 
-1. Download the latest release
-2. Replace the old binary
-3. Restart the application
+There are two ways to update the MultipackParser binary:
+
+1. **Automatic Update via Application UI**
+   
+   - Click the hidden button at the top left corner of the main window.
+   - Enter the password when prompted.
+   - Click the "Search Update" button.
+   - The application will automatically check for a new release either on GitHub or on a connected USB drive and prompt you to install if one is found.
+
+2. **Manual Update**
+   
+   - Download the latest release from the [Releases page](https://github.com/Snupai/MultipackParser/releases)
+   - Replace the old binary with the new one
+   - Restart the application
+
+### Backup Before Update
+
+It's recommended to backup your data before updating:
+
+```bash
+# Backup database
+cp paletten.db paletten.db.backup
+
+# Backup settings (if applicable)
+cp -r config/ config.backup/
+```
+
+---
 
 ## Uninstallation
 
-### Remove from Source Installation
+### Remove Source Installation
 
 ```bash
-cd /path/to/MultipackParser
-pip uninstall -r requirements.txt
-rm -rf /path/to/MultipackParser
+cd /path/to
+rm -rf MultipackParser
+```
+
+### Remove Python Packages (Optional)
+
+If you want to remove the installed Python packages:
+
+```bash
+pip uninstall PySide6 matplotlib cryptography pydub pygame requests python-dotenv ffmpeg-python
 ```
 
 ### Remove Binary Installation
 
-Simply delete the application directory and binary file.
+Simply delete the application directory and binary file:
+
+```bash
+rm -rf /path/to/MultipackParser
+```
+
+### Clean Up Data
+
+To remove all application data:
+
+```bash
+rm -f paletten.db
+rm -rf logs/
+```
+
+---
 
 ## Next Steps
 
-After installation, proceed to the [User Guide](user-guide.md) to learn how to use the application.
+After successful installation:
 
+1. **[User Guide](user-guide.md)** - Learn how to use the application
+2. **[Architecture Documentation](architecture.md)** - Understand the system design
+3. **[API Reference](api-reference.md)** - Integrate with robot systems
+
+---
+
+<div align="center">
+  <sub>MultipackParser Installation Guide - Version 1.7.9</sub>
+</div>
