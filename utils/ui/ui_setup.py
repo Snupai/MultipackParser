@@ -231,6 +231,14 @@ def connect_signal_handlers():
     def set_height_programmatically(value):
         """Set height value programmatically without showing confirmation dialog."""
         nonlocal _programmatic_height_update, _previous_height, _height_revert_timer
+        
+        # Validate input
+        try:
+            height = int(value)
+        except (ValueError, TypeError):
+            logger.warning(f"Invalid height value provided to set_height_programmatically: {value}")
+            return
+        
         _programmatic_height_update = True
         # Stop revert timer when setting programmatically
         _height_revert_timer.stop()
@@ -239,15 +247,31 @@ def connect_signal_handlers():
         except RuntimeError:
             pass  # Ignore if no connections exist
         global_vars.ui.EingabeKartonhoehe.blockSignals(True)
-        global_vars.ui.EingabeKartonhoehe.setText(str(value))
+        global_vars.ui.EingabeKartonhoehe.setText(str(height))
         global_vars.ui.EingabeKartonhoehe.blockSignals(False)
-        _previous_height = value
+        _previous_height = height
+        
+        # Sync global state variable (consistent with _update_box_height_in_db)
+        if global_vars.g_PaketDim and len(global_vars.g_PaketDim) > 2:
+            global_vars.g_PaketDim[2] = height
+        
+        # Update weight info label since height affects calculated weight
+        update_weight_info_label()
+        
         _programmatic_height_update = False
     
     # Helper function to set weight programmatically without triggering dialog
     def set_weight_programmatically(value):
         """Set weight value programmatically without showing confirmation dialog."""
         nonlocal _programmatic_weight_update, _previous_weight, _calculated_weight, _weight_revert_timer
+        
+        # Validate input with error handling
+        try:
+            weight = float(value)
+        except (ValueError, TypeError):
+            logger.warning(f"Invalid weight value provided to set_weight_programmatically: {value}")
+            return
+        
         _programmatic_weight_update = True
         # Stop revert timer when setting programmatically
         _weight_revert_timer.stop()
@@ -256,13 +280,16 @@ def connect_signal_handlers():
         except RuntimeError:
             pass  # Ignore if no connections exist
         global_vars.ui.EingabeKartonGewicht.blockSignals(True)
-        global_vars.ui.EingabeKartonGewicht.setText(str(value))
+        global_vars.ui.EingabeKartonGewicht.setText(str(weight))
         global_vars.ui.EingabeKartonGewicht.blockSignals(False)
-        _previous_weight = value
+        _previous_weight = weight
+        
+        # Sync global state variable (consistent with _update_box_weight_in_db)
+        global_vars.g_MassePaket = weight
         
         # Check if this matches calculated weight
         expected_weight = calculate_expected_weight()
-        if expected_weight is not None and abs(float(value) - expected_weight) < 0.05:
+        if expected_weight is not None and abs(weight - expected_weight) < 0.05:
             _calculated_weight = expected_weight
         else:
             _calculated_weight = None
