@@ -2,8 +2,8 @@
 
 - [x] Add box weight to db 
 - [x] Add Update db function to update db box height and box weight
-- [ ] Add confirmation window for updating weight or height of box before saving to db.
-- [ ] Add Text next to weight input field if no weight been set by a user before noting that they should weigh 1 package and put the weight in the field. (if we save the weight we calculate maybe we should also have this message once the weight we load is the same as the one we calculate???)
+- [x] Add confirmation window for updating weight or height of box before saving to db.
+- [x] Add Text next to weight input field if no weight been set by a user before noting that they should weigh 1 package and put the weight in the field. (if we save the weight we calculate maybe we should also have this message once the weight we load is the same as the one we calculate???)
 
 
 # Important:
