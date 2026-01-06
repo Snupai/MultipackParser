@@ -34,7 +34,7 @@ from utils.server.UR20_Server_functions import scanner_signals
 from utils.ui.notification_popup import check_zwischenlage_status
 from utils.ui.ui_helpers import check_palette_clearing_status
 
-DEBOUNCE_TIME = 800
+DEBOUNCE_TIME = 2000
 
 # Add logger
 logger = logging.getLogger(__name__)
@@ -428,7 +428,7 @@ def connect_signal_handlers():
         # Only start revert timer if value is invalid
         if not is_valid and _previous_height is not None:
             _height_revert_timer.timeout.connect(_check_and_revert_height)
-            _height_revert_timer.start(5000)  # 5 seconds
+            _height_revert_timer.start(6900)  # 6.9 seconds
         
         # Handle debounced update
         _height_debounce_timer.stop()
@@ -437,7 +437,7 @@ def connect_signal_handlers():
         except RuntimeError:
             pass  # Ignore if no connections exist
         _height_debounce_timer.timeout.connect(_update_box_height_in_db)
-        _height_debounce_timer.start(DEBOUNCE_TIME)  # 300ms debounce
+        _height_debounce_timer.start(DEBOUNCE_TIME)  # debouncing
     
     def _update_box_weight_in_db():
         """Update box weight in database when UI value changes, with confirmation dialog."""
@@ -564,7 +564,7 @@ def connect_signal_handlers():
         # Only start revert timer if value is invalid
         if not is_valid and _previous_weight is not None:
             _weight_revert_timer.timeout.connect(_check_and_revert_weight)
-            _weight_revert_timer.start(5000)  # 5 seconds
+            _weight_revert_timer.start(6900)  # 6.9 seconds
         
         # Handle debounced update
         _weight_debounce_timer.stop()
@@ -573,7 +573,7 @@ def connect_signal_handlers():
         except RuntimeError:
             pass  # Ignore if no connections exist
         _weight_debounce_timer.timeout.connect(_update_box_weight_in_db)
-        _weight_debounce_timer.start(DEBOUNCE_TIME)  # 300ms debounce
+        _weight_debounce_timer.start(DEBOUNCE_TIME)  # debouncing
     
     global_vars.ui.EingabeKartonhoehe.textChanged.connect(update_box_height_in_db)
     global_vars.ui.EingabeKartonGewicht.textChanged.connect(update_box_weight_in_db)
