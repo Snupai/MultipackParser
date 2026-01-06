@@ -266,8 +266,16 @@ def load() -> None:
                 Gewicht = round(Volumen * Dichte * Ausnutzung, 1) # Gewicht in kg
                 logger.debug(f"Calculated default weight: {Gewicht}")
             
-            global_vars.ui.EingabeKartonGewicht.setText(str(Gewicht))
-            global_vars.ui.EingabeKartonhoehe.setText(str(box_height))
+            # Use helper functions to set values programmatically without triggering confirmation dialog
+            if hasattr(global_vars, 'set_weight_programmatically'):
+                global_vars.set_weight_programmatically(Gewicht)
+            else:
+                global_vars.ui.EingabeKartonGewicht.setText(str(Gewicht))
+            
+            if hasattr(global_vars, 'set_height_programmatically'):
+                global_vars.set_height_programmatically(box_height)
+            else:
+                global_vars.ui.EingabeKartonhoehe.setText(str(box_height))
             
             # Load saved einzelpaket_laengs setting, or use auto-check if not saved
             from utils.database.database import get_einzelpaket_laengs

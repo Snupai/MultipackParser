@@ -150,31 +150,153 @@ def connect_signal_handlers():
     global_vars.ui.lineEditFilterHeight.textChanged.connect(update_filter_height)
     global_vars.ui.pushButtonClearFilters.clicked.connect(clear_filters)
 
-    # Connect box dimension inputs to update database immediately on change
-    def update_box_height_in_db(text_value):
-        """Update box height in database when UI value changes."""
+    # Track previous values and programmatic update flags for box dimensions
+    _previous_height = None
+    _previous_weight = None
+    _programmatic_height_update = False
+    _programmatic_weight_update = False
+    _height_debounce_timer = QTimer()
+    _height_debounce_timer.setSingleShot(True)
+    _weight_debounce_timer = QTimer()
+    _weight_debounce_timer.setSingleShot(True)
+    
+    # Helper function to set height programmatically without triggering dialog
+    def set_height_programmatically(value):
+        """Set height value programmatically without showing confirmation dialog."""
+        global _programmatic_height_update, _previous_height
+        _programmatic_height_update = True
+        global_vars.ui.EingabeKartonhoehe.blockSignals(True)
+        global_vars.ui.EingabeKartonhoehe.setText(str(value))
+        global_vars.ui.EingabeKartonhoehe.blockSignals(False)
+        _previous_height = value
+        _programmatic_height_update = False
+    
+    # Helper function to set weight programmatically without triggering dialog
+    def set_weight_programmatically(value):
+        """Set weight value programmatically without showing confirmation dialog."""
+        global _programmatic_weight_update, _previous_weight
+        _programmatic_weight_update = True
+        global_vars.ui.EingabeKartonGewicht.blockSignals(True)
+        global_vars.ui.EingabeKartonGewicht.setText(str(value))
+        global_vars.ui.EingabeKartonGewicht.blockSignals(False)
+        _previous_weight = value
+        _programmatic_weight_update = False
+    
+    # Store helper functions in global_vars for use in other modules
+    global_vars.set_height_programmatically = set_height_programmatically
+    global_vars.set_weight_programmatically = set_weight_programmatically
+    
+    # Connect box dimension inputs to update database with confirmation dialog
+    def _update_box_height_in_db():
+        """Update box height in database when UI value changes, with confirmation dialog."""
+        global _previous_height, _programmatic_height_update
+        
+        # Don't show dialog if this is a programmatic update
+        if _programmatic_height_update:
+            return
+        
+        text_value = global_vars.ui.EingabeKartonhoehe.text()
         if not text_value or not global_vars.FILENAME:
             return
+        
         try:
             height = int(text_value)
-            # Also update g_PaketDim if it exists
-            if global_vars.g_PaketDim and len(global_vars.g_PaketDim) > 2:
-                global_vars.g_PaketDim[2] = height
-            update_box_dimensions(global_vars.FILENAME, height=height)
+            
+            # Only show dialog if value actually changed
+            if _previous_height is not None and _previous_height == height:
+                return
+            
+            old_height = _previous_height
+            
+            # Show confirmation dialog before saving
+            if old_height is not None:
+                message = f"Möchten Sie die Kartonhöhe von {old_height} mm auf {height} mm in der Datenbank speichern?"
+            else:
+                message = f"Möchten Sie die Kartonhöhe auf {height} mm in der Datenbank speichern?"
+            
+            response = QMessageBox.question(
+                global_vars.main_window,
+                "Kartonhöhe aktualisieren",
+                message,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.Yes
+            )
+            global_vars.main_window.setWindowState(global_vars.main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink
+            
+            if response == QMessageBox.StandardButton.Yes:
+                # Also update g_PaketDim if it exists
+                if global_vars.g_PaketDim and len(global_vars.g_PaketDim) > 2:
+                    global_vars.g_PaketDim[2] = height
+                update_box_dimensions(global_vars.FILENAME, height=height)
+                _previous_height = height
+            else:
+                # Revert to previous value if user cancels
+                if old_height is not None:
+                    set_height_programmatically(old_height)
         except ValueError:
             pass  # Invalid value, skip update
     
-    def update_box_weight_in_db(text_value):
-        """Update box weight in database when UI value changes."""
+    def update_box_height_in_db():
+        """Debounced wrapper for height update."""
+        _height_debounce_timer.stop()
+        _height_debounce_timer.timeout.disconnect()
+        _height_debounce_timer.timeout.connect(_update_box_height_in_db)
+        _height_debounce_timer.start(300)  # 300ms debounce
+    
+    def _update_box_weight_in_db():
+        """Update box weight in database when UI value changes, with confirmation dialog."""
+        global _previous_weight, _programmatic_weight_update
+        
+        # Don't show dialog if this is a programmatic update
+        if _programmatic_weight_update:
+            return
+        
+        text_value = global_vars.ui.EingabeKartonGewicht.text()
         if not text_value or not global_vars.FILENAME:
             return
+        
         try:
             # Handle both comma and period as decimal separator
             weight = float(text_value.replace(',', '.'))
-            global_vars.g_MassePaket = weight
-            update_box_dimensions(global_vars.FILENAME, weight=weight)
+            
+            # Only show dialog if value actually changed
+            if _previous_weight is not None and abs(_previous_weight - weight) < 0.001:  # Float comparison with tolerance
+                return
+            
+            old_weight = _previous_weight
+            
+            # Show confirmation dialog before saving
+            if old_weight is not None:
+                message = f"Möchten Sie das Kartongewicht von {old_weight} kg auf {weight} kg in der Datenbank speichern?"
+            else:
+                message = f"Möchten Sie das Kartongewicht auf {weight} kg in der Datenbank speichern?"
+            
+            response = QMessageBox.question(
+                global_vars.main_window,
+                "Kartongewicht aktualisieren",
+                message,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.Yes
+            )
+            global_vars.main_window.setWindowState(global_vars.main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink
+            
+            if response == QMessageBox.StandardButton.Yes:
+                global_vars.g_MassePaket = weight
+                update_box_dimensions(global_vars.FILENAME, weight=weight)
+                _previous_weight = weight
+            else:
+                # Revert to previous value if user cancels
+                if old_weight is not None:
+                    set_weight_programmatically(old_weight)
         except ValueError:
             pass  # Invalid value, skip update
+    
+    def update_box_weight_in_db():
+        """Debounced wrapper for weight update."""
+        _weight_debounce_timer.stop()
+        _weight_debounce_timer.timeout.disconnect()
+        _weight_debounce_timer.timeout.connect(_update_box_weight_in_db)
+        _weight_debounce_timer.start(300)  # 300ms debounce
     
     global_vars.ui.EingabeKartonhoehe.textChanged.connect(update_box_height_in_db)
     global_vars.ui.EingabeKartonGewicht.textChanged.connect(update_box_weight_in_db)
