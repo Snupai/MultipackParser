@@ -34,6 +34,8 @@ from utils.server.UR20_Server_functions import scanner_signals
 from utils.ui.notification_popup import check_zwischenlage_status
 from utils.ui.ui_helpers import check_palette_clearing_status
 
+DEBOUNCE_TIME = 800
+
 # Add logger
 logger = logging.getLogger(__name__)
 
@@ -150,34 +152,435 @@ def connect_signal_handlers():
     global_vars.ui.lineEditFilterHeight.textChanged.connect(update_filter_height)
     global_vars.ui.pushButtonClearFilters.clicked.connect(clear_filters)
 
-    # Connect box dimension inputs to update database immediately on change
-    def update_box_height_in_db(text_value):
-        """Update box height in database when UI value changes."""
+    # Track previous values and programmatic update flags for box dimensions
+    _previous_height = None
+    _previous_weight = None
+    _programmatic_height_update = False
+    _programmatic_weight_update = False
+    _height_debounce_timer = QTimer()
+    _height_debounce_timer.setSingleShot(True)
+    _weight_debounce_timer = QTimer()
+    _weight_debounce_timer.setSingleShot(True)
+    _height_revert_timer = QTimer()
+    _height_revert_timer.setSingleShot(True)
+    _weight_revert_timer = QTimer()
+    _weight_revert_timer.setSingleShot(True)
+    _calculated_weight = None  # Track calculated weight to detect if current weight matches
+    
+    # Define helper functions first (before they're used)
+    def calculate_expected_weight():
+        """Calculate expected weight based on package dimensions.
+        
+        Returns:
+            Optional[float]: Calculated weight in kg, or None if dimensions are not available
+        """
+        if not global_vars.g_PaketDim or len(global_vars.g_PaketDim) < 3:
+            return None
+        
+        try:
+            box_height = global_vars.g_PaketDim[2]
+            Volumen = (global_vars.g_PaketDim[0] * global_vars.g_PaketDim[1] * box_height) / 1E+9  # in m³
+            Dichte = 1000  # Dichte von Wasser in kg/m³
+            Ausnutzung = 0.4  # Empirsch ermittelter Faktor - nicht für Gasflaschen
+            Gewicht = round(Volumen * Dichte * Ausnutzung, 1)  # Gewicht in kg
+            return Gewicht
+        except (IndexError, TypeError, ValueError):
+            return None
+    
+    def update_weight_info_label():
+        """Update the weight info label based on current weight status."""
+        nonlocal _calculated_weight
+        
+        if not hasattr(global_vars.ui, 'label_GewichtInfo'):
+            return
+        
+        text_value = global_vars.ui.EingabeKartonGewicht.text()
+        
+        # If weight field is empty, show warning
+        if not text_value or not text_value.strip():
+            global_vars.ui.label_GewichtInfo.setText("Bitte 1 Paket wiegen und Gewicht eingeben.")
+            global_vars.ui.label_GewichtInfo.setStyleSheet("color: #FF5F15;")
+            return
+        
+        try:
+            current_weight = float(text_value.replace(',', '.'))
+            
+            # Calculate expected weight
+            expected_weight = calculate_expected_weight()
+            
+            # If we have expected weight and current weight matches (within tolerance)
+            if expected_weight is not None:
+                weight_diff = abs(current_weight - expected_weight)
+                if weight_diff < 0.05:  # Tolerance of 0.05 kg
+                    global_vars.ui.label_GewichtInfo.setText("Paket Gewicht errechnet!\nBitte 1 Paket wiegen und Gewicht eingeben.")
+                    global_vars.ui.label_GewichtInfo.setStyleSheet("color: #FF5F15;")
+                    _calculated_weight = expected_weight
+                    return
+            
+            # Weight is user-set (different from calculated or no calculation possible)
+            global_vars.ui.label_GewichtInfo.setText("")
+            global_vars.ui.label_GewichtInfo.setStyleSheet("")
+            _calculated_weight = None
+            
+        except ValueError:
+            # Invalid weight value
+            global_vars.ui.label_GewichtInfo.setText("Bitte 1 Paket wiegen und Gewicht eingeben.")
+            global_vars.ui.label_GewichtInfo.setStyleSheet("color: #FF5F15;")
+    
+    # Helper function to set height programmatically without triggering dialog
+    def set_height_programmatically(value):
+        """Set height value programmatically without showing confirmation dialog."""
+        nonlocal _programmatic_height_update, _previous_height, _height_revert_timer
+        
+        # Validate input
+        try:
+            height = int(value)
+        except (ValueError, TypeError):
+            logger.warning(f"Invalid height value provided to set_height_programmatically: {value}")
+            return
+        
+        _programmatic_height_update = True
+        # Stop revert timer when setting programmatically
+        _height_revert_timer.stop()
+        try:
+            _height_revert_timer.timeout.disconnect()
+        except RuntimeError:
+            pass  # Ignore if no connections exist
+        global_vars.ui.EingabeKartonhoehe.blockSignals(True)
+        global_vars.ui.EingabeKartonhoehe.setText(str(height))
+        global_vars.ui.EingabeKartonhoehe.blockSignals(False)
+        _previous_height = height
+        
+        # Sync global state variable (consistent with _update_box_height_in_db)
+        if global_vars.g_PaketDim and len(global_vars.g_PaketDim) > 2:
+            global_vars.g_PaketDim[2] = height
+        
+        # Update weight info label since height affects calculated weight
+        update_weight_info_label()
+        
+        _programmatic_height_update = False
+    
+    # Helper function to set weight programmatically without triggering dialog
+    def set_weight_programmatically(value):
+        """Set weight value programmatically without showing confirmation dialog."""
+        nonlocal _programmatic_weight_update, _previous_weight, _calculated_weight, _weight_revert_timer
+        
+        # Validate input with error handling
+        try:
+            weight = float(value)
+        except (ValueError, TypeError):
+            logger.warning(f"Invalid weight value provided to set_weight_programmatically: {value}")
+            return
+        
+        _programmatic_weight_update = True
+        # Stop revert timer when setting programmatically
+        _weight_revert_timer.stop()
+        try:
+            _weight_revert_timer.timeout.disconnect()
+        except RuntimeError:
+            pass  # Ignore if no connections exist
+        global_vars.ui.EingabeKartonGewicht.blockSignals(True)
+        global_vars.ui.EingabeKartonGewicht.setText(str(weight))
+        global_vars.ui.EingabeKartonGewicht.blockSignals(False)
+        _previous_weight = weight
+        
+        # Sync global state variable (consistent with _update_box_weight_in_db)
+        global_vars.g_MassePaket = weight
+        
+        # Check if this matches calculated weight
+        expected_weight = calculate_expected_weight()
+        if expected_weight is not None and abs(weight - expected_weight) < 0.05:
+            _calculated_weight = expected_weight
+        else:
+            _calculated_weight = None
+        
+        # Update info label
+        update_weight_info_label()
+        _programmatic_weight_update = False
+    
+    # Store helper functions in global_vars for use in other modules
+    global_vars.set_height_programmatically = set_height_programmatically
+    global_vars.set_weight_programmatically = set_weight_programmatically
+    global_vars.calculate_expected_weight = calculate_expected_weight
+    global_vars.update_weight_info_label = update_weight_info_label
+    
+    # Connect box dimension inputs to update database with confirmation dialog
+    def _update_box_height_in_db():
+        """Update box height in database when UI value changes, with confirmation dialog."""
+        nonlocal _previous_height, _programmatic_height_update, _height_revert_timer
+        
+        # Don't show dialog if this is a programmatic update
+        if _programmatic_height_update:
+            return
+        
+        text_value = global_vars.ui.EingabeKartonhoehe.text()
         if not text_value or not global_vars.FILENAME:
             return
+        
         try:
             height = int(text_value)
-            # Also update g_PaketDim if it exists
-            if global_vars.g_PaketDim and len(global_vars.g_PaketDim) > 2:
-                global_vars.g_PaketDim[2] = height
-            update_box_dimensions(global_vars.FILENAME, height=height)
+
+            # Plausibility check: height must be > 0 and < 600
+            if height <= 0 or height >= 600:
+                QMessageBox.warning(
+                    global_vars.main_window,
+                    "Ungültige Kartonhöhe",
+                    "Die Kartonhöhe muss größer als 0 und kleiner als 600 mm sein."
+                )
+                # Revert to previous value or clear field
+                if _previous_height is not None:
+                    set_height_programmatically(_previous_height)
+                else:
+                    global_vars.ui.EingabeKartonhoehe.clear()
+                return
+            
+            # Stop revert timer if we have a valid value
+            if height != 0:
+                _height_revert_timer.stop()
+                try:
+                    _height_revert_timer.timeout.disconnect()
+                except RuntimeError:
+                    pass
+            
+            # Only show dialog if value actually changed
+            if _previous_height is not None and _previous_height == height:
+                return
+            
+            old_height = _previous_height
+            
+            # Show confirmation dialog before saving
+            if old_height is not None:
+                message = f"Möchten Sie die Kartonhöhe von {old_height} mm auf {height} mm in der Datenbank speichern?"
+            else:
+                message = f"Möchten Sie die Kartonhöhe auf {height} mm in der Datenbank speichern?"
+            
+            response = QMessageBox.question(
+                global_vars.main_window,
+                "Kartonhöhe aktualisieren",
+                message,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.Yes
+            )
+            global_vars.main_window.setWindowState(global_vars.main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink
+            
+            if response == QMessageBox.StandardButton.Yes:
+                # Also update g_PaketDim if it exists
+                if global_vars.g_PaketDim and len(global_vars.g_PaketDim) > 2:
+                    global_vars.g_PaketDim[2] = height
+                update_box_dimensions(global_vars.FILENAME, height=height)
+                _previous_height = height
+            else:
+                # Revert to previous value if user cancels
+                if old_height is not None:
+                    set_height_programmatically(old_height)
         except ValueError:
             pass  # Invalid value, skip update
     
-    def update_box_weight_in_db(text_value):
-        """Update box weight in database when UI value changes."""
+    def _check_and_revert_height():
+        """Check if height is empty or 0 and revert to previous value if so."""
+        nonlocal _previous_height, _programmatic_height_update
+        
+        # Don't revert if this is a programmatic update
+        if _programmatic_height_update:
+            return
+        
+        text_value = global_vars.ui.EingabeKartonhoehe.text()
+        
+        # Check if field is empty or effectively 0
+        is_empty_or_zero = False
+        if not text_value or not text_value.strip():
+            is_empty_or_zero = True
+        else:
+            try:
+                height = int(text_value)
+                if height == 0:
+                    is_empty_or_zero = True
+            except ValueError:
+                # Invalid value, treat as empty
+                is_empty_or_zero = True
+        
+        # If empty/zero and we have a previous value, revert it
+        if is_empty_or_zero and _previous_height is not None:
+            set_height_programmatically(_previous_height)
+    
+    def update_box_height_in_db():
+        """Debounced wrapper for height update."""
+        nonlocal _height_revert_timer
+        
+        # Stop and restart revert timer
+        _height_revert_timer.stop()
+        try:
+            _height_revert_timer.timeout.disconnect()
+        except RuntimeError:
+            pass  # Ignore if no connections exist
+        
+        # Check if current value is valid (not empty/zero)
+        text_value = global_vars.ui.EingabeKartonhoehe.text()
+        is_valid = False
+        if text_value and text_value.strip():
+            try:
+                height = int(text_value)
+                if height != 0:
+                    is_valid = True
+            except ValueError:
+                pass
+        
+        # Only start revert timer if value is invalid
+        if not is_valid and _previous_height is not None:
+            _height_revert_timer.timeout.connect(_check_and_revert_height)
+            _height_revert_timer.start(5000)  # 5 seconds
+        
+        # Handle debounced update
+        _height_debounce_timer.stop()
+        try:
+            _height_debounce_timer.timeout.disconnect()
+        except RuntimeError:
+            pass  # Ignore if no connections exist
+        _height_debounce_timer.timeout.connect(_update_box_height_in_db)
+        _height_debounce_timer.start(DEBOUNCE_TIME)  # 300ms debounce
+    
+    def _update_box_weight_in_db():
+        """Update box weight in database when UI value changes, with confirmation dialog."""
+        nonlocal _previous_weight, _programmatic_weight_update, _calculated_weight, _weight_revert_timer
+        
+        # Don't show dialog if this is a programmatic update
+        if _programmatic_weight_update:
+            return
+        
+        text_value = global_vars.ui.EingabeKartonGewicht.text()
         if not text_value or not global_vars.FILENAME:
             return
+        
         try:
             # Handle both comma and period as decimal separator
             weight = float(text_value.replace(',', '.'))
-            global_vars.g_MassePaket = weight
-            update_box_dimensions(global_vars.FILENAME, weight=weight)
+
+            # Plausibility check: weight must be > 0 and < 15.0
+            if weight <= 0 or weight >= 15.0:
+                QMessageBox.warning(
+                    global_vars.main_window,
+                    "Ungültiges Kartongewicht",
+                    "Das Kartongewicht muss größer als 0 und kleiner als 15,0 kg sein."
+                )
+                # Revert to previous value or clear field
+                if _previous_weight is not None:
+                    set_weight_programmatically(_previous_weight)
+                else:
+                    global_vars.ui.EingabeKartonGewicht.clear()
+                return
+            
+            # Stop revert timer if we have a valid value
+            if abs(weight) >= 0.001:  # Not effectively zero
+                _weight_revert_timer.stop()
+                try:
+                    _weight_revert_timer.timeout.disconnect()
+                except RuntimeError:
+                    pass
+            
+            # Only show dialog if value actually changed
+            if _previous_weight is not None and abs(_previous_weight - weight) < 0.001:  # Float comparison with tolerance
+                return
+            
+            old_weight = _previous_weight
+            
+            # Show confirmation dialog before saving
+            if old_weight is not None:
+                message = f"Möchten Sie das Kartongewicht von {old_weight} kg auf {weight} kg in der Datenbank speichern?"
+            else:
+                message = f"Möchten Sie das Kartongewicht auf {weight} kg in der Datenbank speichern?"
+            
+            response = QMessageBox.question(
+                global_vars.main_window,
+                "Kartongewicht aktualisieren",
+                message,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.Yes
+            )
+            global_vars.main_window.setWindowState(global_vars.main_window.windowState() ^ Qt.WindowState.WindowActive)  # This will make the window blink
+            
+            if response == QMessageBox.StandardButton.Yes:
+                global_vars.g_MassePaket = weight
+                update_box_dimensions(global_vars.FILENAME, weight=weight)
+                _previous_weight = weight
+                # User has set weight manually, clear calculated weight flag
+                _calculated_weight = None
+                update_weight_info_label()
+            else:
+                # Revert to previous value if user cancels
+                if old_weight is not None:
+                    set_weight_programmatically(old_weight)
         except ValueError:
             pass  # Invalid value, skip update
     
+    def _check_and_revert_weight():
+        """Check if weight is empty or 0 and revert to previous value if so."""
+        nonlocal _previous_weight, _programmatic_weight_update
+        
+        # Don't revert if this is a programmatic update
+        if _programmatic_weight_update:
+            return
+        
+        text_value = global_vars.ui.EingabeKartonGewicht.text()
+        
+        # Check if field is empty or effectively 0
+        is_empty_or_zero = False
+        if not text_value or not text_value.strip():
+            is_empty_or_zero = True
+        else:
+            try:
+                weight = float(text_value.replace(',', '.'))
+                if abs(weight) < 0.001:  # Effectively zero
+                    is_empty_or_zero = True
+            except ValueError:
+                # Invalid value, treat as empty
+                is_empty_or_zero = True
+        
+        # If empty/zero and we have a previous value, revert it
+        if is_empty_or_zero and _previous_weight is not None:
+            set_weight_programmatically(_previous_weight)
+    
+    def update_box_weight_in_db():
+        """Debounced wrapper for weight update."""
+        nonlocal _weight_revert_timer
+        
+        # Stop and restart revert timer
+        _weight_revert_timer.stop()
+        try:
+            _weight_revert_timer.timeout.disconnect()
+        except RuntimeError:
+            pass  # Ignore if no connections exist
+        
+        # Check if current value is valid (not empty/zero)
+        text_value = global_vars.ui.EingabeKartonGewicht.text()
+        is_valid = False
+        if text_value and text_value.strip():
+            try:
+                weight = float(text_value.replace(',', '.'))
+                if abs(weight) >= 0.001:  # Not effectively zero
+                    is_valid = True
+            except ValueError:
+                pass
+        
+        # Only start revert timer if value is invalid
+        if not is_valid and _previous_weight is not None:
+            _weight_revert_timer.timeout.connect(_check_and_revert_weight)
+            _weight_revert_timer.start(5000)  # 5 seconds
+        
+        # Handle debounced update
+        _weight_debounce_timer.stop()
+        try:
+            _weight_debounce_timer.timeout.disconnect()
+        except RuntimeError:
+            pass  # Ignore if no connections exist
+        _weight_debounce_timer.timeout.connect(_update_box_weight_in_db)
+        _weight_debounce_timer.start(DEBOUNCE_TIME)  # 300ms debounce
+    
     global_vars.ui.EingabeKartonhoehe.textChanged.connect(update_box_height_in_db)
     global_vars.ui.EingabeKartonGewicht.textChanged.connect(update_box_weight_in_db)
+    # Also update weight info label when weight changes
+    global_vars.ui.EingabeKartonGewicht.textChanged.connect(update_weight_info_label)
+    # Update weight info label when height changes (affects calculated weight)
+    global_vars.ui.EingabeKartonhoehe.textChanged.connect(update_weight_info_label)
 
     def update_einzelpaket_in_db(state):
         """Update einzelpaket_laengs setting in database when checkbox state changes."""
@@ -315,6 +718,10 @@ def setup_components():
     
     # Add palette clear dialog function to UI
     global_vars.ui.show_palette_clear_dialog = show_palette_clear_dialog
+    
+    # Initialize weight info label
+    if hasattr(global_vars, 'update_weight_info_label'):
+        global_vars.update_weight_info_label()
     
     # Override the keyPressEvent handler for the EingabePallettenplan input field
     original_key_press = global_vars.ui.EingabePallettenplan.keyPressEvent
