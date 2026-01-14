@@ -1,193 +1,204 @@
-<div align="center">
-  <img src="docs/assets/MultipackParser-MainUI.png" alt="MultipackParser" width="600">
-  
-  <h1>🤖 MultipackParser</h1>
-  
-  <p><strong>Bridge software connecting Multipack optimization software with Universal Robots palletizing systems</strong></p>
+# MultipackParser C++ Version
 
-  <a href="https://github.com/Snupai/MultipackParser/actions/workflows/build.yml">
-    <img alt="Build Binary" src="https://github.com/Snupai/MultipackParser/actions/workflows/build.yml/badge.svg?branch=main" />
-  </a>
-  <a href="https://github.com/Snupai/MultipackParser/releases/latest">
-    <img alt="GitHub release (with filter)" src="https://img.shields.io/github/v/release/Snupai/MultipackParser?label=Latest%20Stable%20Release">
-  </a>
-  <a href="https://github.com/Snupai/MultipackParser/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/License-GPL--3.0-blue.svg">
-  </a>
-  <img alt="Python 3.13+" src="https://img.shields.io/badge/Python-3.12+-3776ab?logo=python&logoColor=white">
-  <img alt="PySide6" src="https://img.shields.io/badge/PySide6-Qt6-41cd52?logo=qt&logoColor=white">
-</div>
-
----
+C++ Qt6 rewrite of the MultipackParser application for enhanced performance on Raspberry Pi.
 
 ## Overview
 
-MultipackParser is a bridge application that connects **[Multipack](https://multiscience.de/multipack-ihre-optimierungssoftware/)** (commercial palette optimization software from Multiscience GmbH) with custom palletizing applications running on Universal Robots (UR10/UR20).
+MultipackParser is a bridge application connecting Multipack palette optimization software with Universal Robots (UR10/UR20) palletizing systems. This C++ version provides:
 
-### How It Works
+- Improved performance on ARM64 (Raspberry Pi)
+- Native Qt6 widgets
+- VTK-based 3D visualization
+- Reduced memory footprint
 
-```
-┌─────────────────┐      ┌──────────────────┐      ┌─────────────────┐
-│   Multipack     │ ───► │  MultipackParser │ ───► │   UR Robot      │
-│ (Optimization)  │ CSV  │   (This App)     │ RPC  │ (Palletizing)   │
-└─────────────────┘      └──────────────────┘      └─────────────────┘
-```
+## Prerequisites
 
-1. **Multipack** generates optimized palette plans (`.rob` files) based on box/palette dimensions
-2. **MultipackParser** reads and parses these files, providing a GUI for management
-3. **UR Robot** queries palette data via XML-RPC to execute the palletizing program
+### Required Dependencies
 
-### Key Features
+- **Qt6** (6.2+ recommended): Core, Widgets, Network, Sql, Multimedia
+- **CMake** 3.16+
+- **C++17** compatible compiler
+- **SQLite3**
 
-| Feature | Description |
-|---------|-------------|
-| 📦 **Pallet Management** | Load, visualize, and manage pallet configurations with 3D preview |
-| 🤖 **Robot Communication** | Real-time XML-RPC communication with UR10/UR20 robots |
-| 🗄️ **Database Storage** | SQLite database for persistent pallet data storage |
-| 📊 **Status Monitoring** | Live monitoring of robot mode, safety status, and scanners |
-| 🔒 **Security** | Password-protected settings and operations |
-| 🔊 **Audio Feedback** | Configurable audio notifications for system events |
+### Optional Dependencies
 
-## Quick Start
+- **VTK 9.x**: For 3D visualization
+- **xmlrpc-c**: For XML-RPC server
+- **OpenSSL**: For password encryption
 
-### Requirements
-
-- Python 3.12+
-- Linux (optimized for Raspberry Pi)
-- [Multipack software](https://multiscience.de/multipack-ihre-optimierungssoftware/) for generating palette plans
-
-### Installation
+### Ubuntu/Debian Installation
 
 ```bash
-# Clone the repository
-curl -O https://github.com/Snupai/MultipackParser/releases/latest/MultipackParser 
+# Qt6 and build tools
+sudo apt install qt6-base-dev qt6-multimedia-dev qt6-tools-dev cmake build-essential
 
-# Make binary executable
-sudo chmod +x MultipackParser
+# SQLite
+sudo apt install libsqlite3-dev
 
-# Run the application
-./MultipackParser
+# Optional: VTK
+sudo apt install libvtk9-qt-dev
+
+# Optional: xmlrpc-c
+sudo apt install libxmlrpc-c++8-dev
+```
+
+### Raspberry Pi OS
+
+```bash
+# Enable Qt6 repository if needed
+sudo apt update
+sudo apt install qt6-base-dev libsqlite3-dev cmake build-essential
+```
+
+## Building
+
+### Windows: Docker Build for Raspberry Pi (Recommended)
+
+The easiest way to build for Raspberry Pi from Windows is using Docker:
+
+```batch
+REM First time setup (installs QEMU for ARM64 emulation)
+build.bat --setup
+
+REM Build for ARM64 (Raspberry Pi)
+build.bat --arm64
+
+REM Build for x86_64 Linux (testing)
+build.bat --native
+
+REM Show all options
+build.bat --help
+
+REM Clean build artifacts
+build.bat --clean
+```
+
+The output binary will be in `output/multipack-parser`.
+
+**Requirements:**
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
+- WSL2 backend enabled (for ARM64 emulation)
+
+### Native Build (Development)
+
+```bash
+cd multipack-cpp
+mkdir build && cd build
+cmake ..
+make -j$(nproc)
+```
+
+### ARM64 Cross-Compilation (Raspberry Pi)
+
+```bash
+cd multipack-cpp
+mkdir build-arm64 && cd build-arm64
+cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Arm64Toolchain.cmake ..
+make -j$(nproc)
+```
+
+### Using Build Scripts
+
+```bash
+# Native build
+./scripts/build.sh
+
+# ARM64 build
+./scripts/build_arm64.sh
+```
+
+## Running
+
+```bash
+# Standard run
+./build/bin/multipack-parser
+
+# With debug logging
+./build/bin/multipack-parser --verbose
+
+# Show version
+./build/bin/multipack-parser --version
+
+# Show help
+./build/bin/multipack-parser --help
 ```
 
 ### Command Line Options
 
-```bash
-./MultipackParser --version    # Display version
-./MultipackParser --license    # Display license
-./MultipackParser --verbose    # Enable debug logging
-./MultipackParser --no-virtual-keyboard # Disables the virutal keyboard
-```
-
-> [!IMPORTANT]
-> **Robot-Side Components Required**: This application requires a UR Program and URscript code running on the Universal Robot controller. These components are **not included** in this repository and must be obtained separately.
-
-## Documentation
-
-Comprehensive documentation is available in the [`docs/`](docs/) directory:
-
-| Document | Description |
-|----------|-------------|
-| [**Documentation Index**](docs/index.md) | Overview and navigation hub |
-| [**Installation Guide**](docs/installation.md) | Detailed setup instructions |
-| [**User Guide**](docs/user-guide.md) | Complete user manual |
-| [**Architecture**](docs/architecture.md) | Technical documentation for developers |
-| [**API Reference**](docs/api-reference.md) | XML-RPC API function reference |
-
-## Development
-
-### Prerequisites
-
-- Python 3.13+
-- pip / uv package manager
-- Qt Designer (optional, for UI modifications)
-- Docker (optional, for ARM64 builds)
-
-### Setting Up Development Environment
-
-```bash
-# Clone and install
-git clone https://github.com/Snupai/MultipackParser.git
-cd MultipackParser
-pip install -r requirements.txt
-
-# Run in development mode
-python main.py --verbose
-```
-
-### UI Development
-
-```bash
-# Open Qt Designer for UI editing
-pyside6-designer ui_files/MainWindow.ui
-
-# Convert .ui files to Python
-pyside6-uic ui_files/MainWindow.ui -o ui_files/ui_main_window.py
-
-# Convert resource files
-pyside6-rcc ui_files/MainWindowResources.qrc -o ui_files/MainWindowResources_rc.py
-```
-
-> [!WARNING]
-> After running `pyside6-uic`, change the import from `import MainWindowResources_rc` to `from . import MainWindowResources_rc`
-
-### Building for Production
-
-```bash
-# Build ARM64 binary (requires Docker)
-python build.py
-```
-
-The resulting binary will be placed in the `local_dist` directory. The binary is compatible with ARM64 architecture (Raspberry Pi).
+| Option | Description |
+|--------|-------------|
+| `--version`, `-V` | Display version information |
+| `--verbose`, `-v` | Enable debug logging |
+| `--license` | Show license information |
+| `--no-virtual-keyboard` | Disable on-screen keyboard |
 
 ## Project Structure
 
 ```
-MultipackParser/
-├── main.py                 # Application entry point
-├── build.py               # Build script for ARM64 binary
-├── requirements.txt       # Python dependencies
-├── ui_files/              # Qt UI files and resources
-├── utils/                 # Core application modules
-│   ├── audio/            # Audio notifications
-│   ├── database/         # SQLite database operations
-│   ├── message/          # Message and status management
-│   ├── robot/            # Robot control and monitoring
-│   ├── server/           # XML-RPC server implementation
-│   ├── system/           # Core system utilities
-│   └── ui/               # UI setup and helpers
+multipack-cpp/
+├── CMakeLists.txt          # Main build configuration
+├── src/                    # Source files (.cpp)
+│   ├── main.cpp           # Entry point
+│   ├── core/              # Application core
+│   ├── ui/                # User interface
+│   ├── database/          # SQLite database
+│   ├── network/           # XML-RPC server
+│   ├── robot/             # Robot communication
+│   ├── audio/             # Audio playback
+│   ├── message/           # Messaging system
+│   ├── config/            # Configuration
+│   ├── system/            # System utilities
+│   └── utils/             # Helper utilities
+├── include/multipack/     # Header files (.h)
+├── ui/                    # Qt Designer UI files
+├── resources/             # Qt resources (icons, audio)
+├── cmake/                 # CMake modules
 ├── docs/                  # Documentation
-└── logs/                  # Application logs (auto-generated)
+└── scripts/               # Build scripts
 ```
 
-## System Requirements
+## Configuration
 
-| Component | Requirement |
-|-----------|-------------|
-| Python | 3.12 or higher |
-| OS | Linux (Raspberry Pi) |
-| RAM | 512MB minimum, 1GB recommended |
-| Storage | 300MB free space |
-| Robot | Universal Robots UR10 or UR20 |
+Settings are stored in `settings.json`:
+
+```json
+{
+  "info": {
+    "version": "1.7.9",
+    "UR_Model": "UR10"
+  },
+  "robot": {
+    "ip": "192.168.0.1"
+  },
+  "server": {
+    "port": 8080
+  }
+}
+```
+
+## Development Status
+
+This is a C++ skeleton with stub implementations. The following components are stubbed:
+
+- [x] Core application framework
+- [x] Settings management
+- [x] Logging configuration
+- [x] Database models
+- [x] XML-RPC server structure
+- [x] Robot communication framework
+- [x] Audio playback system
+- [x] Message/status system
+- [ ] Full MainWindow implementation
+- [ ] 3D visualization (VTK)
+- [ ] Complete database operations
+- [ ] Full XML-RPC method implementations
+
+## Documentation
+
+- [Architecture](docs/ARCHITECTURE.md)
+- [Building](docs/BUILDING.md)
+- [Migration Guide](docs/MIGRATION.md)
 
 ## License
 
-This project is licensed under the **GNU General Public License v3.0**. See the [LICENSE](LICENSE) file for details.
-
-```
-Copyright (C) 2025 Yann-Luca Näher
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-```
-
-## Contributing
-
-Contributions are welcome! Please read the [Architecture Documentation](docs/architecture.md) to understand the codebase structure before submitting pull requests.
-
----
-
-<div align="center">
-  <sub>Built with ❤️ for industrial automation</sub>
-</div>
+Proprietary - Szaidel Cosmetic GmbH

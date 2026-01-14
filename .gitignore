@@ -3,51 +3,128 @@ build/
 build-*/
 cmake-build-*/
 out/
+output/
 
-# Generated files
-moc_*.cpp
-qrc_*.cpp
-ui_*.h
-*.o
-*.obj
-*.a
-*.lib
-*.so
-*.dll
-*.exe
-*.pdb
-
-# CMake
+# CMake generated files
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
 Makefile
 *.cmake
 !cmake/*.cmake
+compile_commands.json
+CPackConfig.cmake
+CPackSourceConfig.cmake
+CTestTestfile.cmake
+Testing/
 
-# IDE
+# Qt autogen directories
+*_autogen/
+moc_predefs.h
+mocs_compilation.cpp
+
+# Qt generated files
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+*.qrc.depends
+
+# Compiled object files
+*.o
+*.obj
+*.lo
+*.slo
+
+# Libraries
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.pdb
+*.ilk
+*.idb
+*.exp
+
+# IDE files
 .vscode/
 .idea/
 *.user
+*.suo
+*.sln.docstates
 *.swp
+*.swo
 *~
+.project
+.classpath
+.settings/
+*.code-workspace
 
 # Qt Creator
 *.pro.user*
 *.qbs.user*
 *.autosave
+*.creator.user*
 
 # Logs
 logs/
 *.log
+*.log.*
 
-# Database
+# Database files
 *.db
 *.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Environment files (secrets)
+.env
+.env.*
+!.env.example
+*.env
 
 # Config (local overrides)
 settings.local.json
+*.local.*
 
-# OS
+# OS files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+*.swo
+*~
+
+# Package files
+*.tar.gz
+*.zip
+*.deb
+*.rpm
+*.dmg
+*.pkg
+
+# Docker
+.dockerignore
+docker-compose.override.yml

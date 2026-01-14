@@ -1,8 +1,0 @@
-PySide6>=6.7.2
-pydub
-python-dotenv
-ffmpeg-python
-matplotlib==3.7.5
-cryptography
-pygame
-requests

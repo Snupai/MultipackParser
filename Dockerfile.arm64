@@ -1,16 +1,17 @@
-# Dockerfile for MultipackParser C++ x86_64 Build
-# Based on Ubuntu 22.04 with Qt6
+# Dockerfile for MultipackParser C++ ARM64 Build using QEMU emulation
+# This builds directly on ARM64 architecture using Docker's buildx/QEMU
 
+ARG TARGETPLATFORM
 FROM ubuntu:22.04
 
 LABEL maintainer="Szaidel Cosmetic GmbH"
-LABEL description="Build environment for MultipackParser C++ (x86_64)"
+LABEL description="ARM64 build environment for MultipackParser C++"
 
-# Prevent interactive prompts during package installation
+# Prevent interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Berlin
 
-# Install build essentials
+# Install build dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
@@ -33,16 +34,17 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Set up environment
-ENV PATH="/usr/lib/qt6/bin:${PATH}"
-ENV Qt6_DIR="/usr/lib/x86_64-linux-gnu/cmake/Qt6"
+# Set Qt6 environment
+ENV Qt6_DIR="/usr/lib/aarch64-linux-gnu/cmake/Qt6"
 
-# Create working directory
+# Raspberry Pi 4 optimization flags
+ENV CFLAGS="-mcpu=cortex-a72 -mtune=cortex-a72"
+ENV CXXFLAGS="-mcpu=cortex-a72 -mtune=cortex-a72"
+
 WORKDIR /src
 
-# Copy build script - convert CRLF to LF for Windows compatibility
+# Build script - convert CRLF to LF for Windows compatibility
 COPY docker-build.sh /usr/local/bin/
 RUN sed -i 's/\r$//' /usr/local/bin/docker-build.sh && chmod +x /usr/local/bin/docker-build.sh
 
-# Default command
 CMD ["/usr/local/bin/docker-build.sh"]
