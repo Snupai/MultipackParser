@@ -119,9 +119,11 @@ void SafetyMonitor::checkSafetyStatus()
         return;
     }
 
-    // TODO: Query current safety status from robot controller
-    // robot::SafetyStatus status = m_robotController->safetyStatus();
-    // onSafetyStatusChanged(status);
+    // Query current safety status from robot controller
+    robot::SafetyStatus status = m_robotController->safetyStatus();
+    if (status != m_lastStatus) {
+        onSafetyStatusChanged(status);
+    }
 }
 
 void SafetyMonitor::triggerAlarm(robot::SafetyStatus status)

@@ -54,14 +54,14 @@ public:
      * @param path Settings file path (empty = default)
      * @return true on success
      */
-    bool load(const QString& path = QString());
+    [[nodiscard]] bool load(const QString& path = QString());
 
     /**
      * @brief Save settings to file
      * @param path Settings file path (empty = default)
      * @return true on success
      */
-    bool save(const QString& path = QString());
+    [[nodiscard]] bool save(const QString& path = QString());
 
     /**
      * @brief Reset to default settings
@@ -76,7 +76,7 @@ public:
      * @param defaultValue Default if not found
      * @return Setting value
      */
-    QVariant value(const QString& key, const QVariant& defaultValue = QVariant()) const;
+    [[nodiscard]] QVariant value(const QString& key, const QVariant& defaultValue = QVariant()) const;
 
     /**
      * @brief Set a setting value
@@ -90,7 +90,7 @@ public:
      * @param key Setting key
      * @return true if exists
      */
-    bool contains(const QString& key) const;
+    [[nodiscard]] bool contains(const QString& key) const;
 
     /**
      * @brief Remove a setting
@@ -186,7 +186,7 @@ public:
      * @brief Check if USB key bypass is valid
      * @return true if USB key file exists and contains expected value
      */
-    bool isUsbKeyBypassValid() const;
+    [[nodiscard]] bool isUsbKeyBypassValid() const;
 
     // Password management (encrypted)
 
@@ -201,13 +201,13 @@ public:
      * @param password Password to check
      * @return true if matches
      */
-    bool verifyAdminPassword(const QString& password) const;
+    [[nodiscard]] bool verifyAdminPassword(const QString& password) const;
 
     /**
      * @brief Check if admin password is set
      * @return true if set
      */
-    bool hasAdminPassword() const;
+    [[nodiscard]] bool hasAdminPassword() const;
 
 signals:
     /**

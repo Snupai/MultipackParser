@@ -14,6 +14,18 @@
 namespace multipack {
 namespace network {
 
+// Pre-compiled regex patterns for XML-RPC parsing (file scope for efficiency)
+namespace {
+    const QRegularExpression RE_METHOD_NAME("<methodName>([^<]+)</methodName>");
+    const QRegularExpression RE_PARAM("<param>\\s*<value>([\\s\\S]*?)</value>\\s*</param>");
+    const QRegularExpression RE_INT("<(?:int|i4)>(-?\\d+)</(?:int|i4)>");
+    const QRegularExpression RE_DOUBLE("<double>([^<]+)</double>");
+    const QRegularExpression RE_BOOL("<boolean>([01])</boolean>");
+    const QRegularExpression RE_STRING("<string>([^<]*)</string>");
+    const QRegularExpression RE_ARRAY("<array>\\s*<data>([\\s\\S]*)</data>\\s*</array>");
+    const QRegularExpression RE_VALUE("<value>([\\s\\S]*?)</value>");
+} // anonymous namespace
+
 XmlRpcServer::XmlRpcServer(QObject* parent)
     : QObject(parent)
     , m_server(std::make_unique<QTcpServer>(this))
@@ -370,8 +382,7 @@ bool XmlRpcServer::parseMethodCall(const QString& xml, QString& methodName,
                                     QVector<RpcValue>& params)
 {
     // Simple XML parsing for methodCall
-    static QRegularExpression methodNameRe("<methodName>([^<]+)</methodName>");
-    auto match = methodNameRe.match(xml);
+    auto match = RE_METHOD_NAME.match(xml);
     if (!match.hasMatch()) {
         return false;
     }
@@ -379,8 +390,7 @@ bool XmlRpcServer::parseMethodCall(const QString& xml, QString& methodName,
     methodName = match.captured(1);
 
     // Parse params
-    static QRegularExpression paramRe("<param>\\s*<value>([\\s\\S]*?)</value>\\s*</param>");
-    auto paramIt = paramRe.globalMatch(xml);
+    auto paramIt = RE_PARAM.globalMatch(xml);
 
     while (paramIt.hasNext()) {
         auto paramMatch = paramIt.next();
@@ -396,29 +406,25 @@ RpcValue XmlRpcServer::parseValue(const QString& xml)
     QString trimmed = xml.trimmed();
 
     // Integer
-    static QRegularExpression intRe("<(?:int|i4)>(-?\\d+)</(?:int|i4)>");
-    auto match = intRe.match(trimmed);
+    auto match = RE_INT.match(trimmed);
     if (match.hasMatch()) {
         return RpcValue(match.captured(1).toInt());
     }
 
     // Double
-    static QRegularExpression doubleRe("<double>([^<]+)</double>");
-    match = doubleRe.match(trimmed);
+    match = RE_DOUBLE.match(trimmed);
     if (match.hasMatch()) {
         return RpcValue(match.captured(1).toDouble());
     }
 
     // Boolean
-    static QRegularExpression boolRe("<boolean>([01])</boolean>");
-    match = boolRe.match(trimmed);
+    match = RE_BOOL.match(trimmed);
     if (match.hasMatch()) {
         return RpcValue(match.captured(1) == "1");
     }
 
     // String
-    static QRegularExpression stringRe("<string>([^<]*)</string>");
-    match = stringRe.match(trimmed);
+    match = RE_STRING.match(trimmed);
     if (match.hasMatch()) {
         return RpcValue(match.captured(1));
     }
@@ -429,14 +435,12 @@ RpcValue XmlRpcServer::parseValue(const QString& xml)
     }
 
     // Array
-    static QRegularExpression arrayRe("<array>\\s*<data>([\\s\\S]*)</data>\\s*</array>");
-    match = arrayRe.match(trimmed);
+    match = RE_ARRAY.match(trimmed);
     if (match.hasMatch()) {
         RpcValue arr;
         arr.type = RpcValue::Array;
 
-        static QRegularExpression valueRe("<value>([\\s\\S]*?)</value>");
-        auto valueIt = valueRe.globalMatch(match.captured(1));
+        auto valueIt = RE_VALUE.globalMatch(match.captured(1));
         while (valueIt.hasNext()) {
             auto valueMatch = valueIt.next();
             arr.arrayValue.append(parseValue(valueMatch.captured(1)));

@@ -119,9 +119,16 @@ endif()
 # Qt UI files location
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR}/ui)
 
+# UI files
+set(UI_FILES
+    ${CMAKE_SOURCE_DIR}/ui/MainWindow.ui
+    ${CMAKE_SOURCE_DIR}/ui/PasswordEntry.ui
+)
+
 # Resource files
 qt6_add_resources(RESOURCES
     ${CMAKE_SOURCE_DIR}/resources/multipack.qrc
+    ${CMAKE_SOURCE_DIR}/ui/MainWindowResources.qrc
 )
 
 # Header files with Q_OBJECT (required for AUTOMOC)
@@ -239,6 +246,7 @@ set(ALL_SOURCES
     ${SYSTEM_SOURCES}
     ${UTILS_SOURCES}
     ${RESOURCES}
+    ${UI_FILES}
 )
 
 # Create executable

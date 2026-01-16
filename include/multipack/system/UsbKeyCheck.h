@@ -3,6 +3,8 @@
  * @brief USB key authentication check
  *
  * Checks for presence of USB key file for password bypass.
+ * Uses a .keyindex file that points to an encrypted key file
+ * verified using Fernet-compatible decryption.
  */
 
 #ifndef MULTIPACK_SYSTEM_USBKEYCHECK_H
@@ -10,8 +12,12 @@
 
 #include <QObject>
 #include <QString>
+#include <QStringList>
 
 namespace multipack {
+
+namespace config { class SettingsManager; }
+
 namespace system {
 
 /**
@@ -20,12 +26,20 @@ namespace system {
  *
  * Monitors for a special key file on USB drives
  * that can bypass password authentication.
+ *
+ * The key verification uses:
+ * 1. A .keyindex file containing the relative path to the key file
+ * 2. A key file containing Fernet-encrypted data
+ * 3. Decryption and comparison against expected value
  */
 class UsbKeyCheck : public QObject
 {
     Q_OBJECT
 
 public:
+    /// Index file name that points to key location
+    static constexpr const char* INDEX_FILE_NAME = ".keyindex";
+
     /**
      * @brief Construct a new Usb Key Check
      * @param parent Parent QObject
@@ -38,29 +52,36 @@ public:
     ~UsbKeyCheck() override;
 
     /**
-     * @brief Check if USB key is present
+     * @brief Set settings manager for key/expected value retrieval
+     * @param settings Settings manager
+     */
+    void setSettingsManager(config::SettingsManager* settings);
+
+    /**
+     * @brief Check if USB key is present on any connected drive
      * @return true if valid key found
      */
     bool isKeyPresent() const;
 
     /**
      * @brief Check specific path for key file
-     * @param path Path to check
+     * @param path Path to check (should be USB root or subdirectory)
      * @return true if valid key found
      */
     bool checkPath(const QString& path) const;
 
     /**
-     * @brief Get the key file name
-     * @return Key file name
+     * @brief Check hidden key using .keyindex approach
+     * @param usbPath USB root path
+     * @return true if valid key found and verified
      */
-    static QString keyFileName();
+    bool checkHiddenKey(const QString& usbPath) const;
 
     /**
-     * @brief Set custom key file name
-     * @param name File name to check for
+     * @brief Get the index file name
+     * @return Index file name (.keyindex)
      */
-    void setKeyFileName(const QString& name);
+    static QString indexFileName();
 
     /**
      * @brief Add path to search
@@ -80,11 +101,11 @@ public:
     QStringList searchPaths() const;
 
     /**
-     * @brief Verify key file contents
-     * @param path Path to key file
-     * @return true if contents are valid
+     * @brief Find all directories containing .keyindex files
+     * @param baseDir Base directory to search
+     * @return List of directories with .keyindex files
      */
-    bool verifyKeyFile(const QString& path) const;
+    QStringList findKeyIndexDirs(const QString& baseDir) const;
 
 signals:
     /**
@@ -94,7 +115,20 @@ signals:
     void keyStatusChanged(bool present);
 
 private:
-    QString m_keyFileName;
+    /**
+     * @brief Verify and decrypt key file using Fernet
+     * @param keyFilePath Path to key file
+     * @return true if decryption succeeds and matches expected
+     */
+    bool verifyKeyFile(const QString& keyFilePath) const;
+
+    /**
+     * @brief Get list of mounted USB drives
+     * @return List of USB mount points
+     */
+    QStringList getUsbDrives() const;
+
+    config::SettingsManager* m_settings = nullptr;
     QStringList m_searchPaths;
 };
 

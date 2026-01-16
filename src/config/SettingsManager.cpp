@@ -77,8 +77,15 @@ bool SettingsManager::save(const QString& path)
         return false;
     }
 
-    file.write(doc.toJson(QJsonDocument::Indented));
+    QByteArray data = doc.toJson(QJsonDocument::Indented);
+    qint64 bytesWritten = file.write(data);
     file.close();
+
+    if (bytesWritten != data.size()) {
+        qWarning() << "Failed to write complete settings file:" << filePath
+                   << "- wrote" << bytesWritten << "of" << data.size() << "bytes";
+        return false;
+    }
 
     m_currentPath = filePath;
     emit settingsSaved();

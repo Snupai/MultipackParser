@@ -112,7 +112,7 @@ public:
      * @param path Database file path
      * @return true on success
      */
-    bool open(const QString& path = "paletten.db");
+    [[nodiscard]] bool open(const QString& path = "paletten.db");
 
     /**
      * @brief Close the database
@@ -122,20 +122,20 @@ public:
     /**
      * @brief Check if database is open
      */
-    bool isOpen() const;
+    [[nodiscard]] bool isOpen() const;
 
     /**
      * @brief Create database tables if they don't exist
      * @return true on success
      */
-    bool createTables();
+    [[nodiscard]] bool createTables();
 
     /**
      * @brief Save palette data to database
      * @param data Palette data to save
      * @return true on success
      */
-    bool savePaletteData(const PaletteData& data);
+    [[nodiscard]] bool savePaletteData(const PaletteData& data);
 
     /**
      * @brief Load palette data from database
@@ -143,20 +143,20 @@ public:
      * @param metadataId Specific ID to load (takes precedence)
      * @return Optional containing data if found
      */
-    std::optional<PaletteData> loadPaletteData(const QString& fileName = QString(), int metadataId = -1);
+    [[nodiscard]] std::optional<PaletteData> loadPaletteData(const QString& fileName = QString(), int metadataId = -1);
 
     /**
      * @brief List all available palette files
      * @return List of file info structures
      */
-    QVector<FileInfo> listAvailableFiles();
+    [[nodiscard]] QVector<FileInfo> listAvailableFiles();
 
     /**
      * @brief Find a file by name
      * @param fileName File name to search
      * @return Optional containing info if found
      */
-    std::optional<FileInfo> findFile(const QString& fileName);
+    [[nodiscard]] std::optional<FileInfo> findFile(const QString& fileName);
 
     /**
      * @brief Find palettes matching package dimensions
@@ -165,7 +165,7 @@ public:
      * @param height Package height (0 = any)
      * @return List of matching file names
      */
-    QStringList findByPackageDimensions(int length = 0, int width = 0, int height = 0);
+    [[nodiscard]] QStringList findByPackageDimensions(int length = 0, int width = 0, int height = 0);
 
     /**
      * @brief Update box dimensions for a file
@@ -175,27 +175,27 @@ public:
      * @param einzelpaketLaengs Single package lengthwise setting (-1 = unchanged)
      * @return true on success
      */
-    bool updateBoxDimensions(const QString& fileName, int height = -1, double weight = -1.0, int einzelpaketLaengs = -1);
+    [[nodiscard]] bool updateBoxDimensions(const QString& fileName, int height = -1, double weight = -1.0, int einzelpaketLaengs = -1);
 
     /**
      * @brief Get box weight for a file
      */
-    std::optional<double> getBoxWeight(const QString& fileName);
+    [[nodiscard]] std::optional<double> getBoxWeight(const QString& fileName);
 
     /**
      * @brief Get box height for a file
      */
-    std::optional<int> getBoxHeight(const QString& fileName);
+    [[nodiscard]] std::optional<int> getBoxHeight(const QString& fileName);
 
     /**
      * @brief Get einzelpaket laengs setting for a file
      */
-    std::optional<bool> getEinzelpaketLaengs(const QString& fileName);
+    [[nodiscard]] std::optional<bool> getEinzelpaketLaengs(const QString& fileName);
 
     /**
      * @brief Delete a palette entry by file name
      */
-    bool deletePalette(const QString& fileName);
+    [[nodiscard]] bool deletePalette(const QString& fileName);
 
 signals:
     void databaseOpened();

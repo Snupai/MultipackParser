@@ -126,9 +126,63 @@ QString LoggingConfig::serverLogFilePath()
 
 void LoggingConfig::rotateLogFiles(int maxFiles)
 {
-    // TODO: Implement log rotation
-    Q_UNUSED(maxFiles);
-    qDebug() << "LoggingConfig::rotateLogFiles - TODO";
+    QString logDir = Defaults::defaultLogDir();
+    QDir dir(logDir);
+
+    if (!dir.exists()) {
+        return;
+    }
+
+    // Get all log files sorted by modification time (oldest first)
+    QStringList filters;
+    filters << "*.log";
+    QFileInfoList logFiles = dir.entryInfoList(filters, QDir::Files, QDir::Time | QDir::Reversed);
+
+    qDebug() << "LoggingConfig::rotateLogFiles - found" << logFiles.size() << "log files, keeping" << maxFiles;
+
+    // Group files by prefix (multipack_parser, server)
+    QMap<QString, QFileInfoList> filesByPrefix;
+    for (const QFileInfo& fi : logFiles) {
+        QString name = fi.baseName();
+        // Extract prefix (everything before the timestamp)
+        int underscoreIdx = name.lastIndexOf('_');
+        if (underscoreIdx > 0) {
+            // Try to find the second-to-last underscore for timestamp pattern
+            int prevUnderscore = name.lastIndexOf('_', underscoreIdx - 1);
+            if (prevUnderscore > 0) {
+                QString prefix = name.left(prevUnderscore);
+                filesByPrefix[prefix].append(fi);
+            } else {
+                // Simple prefix_timestamp pattern
+                filesByPrefix[name.left(underscoreIdx)].append(fi);
+            }
+        }
+    }
+
+    // Delete old files for each prefix
+    for (auto it = filesByPrefix.begin(); it != filesByPrefix.end(); ++it) {
+        const QString& prefix = it.key();
+        QFileInfoList& files = it.value();
+
+        // Keep only maxFiles per prefix
+        while (files.size() > maxFiles) {
+            QFileInfo oldest = files.takeFirst();
+
+            // Don't delete currently open log files
+            if (s_logFile && oldest.absoluteFilePath() == s_logFile->fileName()) {
+                continue;
+            }
+            if (s_serverLogFile && oldest.absoluteFilePath() == s_serverLogFile->fileName()) {
+                continue;
+            }
+
+            if (QFile::remove(oldest.absoluteFilePath())) {
+                qDebug() << "Deleted old log file:" << oldest.fileName();
+            } else {
+                qWarning() << "Failed to delete old log file:" << oldest.fileName();
+            }
+        }
+    }
 }
 
 void LoggingConfig::flush()

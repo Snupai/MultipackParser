@@ -94,7 +94,7 @@ public:
      * @param port Port to listen on
      * @return true on success
      */
-    bool start(int port = DEFAULT_PORT);
+    [[nodiscard]] bool start(int port = DEFAULT_PORT);
 
     /**
      * @brief Stop the server
@@ -104,12 +104,12 @@ public:
     /**
      * @brief Check if server is running
      */
-    bool isRunning() const;
+    [[nodiscard]] bool isRunning() const;
 
     /**
      * @brief Get port number
      */
-    int port() const { return m_port; }
+    [[nodiscard]] int port() const { return m_port; }
 
     /**
      * @brief Register an RPC method

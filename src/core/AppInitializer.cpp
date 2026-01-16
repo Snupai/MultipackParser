@@ -122,7 +122,9 @@ void AppInitializer::shutdown()
 
     if (m_settingsManager) {
         qDebug() << "Saving settings...";
-        m_settingsManager->save();
+        if (!m_settingsManager->save()) {
+            qWarning() << "Failed to save settings during shutdown";
+        }
         m_settingsManager.reset();
     }
 

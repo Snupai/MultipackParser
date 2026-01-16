@@ -20,15 +20,23 @@
 #include "multipack/config/ConfigDefaults.h"
 
 /**
- * @brief Set environment variables for Raspberry Pi compatibility
+ * @brief Set environment variables for platform compatibility
  */
 void setupEnvironment()
 {
+#if defined(Q_OS_LINUX)
     // Force software rendering for Raspberry Pi
     qputenv("QT_X11_NO_MITSHM", "1");
     qputenv("LIBGL_ALWAYS_SOFTWARE", "1");
     qputenv("QT_OPENGL", "software");
     qputenv("QT_QPA_PLATFORM", "xcb");
+#elif defined(Q_OS_MACOS)
+    // macOS uses cocoa platform (default)
+    // No special environment setup needed
+#elif defined(Q_OS_WIN)
+    // Windows uses windows platform (default)
+    // No special environment setup needed
+#endif
 }
 
 /**
