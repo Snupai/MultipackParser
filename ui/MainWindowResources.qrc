@@ -6,6 +6,10 @@
     <file>imgs/volume-off.png</file>
     <file>imgs/volume-on.png</file>
   </qresource>
+  <qresource prefix="audio">
+    <file>imgs/output.wav</file>
+    <file>imgs/stepback.wav</file>
+  </qresource>
   <qresource prefix="ScannerUR20">
     <file>imgs/UR20/scanner1_2_3io.png</file>
     <file>imgs/UR20/scanner1_2_3nio.png</file>
