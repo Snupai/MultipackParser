@@ -10,6 +10,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QStringList>
 #include <QVariant>
 #include <QJsonObject>
 #include <memory>
@@ -209,6 +210,50 @@ public:
      */
     [[nodiscard]] bool hasAdminPassword() const;
 
+    // Validation methods
+
+    /**
+     * @brief Validate IP address format
+     * @param ip IP address string
+     * @return true if valid IPv4 format
+     */
+    [[nodiscard]] static bool isValidIpAddress(const QString& ip);
+
+    /**
+     * @brief Validate port number
+     * @param port Port number
+     * @return true if in valid range (1-65535)
+     */
+    [[nodiscard]] static bool isValidPort(int port);
+
+    /**
+     * @brief Validate volume level
+     * @param volume Volume value
+     * @return true if in valid range (0.0-1.0)
+     */
+    [[nodiscard]] static bool isValidVolume(float volume);
+
+    /**
+     * @brief Validate robot model string
+     * @param model Model string
+     * @return true if valid (UR10 or UR20)
+     */
+    [[nodiscard]] static bool isValidRobotModel(const QString& model);
+
+    /**
+     * @brief Validate password meets minimum requirements
+     * @param password Password to validate
+     * @return true if meets minimum length
+     */
+    [[nodiscard]] static bool isValidPassword(const QString& password);
+
+    /**
+     * @brief Validate all current settings
+     * @param errors Output list of validation errors
+     * @return true if all settings are valid
+     */
+    [[nodiscard]] bool validateSettings(QStringList* errors = nullptr) const;
+
 signals:
     /**
      * @brief Emitted when settings are loaded
@@ -244,9 +289,23 @@ private:
     /**
      * @brief Hash password for verification
      * @param password Plain text
-     * @return Hash string
+     * @return SHA-256 hash of password with salt
      */
     QString hashPassword(const QString& password) const;
+    
+    /**
+     * @brief Generate random salt for password hashing
+     * @return 16-byte random salt
+     */
+    QByteArray generateSalt() const;
+    
+    /**
+     * @brief Hash password with provided salt (for verification)
+     * @param password Plain text password
+     * @param salt Salt bytes to use
+     * @return SHA-256 hash of salted password
+     */
+    QString hashPasswordWithSalt(const QString& password, const QByteArray& salt) const;
 
     QJsonObject m_settings;
     QString m_currentPath;

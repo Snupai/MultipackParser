@@ -11,6 +11,8 @@
 #include "multipack/core/GlobalState.h"
 #include "multipack/audio/AudioManager.h"
 #include "multipack/config/ConfigDefaults.h"
+#include "multipack/system/UsbKeyCheck.h"
+#include "multipack/ui/PasswordDialog.h"
 
 #include <QApplication>
 #include <QScreen>
@@ -18,6 +20,7 @@
 #include <QMessageBox>
 #include <QDateTime>
 #include <QFileSystemModel>
+#include <QCompleter>
 #include <QDebug>
 #include <QIcon>
 #include <QPixmap>
@@ -28,6 +31,7 @@ namespace ui {
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::Form)
+    , m_usbKeyCheck(new system::UsbKeyCheck(this))
 {
     qDebug() << "MainWindow - initializing with UI file";
 
@@ -35,7 +39,10 @@ MainWindow::MainWindow(QWidget* parent)
     QWidget* centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
     ui->setupUi(centralWidget);
-
+    
+    // Set up auto-completion for palette plan files
+    setupPalettePlanCompleter();
+    
     // Setup connections
     setupConnections();
 
@@ -138,6 +145,11 @@ void MainWindow::setupConnections()
     connect(ui->buttonSelectScannerWarningSoundPath, &QToolButton::clicked, this, &MainWindow::onSelectScannerSoundPathClicked);
     connect(ui->pushButtonOpenFile, &QPushButton::clicked, this, &MainWindow::onOpenFileClicked);
     connect(ui->lineEditCommand, &QLineEdit::returnPressed, this, &MainWindow::onConsoleCommandEntered);
+
+    // Scanner overwrite checkboxes (UR20 specific)
+    connect(ui->checkBoxScanner1Overwrite, &QCheckBox::checkStateChanged, this, &MainWindow::onScanner1OverwriteChanged);
+    connect(ui->checkBoxScanner2Overwrite, &QCheckBox::checkStateChanged, this, &MainWindow::onScanner2OverwriteChanged);
+    connect(ui->checkBoxScanner3Overwrite, &QCheckBox::checkStateChanged, this, &MainWindow::onScanner3OverwriteChanged);
 
     // Experimental - back button and actions
     connect(ui->ButtonZurueck_8, &QPushButton::clicked, this, &MainWindow::showMainMenu);
@@ -248,6 +260,19 @@ void MainWindow::showSettings()
     ui->stackedWidget->setCurrentIndex(PAGE_SETTINGS);
 }
 
+void MainWindow::showPasswordDialog()
+{
+    PasswordDialog dialog(this, m_settings);
+    
+    // Show the dialog and wait for user response
+    if (dialog.exec() == QDialog::Accepted && dialog.wasAccepted()) {
+        qDebug() << "Password authenticated - opening settings";
+        showSettings();
+    } else {
+        qDebug() << "Password authentication cancelled or failed";
+    }
+}
+
 void MainWindow::showExperimental()
 {
     ui->stackedWidget->setCurrentIndex(PAGE_EXPERIMENTAL);
@@ -315,7 +340,16 @@ void MainWindow::onParameterRobotClicked()
 
 void MainWindow::onSettingsClicked()
 {
-    showSettings();
+    qDebug() << "Settings button clicked - checking for USB key or password";
+    
+    // First check for valid USB key
+    if (m_usbKeyCheck && m_usbKeyCheck->isKeyPresent()) {
+        qDebug() << "Valid USB key found - opening settings directly";
+        showSettings();
+    } else {
+        qDebug() << "No valid USB key found - showing password dialog";
+        showPasswordDialog();
+    }
 }
 
 void MainWindow::onVolumeToggleClicked()
@@ -364,9 +398,9 @@ void MainWindow::onLabelInvertChanged(Qt::CheckState state)
     bool checked = (state == Qt::CheckState::Checked);
     qDebug() << "Label invert changed:" << checked;
 
-    // Update global state - label invert affects paket orientation
+    // Update global state - label invert adds 180 to rotation in UR_PaketPos
     if (m_state) {
-        m_state->setPaketQuer(checked ? 2 : 1);
+        m_state->setLabelInvert(checked);
     }
 }
 
@@ -477,6 +511,39 @@ void MainWindow::onKlemmungChanged(Qt::CheckState state)
 void MainWindow::onAufnahmeServerStart()
 {
     onStartServerClicked();
+}
+
+void MainWindow::onScanner1OverwriteChanged(Qt::CheckState state)
+{
+    bool checked = (state == Qt::CheckState::Checked);
+    qDebug() << "Scanner 1 overwrite changed:" << checked;
+
+    // Update global state for UR20 scanner override
+    if (m_state) {
+        m_state->setScannerOverride(0, checked);
+    }
+}
+
+void MainWindow::onScanner2OverwriteChanged(Qt::CheckState state)
+{
+    bool checked = (state == Qt::CheckState::Checked);
+    qDebug() << "Scanner 2 overwrite changed:" << checked;
+
+    // Update global state for UR20 scanner override
+    if (m_state) {
+        m_state->setScannerOverride(1, checked);
+    }
+}
+
+void MainWindow::onScanner3OverwriteChanged(Qt::CheckState state)
+{
+    bool checked = (state == Qt::CheckState::Checked);
+    qDebug() << "Scanner 3 overwrite changed:" << checked;
+
+    // Update global state for UR20 scanner override
+    if (m_state) {
+        m_state->setScannerOverride(2, checked);
+    }
 }
 
 // === Settings Slots ===
@@ -715,13 +782,63 @@ void MainWindow::updatePaletteInfo()
 void MainWindow::showMessage(const QString& message)
 {
     ui->label_GewichtInfo->setText(message);
-    qDebug() << "Message:" << message;
+}
+
+void MainWindow::setupPalettePlanCompleter()
+{
+    qDebug() << "Setting up palette plan auto-completion";
+    
+    if (!ui->lineEditFilePath) {
+        return;
+    }
+    
+    // Create completer for .rob files
+    QStringList wordList;
+    
+    // Load initial wordlist from current USB path
+    wordList = loadPalettePlanWordlist();
+    
+    QCompleter* completer = new QCompleter(wordList, this);
+    completer->setCompletionMode(QCompleter::PopupCompletion);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setFilterMode(Qt::MatchStartsWith);
+    
+    ui->lineEditFilePath->setCompleter(completer);
+    
+    qDebug() << "Palette plan completer set up with" << wordList.size() << "entries";
 }
 
 void MainWindow::appendConsoleLog(const QString& text)
 {
-    ui->textEditConsole->append(text);
+    if (ui && ui->textEditConsole) {
+        ui->textEditConsole->append(text);
+    }
 }
 
+QStringList MainWindow::loadPalettePlanWordlist()
+{
+    QString usbPath = m_settings ? m_settings->usbPath() : "../";
+    QDir usbDir(usbPath);
+    
+    if (!usbDir.exists()) {
+        qWarning() << "USB directory does not exist:" << usbPath;
+        return QStringList();
+    }
+    
+    // Get all .rob files
+    QStringList nameFilter;
+    nameFilter << "*.rob";
+    QFileInfoList robFiles = usbDir.entryInfoList(nameFilter, QDir::Files, QDir::Name);
+    
+    // Convert to wordlist (remove .rob extension)
+    QStringList wordList;
+    wordList.clear();
+    for (const QFileInfo& fileInfo : robFiles) {
+        wordList.append(fileInfo.completeBaseName());
+    }
+    
+    qDebug() << "Loaded" << wordList.size() << "palette plan files from USB";
+    return wordList;
+}
 } // namespace ui
 } // namespace multipack

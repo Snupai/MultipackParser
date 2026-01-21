@@ -162,8 +162,8 @@ public:
     // =========================================================================
 
     /** @brief Package orientation (1 = default) */
-    int paketQuer() const;
-    void setPaketQuer(int value);
+    bool paketQuer() const;
+    void setPaketQuer(bool value);
 
     /** @brief Center of gravity [x, y, z] */
     QVector<double> centerOfGravity() const;
@@ -262,6 +262,11 @@ public:
 
     QVector<bool> scannerOverride() const;
     void setScannerOverride(const QVector<bool>& override);
+    void setScannerOverride(int index, bool value);
+
+    /** @brief Label invert checkbox state (adds 180 to rotation) */
+    bool labelInvert() const;
+    void setLabelInvert(bool invert);
 
     // =========================================================================
     // Current Layer/Position Tracking
@@ -272,6 +277,41 @@ public:
 
     int startLayer() const;
     void setStartLayer(int layer);
+
+    // =========================================================================
+    // Additional Data Variables (from Python global_vars)
+    // =========================================================================
+
+    /** @brief Start layer positions array */
+    QVector<int> startlage() const;
+    void setStartlage(const QVector<int>& startlage);
+
+
+
+    /** @brief Package mass in kg */
+    double massePaket() const;
+    void setMassePaket(double masse);
+
+    /** @brief Pick offset coordinates [x, y] */
+    double pickOffsetX() const;
+    void setPickOffsetX(double offset);
+
+    double pickOffsetY() const;
+    void setPickOffsetY(double offset);
+
+    // =========================================================================
+    // Filter Variables (for palette list)
+    // =========================================================================
+
+    /** @brief Filter dimensions for palette list */
+    int filterLength() const;
+    void setFilterLength(int length);
+
+    int filterWidth() const;
+    void setFilterWidth(int width);
+
+    int filterHeight() const;
+    void setFilterHeight(int height);
 
     // =========================================================================
     // Audio State
@@ -304,6 +344,8 @@ signals:
     void ur20StateChanged();
     void currentLayerChanged(int layer);
     void scannerStatusChanged(const QString& status, const QString& imagePath);
+    void filterDimensionsChanged();
+    void additionalDataChanged();
 
 private:
     GlobalState();
@@ -343,6 +385,17 @@ private:
     // Metadata
     int m_paketQuer = 1;
     QVector<double> m_centerOfGravity;
+    
+    // Additional data variables
+    QVector<int> m_startlage;
+    double m_massePaket = 0.0;
+    double m_pickOffsetX = 0.0;
+    double m_pickOffsetY = 0.0;
+    
+    // Filter variables for palette list
+    int m_filterLength = 0;
+    int m_filterWidth = 0;
+    int m_filterHeight = 0;
 
     // Current file
     QString m_currentFileName;
@@ -377,6 +430,7 @@ private:
     // UI state
     bool m_klemmungAktiv = false;
     QVector<bool> m_scannerOverride = {false, false, false};
+    bool m_labelInvert = false;
 
     // Current layer tracking
     int m_currentLayer = 1;

@@ -12,21 +12,13 @@
 #include <QString>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include "multipack/system/AutoUpdater.h"
 
 namespace multipack {
 namespace system {
 
-/**
- * @struct UpdateInfo
- * @brief Information about an available update
- */
-struct UpdateInfo {
-    QString version;        ///< Version string
-    QString releaseNotes;   ///< Release notes (body)
-    QString downloadUrl;    ///< Download URL for asset
-    QString releaseName;    ///< Release name/title
-    bool isRequired = false; ///< Whether update is required
-};
+// Forward declaration - UpdateInfo is defined in AutoUpdater.h
+struct UpdateInfo;
 
 /**
  * @class UpdateChecker

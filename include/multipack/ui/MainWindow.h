@@ -22,6 +22,8 @@ namespace database { class DatabaseManager; }
 namespace robot { class RobotController; }
 namespace core { class GlobalState; }
 namespace audio { class AudioManager; }
+namespace system { class UsbKeyCheck; }
+class PasswordDialog;
 
 namespace ui {
 
@@ -60,6 +62,7 @@ private slots:
     void showRobotParameters();
     void showSettings();
     void showExperimental();
+    void showPasswordDialog();
 
     // Main menu actions
     void onLoadPaletteClicked();
@@ -97,6 +100,9 @@ private slots:
     void onSelectScannerSoundPathClicked();
     void onOpenFileClicked();
     void onConsoleCommandEntered();
+    void onScanner1OverwriteChanged(Qt::CheckState state);
+    void onScanner2OverwriteChanged(Qt::CheckState state);
+    void onScanner3OverwriteChanged(Qt::CheckState state);
 
     // Experimental actions
     void onRobFileSelected(QListWidgetItem* item);
@@ -111,6 +117,8 @@ private:
     void loadRobFileList();
     void updateEnabledStates();
     void updateVolumeIcon();
+    void setupPalettePlanCompleter();
+    QStringList loadPalettePlanWordlist();
 
     // Generated UI
     Ui::Form* ui = nullptr;
@@ -121,6 +129,7 @@ private:
     robot::RobotController* m_robot = nullptr;
     core::GlobalState* m_state = nullptr;
     audio::AudioManager* m_audio = nullptr;
+    system::UsbKeyCheck* m_usbKeyCheck = nullptr;
 
     // Page indices (matching stackedWidget pages)
     enum PageIndex {

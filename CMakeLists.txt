@@ -143,6 +143,7 @@ set(MOC_HEADERS
     include/multipack/ui/NotificationPopup.h
     include/multipack/ui/InputValidation.h
     include/multipack/ui/VisualizationWidget.h
+    include/multipack/ui/PaletteConfigDialog.h
     include/multipack/database/DatabaseManager.h
     include/multipack/network/XmlRpcServer.h
     include/multipack/network/RpcMethodRegistry.h
@@ -157,6 +158,7 @@ set(MOC_HEADERS
     include/multipack/config/SettingsManager.h
     include/multipack/system/UsbKeyCheck.h
     include/multipack/system/UpdateChecker.h
+    include/multipack/system/AutoUpdater.h
 )
 
 # Source files organization
@@ -171,12 +173,13 @@ set(CORE_SOURCES
 set(UI_SOURCES
     src/ui/MainWindow.cpp
     src/ui/PasswordDialog.cpp
+    src/ui/VisualizationWidget.cpp
+    src/ui/NotificationPopup.cpp
+    src/ui/InputValidation.cpp
+    src/ui/PaletteConfigDialog.cpp
     src/ui/BlinkingLabel.cpp
     src/ui/MessageDialog.cpp
-    src/ui/NotificationPopup.cpp
     src/ui/UIHelpers.cpp
-    src/ui/InputValidation.cpp
-    src/ui/VisualizationWidget.cpp
 )
 
 set(DATABASE_SOURCES
@@ -224,6 +227,7 @@ set(SYSTEM_SOURCES
     src/system/UsbKeyCheck.cpp
     src/system/UpdateChecker.cpp
     src/system/FileOperations.cpp
+    src/system/AutoUpdater.cpp
 )
 
 set(UTILS_SOURCES

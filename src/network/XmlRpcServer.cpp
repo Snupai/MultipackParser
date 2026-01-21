@@ -597,6 +597,11 @@ RpcValue XmlRpcServer::rpcGetPaketPos(const QVector<RpcValue>& params)
     int x = pos[3], y = pos[4], r = pos[5];
     int n = pos[6], dx = pos[7], dy = pos[8];
 
+    // Apply label invert rotation if checkbox is checked (matching Python behavior)
+    if (m_state->labelInvert()) {
+        r = (r + 180) % 360;
+    }
+
     // UR20 palette 2 coordinate transformation
     if (m_state->ur20ActivePalette() == 2) {
         // Swap x and y, adjust rotation

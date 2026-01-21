@@ -11,6 +11,8 @@
 #include <QJsonDocument>
 #include <QCryptographicHash>
 #include <QStandardPaths>
+#include <QRandomGenerator>
+#include <QCoreApplication>
 
 namespace multipack {
 namespace config {
@@ -533,7 +535,22 @@ bool SettingsManager::verifyAdminPassword(const QString& password) const
     if (storedHash.isEmpty()) {
         return true;  // No password set
     }
-    return hashPassword(password) == storedHash;
+    
+    // Parse stored format: salt_hex$hash_hex
+    QStringList parts = storedHash.split('$');
+    if (parts.size() != 2) {
+        qWarning() << "Invalid stored password hash format";
+        return false;
+    }
+    
+    // Extract salt and hash
+    QByteArray salt = QByteArray::fromHex(parts[0].toUtf8());
+    QString expectedHash = parts[1];
+    
+    // Hash provided password with the same salt
+    QString actualHash = hashPasswordWithSalt(password, salt);
+    
+    return actualHash == expectedHash;
 }
 
 bool SettingsManager::hasAdminPassword() const
@@ -548,15 +565,134 @@ QString SettingsManager::defaultPath() const
 
 QString SettingsManager::encryptPassword(const QString& password) const
 {
-    // TODO: Implement proper encryption using OpenSSL
+    // Generate salt and hash password like Python version
     return hashPassword(password);
 }
 
 QString SettingsManager::hashPassword(const QString& password) const
 {
-    QByteArray data = password.toUtf8();
-    QByteArray hash = QCryptographicHash::hash(data, QCryptographicHash::Sha256);
+    // Generate random salt (16 bytes) like Python's os.urandom(16)
+    QByteArray salt = generateSalt();
+    
+    // Hash with salt: SHA-256(salt + password)
+    QByteArray saltedPassword = salt + password.toUtf8();
+    QByteArray hash = QCryptographicHash::hash(saltedPassword, QCryptographicHash::Sha256);
+    
+    // Return format: salt_hex + '$' + hash_hex (matches Python)
+    return salt.toHex() + '$' + QString(hash.toHex());
+}
+
+QByteArray SettingsManager::generateSalt() const
+{
+    // Generate 16 random bytes for salt (equivalent to Python's os.urandom(16))
+    // Using QRandomGenerator::securelySeeded() for cryptographically secure randomness
+    QByteArray salt(16, 0);
+    QRandomGenerator* rng = QRandomGenerator::global();
+    for (int i = 0; i < salt.size(); ++i) {
+        salt[i] = static_cast<char>(rng->bounded(256));
+    }
+    return salt;
+}
+
+QString SettingsManager::hashPasswordWithSalt(const QString& password, const QByteArray& salt) const
+{
+    // Hash password with existing salt (for verification)
+    QByteArray saltedPassword = salt + password.toUtf8();
+    QByteArray hash = QCryptographicHash::hash(saltedPassword, QCryptographicHash::Sha256);
     return QString(hash.toHex());
+}
+
+// Validation methods
+
+bool SettingsManager::isValidIpAddress(const QString& ip)
+{
+    // Validate IPv4 address format
+    QStringList parts = ip.split('.');
+    if (parts.size() != 4) {
+        return false;
+    }
+
+    for (const QString& part : parts) {
+        bool ok;
+        int value = part.toInt(&ok);
+        if (!ok || value < 0 || value > 255) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool SettingsManager::isValidPort(int port)
+{
+    return port >= 1 && port <= 65535;
+}
+
+bool SettingsManager::isValidVolume(float volume)
+{
+    return volume >= 0.0f && volume <= 1.0f;
+}
+
+bool SettingsManager::isValidRobotModel(const QString& model)
+{
+    return model == "UR10" || model == "UR20";
+}
+
+bool SettingsManager::isValidPassword(const QString& password)
+{
+    return password.length() >= Defaults::PASSWORD_MIN_LENGTH;
+}
+
+bool SettingsManager::validateSettings(QStringList* errors) const
+{
+    bool valid = true;
+
+    // Validate robot IP
+    QString ip = robotIp();
+    if (!isValidIpAddress(ip)) {
+        valid = false;
+        if (errors) {
+            errors->append(QString("Invalid robot IP address: %1").arg(ip));
+        }
+    }
+
+    // Validate XML-RPC port
+    int xmlRpcPortVal = xmlRpcPort();
+    if (!isValidPort(xmlRpcPortVal)) {
+        valid = false;
+        if (errors) {
+            errors->append(QString("Invalid XML-RPC port: %1 (must be 1-65535)").arg(xmlRpcPortVal));
+        }
+    }
+
+    // Validate audio volume
+    float volume = audioVolume();
+    if (!isValidVolume(volume)) {
+        valid = false;
+        if (errors) {
+            errors->append(QString("Invalid audio volume: %1 (must be 0.0-1.0)").arg(volume));
+        }
+    }
+
+    // Validate robot model
+    QString model = value(Keys::INFO_UR_MODEL, "UR10").toString();
+    if (!isValidRobotModel(model)) {
+        valid = false;
+        if (errors) {
+            errors->append(QString("Invalid robot model: %1 (must be UR10 or UR20)").arg(model));
+        }
+    }
+
+    // Validate display dimensions
+    int width = displayWidth();
+    int height = displayHeight();
+    if (width <= 0 || height <= 0) {
+        valid = false;
+        if (errors) {
+            errors->append(QString("Invalid display dimensions: %1x%2").arg(width).arg(height));
+        }
+    }
+
+    return valid;
 }
 
 } // namespace config

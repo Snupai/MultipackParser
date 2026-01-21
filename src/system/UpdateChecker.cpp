@@ -169,7 +169,6 @@ void UpdateChecker::parseGitHubResponse(const QByteArray& data)
 
     // Store update info
     m_updateInfo.version = version;
-    m_updateInfo.releaseName = root["name"].toString();
     m_updateInfo.releaseNotes = root["body"].toString();
     m_updateInfo.downloadUrl = downloadUrl;
 

@@ -1,22 +1,28 @@
-# Dockerfile for MultipackParser C++ ARM64 Build using QEMU emulation
-# This builds directly on ARM64 architecture using Docker's buildx/QEMU
+# Dockerfile for MultipackParser C++ ARM64 Build using Docker Buildx
+# Multi-architecture build with better caching and layer optimization
 
-ARG TARGETPLATFORM
+ARG TARGETPLATFORM=linux/arm64
 FROM ubuntu:22.04
 
 LABEL maintainer="Szaidel Cosmetic GmbH"
 LABEL description="ARM64 build environment for MultipackParser C++"
+LABEL version="1.7.9"
 
 # Prevent interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Berlin
 
+# Use separate layers for better caching
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
     ninja-build \
     pkg-config \
+    # Core dependencies
+    git \
+    wget \
+    curl \
     # OpenGL (required by Qt6Gui)
     libgl1-mesa-dev \
     libegl1-mesa-dev \
@@ -32,19 +38,76 @@ RUN apt-get update && apt-get install -y \
     libsqlite3-dev \
     # SSL
     libssl-dev \
+    # Clean up
     && rm -rf /var/lib/apt/lists/*
 
 # Set Qt6 environment
 ENV Qt6_DIR="/usr/lib/aarch64-linux-gnu/cmake/Qt6"
 
-# Raspberry Pi 4 optimization flags
-ENV CFLAGS="-mcpu=cortex-a72 -mtune=cortex-a72"
-ENV CXXFLAGS="-mcpu=cortex-a72 -mtune=cortex-a72"
+# Raspberry Pi 4/5 optimization flags
+ENV CFLAGS="-mcpu=cortex-a72 -mtune=cortex-a72 -O2"
+ENV CXXFLAGS="-mcpu=cortex-a72 -mtune=cortex-a72 -O2"
 
+# Add build args for version injection
+ARG BUILD_VERSION
+ARG BUILD_TYPE=Release
+ARG VERSION_SUFFIX=""
+
+# Create build directory structure
 WORKDIR /src
 
-# Build script - convert CRLF to LF for Windows compatibility
-COPY docker-build.sh /usr/local/bin/
-RUN sed -i 's/\r$//' /usr/local/bin/docker-build.sh && chmod +x /usr/local/bin/docker-build.sh
+# Copy CMakeLists.txt first (better layer caching)
+COPY CMakeLists.txt cmake/
+COPY src/ ./src/
+COPY include/ ./include/
+COPY ui/ ./ui/
+COPY CMakeLists.txt ./
 
-CMD ["/usr/local/bin/docker-build.sh"]
+# Build configuration
+RUN cmake -B build \
+    -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+    -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
+    -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY_TYPE=ON \
+    -DCMAKE_SKIP_BUILD_RPATH=ON \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_CXX_FLAGS="-mcpu=cortex-a72 -mtune=cortex-a72 -O2" \
+    -DCMAKE_C_FLAGS="-mcpu=cortex-a72 -mtune=cortex-a72 -O2" \
+    -DCMAKE_CXX_STANDARD=17 \
+    -DCMAKE_COLOR_DIAGNOSTICS=ON \
+    -DENABLE_VTK=OFF
+
+# Build
+RUN cmake --build build --target multipack-parser-${VERSION_SUFFIX} && \
+    cmake --build build --target package
+
+# Install to system
+RUN make -C build install && \
+    ldconfig
+
+# Create deployment directory
+RUN mkdir -p /opt/multipack-parser
+
+# Copy built files to deployment location
+RUN cp -r build/bin/multipack-parser* /opt/multipack-parser/ && \
+    cp -r build/lib* /opt/multipack-parser/ && \
+    cp -r build/plugins/* /opt/multipack-parser/ 2>/dev/null || true
+
+# Set up runtime environment
+ENV LD_LIBRARY_PATH=/opt/multipack-parser/lib:$LD_LIBRARY_PATH
+ENV PATH=/opt/multipack-parser/bin:$PATH
+ENV QT_PLUGIN_PATH=/opt/multipack-parser/plugins
+
+# Create non-root user for security
+RUN useradd -m -u multipack -s /bin/bash multipack || true
+RUN chown -R multipack:multipack /opt/multipack-parser
+
+USER multipack
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD ["/opt/multipack-parser/bin/multipack-parser", "--version"] || \
+    [ "/opt/multipack-parser/bin/multipack-parser", "--help" ]
+
+# Default command
+CMD ["/opt/multipack-parser/bin/multipack-parser"]

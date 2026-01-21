@@ -214,14 +214,14 @@ void AudioManager::playNext()
     }
 
     AudioItem item = m_queue->dequeue();
-    if (item.path.isEmpty()) {
+    if (item.filePath.isEmpty()) {
         return;
     }
 
     if (item.isResource) {
-        playResource(item.path);
+        playResource(item.filePath);
     } else {
-        playFile(item.path);
+        playFile(item.filePath);
     }
 }
 

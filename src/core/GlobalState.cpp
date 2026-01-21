@@ -295,29 +295,19 @@ void GlobalState::setRawData(const QVector<QVector<int>>& data)
 // Metadata
 // =============================================================================
 
-int GlobalState::paketQuer() const
+bool GlobalState::paketQuer() const
 {
     QMutexLocker locker(&m_mutex);
     return m_paketQuer;
 }
 
-void GlobalState::setPaketQuer(int value)
+void GlobalState::setPaketQuer(bool value)
 {
     QMutexLocker locker(&m_mutex);
     m_paketQuer = value;
 }
 
-QVector<double> GlobalState::centerOfGravity() const
-{
-    QMutexLocker locker(&m_mutex);
-    return m_centerOfGravity;
-}
 
-void GlobalState::setCenterOfGravity(const QVector<double>& cog)
-{
-    QMutexLocker locker(&m_mutex);
-    m_centerOfGravity = cog;
-}
 
 // =============================================================================
 // Current File
@@ -644,6 +634,26 @@ void GlobalState::setScannerOverride(const QVector<bool>& override)
     m_scannerOverride = override;
 }
 
+void GlobalState::setScannerOverride(int index, bool value)
+{
+    QMutexLocker locker(&m_mutex);
+    if (index >= 0 && index < m_scannerOverride.size()) {
+        m_scannerOverride[index] = value;
+    }
+}
+
+bool GlobalState::labelInvert() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_labelInvert;
+}
+
+void GlobalState::setLabelInvert(bool invert)
+{
+    QMutexLocker locker(&m_mutex);
+    m_labelInvert = invert;
+}
+
 // =============================================================================
 // Current Layer/Position Tracking
 // =============================================================================
@@ -824,6 +834,107 @@ bool GlobalState::hasLoadedData() const
 {
     QMutexLocker locker(&m_mutex);
     return !m_currentFileName.isEmpty() && m_numberOfLayers > 0;
+}
+
+// =========================================================================
+// Additional Data Variables Implementation
+// =========================================================================
+
+QVector<int> GlobalState::startlage() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_startlage;
+}
+
+void GlobalState::setStartlage(const QVector<int>& startlage)
+{
+    QMutexLocker locker(&m_mutex);
+    m_startlage = startlage;
+    emit additionalDataChanged();
+}
+
+
+
+double GlobalState::massePaket() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_massePaket;
+}
+
+void GlobalState::setMassePaket(double masse)
+{
+    QMutexLocker locker(&m_mutex);
+    m_massePaket = masse;
+    emit additionalDataChanged();
+}
+
+double GlobalState::pickOffsetX() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_pickOffsetX;
+}
+
+void GlobalState::setPickOffsetX(double offset)
+{
+    QMutexLocker locker(&m_mutex);
+    m_pickOffsetX = offset;
+    emit additionalDataChanged();
+}
+
+double GlobalState::pickOffsetY() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_pickOffsetY;
+}
+
+void GlobalState::setPickOffsetY(double offset)
+{
+    QMutexLocker locker(&m_mutex);
+    m_pickOffsetY = offset;
+    emit additionalDataChanged();
+}
+
+// =========================================================================
+// Filter Variables Implementation
+// =========================================================================
+
+int GlobalState::filterLength() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_filterLength;
+}
+
+void GlobalState::setFilterLength(int length)
+{
+    QMutexLocker locker(&m_mutex);
+    m_filterLength = length;
+    emit filterDimensionsChanged();
+}
+
+int GlobalState::filterWidth() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_filterWidth;
+}
+
+void GlobalState::setFilterWidth(int width)
+{
+    QMutexLocker locker(&m_mutex);
+    m_filterWidth = width;
+    emit filterDimensionsChanged();
+}
+
+int GlobalState::filterHeight() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_filterHeight;
+}
+
+void GlobalState::setFilterHeight(int height)
+{
+    QMutexLocker locker(&m_mutex);
+    m_filterHeight = height;
+    emit filterDimensionsChanged();
 }
 
 } // namespace core

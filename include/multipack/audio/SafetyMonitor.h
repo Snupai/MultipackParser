@@ -10,6 +10,7 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QDateTime>
 #include <memory>
 
 namespace multipack {
@@ -133,6 +134,12 @@ private:
     bool m_audioAlertsEnabled = true;
     bool m_alarmActive = false;
     robot::SafetyStatus m_lastStatus;
+    
+    // 30-second warning interval tracking (like Python version)
+    static constexpr int WARNING_INTERVAL_SECONDS = 30;
+    QDateTime m_reducedModeStartTime;
+    QDateTime m_lastWarningTime;
+    bool m_inReducedMode = false;
 };
 
 } // namespace audio
