@@ -102,8 +102,8 @@ void MainWindow::setupConnections()
     connect(ui->LadePallettenplan, &QPushButton::clicked, this, &MainWindow::onLoadPaletteClicked);
     connect(ui->ButtonDatenSenden, &QPushButton::clicked, this, &MainWindow::onStartServerClicked);
     connect(ui->EingabePallettenplan, &QLineEdit::returnPressed, this, &MainWindow::onLoadPaletteClicked);
-    connect(ui->checkBoxEinzelpaket, &QCheckBox::checkStateChanged, this, &MainWindow::onEinzelpaketChanged);
-    connect(ui->checkBoxLabelInvert, &QCheckBox::checkStateChanged, this, &MainWindow::onLabelInvertChanged);
+    connect(ui->checkBoxEinzelpaket, &QCheckBox::stateChanged, this, &MainWindow::onEinzelpaketChanged);
+    connect(ui->checkBoxLabelInvert, &QCheckBox::stateChanged, this, &MainWindow::onLabelInvertChanged);
     connect(ui->EingabeKartonhoehe, &QLineEdit::editingFinished, this, &MainWindow::onKartonhoeheChanged);
     connect(ui->EingabeKartonGewicht, &QLineEdit::editingFinished, this, &MainWindow::onGewichtChanged);
     connect(ui->EingabeStartlage, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onStartlageChanged);
@@ -121,7 +121,7 @@ void MainWindow::setupConnections()
     // Aufnahme tab
     connect(ui->EingabeVerschiebungX, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onVerschiebungXChanged);
     connect(ui->EingabeVerschiebungY, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onVerschiebungYChanged);
-    connect(ui->checkBoxKlemmung, &QCheckBox::checkStateChanged, this, &MainWindow::onKlemmungChanged);
+    connect(ui->checkBoxKlemmung, &QCheckBox::stateChanged, this, &MainWindow::onKlemmungChanged);
     connect(ui->ButtonDatenSenden_2, &QPushButton::clicked, this, &MainWindow::onAufnahmeServerStart);
 
     // Settings - back buttons
@@ -147,9 +147,9 @@ void MainWindow::setupConnections()
     connect(ui->lineEditCommand, &QLineEdit::returnPressed, this, &MainWindow::onConsoleCommandEntered);
 
     // Scanner overwrite checkboxes (UR20 specific)
-    connect(ui->checkBoxScanner1Overwrite, &QCheckBox::checkStateChanged, this, &MainWindow::onScanner1OverwriteChanged);
-    connect(ui->checkBoxScanner2Overwrite, &QCheckBox::checkStateChanged, this, &MainWindow::onScanner2OverwriteChanged);
-    connect(ui->checkBoxScanner3Overwrite, &QCheckBox::checkStateChanged, this, &MainWindow::onScanner3OverwriteChanged);
+    connect(ui->checkBoxScanner1Overwrite, &QCheckBox::stateChanged, this, &MainWindow::onScanner1OverwriteChanged);
+    connect(ui->checkBoxScanner2Overwrite, &QCheckBox::stateChanged, this, &MainWindow::onScanner2OverwriteChanged);
+    connect(ui->checkBoxScanner3Overwrite, &QCheckBox::stateChanged, this, &MainWindow::onScanner3OverwriteChanged);
 
     // Experimental - back button and actions
     connect(ui->ButtonZurueck_8, &QPushButton::clicked, this, &MainWindow::showMainMenu);
@@ -375,9 +375,9 @@ void MainWindow::onExperimentalClicked()
     showExperimental();
 }
 
-void MainWindow::onEinzelpaketChanged(Qt::CheckState state)
+void MainWindow::onEinzelpaketChanged(int state)
 {
-    bool checked = (state == Qt::CheckState::Checked);
+    bool checked = (state == Qt::Checked);
     qDebug() << "Einzelpaket changed:" << checked;
 
     // Update database
@@ -393,9 +393,9 @@ void MainWindow::onEinzelpaketChanged(Qt::CheckState state)
     }
 }
 
-void MainWindow::onLabelInvertChanged(Qt::CheckState state)
+void MainWindow::onLabelInvertChanged(int state)
 {
-    bool checked = (state == Qt::CheckState::Checked);
+    bool checked = (state == Qt::Checked);
     qDebug() << "Label invert changed:" << checked;
 
     // Update global state - label invert adds 180 to rotation in UR_PaketPos
@@ -497,9 +497,9 @@ void MainWindow::onVerschiebungYChanged(int value)
     }
 }
 
-void MainWindow::onKlemmungChanged(Qt::CheckState state)
+void MainWindow::onKlemmungChanged(int state)
 {
-    bool checked = (state == Qt::CheckState::Checked);
+    bool checked = (state == Qt::Checked);
     qDebug() << "Klemmung changed:" << checked;
 
     // Update global state
@@ -513,9 +513,9 @@ void MainWindow::onAufnahmeServerStart()
     onStartServerClicked();
 }
 
-void MainWindow::onScanner1OverwriteChanged(Qt::CheckState state)
+void MainWindow::onScanner1OverwriteChanged(int state)
 {
-    bool checked = (state == Qt::CheckState::Checked);
+    bool checked = (state == Qt::Checked);
     qDebug() << "Scanner 1 overwrite changed:" << checked;
 
     // Update global state for UR20 scanner override
@@ -524,9 +524,9 @@ void MainWindow::onScanner1OverwriteChanged(Qt::CheckState state)
     }
 }
 
-void MainWindow::onScanner2OverwriteChanged(Qt::CheckState state)
+void MainWindow::onScanner2OverwriteChanged(int state)
 {
-    bool checked = (state == Qt::CheckState::Checked);
+    bool checked = (state == Qt::Checked);
     qDebug() << "Scanner 2 overwrite changed:" << checked;
 
     // Update global state for UR20 scanner override
@@ -535,9 +535,9 @@ void MainWindow::onScanner2OverwriteChanged(Qt::CheckState state)
     }
 }
 
-void MainWindow::onScanner3OverwriteChanged(Qt::CheckState state)
+void MainWindow::onScanner3OverwriteChanged(int state)
 {
-    bool checked = (state == Qt::CheckState::Checked);
+    bool checked = (state == Qt::Checked);
     qDebug() << "Scanner 3 overwrite changed:" << checked;
 
     // Update global state for UR20 scanner override

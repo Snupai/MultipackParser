@@ -71,8 +71,8 @@ private slots:
     void onSettingsClicked();
     void onVolumeToggleClicked();
     void onExperimentalClicked();
-    void onEinzelpaketChanged(Qt::CheckState state);
-    void onLabelInvertChanged(Qt::CheckState state);
+    void onEinzelpaketChanged(int state);
+    void onLabelInvertChanged(int state);
     void onKartonhoeheChanged();
     void onGewichtChanged();
     void onStartlageChanged(int value);
@@ -86,7 +86,7 @@ private slots:
     // Aufnahme tab actions
     void onVerschiebungXChanged(int value);
     void onVerschiebungYChanged(int value);
-    void onKlemmungChanged(Qt::CheckState state);
+    void onKlemmungChanged(int state);
     void onAufnahmeServerStart();
 
     // Settings actions
@@ -100,9 +100,9 @@ private slots:
     void onSelectScannerSoundPathClicked();
     void onOpenFileClicked();
     void onConsoleCommandEntered();
-    void onScanner1OverwriteChanged(Qt::CheckState state);
-    void onScanner2OverwriteChanged(Qt::CheckState state);
-    void onScanner3OverwriteChanged(Qt::CheckState state);
+    void onScanner1OverwriteChanged(int state);
+    void onScanner2OverwriteChanged(int state);
+    void onScanner3OverwriteChanged(int state);
 
     // Experimental actions
     void onRobFileSelected(QListWidgetItem* item);

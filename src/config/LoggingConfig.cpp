@@ -161,7 +161,7 @@ void LoggingConfig::rotateLogFiles(int maxFiles)
 
     // Delete old files for each prefix
     for (auto it = filesByPrefix.begin(); it != filesByPrefix.end(); ++it) {
-        const QString& prefix = it.key();
+        Q_UNUSED(it.key()); // prefix not used but kept for potential future logging
         QFileInfoList& files = it.value();
 
         // Keep only maxFiles per prefix
@@ -200,7 +200,7 @@ void LoggingConfig::messageHandler(QtMsgType type,
                                    const QString& msg)
 {
     // Check log level
-    LogLevel msgLevel;
+    LogLevel msgLevel = LogLevel::Debug;  // Default to Debug
     QString levelStr;
 
     switch (type) {

@@ -1,7 +1,7 @@
 # Dockerfile for MultipackParser C++ ARM64 Build
 # Builds for Raspberry Pi 4/5 (ARM64/aarch64)
 
-FROM --platform=linux/arm64 ubuntu:22.04
+FROM ubuntu:22.04
 
 LABEL maintainer="Szaidel Cosmetic GmbH"
 LABEL description="ARM64 build environment for MultipackParser C++"
@@ -66,6 +66,7 @@ COPY cmake/ ./cmake/
 COPY include/ ./include/
 COPY src/ ./src/
 COPY ui/ ./ui/
+COPY resources/ ./resources/
 
 # Configure CMake
 RUN cmake -B build \
@@ -81,8 +82,7 @@ RUN cmake -B build \
 RUN cmake --build build --target multipack-parser -j$(nproc)
 
 # Verify the binary was built
-RUN ls -la build/bin/ && \
-    file build/bin/multipack-parser
+RUN ls -la build/bin/
 
 # The binary is now at /src/build/bin/multipack-parser
 # It will be extracted by docker-build.sh
