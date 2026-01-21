@@ -1,113 +1,88 @@
-# Dockerfile for MultipackParser C++ ARM64 Build using Docker Buildx
-# Multi-architecture build with better caching and layer optimization
+# Dockerfile for MultipackParser C++ ARM64 Build
+# Builds for Raspberry Pi 4/5 (ARM64/aarch64)
 
-ARG TARGETPLATFORM=linux/arm64
-FROM ubuntu:22.04
+FROM --platform=linux/arm64 ubuntu:22.04
 
 LABEL maintainer="Szaidel Cosmetic GmbH"
 LABEL description="ARM64 build environment for MultipackParser C++"
-LABEL version="1.7.9"
 
-# Prevent interactive prompts
+# Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Berlin
 
-# Use separate layers for better caching
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
+    # Build tools
     build-essential \
     cmake \
     ninja-build \
     pkg-config \
-    # Core dependencies
     git \
-    wget \
-    curl \
-    # OpenGL (required by Qt6Gui)
-    libgl1-mesa-dev \
-    libegl1-mesa-dev \
-    libgles2-mesa-dev \
-    # Qt6
+    # Qt6 development packages
     qt6-base-dev \
     qt6-base-dev-tools \
     qt6-tools-dev \
     qt6-tools-dev-tools \
     qt6-multimedia-dev \
     libqt6sql6-sqlite \
+    # OpenGL/EGL for Qt6Gui
+    libgl1-mesa-dev \
+    libegl1-mesa-dev \
+    libgles2-mesa-dev \
+    # X11/XCB for Qt platform plugins
+    libxcb1-dev \
+    libxcb-cursor-dev \
+    libxcb-icccm4-dev \
+    libxcb-image0-dev \
+    libxcb-keysyms1-dev \
+    libxcb-render-util0-dev \
+    libxcb-shape0-dev \
+    libxcb-shm0-dev \
+    libxcb-sync-dev \
+    libxcb-xfixes0-dev \
+    libxcb-xinerama0-dev \
+    libxcb-xkb-dev \
+    libxkbcommon-dev \
+    libxkbcommon-x11-dev \
     # SQLite
     libsqlite3-dev \
-    # SSL
+    # SSL for network operations
     libssl-dev \
-    # Clean up
     && rm -rf /var/lib/apt/lists/*
 
-# Set Qt6 environment
+# Set Qt6 cmake path
 ENV Qt6_DIR="/usr/lib/aarch64-linux-gnu/cmake/Qt6"
 
-# Raspberry Pi 4/5 optimization flags
+# Set Raspberry Pi 4 optimization flags
 ENV CFLAGS="-mcpu=cortex-a72 -mtune=cortex-a72 -O2"
 ENV CXXFLAGS="-mcpu=cortex-a72 -mtune=cortex-a72 -O2"
 
-# Add build args for version injection
-ARG BUILD_VERSION
-ARG BUILD_TYPE=Release
-ARG VERSION_SUFFIX=""
-
-# Create build directory structure
+# Create working directory
 WORKDIR /src
 
-# Copy CMakeLists.txt first (better layer caching)
-COPY CMakeLists.txt cmake/
-COPY src/ ./src/
-COPY include/ ./include/
-COPY ui/ ./ui/
+# Copy source files
 COPY CMakeLists.txt ./
+COPY cmake/ ./cmake/
+COPY include/ ./include/
+COPY src/ ./src/
+COPY ui/ ./ui/
 
-# Build configuration
+# Configure CMake
 RUN cmake -B build \
-    -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
-    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-    -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
-    -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY_TYPE=ON \
-    -DCMAKE_SKIP_BUILD_RPATH=ON \
-    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_STANDARD=17 \
     -DCMAKE_CXX_FLAGS="-mcpu=cortex-a72 -mtune=cortex-a72 -O2" \
     -DCMAKE_C_FLAGS="-mcpu=cortex-a72 -mtune=cortex-a72 -O2" \
-    -DCMAKE_CXX_STANDARD=17 \
-    -DCMAKE_COLOR_DIAGNOSTICS=ON \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
     -DENABLE_VTK=OFF
 
 # Build
-RUN cmake --build build --target multipack-parser-${VERSION_SUFFIX} && \
-    cmake --build build --target package
+RUN cmake --build build --target multipack-parser -j$(nproc)
 
-# Install to system
-RUN make -C build install && \
-    ldconfig
+# Verify the binary was built
+RUN ls -la build/bin/ && \
+    file build/bin/multipack-parser
 
-# Create deployment directory
-RUN mkdir -p /opt/multipack-parser
-
-# Copy built files to deployment location
-RUN cp -r build/bin/multipack-parser* /opt/multipack-parser/ && \
-    cp -r build/lib* /opt/multipack-parser/ && \
-    cp -r build/plugins/* /opt/multipack-parser/ 2>/dev/null || true
-
-# Set up runtime environment
-ENV LD_LIBRARY_PATH=/opt/multipack-parser/lib:$LD_LIBRARY_PATH
-ENV PATH=/opt/multipack-parser/bin:$PATH
-ENV QT_PLUGIN_PATH=/opt/multipack-parser/plugins
-
-# Create non-root user for security
-RUN useradd -m -u multipack -s /bin/bash multipack || true
-RUN chown -R multipack:multipack /opt/multipack-parser
-
-USER multipack
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD ["/opt/multipack-parser/bin/multipack-parser", "--version"] || \
-    [ "/opt/multipack-parser/bin/multipack-parser", "--help" ]
-
-# Default command
-CMD ["/opt/multipack-parser/bin/multipack-parser"]
+# The binary is now at /src/build/bin/multipack-parser
+# It will be extracted by docker-build.sh
