@@ -58,7 +58,7 @@ ENV CFLAGS="-mcpu=cortex-a72 -mtune=cortex-a72 -O2"
 ENV CXXFLAGS="-mcpu=cortex-a72 -mtune=cortex-a72 -O2"
 
 # Create working directory
-WORKDIR /src
+WORKDIR /app
 
 # Copy source files
 COPY CMakeLists.txt ./
