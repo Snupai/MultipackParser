@@ -1,129 +1,62 @@
-# MultipackParser C++ Version
+# MultipackParser C++
 
-C++ Qt6 rewrite of the MultipackParser application for enhanced performance on Raspberry Pi.
+C++ Qt6 rewrite of the MultipackParser application - a bridge connecting Multipack palette optimization software with Universal Robots (UR10/UR20) palletizing systems.
 
-## Overview
+## Features
 
-MultipackParser is a bridge application connecting Multipack palette optimization software with Universal Robots (UR10/UR20) palletizing systems. This C++ version provides:
+- **Native Performance:** C++17 with Qt6 for optimized performance on ARM64 (Raspberry Pi)
+- **XML-RPC Server:** Serves palette data to robot controllers on port 8080
+- **Robot Communication:** Dashboard server integration for status monitoring
+- **SQLite Database:** Stores and manages palette configurations
+- **3D Visualization:** Package position visualization (VTK optional)
+- **Safety System:** Scanner monitoring with audio warnings
+- **USB Support:** Hot-plug detection for palette file loading
 
-- Improved performance on ARM64 (Raspberry Pi)
-- Native Qt6 widgets
-- VTK-based 3D visualization
-- Reduced memory footprint
+## Quick Start
 
-## Prerequisites
+### Prerequisites
 
-### Required Dependencies
-
-- **Qt6** (6.2+ recommended): Core, Widgets, Network, Sql, Multimedia
-- **CMake** 3.16+
+- **Qt6** (6.2+): Core, Widgets, Network, Sql, Multimedia
+- **CMake** 3.20+
 - **C++17** compatible compiler
 - **SQLite3**
 
-### Optional Dependencies
+### Build for ARM64 (Raspberry Pi)
 
-- **VTK 9.x**: For 3D visualization
-- **xmlrpc-c**: For XML-RPC server
-- **OpenSSL**: For password encryption
-
-### Ubuntu/Debian Installation
+The recommended way to build for Raspberry Pi from any platform:
 
 ```bash
-# Qt6 and build tools
-sudo apt install qt6-base-dev qt6-multimedia-dev qt6-tools-dev cmake build-essential
+# macOS/Linux
+./docker-build.sh
 
-# SQLite
-sudo apt install libsqlite3-dev
-
-# Optional: VTK
-sudo apt install libvtk9-qt-dev
-
-# Optional: xmlrpc-c
-sudo apt install libxmlrpc-c++8-dev
-```
-
-### Raspberry Pi OS
-
-```bash
-# Enable Qt6 repository if needed
-sudo apt update
-sudo apt install qt6-base-dev libsqlite3-dev cmake build-essential
-```
-
-## Building
-
-### Windows: Docker Build for Raspberry Pi (Recommended)
-
-The easiest way to build for Raspberry Pi from Windows is using Docker:
-
-```batch
-REM First time setup (installs QEMU for ARM64 emulation)
-build.bat --setup
-
-REM Build for ARM64 (Raspberry Pi)
+# Windows
 build.bat --arm64
-
-REM Build for x86_64 Linux (testing)
-build.bat --native
-
-REM Show all options
-build.bat --help
-
-REM Clean build artifacts
-build.bat --clean
 ```
 
-The output binary will be in `output/multipack-parser`.
-
-**Requirements:**
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
-- WSL2 backend enabled (for ARM64 emulation)
+Output: `output/multipack-parser-arm64.tar.gz` (includes Qt libraries)
 
 ### Native Build (Development)
 
 ```bash
-cd multipack-cpp
+# macOS/Linux
+./build.sh
+./build.sh --debug --run
+
+# Windows
+build.bat
+build.bat --debug --run
+```
+
+### Manual Build
+
+```bash
 mkdir build && cd build
-cmake ..
+cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j$(nproc)
+./bin/multipack-parser
 ```
 
-### ARM64 Cross-Compilation (Raspberry Pi)
-
-```bash
-cd multipack-cpp
-mkdir build-arm64 && cd build-arm64
-cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Arm64Toolchain.cmake ..
-make -j$(nproc)
-```
-
-### Using Build Scripts
-
-```bash
-# Native build
-./scripts/build.sh
-
-# ARM64 build
-./scripts/build_arm64.sh
-```
-
-## Running
-
-```bash
-# Standard run
-./build/bin/multipack-parser
-
-# With debug logging
-./build/bin/multipack-parser --verbose
-
-# Show version
-./build/bin/multipack-parser --version
-
-# Show help
-./build/bin/multipack-parser --help
-```
-
-### Command Line Options
+## Command Line Options
 
 | Option | Description |
 |--------|-------------|
@@ -135,31 +68,31 @@ make -j$(nproc)
 ## Project Structure
 
 ```
-multipack-cpp/
-├── CMakeLists.txt          # Main build configuration
-├── src/                    # Source files (.cpp)
-│   ├── main.cpp           # Entry point
-│   ├── core/              # Application core
-│   ├── ui/                # User interface
-│   ├── database/          # SQLite database
-│   ├── network/           # XML-RPC server
-│   ├── robot/             # Robot communication
-│   ├── audio/             # Audio playback
-│   ├── message/           # Messaging system
-│   ├── config/            # Configuration
-│   ├── system/            # System utilities
-│   └── utils/             # Helper utilities
-├── include/multipack/     # Header files (.h)
-├── ui/                    # Qt Designer UI files
-├── resources/             # Qt resources (icons, audio)
-├── cmake/                 # CMake modules
-├── docs/                  # Documentation
-└── scripts/               # Build scripts
+MultipackParser/
+├── CMakeLists.txt              # Build configuration
+├── build.sh / build.bat        # Native build scripts
+├── docker-build.sh             # ARM64 cross-compilation
+├── Dockerfile.arm64            # ARM64 build container
+├── src/                        # Source files
+│   ├── main.cpp                # Entry point
+│   ├── core/                   # Application core & state
+│   ├── ui/                     # User interface
+│   ├── database/               # SQLite operations
+│   ├── network/                # XML-RPC server
+│   ├── robot/                  # Robot communication
+│   ├── audio/                  # Audio playback & safety
+│   ├── message/                # Status messaging
+│   ├── config/                 # Settings management
+│   ├── system/                 # USB, updates, file ops
+│   └── utils/                  # String/socket utilities
+├── include/multipack/          # Header files
+├── ui/                         # Qt Designer UI files
+└── resources/                  # Icons, audio files
 ```
 
 ## Configuration
 
-Settings are stored in `settings.json`:
+Settings stored in `settings.json`:
 
 ```json
 {
@@ -176,28 +109,54 @@ Settings are stored in `settings.json`:
 }
 ```
 
-## Development Status
+## Dependencies Installation
 
-This is a C++ skeleton with stub implementations. The following components are stubbed:
+### Ubuntu/Debian
 
-- [x] Core application framework
-- [x] Settings management
-- [x] Logging configuration
-- [x] Database models
-- [x] XML-RPC server structure
-- [x] Robot communication framework
-- [x] Audio playback system
-- [x] Message/status system
-- [ ] Full MainWindow implementation
-- [ ] 3D visualization (VTK)
-- [ ] Complete database operations
-- [ ] Full XML-RPC method implementations
+```bash
+sudo apt install qt6-base-dev qt6-multimedia-dev qt6-tools-dev \
+                 cmake build-essential libsqlite3-dev
+
+# Optional: VTK for 3D visualization
+sudo apt install libvtk9-qt-dev
+```
+
+### macOS (Homebrew)
+
+```bash
+brew install qt@6 cmake sqlite
+```
+
+### Windows
+
+Install Qt6 from [qt.io](https://www.qt.io/download) and add to PATH.
+
+## Robot Communication
+
+The application communicates with Universal Robots via:
+
+- **XML-RPC Server (port 8080):** Serves palette data, package positions, layer info
+- **Dashboard Server (port 29999):** Monitors robot status, program state, safety
+
+### Supported Robots
+
+| Model | Features |
+|-------|----------|
+| UR10 | Single palette, basic scanner |
+| UR20 | Dual palettes, advanced scanner monitoring |
+
+## Technical Notes
+
+- **Qt Version:** Targets Qt 6.2+ (Ubuntu 22.04 compatible)
+- **Thread Safety:** Uses Qt signals/slots for cross-thread UI updates
+- **Password Encryption:** SHA256 with random salt (Python-compatible format)
+- **Database:** Normalized SQLite schema with cascading foreign keys
 
 ## Documentation
 
-- [Architecture](docs/ARCHITECTURE.md)
-- [Building](docs/BUILDING.md)
-- [Migration Guide](docs/MIGRATION.md)
+- [Building Guide](docs/BUILDING.md)
+- [Architecture](docs/architecture.md)
+- [Migration from Python](docs/MIGRATION.md)
 
 ## License
 

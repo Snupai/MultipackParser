@@ -1,0 +1,128 @@
+name: Build ARM64
+
+on:
+  push:
+    branches: [feat/cpp-rewrite, main]
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+      - '.gitignore'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build-arm64:
+    name: Build ARM64 (Raspberry Pi)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build ARM64 binary
+        run: |
+          # Build using Docker with ARM64 emulation
+          docker build \
+            --platform linux/arm64 \
+            -f Dockerfile.arm64 \
+            -t multipack-builder-arm64 \
+            .
+          
+          # Create output directory
+          mkdir -p output
+          
+          # Extract binary and libraries from container
+          CONTAINER_ID=$(docker create multipack-builder-arm64)
+          docker cp "$CONTAINER_ID:/app/build/bin/multipack-parser" output/
+          docker cp "$CONTAINER_ID:/app/build/lib" output/ 2>/dev/null || true
+          docker rm "$CONTAINER_ID"
+          
+          # Bundle Qt libraries
+          docker run --rm \
+            --platform linux/arm64 \
+            -v "$(pwd)/output:/output" \
+            multipack-builder-arm64 \
+            bash -c '
+              mkdir -p /output/lib
+              
+              # Copy Qt libraries
+              for lib in libQt6Core libQt6Gui libQt6Widgets libQt6Network libQt6Sql libQt6Multimedia libQt6DBus; do
+                find /usr/lib -name "${lib}.so*" -exec cp -a {} /output/lib/ \; 2>/dev/null || true
+              done
+              
+              # Copy Qt plugins
+              mkdir -p /output/plugins
+              cp -r /usr/lib/*/qt6/plugins/platforms /output/plugins/ 2>/dev/null || true
+              cp -r /usr/lib/*/qt6/plugins/sqldrivers /output/plugins/ 2>/dev/null || true
+              cp -r /usr/lib/*/qt6/plugins/multimedia /output/plugins/ 2>/dev/null || true
+              
+              # Copy ICU libraries
+              find /usr/lib -name "libicu*.so*" -exec cp -a {} /output/lib/ \; 2>/dev/null || true
+              
+              # Copy other dependencies
+              for lib in libpcre2-16 libdouble-conversion libxcb libxkbcommon; do
+                find /usr/lib -name "${lib}.so*" -exec cp -a {} /output/lib/ \; 2>/dev/null || true
+              done
+            '
+          
+          # Create run script
+          cat > output/run.sh << 'EOF'
+          #!/bin/bash
+          SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+          export LD_LIBRARY_PATH="$SCRIPT_DIR/lib:$LD_LIBRARY_PATH"
+          export QT_PLUGIN_PATH="$SCRIPT_DIR/plugins"
+          export QT_QPA_PLATFORM=xcb
+          export LIBGL_ALWAYS_SOFTWARE=1
+          exec "$SCRIPT_DIR/multipack-parser" "$@"
+          EOF
+          chmod +x output/run.sh
+          
+          # Package everything
+          cd output
+          tar -czvf multipack-parser-arm64.tar.gz multipack-parser lib plugins run.sh
+          
+          # Show contents
+          echo "=== Package contents ==="
+          tar -tzvf multipack-parser-arm64.tar.gz
+          echo "=== Binary info ==="
+          file multipack-parser
+          ls -lh multipack-parser-arm64.tar.gz
+
+      - name: Upload ARM64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: multipack-parser-arm64
+          path: output/multipack-parser-arm64.tar.gz
+          retention-days: 30
+
+  # Optional: Create release on tag push
+  release:
+    name: Create Release
+    needs: build-arm64
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: multipack-parser-arm64
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: multipack-parser-arm64.tar.gz
+          draft: false
+          prerelease: ${{ contains(github.ref, '-rc') || contains(github.ref, '-beta') || contains(github.ref, '-alpha') }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
