@@ -69,7 +69,7 @@ jobs:
               find /usr/lib -name "libicu*.so*" -exec cp -a {} /output/lib/ \; 2>/dev/null || true
               
               # Copy other dependencies
-              for lib in libpcre2-16 libdouble-conversion libxcb libxkbcommon; do
+              for lib in libpcre2-16 libdouble-conversion libxcb libxkbcommon libX11 libXext libXcursor libXfixes libXi libXrandr libXrender libXinerama; do
                 find /usr/lib -name "${lib}.so*" -exec cp -a {} /output/lib/ \; 2>/dev/null || true
               done
             '
@@ -81,17 +81,17 @@ jobs:
           export LD_LIBRARY_PATH="$SCRIPT_DIR/lib:$LD_LIBRARY_PATH"
           export QT_PLUGIN_PATH="$SCRIPT_DIR/plugins"
           
-          # Auto-detect platform or use fallback
-          if [ -n "$DISPLAY" ] && xset q >/dev/null 2>&1; then
-            export QT_QPA_PLATFORM=xcb
-          elif [ -c /dev/dri/card0 ] || [ -c /dev/dri/card1 ]; then
-            export QT_QPA_PLATFORM=eglfs
-          else
-            export QT_QPA_PLATFORM=offscreen
-          fi
-          
-          export LIBGL_ALWAYS_SOFTWARE=1
+          # Force X11 for Openbox environments
+          export QT_QPA_PLATFORM=xcb
           export QT_X11_NO_MITSHM=1
+          export LIBGL_ALWAYS_SOFTWARE=1
+          
+          # Debug info (remove once working)
+          echo "QT_PLUGIN_PATH: $QT_PLUGIN_PATH"
+          echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+          echo "Available platforms in plugins:"
+          ls -la "$SCRIPT_DIR/plugins/platforms/" 2>/dev/null || echo "No platforms directory"
+          
           exec "$SCRIPT_DIR/multipack-parser" "$@"
           EOF
           chmod +x output/run.sh
