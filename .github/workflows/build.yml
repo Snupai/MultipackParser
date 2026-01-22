@@ -55,7 +55,7 @@ jobs:
               mkdir -p /output/lib
               
               # Copy Qt libraries
-              for lib in libQt6Core libQt6Gui libQt6Widgets libQt6Network libQt6Sql libQt6Multimedia libQt6DBus; do
+              for lib in libQt6Core libQt6Gui libQt6Widgets libQt6Network libQt6Sql libQt6Multimedia libQt6DBus libQt6XcbQpa libQt6OpenGL; do
                 find /usr/lib -name "${lib}.so*" -exec cp -a {} /output/lib/ \; 2>/dev/null || true
               done
               
@@ -86,13 +86,16 @@ jobs:
           export QT_X11_NO_MITSHM=1
           export LIBGL_ALWAYS_SOFTWARE=1
           
-          # Debug info (remove once working)
-          echo "QT_PLUGIN_PATH: $QT_PLUGIN_PATH"
-          echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
-          echo "Available platforms in plugins:"
-          ls -la "$SCRIPT_DIR/plugins/platforms/" 2>/dev/null || echo "No platforms directory"
-          
           exec "$SCRIPT_DIR/multipack-parser" "$@"
+          EOF
+          chmod +x output/run.sh
+          
+          # Create qt.conf to help Qt find plugins and libraries
+          cat > output/qt.conf << 'EOF'
+          [Paths]
+          Prefix = .
+          Plugins = plugins
+          Libraries = lib
           EOF
           chmod +x output/run.sh
           
