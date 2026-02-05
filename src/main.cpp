@@ -12,8 +12,10 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QLoggingCategory>
 #include <QCommandLineParser>
 #include <QCommandLineOption>
+#include <cstring>
 
 #include "multipack/core/Application.h"
 #include "multipack/core/GlobalState.h"
@@ -37,6 +39,16 @@ void setupEnvironment()
     // Windows uses windows platform (default)
     // No special environment setup needed
 #endif
+}
+
+bool shouldEnableVirtualKeyboard(int argc, char* argv[])
+{
+    for (int i = 1; i < argc; ++i) {
+        if (std::strcmp(argv[i], "--no-virtual-keyboard") == 0) {
+            return false;
+        }
+    }
+    return true;
 }
 
 /**
@@ -93,13 +105,9 @@ bool parseArguments(QCoreApplication& app)
 
     // Handle verbose
     if (parser.isSet(verboseOption)) {
-        // TODO: Enable debug logging
+        // Enable debug logging
+        QLoggingCategory::setFilterRules("*.debug=true\nqt.*.debug=false");
         qInfo() << "Verbose logging enabled";
-    }
-
-    // Handle virtual keyboard
-    if (!parser.isSet(noKeyboardOption)) {
-        qputenv("QT_IM_MODULE", "qtvirtualkeyboard");
     }
 
     return true;
@@ -115,6 +123,10 @@ int main(int argc, char* argv[])
 {
     // Setup environment before creating QApplication
     setupEnvironment();
+
+    if (shouldEnableVirtualKeyboard(argc, argv)) {
+        qputenv("QT_IM_MODULE", "qtvirtualkeyboard");
+    }
 
     // Create application
     multipack::core::Application app(argc, argv);

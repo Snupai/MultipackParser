@@ -5,6 +5,7 @@
 #include "multipack/network/XmlRpcServer.h"
 #include "multipack/database/DatabaseManager.h"
 #include "multipack/core/GlobalState.h"
+#include "multipack/network/URCommonFunctions.h"
 
 #include <QTcpSocket>
 #include <QRegularExpression>
@@ -103,6 +104,25 @@ void XmlRpcServer::setGlobalState(core::GlobalState* state)
 void XmlRpcServer::registerStandardMethods()
 {
     qDebug() << "Registering standard RPC methods";
+
+    auto markPaletteNotEmpty = [this](int paletteNumber) {
+        if (!m_state) {
+            return;
+        }
+
+        qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
+        if (paletteNumber == 1) {
+            m_state->setUr20Palette1Empty(false);
+            if (m_state->palette1NonEmptyTimestamp() == 0) {
+                m_state->setPalette1NonEmptyTimestamp(currentTime);
+            }
+        } else if (paletteNumber == 2) {
+            m_state->setUr20Palette2Empty(false);
+            if (m_state->palette2NonEmptyTimestamp() == 0) {
+                m_state->setPalette2NonEmptyTimestamp(currentTime);
+            }
+        }
+    };
 
     // Register all standard methods using lambdas that call member functions
     // Use Python-style names (UR_*) for compatibility with robot URscript
@@ -235,6 +255,9 @@ void XmlRpcServer::registerStandardMethods()
     registerMethod("getPalettenDaten", [this](const QVector<RpcValue>& p) {
         return rpcGetPalettenDaten(p);
     });
+    registerMethod("getData", [](const QVector<RpcValue>& p) {
+        return URCommonFunctions::getData(p);
+    });
     registerMethod("getPaketDaten", [this](const QVector<RpcValue>& p) {
         return rpcGetPaketDaten(p);
     });
@@ -285,6 +308,175 @@ void XmlRpcServer::registerStandardMethods()
     });
     registerMethod("getLabelInvert", [this](const QVector<RpcValue>& p) {
         return rpcGetLabelInvert(p);
+    });
+
+    // UR10 scanner status methods
+    registerMethod("UR_scanner1and2niobild", [this](const QVector<RpcValue>& params) {
+        Q_UNUSED(params);
+        qDebug() << "RPC: UR_scanner1and2niobild called";
+        return m_state ? RpcValue(m_state->scanner1and2NioValue()) : RpcValue(0);
+    });
+    registerMethod("UR_scanner1bild", [this](const QVector<RpcValue>& params) {
+        Q_UNUSED(params);
+        qDebug() << "RPC: UR_scanner1bild called";
+        return m_state ? RpcValue(m_state->scanner1Value()) : RpcValue(0);
+    });
+    registerMethod("UR_scanner2bild", [this](const QVector<RpcValue>& params) {
+        Q_UNUSED(params);
+        qDebug() << "RPC: UR_scanner2bild called";
+        return m_state ? RpcValue(m_state->scanner2Value()) : RpcValue(0);
+    });
+    registerMethod("UR_scanner1and2iobild", [this](const QVector<RpcValue>& params) {
+        Q_UNUSED(params);
+        qDebug() << "RPC: UR_scanner1and2iobild called";
+        return m_state ? RpcValue(m_state->scanner1and2IoValue()) : RpcValue(0);
+    });
+
+    // UR20-specific methods
+    registerMethod("UR_scannerStatus", [this](const QVector<RpcValue>& params) {
+        if (params.isEmpty() || !m_state) {
+            qWarning() << "RPC: UR_scannerStatus - missing status";
+            return RpcValue(-1);
+        }
+
+        QString status = params[0].toString();
+        qDebug() << "RPC: UR_scannerStatus -" << status;
+
+        QString previousStatus = m_state->previousScannerStatus();
+        qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
+
+        m_state->setScannerStatus(status);
+
+        if (status == "True,True,True") {
+            m_state->setTimestampScannerSafe(currentTime);
+            if (m_state->timestampScannerFault() != 0) {
+                m_state->setTimestampScannerFault(0);
+            }
+        } else if (previousStatus == "True,True,True") {
+            if (m_state->timestampScannerFault() == 0) {
+                m_state->setTimestampScannerFault(currentTime);
+            }
+            qint64 lastWarning = m_state->lastScannerWarningTime();
+            if (lastWarning == 0 || (currentTime - lastWarning) >= 15000) {
+                m_state->setLastScannerWarningTime(currentTime);
+            }
+        }
+
+        return RpcValue(0);
+    });
+    registerMethod("UR_SetActivePalette", [this, markPaletteNotEmpty](const QVector<RpcValue>& params) {
+        if (params.isEmpty() || !m_state) {
+            return RpcValue(404);
+        }
+
+        int paletteNumber = params[0].toInt();
+        if (paletteNumber != 1 && paletteNumber != 2) {
+            return RpcValue(404);
+        }
+
+        bool isEmpty = (paletteNumber == 1) ? m_state->ur20Palette1Empty()
+                                            : m_state->ur20Palette2Empty();
+        if (!isEmpty) {
+            return RpcValue(503);
+        }
+
+        m_state->setUr20ActivePalette(paletteNumber);
+        markPaletteNotEmpty(paletteNumber);
+        return RpcValue(paletteNumber);
+    });
+    registerMethod("UR_RequestPaletteChange", [this, markPaletteNotEmpty](const QVector<RpcValue>& params) {
+        if (params.size() < 2 || !m_state) {
+            return RpcValue(404);
+        }
+
+        int newPalette = params[1].toInt();
+        if (newPalette != 1 && newPalette != 2) {
+            return RpcValue(404);
+        }
+
+        bool newEmpty = (newPalette == 1) ? m_state->ur20Palette1Empty()
+                                          : m_state->ur20Palette2Empty();
+        if (!newEmpty) {
+            return RpcValue(0);
+        }
+
+        m_state->setUr20ActivePalette(newPalette);
+        markPaletteNotEmpty(newPalette);
+        return RpcValue(1);
+    });
+    registerMethod("UR_GetActivePaletteNumber", [this, markPaletteNotEmpty](const QVector<RpcValue>& params) {
+        Q_UNUSED(params);
+        if (!m_state) {
+            return RpcValue(0);
+        }
+
+        int activePalette = m_state->ur20ActivePalette();
+        if (activePalette == 1) {
+            if (m_state->ur20Palette1Empty()) {
+                markPaletteNotEmpty(1);
+                return RpcValue(1);
+            }
+            return RpcValue(0);
+        }
+        if (activePalette == 2) {
+            if (m_state->ur20Palette2Empty()) {
+                markPaletteNotEmpty(2);
+                return RpcValue(2);
+            }
+            return RpcValue(0);
+        }
+
+        return RpcValue(0);
+    });
+    registerMethod("UR_GetPaletteStatus", [this](const QVector<RpcValue>& params) {
+        if (params.isEmpty() || !m_state) {
+            return RpcValue(-1);
+        }
+
+        int paletteNumber = params[0].toInt();
+        if (paletteNumber == 1) {
+            return RpcValue(m_state->ur20Palette1Empty() ? 1 : 0);
+        }
+        if (paletteNumber == 2) {
+            return RpcValue(m_state->ur20Palette2Empty() ? 1 : 0);
+        }
+        return RpcValue(-1);
+    });
+    registerMethod("UR_SetZwischenLageLegen", [this](const QVector<RpcValue>& params) {
+        if (params.isEmpty() || !m_state) {
+            return RpcValue(0);
+        }
+
+        bool aktiv = params[0].toBool();
+        m_state->setUr20Zwischenlage(aktiv);
+        return RpcValue(1);
+    });
+    registerMethod("UR_GetKlemmungAktiv", [this](const QVector<RpcValue>& params) {
+        Q_UNUSED(params);
+        return m_state ? RpcValue(m_state->klemmungAktiv()) : RpcValue(false);
+    });
+    registerMethod("UR_GetScannerOverwrite", [this](const QVector<RpcValue>& params) {
+        Q_UNUSED(params);
+        if (!m_state) {
+            return RpcValue::fromArray({});
+        }
+
+        QVector<RpcValue> result;
+        for (bool value : m_state->scannerOverride()) {
+            result.append(RpcValue(value));
+        }
+        return RpcValue::fromArray(result);
+    });
+    registerMethod("UR_GetScannerOverride", [this](const QVector<RpcValue>& params) {
+        return callMethod("UR_GetScannerOverwrite", params);
+    });
+    registerMethod("get_available_functions", [this](const QVector<RpcValue>& params) {
+        Q_UNUSED(params);
+        QVector<RpcValue> result;
+        for (auto it = m_methods.constBegin(); it != m_methods.constEnd(); ++it) {
+            result.append(RpcValue(it.key()));
+        }
+        return RpcValue::fromArray(result);
     });
 
     qDebug() << "Registered" << m_methods.size() << "RPC methods";
@@ -751,16 +943,22 @@ RpcValue XmlRpcServer::rpcGetVerschiebungX(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
     qDebug() << "RPC: UR_PickOffsetX called";
-    // TODO: Get from UI settings when available
-    return RpcValue(0);
+    if (!m_state) {
+        return RpcValue(0);
+    }
+
+    return RpcValue(static_cast<int>(m_state->pickOffsetX()));
 }
 
 RpcValue XmlRpcServer::rpcGetVerschiebungY(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
     qDebug() << "RPC: UR_PickOffsetY called";
-    // TODO: Get from UI settings when available
-    return RpcValue(0);
+    if (!m_state) {
+        return RpcValue(0);
+    }
+
+    return RpcValue(static_cast<int>(m_state->pickOffsetY()));
 }
 
 RpcValue XmlRpcServer::rpcSetLage(const QVector<RpcValue>& params)
@@ -785,8 +983,11 @@ RpcValue XmlRpcServer::rpcGetLabelInvert(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
     qDebug() << "RPC: getLabelInvert called";
-    // TODO: Get from UI settings when available
-    return RpcValue(false);
+    if (!m_state) {
+        return RpcValue(false);
+    }
+
+    return RpcValue(m_state->labelInvert());
 }
 
 } // namespace network

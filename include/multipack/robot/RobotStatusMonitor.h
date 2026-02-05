@@ -13,6 +13,8 @@
 #include <QTimer>
 #include <QDateTime>
 #include <memory>
+#include <QMutex>
+#include <atomic>
 
 #include "RobotEnums.h"
 
@@ -152,6 +154,16 @@ signals:
     void statusUpdated(const RobotStatus& status);
 
     /**
+     * @brief Emitted when detail fields update
+     * @param polyscopeVersion Polyscope version string
+     * @param serialNumber Robot serial number
+     * @param loadedProgram Loaded program name
+     */
+    void detailsUpdated(const QString& polyscopeVersion,
+                        const QString& serialNumber,
+                        const QString& loadedProgram);
+
+    /**
      * @brief Emitted on connection error
      * @param error Error message
      */
@@ -183,10 +195,16 @@ private:
     ProgramState parseProgramState(const QString& response);
 
     std::unique_ptr<DashboardClient> m_client;
-    QTimer m_pollTimer;
+    QTimer* m_pollTimer = nullptr;
     QString m_robotIp;
     RobotStatus m_status;
     bool m_wasConnected = false;
+    int m_detailCounter = 0;
+    QString m_cachedPolyscopeVersion;
+    QString m_cachedSerialNumber;
+    QString m_cachedLoadedProgram;
+    mutable QMutex m_detailMutex;
+    std::atomic<bool> m_shouldStop{false};
 };
 
 } // namespace robot

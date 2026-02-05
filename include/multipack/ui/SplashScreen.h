@@ -119,6 +119,12 @@ private:
      * @brief Update component positions based on splash size
      */
     void updateComponentPositions();
+
+    /**
+     * @brief Draw progress when widgets are unavailable
+     * @param painter Painter to draw with
+     */
+    void drawProgressManually(QPainter* painter);
 };
 
 /**

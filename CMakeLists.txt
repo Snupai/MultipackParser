@@ -144,6 +144,7 @@ set(MOC_HEADERS
     include/multipack/ui/InputValidation.h
     include/multipack/ui/VisualizationWidget.h
     include/multipack/ui/PaletteConfigDialog.h
+    include/multipack/ui/SplashScreen.h
     include/multipack/database/DatabaseManager.h
     include/multipack/network/XmlRpcServer.h
     include/multipack/network/RpcMethodRegistry.h
@@ -159,6 +160,7 @@ set(MOC_HEADERS
     include/multipack/system/UsbKeyCheck.h
     include/multipack/system/UpdateChecker.h
     include/multipack/system/AutoUpdater.h
+    include/multipack/system/UsbMonitor.h
 )
 
 # Source files organization
@@ -180,6 +182,7 @@ set(UI_SOURCES
     src/ui/BlinkingLabel.cpp
     src/ui/MessageDialog.cpp
     src/ui/UIHelpers.cpp
+    src/ui/SplashScreen.cpp
 )
 
 set(DATABASE_SOURCES
@@ -227,7 +230,9 @@ set(SYSTEM_SOURCES
     src/system/UsbKeyCheck.cpp
     src/system/UpdateChecker.cpp
     src/system/FileOperations.cpp
+    src/system/RobFileParser.cpp
     src/system/AutoUpdater.cpp
+    src/system/UsbMonitor.cpp
 )
 
 set(UTILS_SOURCES
@@ -270,6 +275,7 @@ target_link_libraries(multipack-parser
     Qt6::Network
     Qt6::Sql
     Qt6::Multimedia
+    Qt6::Concurrent
     pthread
 )
 

@@ -20,8 +20,9 @@ namespace ui {
 // =========================================================================
 
 SplashScreen::SplashScreen(QWidget* parent)
-    : QSplashScreen(parent)
+    : QSplashScreen(QPixmap())
 {
+    Q_UNUSED(parent);
     // Load the logo
     m_logoPixmap = QPixmap(":/Szaidel Logo/imgs/logoszaidel-transparent-big.png");
     if (m_logoPixmap.isNull()) {
@@ -253,8 +254,9 @@ void SplashScreen::drawProgressManually(QPainter* painter)
 // =========================================================================
 
 InstantSplashScreen::InstantSplashScreen(QWidget* parent)
-    : QSplashScreen(parent)
+    : QSplashScreen(QPixmap())
 {
+    Q_UNUSED(parent);
     createInstantBackground();
 }
 
@@ -308,5 +310,3 @@ void InstantSplashScreen::createInstantBackground()
 
 } // namespace ui
 } // namespace multipack
-
-#include "SplashScreen.moc"

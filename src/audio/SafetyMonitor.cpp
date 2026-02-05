@@ -117,6 +117,10 @@ void SafetyMonitor::checkSafetyStatus()
 
     // Handle REDUCED mode with 30-second warning intervals (matching Python behavior)
     if (currentStatus == robot::SafetyStatus::ReducedMode) {
+        if (m_alarmActive && m_audioManager) {
+            m_audioManager->stopAlarm();
+            m_alarmActive = false;
+        }
         QDateTime currentTime = QDateTime::currentDateTime();
         
         if (!m_inReducedMode) {
@@ -163,9 +167,19 @@ void SafetyMonitor::checkSafetyStatus()
         }
         
         // Handle other safety statuses
-        if (currentStatus != robot::SafetyStatus::Normal && !m_alarmActive) {
-            triggerAlarm(currentStatus);
-        } else if (currentStatus == robot::SafetyStatus::Normal && m_alarmActive) {
+        if (currentStatus != robot::SafetyStatus::Normal) {
+            if (!m_alarmActive) {
+                triggerAlarm(currentStatus);
+            } else {
+                QDateTime currentTime = QDateTime::currentDateTime();
+                if (!m_lastAlarmTime.isValid() || m_lastAlarmTime.secsTo(currentTime) >= WARNING_INTERVAL_SECONDS) {
+                    if (m_audioAlertsEnabled && m_audioManager) {
+                        m_audioManager->playNotification(AudioType::Alarm);
+                    }
+                    m_lastAlarmTime = currentTime;
+                }
+            }
+        } else if (m_alarmActive) {
             clearAlarm();
         }
     }
@@ -187,10 +201,11 @@ void SafetyMonitor::triggerAlarm(robot::SafetyStatus status)
     
     qDebug() << "SafetyMonitor: Alarm triggered -" << statusString;
     m_alarmActive = true;
+
+    m_lastAlarmTime = QDateTime::currentDateTime();
     
     if (m_audioAlertsEnabled && m_audioManager) {
-        // Use available AudioManager methods
-        m_audioManager->playNotification(AudioType::Warning);
+        m_audioManager->playNotification(AudioType::Alarm);
     }
     
     emit safetyAlert(statusString);
@@ -200,6 +215,10 @@ void SafetyMonitor::clearAlarm()
 {
     qDebug() << "SafetyMonitor: Alarm cleared - Safety restored";
     m_alarmActive = false;
+    if (m_audioManager) {
+        m_audioManager->stopAlarm();
+    }
+    m_lastAlarmTime = QDateTime();
     emit safetyRestored();
 }
 

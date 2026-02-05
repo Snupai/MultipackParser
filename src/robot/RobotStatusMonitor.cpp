@@ -8,20 +8,21 @@
 #include "multipack/core/GlobalState.h"
 
 #include <QDebug>
+#include <QMutexLocker>
 
 namespace multipack {
 namespace robot {
 
 RobotStatusMonitor::RobotStatusMonitor(QObject* parent)
     : QObject(parent)
-    , m_client(std::make_unique<DashboardClient>(this))
     , m_robotIp("192.168.0.1")
 {
-    connect(&m_pollTimer, &QTimer::timeout, this, &RobotStatusMonitor::onPollTimeout);
 }
 
 RobotStatusMonitor::~RobotStatusMonitor()
 {
+    // Set flag first to prevent any connection attempts
+    m_shouldStop.store(true);
     stop();
 }
 
@@ -37,12 +38,24 @@ QString RobotStatusMonitor::robotIp() const
 
 void RobotStatusMonitor::start(int intervalMs)
 {
-    if (m_pollTimer.isActive()) {
+    // Reset stop flag
+    m_shouldStop.store(false);
+
+    if (!m_client) {
+        m_client = std::make_unique<DashboardClient>(this);
+    }
+
+    if (!m_pollTimer) {
+        m_pollTimer = new QTimer(this);
+        connect(m_pollTimer, &QTimer::timeout, this, &RobotStatusMonitor::onPollTimeout);
+    }
+
+    if (m_pollTimer->isActive()) {
         return;
     }
 
     qDebug() << "RobotStatusMonitor: Starting monitoring at" << intervalMs << "ms interval";
-    m_pollTimer.start(intervalMs);
+    m_pollTimer->start(intervalMs);
 
     // Do an immediate poll
     updateNow();
@@ -50,19 +63,23 @@ void RobotStatusMonitor::start(int intervalMs)
 
 void RobotStatusMonitor::stop()
 {
-    if (m_pollTimer.isActive()) {
-        qDebug() << "RobotStatusMonitor: Stopping monitoring";
-        m_pollTimer.stop();
+    // Set flag to stop any pending connection attempts
+    m_shouldStop.store(true);
 
-        if (m_client->isConnected()) {
-            m_client->disconnect();
-        }
+    if (m_pollTimer && m_pollTimer->isActive()) {
+        qDebug() << "RobotStatusMonitor: Stopping monitoring";
+        m_pollTimer->stop();
+    }
+
+    // Force disconnect even if not fully connected
+    if (m_client) {
+        m_client->disconnect();
     }
 }
 
 bool RobotStatusMonitor::isRunning() const
 {
-    return m_pollTimer.isActive();
+    return m_pollTimer && m_pollTimer->isActive();
 }
 
 RobotStatus RobotStatusMonitor::currentStatus() const
@@ -77,36 +94,33 @@ void RobotStatusMonitor::updateNow()
 
 QString RobotStatusMonitor::getPolyscopeVersion()
 {
-    if (!m_client->isConnected()) {
-        if (!m_client->connect(m_robotIp)) {
-            return QString();
-        }
-    }
-    return m_client->getPolyscopeVersion();
+    QMutexLocker locker(&m_detailMutex);
+    return m_cachedPolyscopeVersion;
 }
 
 QString RobotStatusMonitor::getLoadedProgram()
 {
-    if (!m_client->isConnected()) {
-        if (!m_client->connect(m_robotIp)) {
-            return QString();
-        }
-    }
-    return m_client->getLoadedProgram();
+    QMutexLocker locker(&m_detailMutex);
+    return m_cachedLoadedProgram;
 }
 
 QString RobotStatusMonitor::getSerialNumber()
 {
-    if (!m_client->isConnected()) {
-        if (!m_client->connect(m_robotIp)) {
-            return QString();
-        }
-    }
-    return m_client->getSerialNumber();
+    QMutexLocker locker(&m_detailMutex);
+    return m_cachedSerialNumber;
 }
 
 void RobotStatusMonitor::onPollTimeout()
 {
+    // Check if we should stop
+    if (m_shouldStop.load()) {
+        return;
+    }
+
+    if (!m_client) {
+        return;
+    }
+
     // Ensure connected
     if (!m_client->isConnected()) {
         if (!m_client->connect(m_robotIp)) {
@@ -158,6 +172,27 @@ void RobotStatusMonitor::onPollTimeout()
     // Update connection status
     m_status.lastUpdate = QDateTime::currentDateTime();
     m_status.isConnected = anySuccess;
+
+    if (m_status.isConnected && (++m_detailCounter % 10 == 0)) {
+        QString polyscope = m_client->getPolyscopeVersion();
+        QString serial = m_client->getSerialNumber();
+        QString program = m_client->getLoadedProgram();
+
+        {
+            QMutexLocker locker(&m_detailMutex);
+            if (!polyscope.isEmpty()) {
+                m_cachedPolyscopeVersion = polyscope;
+            }
+            if (!serial.isEmpty()) {
+                m_cachedSerialNumber = serial;
+            }
+            if (!program.isEmpty()) {
+                m_cachedLoadedProgram = program;
+            }
+        }
+
+        emit detailsUpdated(m_cachedPolyscopeVersion, m_cachedSerialNumber, m_cachedLoadedProgram);
+    }
 
     if (anySuccess && !m_wasConnected) {
         m_wasConnected = true;

@@ -8,6 +8,13 @@
 #include <QMainWindow>
 #include <QListWidgetItem>
 #include <memory>
+#include <QTimer>
+
+QT_BEGIN_NAMESPACE
+class QPushButton;
+class QLabel;
+class QThread;
+QT_END_NAMESPACE
 
 // Forward declaration of generated UI class
 namespace Ui {
@@ -18,14 +25,33 @@ namespace multipack {
 
 // Forward declarations
 namespace config { class SettingsManager; }
-namespace database { class DatabaseManager; }
+namespace database {
+class DatabaseManager;
+struct PaletteData;
+}
 namespace robot { class RobotController; }
+namespace robot {
+class RobotStatusMonitor;
+struct RobotStatus;
+}
 namespace core { class GlobalState; }
-namespace audio { class AudioManager; }
-namespace system { class UsbKeyCheck; }
+namespace message { enum class StatusType; }
+namespace audio {
+class AudioManager;
+class SafetyMonitor;
+}
+namespace system {
+class UsbKeyCheck;
+class AutoUpdater;
+struct UpdateProgress;
+}
 class PasswordDialog;
 
 namespace ui {
+
+class NotificationPopup;
+class DimensionInputHandler;
+class VisualizationWidget;
 
 /**
  * @class MainWindow
@@ -44,11 +70,15 @@ public:
     void setRobotController(robot::RobotController* robot);
     void setGlobalState(core::GlobalState* state);
     void setAudioManager(audio::AudioManager* audio);
+    void setAutoUpdater(system::AutoUpdater* updater);
 
 signals:
     void serverStartRequested();
     void serverStopRequested();
     void paletteLoadRequested(const QString& fileName);
+
+protected:
+    void closeEvent(QCloseEvent* event) override;
 
 public slots:
     void updateRobotStatus();
@@ -94,10 +124,18 @@ private slots:
     void onUrModelChanged(int index);
     void onExitAppClicked();
     void onSearchUpdateClicked();
+    void onUpdateCheckCompleted(bool success, const QString& message);
+    void onUpdateDownloadProgress(const system::UpdateProgress& progress);
+    void onUpdateDownloadCompleted(const QString& fileName);
+    void onUpdateInstallationCompleted(bool success, const QString& message);
+    void onUpdateFailed(const QString& error);
     void onSendCommandClicked();
     void onSelectRobPathClicked();
     void onSelectAudioPathClicked();
     void onSelectScannerSoundPathClicked();
+    void onTestAlarmAudioClicked();
+    void onTestScannerAudioClicked();
+    void onImportRobFileClicked();
     void onOpenFileClicked();
     void onConsoleCommandEntered();
     void onScanner1OverwriteChanged(int state);
@@ -110,6 +148,8 @@ private slots:
     void onFilterChanged();
     void onClearFiltersClicked();
     void onLoadSelectedRobFile();
+    void onScannerStatusChanged(const QString& status, const QString& imagePath);
+    void onStatusChanged(const QString& message, message::StatusType type);
 
 private:
     void setupConnections();
@@ -119,6 +159,24 @@ private:
     void updateVolumeIcon();
     void setupPalettePlanCompleter();
     QStringList loadPalettePlanWordlist();
+    void maybeStartUr20Ui();
+    void maybeStartSafetyMonitor();
+    void maybeStartRobotStatusMonitor();
+    void setupStatusTab();
+    void updateStatusTab(const robot::RobotStatus& status);
+    void onStatusDetailsUpdated(const QString& polyscopeVersion,
+                                const QString& serialNumber,
+                                const QString& loadedProgram);
+    void setupDimensionHandlers();
+    void applyHeightChange(int height);
+    void applyWeightChange(double weight);
+    void revertDimensionChanges();
+    void updateVisualizationFromPaletteData(const database::PaletteData& data);
+    void showPaletteConfigDialog();
+    void setupUr20Timers();
+    void updateZwischenlagePopup();
+    void updatePaletteClearIndicators();
+    void onPaletteClearClicked(int paletteNumber);
 
     // Generated UI
     Ui::Form* ui = nullptr;
@@ -129,7 +187,12 @@ private:
     robot::RobotController* m_robot = nullptr;
     core::GlobalState* m_state = nullptr;
     audio::AudioManager* m_audio = nullptr;
+    std::unique_ptr<audio::SafetyMonitor> m_safetyMonitor;
+    robot::RobotStatusMonitor* m_statusMonitor = nullptr;
+    QThread* m_statusThread = nullptr;
+    std::unique_ptr<DimensionInputHandler> m_dimensionHandler;
     system::UsbKeyCheck* m_usbKeyCheck = nullptr;
+    system::AutoUpdater* m_autoUpdater = nullptr;
 
     // Page indices (matching stackedWidget pages)
     enum PageIndex {
@@ -143,7 +206,30 @@ private:
     bool m_serverRunning = false;
     bool m_paletteLoaded = false;
     bool m_volumeOn = true;
+    bool m_weightEstimated = false;
+    bool m_ur20UiInitialized = false;
     QString m_currentPaletteFile;
+    int m_packageLength = 0;
+    int m_packageWidth = 0;
+    int m_lastConfirmedHeight = 0;
+    double m_lastConfirmedWeight = 0.0;
+
+    QWidget* m_centralWidget = nullptr;
+    QTimer* m_zwischenlageTimer = nullptr;
+    QTimer* m_paletteClearTimer = nullptr;
+    NotificationPopup* m_zwischenlagePopup = nullptr;
+    QPushButton* m_palette1ClearIndicator = nullptr;
+    QPushButton* m_palette2ClearIndicator = nullptr;
+    VisualizationWidget* m_visualizationWidget = nullptr;
+    QLabel* m_statusRobotIp = nullptr;
+    QLabel* m_statusConnection = nullptr;
+    QLabel* m_statusRobotMode = nullptr;
+    QLabel* m_statusSafetyStatus = nullptr;
+    QLabel* m_statusProgramState = nullptr;
+    QLabel* m_statusLastUpdate = nullptr;
+    QLabel* m_statusPolyscopeVersion = nullptr;
+    QLabel* m_statusSerialNumber = nullptr;
+    QLabel* m_statusLoadedProgram = nullptr;
 };
 
 } // namespace ui

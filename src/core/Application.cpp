@@ -7,11 +7,15 @@
 #include "multipack/core/AppInitializer.h"
 #include "multipack/core/GlobalState.h"
 #include "multipack/ui/MainWindow.h"
+#include "multipack/ui/SplashScreen.h"
 #include "multipack/config/SettingsManager.h"
 #include "multipack/database/DatabaseManager.h"
 #include "multipack/robot/RobotController.h"
 
 #include <QDebug>
+#include <QCoreApplication>
+#include <QSessionManager>
+#include <QCloseEvent>
 
 namespace multipack {
 namespace core {
@@ -31,6 +35,28 @@ Application::Application(int& argc, char** argv)
 Application::~Application()
 {
     qDebug() << "Application - destructor";
+
+    // Ensure clean shutdown
+    cleanup();
+}
+
+void Application::cleanup()
+{
+    qDebug() << "Application - cleanup";
+
+    // First close the main window to stop all UI interactions
+    if (m_mainWindow) {
+        m_mainWindow->close();
+        m_mainWindow.reset();
+    }
+
+    // Then shutdown all subsystems
+    if (m_initializer) {
+        m_initializer->shutdown();
+        m_initializer.reset();
+    }
+
+    qDebug() << "Application - cleanup complete";
 }
 
 bool Application::initialize()
@@ -40,7 +66,21 @@ bool Application::initialize()
     // Create and run initializer
     m_initializer = std::make_unique<AppInitializer>();
 
-    if (!m_initializer->initialize()) {
+    ui::InstantSplashScreen instantSplash;
+    instantSplash.show();
+    processEvents();
+
+    ui::SplashScreen splash;
+    splash.show();
+    processEvents();
+    instantSplash.finish(&splash);
+
+    auto progressCallback = [&splash](int percent, const QString& message) {
+        splash.updateProgress(percent, message);
+        QCoreApplication::processEvents();
+    };
+
+    if (!m_initializer->initialize(progressCallback)) {
         qCritical() << "Application - initialization failed";
         return false;
     }
@@ -71,6 +111,16 @@ bool Application::initialize()
     // Connect to global state
     m_mainWindow->setGlobalState(&GlobalState::instance());
 
+    if (m_initializer->audioManager()) {
+        m_mainWindow->setAudioManager(m_initializer->audioManager());
+    }
+
+    if (m_initializer->autoUpdater()) {
+        m_mainWindow->setAutoUpdater(m_initializer->autoUpdater());
+    }
+
+    splash.finish(m_mainWindow.get());
+
     qDebug() << "Application - initialized successfully";
     return true;
 }
@@ -89,6 +139,34 @@ int Application::run()
 
     qDebug() << "Application - entering event loop";
     return exec();
+}
+
+bool Application::event(QEvent* event)
+{
+    // Handle close events gracefully
+    if (event->type() == QEvent::Close) {
+        qDebug() << "Application - close event received";
+        cleanup();
+        event->accept();
+        return true;
+    }
+
+    return QApplication::event(event);
+}
+
+void Application::commitData(QSessionManager& manager)
+{
+    // Save any pending session data
+    Q_UNUSED(manager);
+
+    qDebug() << "Application - committing session data";
+
+    // Save settings if available
+    if (m_initializer && m_initializer->settingsManager()) {
+        if (!m_initializer->settingsManager()->save()) {
+            qWarning() << "Failed to save settings during session commit";
+        }
+    }
 }
 
 } // namespace core

@@ -59,6 +59,14 @@ bool SettingsManager::load(const QString& path)
     m_settings = doc.object();
     m_currentPath = filePath;
 
+    // Ensure default admin password is set if missing
+    QJsonObject admin = m_settings["admin"].toObject();
+    QString passwordHash = admin["password_hash"].toString();
+    if (passwordHash.isEmpty()) {
+        admin["password_hash"] = hashPassword("666666");
+        m_settings["admin"] = admin;
+    }
+
     emit settingsLoaded();
     qDebug() << "Settings loaded successfully";
     return true;
@@ -160,7 +168,7 @@ void SettingsManager::resetToDefaults()
 
     // Admin section
     QJsonObject admin;
-    admin["password_hash"] = "";
+    admin["password_hash"] = hashPassword("666666");
     admin["path"] = "..";
     admin["alarm_sound_file"] = Defaults::ALARM_SOUND_FILE;
     admin["scanner_warning_sound_file"] = Defaults::SCANNER_WARNING_SOUND_FILE;

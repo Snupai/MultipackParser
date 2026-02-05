@@ -1,0 +1,52 @@
+{
+    "admin": {
+        "alarm_sound_file": "Sound/output.wav",
+        "password_hash": "de3a4611d4cf171109619bf166716d99$2bab75683da5e70ecff581002b793835f4dc772fd51c536b20a4ec6e7d9c2e5e",
+        "path": "..",
+        "scanner_warning_sound_file": "Sound/stepback.wav",
+        "usb_expected_value": "",
+        "usb_key": ""
+    },
+    "audio": {
+        "enabled": true,
+        "volume": 0.800000011920929
+    },
+    "database": {
+        "path": "paletten.db"
+    },
+    "display": {
+        "fullscreen": true,
+        "height": 600,
+        "specs": {
+            "height": 0,
+            "model": "",
+            "refresh_rate": 60,
+            "width": 0
+        },
+        "width": 800
+    },
+    "info": {
+        "Pallettierer_Name": "N/A",
+        "Pallettierer_Standort": "N/A",
+        "UR_Manufacturing_Date": "N/A",
+        "UR_Model": "UR10",
+        "UR_Serial_Number": "N/A",
+        "UR_Software_Version": "N/A",
+        "last_restart": "Never",
+        "number_of_plans": 0,
+        "number_of_use_cycles": 0,
+        "version": "1.7.9"
+    },
+    "robot": {
+        "dashboard_port": 29999,
+        "ip": "192.168.0.1"
+    },
+    "server": {
+        "port": 8080,
+        "usb_path": "/media/usb0"
+    },
+    "ui": {
+        "fullscreen": true,
+        "virtual_keyboard": true
+    }
+}

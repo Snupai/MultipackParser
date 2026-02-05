@@ -35,6 +35,10 @@ class RobotController;
 namespace audio {
 class AudioManager;
 }
+namespace system {
+class UsbMonitor;
+class AutoUpdater;
+}
 
 namespace core {
 
@@ -86,6 +90,7 @@ public:
     network::XmlRpcServer* xmlRpcServer() const;
     robot::RobotController* robotController() const;
     audio::AudioManager* audioManager() const;
+    system::AutoUpdater* autoUpdater() const;
 
 signals:
     /**
@@ -145,6 +150,18 @@ private:
     bool initializeAudio();
 
     /**
+     * @brief Initialize auto-updater system
+     * @return true on success
+     */
+    bool initializeAutoUpdater();
+
+    /**
+     * @brief Initialize USB monitoring and database refresh
+     * @return true if initialization succeeded
+     */
+    bool initializeUsbMonitor();
+
+    /**
      * @brief Report progress
      * @param percentage Progress percentage
      * @param message Status message
@@ -158,6 +175,9 @@ private:
     std::unique_ptr<network::XmlRpcServer> m_xmlRpcServer;
     std::unique_ptr<robot::RobotController> m_robotController;
     std::unique_ptr<audio::AudioManager> m_audioManager;
+    std::unique_ptr<system::AutoUpdater> m_autoUpdater;
+    std::unique_ptr<system::UsbMonitor> m_usbMonitor;
+    QString m_databasePath;
 
     bool m_initialized = false;
 };

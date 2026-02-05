@@ -36,6 +36,15 @@ public:
     ui::MainWindow* mainWindow() const { return m_mainWindow.get(); }
     AppInitializer* initializer() const { return m_initializer.get(); }
 
+protected:
+    bool event(QEvent* event) override;
+
+public slots:
+    virtual void commitData(QSessionManager& manager);
+
+private:
+    void cleanup();
+
 private:
     std::unique_ptr<AppInitializer> m_initializer;
     std::unique_ptr<ui::MainWindow> m_mainWindow;

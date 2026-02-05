@@ -9,18 +9,20 @@
 #include <QDebug>
 #include <QMutexLocker>
 #include <QApplication>
+#include <QtConcurrent/QtConcurrent>
 
 namespace multipack {
 namespace system {
 
-UsbMonitor::UsbMonitor(const QString& usbPath, 
-                       database::DatabaseManager* dbManager,
+UsbMonitor::UsbMonitor(const QString& usbPath,
+                       const QString& databasePath,
                        QObject* parent)
     : QObject(parent)
     , m_usbPath(usbPath)
-    , m_dbManager(dbManager)
+    , m_databasePath(databasePath)
     , m_fileSystemWatcher(new QFileSystemWatcher(this))
     , m_periodicScanTimer(new QTimer(this))
+    , m_updateWatcher(new QFutureWatcher<int>(this))
     , m_isMonitoring(false)
     , m_isProcessing(false)
 {
@@ -34,6 +36,16 @@ UsbMonitor::UsbMonitor(const QString& usbPath,
     m_periodicScanTimer->setInterval(30000);
     connect(m_periodicScanTimer, &QTimer::timeout,
             this, &UsbMonitor::performPeriodicScan);
+
+    connect(m_updateWatcher, &QFutureWatcher<int>::finished, this, [this]() {
+        int updatedCount = m_updateWatcher->result();
+        Q_UNUSED(updatedCount);
+        m_isProcessing = false;
+        if (m_updateQueued) {
+            m_updateQueued = false;
+            updateDatabaseFromUsbAsync();
+        }
+    });
 }
 
 UsbMonitor::~UsbMonitor()
@@ -50,8 +62,8 @@ bool UsbMonitor::startMonitoring()
         return true;
     }
     
-    if (!m_dbManager) {
-        qWarning() << "Cannot start USB monitoring: Database manager is null";
+    if (m_databasePath.isEmpty()) {
+        qWarning() << "Cannot start USB monitoring: Database path is empty";
         return false;
     }
     
@@ -122,9 +134,9 @@ QString UsbMonitor::getUsbPath() const
 
 int UsbMonitor::updateDatabaseFromUsb()
 {
-    if (!m_dbManager) {
-        qCritical() << "Cannot update database: Database manager is null";
-        emit databaseUpdateFailed("Database manager is null");
+    if (m_databasePath.isEmpty()) {
+        qCritical() << "Cannot update database: Database path is empty";
+        emit databaseUpdateFailed("Database path is empty");
         return 0;
     }
     
@@ -141,6 +153,14 @@ int UsbMonitor::updateDatabaseFromUsb()
     QStringList robFiles = scanDirectory();
     qDebug() << "Found" << robFiles.size() << ".rob files to process";
     
+    database::DatabaseManager dbManager;
+    if (!dbManager.open(m_databasePath)) {
+        QString error = QString("Failed to open database: %1").arg(m_databasePath);
+        qCritical() << error;
+        emit databaseUpdateFailed(error);
+        return 0;
+    }
+
     QStringList updatedFiles;
     
     for (const QString& filename : robFiles) {
@@ -153,7 +173,7 @@ int UsbMonitor::updateDatabaseFromUsb()
         if (needsUpdate(filename)) {
             qDebug() << "Processing file:" << filename;
             
-            if (processFile(filename)) {
+            if (processFile(filename, dbManager)) {
                 updatedFiles.append(filename);
                 qDebug() << "Successfully processed:" << filename;
             } else {
@@ -266,7 +286,7 @@ void UsbMonitor::processChanges()
         
         // Update database if there are changes
         if (!newFiles.isEmpty() || !modifiedFiles.isEmpty()) {
-            updateDatabaseFromUsb();
+            updateDatabaseFromUsbAsync();
         }
         
     } catch (const std::exception& e) {
@@ -316,26 +336,34 @@ bool UsbMonitor::needsUpdate(const QString& filename)
     if (isFailedFile(filename)) {
         return false;
     }
-    
-    // Get database timestamp
-    QDateTime dbTimestamp;
-    if (m_dbManager) {
-        dbTimestamp = m_dbManager->getFileTimestamp(filename);
-    }
-    
-    // Get file timestamp
+
+    // Compare file timestamp to last processed timestamp
     QDateTime fileTimestamp = getFileTimestamp(filename);
-    
-    // Update if file is newer than database entry or no database entry exists
-    return !dbTimestamp.isValid() || fileTimestamp > dbTimestamp;
+    QDateTime knownTimestamp = m_fileTimestamps.value(filename);
+
+    if (!knownTimestamp.isValid()) {
+        return true;
+    }
+
+    return fileTimestamp > knownTimestamp;
 }
 
-bool UsbMonitor::processFile(const QString& filename)
+void UsbMonitor::updateDatabaseFromUsbAsync()
 {
-    if (!m_dbManager) {
-        return false;
+    if (m_isProcessing) {
+        m_updateQueued = true;
+        return;
     }
-    
+
+    m_isProcessing = true;
+    auto future = QtConcurrent::run([this]() {
+        return updateDatabaseFromUsb();
+    });
+    m_updateWatcher->setFuture(future);
+}
+
+bool UsbMonitor::processFile(const QString& filename, database::DatabaseManager& dbManager)
+{
     // Parse the file using RobFileParser
     RobFileParser parser(m_usbPath);
     RobFileData fileData = parser.parseFile(filename);
@@ -346,7 +374,55 @@ bool UsbMonitor::processFile(const QString& filename)
     }
     
     // Save to database
-    return m_dbManager->saveRobFile(fileData);
+    database::PaletteData paletteData;
+    paletteData.metadata.fileName = QFileInfo(fileData.filePath).fileName();
+    paletteData.metadata.fileTimestamp = fileData.fileTimestamp.toMSecsSinceEpoch();
+    paletteData.metadata.paketQuer = fileData.g_paket_quer;
+    paletteData.metadata.centerOfGravity = fileData.g_CenterOfGravity;
+    paletteData.metadata.lageArten = fileData.g_LageArten;
+    paletteData.metadata.anzLagen = fileData.g_AnzLagen;
+    paletteData.metadata.anzahlPakete = fileData.g_AnzahlPakete;
+
+    if (fileData.g_PalettenDim.size() >= 3) {
+        paletteData.paletteDimensions.length = fileData.g_PalettenDim[0];
+        paletteData.paletteDimensions.width = fileData.g_PalettenDim[1];
+        paletteData.paletteDimensions.height = fileData.g_PalettenDim[2];
+    }
+
+    if (fileData.g_PaketDim.size() >= 4) {
+        paletteData.packageDimensions.length = fileData.g_PaketDim[0];
+        paletteData.packageDimensions.width = fileData.g_PaketDim[1];
+        paletteData.packageDimensions.height = fileData.g_PaketDim[2];
+        paletteData.packageDimensions.gap = fileData.g_PaketDim[3];
+    }
+
+    paletteData.rawData = fileData.g_Daten;
+    paletteData.layerAssignments = fileData.g_LageZuordnung;
+    paletteData.intermediaryLayers = fileData.g_Zwischenlagen;
+    paletteData.packagesPerLayerType = fileData.g_PaketeZuordnung;
+
+    for (const auto& pos : fileData.g_PaketPos) {
+        if (pos.size() < 9) {
+            continue;
+        }
+        database::PackagePosition position;
+        position.xp = pos[0];
+        position.yp = pos[1];
+        position.ap = pos[2];
+        position.xd = pos[3];
+        position.yd = pos[4];
+        position.ad = pos[5];
+        position.nop = pos[6];
+        position.xvec = pos[7];
+        position.yvec = pos[8];
+        paletteData.packagePositions.append(position);
+    }
+
+    bool saved = dbManager.savePaletteData(paletteData);
+    if (saved) {
+        updateFileTracking(filename, fileData.fileTimestamp);
+    }
+    return saved;
 }
 
 QDateTime UsbMonitor::getFileTimestamp(const QString& filename)
@@ -387,5 +463,3 @@ void UsbMonitor::setupInitialTracking()
 
 } // namespace system
 } // namespace multipack
-
-#include "UsbMonitor.moc"

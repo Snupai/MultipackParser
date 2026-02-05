@@ -7,7 +7,6 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QDebug>
-#include <QTextCodec>
 #include <QRegularExpression>
 
 namespace multipack {
@@ -104,7 +103,14 @@ QVector<QVector<int>> RobFileParser::readFileWithEncodings(const QString& filePa
         }
         
         QTextStream stream(&file);
-        stream.setEncoding(QStringConverter::encodingForName(encoding.toUtf8()));
+        if (encoding == "System") {
+            stream.setEncoding(QStringConverter::System);
+        } else {
+            auto encodingOpt = QStringConverter::encodingForName(encoding.toUtf8());
+            if (encodingOpt.has_value()) {
+                stream.setEncoding(*encodingOpt);
+            }
+        }
         
         data.clear();
         bool parseSuccess = true;

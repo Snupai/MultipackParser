@@ -171,13 +171,13 @@ void PasswordDialog::reject()
 bool PasswordDialog::verifyPassword(const QString& password)
 {
     if (!m_settings) {
-        qDebug() << "PasswordDialog - no settings manager, skipping verification";
-        return true;  // Allow access if no settings manager configured
+        qDebug() << "PasswordDialog - no settings manager, refusing verification";
+        return false;
     }
 
     if (!m_settings->hasAdminPassword()) {
         qDebug() << "PasswordDialog - no admin password set";
-        return true;  // Allow access if no password is set
+        return false;
     }
 
     return m_settings->verifyAdminPassword(password);

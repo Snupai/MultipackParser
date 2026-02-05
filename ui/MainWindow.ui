@@ -746,8 +746,8 @@
     <zorder>checkBoxEinzelpaket</zorder>
     <zorder>ButtonDatenSenden</zorder>
     <zorder>ButtonOpenParameterRoboter</zorder>
-    <zorder>label_7</zorder>
-    <zorder>LabelPalletenplanInfo</zorder>
+     <zorder>label_7</zorder>
+     <zorder>LabelPalletenplanInfo</zorder>
     <zorder>label_Kartonhoehe_mm</zorder>
     <zorder>label_Gewicht_kg</zorder>
     <zorder>EingabePallettenplan</zorder>
@@ -1616,6 +1616,13 @@ Application</string>
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonTestAlarmAudio">
+            <property name="text">
+             <string>Test</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item row="3" column="0">
@@ -1643,7 +1650,28 @@ Application</string>
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonTestScannerAudio">
+            <property name="text">
+             <string>Test</string>
+            </property>
+           </widget>
+          </item>
          </layout>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="label_import_rob">
+          <property name="text">
+           <string>.rob Datei importieren</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QPushButton" name="pushButtonImportRobFile">
+          <property name="text">
+           <string>Datei auswaehlen</string>
+          </property>
+         </widget>
         </item>
         <item row="4" column="0" colspan="2">
          <widget class="QCheckBox" name="checkBoxScanner1Overwrite">

@@ -9,6 +9,7 @@
 #include <QSet>
 #include <QMutex>
 #include <QDir>
+#include <QFutureWatcher>
 #include "multipack/system/RobFileParser.h"
 #include "multipack/database/DatabaseManager.h"
 
@@ -33,8 +34,8 @@ public:
      * @param dbManager Pointer to database manager for updates
      * @param parent Parent QObject
      */
-    explicit UsbMonitor(const QString& usbPath, 
-                       database::DatabaseManager* dbManager,
+    explicit UsbMonitor(const QString& usbPath,
+                       const QString& databasePath,
                        QObject* parent = nullptr);
     
     /**
@@ -76,6 +77,11 @@ public:
      * @return Number of files processed
      */
     int updateDatabaseFromUsb();
+
+    /**
+     * @brief Run database update on background thread
+     */
+    void updateDatabaseFromUsbAsync();
     
     /**
      * @brief Get list of currently available .rob files
@@ -149,9 +155,10 @@ private slots:
 
 private:
     QString m_usbPath;
-    database::DatabaseManager* m_dbManager;
+    QString m_databasePath;
     QFileSystemWatcher* m_fileSystemWatcher;
     QTimer* m_periodicScanTimer;
+    QFutureWatcher<int>* m_updateWatcher;
     
     // State tracking
     bool m_isMonitoring;
@@ -165,6 +172,7 @@ private:
     // Processing state
     bool m_isProcessing;
     QStringList m_pendingChanges;
+    bool m_updateQueued = false;
     
     /**
      * @brief Initialize the file system watcher
@@ -190,7 +198,7 @@ private:
      * @param filename Name of the file to process
      * @return true if successful
      */
-    bool processFile(const QString& filename);
+    bool processFile(const QString& filename, database::DatabaseManager& dbManager);
     
     /**
      * @brief Get file timestamp

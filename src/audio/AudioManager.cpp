@@ -8,6 +8,7 @@
 
 #include <QMediaPlayer>
 #include <QAudioOutput>
+#include <QFileInfo>
 #include <QDebug>
 
 namespace multipack {
@@ -97,8 +98,16 @@ void AudioManager::playNotification(AudioType type)
 {
     if (!m_enabled || !m_initialized) return;
 
+    QString customPath = customFilePath(type);
+    if (!customPath.isEmpty()) {
+        playFile(customPath);
+        return;
+    }
+
     QString resource = getResourcePath(type);
-    playResource(resource);
+    if (!resource.isEmpty()) {
+        playResource(resource);
+    }
 }
 
 void AudioManager::playFile(const QString& path)
@@ -133,7 +142,16 @@ void AudioManager::startAlarm()
 
     m_alarmActive = true;
     m_player->setLoops(QMediaPlayer::Infinite);
-    playResource(getResourcePath(AudioType::Alarm));
+    QString customPath = customFilePath(AudioType::Alarm);
+    if (!customPath.isEmpty()) {
+        playFile(customPath);
+        return;
+    }
+
+    QString resource = getResourcePath(AudioType::Alarm);
+    if (!resource.isEmpty()) {
+        playResource(resource);
+    }
 }
 
 void AudioManager::stopAlarm()
@@ -188,6 +206,8 @@ QString AudioManager::getResourcePath(AudioType type) const
             return "qrc:/audio/info.wav";
         case AudioType::Warning:
             return "qrc:/audio/warning.wav";
+        case AudioType::ScannerWarning:
+            return "qrc:/audio/warning.wav";
         case AudioType::Error:
             return "qrc:/audio/warning.wav";  // Use warning for errors too
         case AudioType::Success:
@@ -201,6 +221,31 @@ QString AudioManager::getResourcePath(AudioType type) const
         default:
             return QString();
     }
+}
+
+void AudioManager::setCustomFile(AudioType type, const QString& path)
+{
+    if (path.trimmed().isEmpty()) {
+        m_customFiles.remove(static_cast<int>(type));
+        return;
+    }
+
+    m_customFiles[static_cast<int>(type)] = path.trimmed();
+}
+
+QString AudioManager::customFilePath(AudioType type) const
+{
+    auto it = m_customFiles.find(static_cast<int>(type));
+    if (it == m_customFiles.end()) {
+        return QString();
+    }
+
+    QFileInfo info(it.value());
+    if (!info.exists() || !info.isFile()) {
+        return QString();
+    }
+
+    return it.value();
 }
 
 void AudioManager::playNext()

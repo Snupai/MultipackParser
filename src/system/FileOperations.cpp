@@ -320,7 +320,32 @@ bool isValidRobFile(const QString& path)
         return false;
     }
 
-    // TODO: Add content validation
+    // Basic content validation: check file size
+    // .rob files should have some content
+    if (info.size() < 100) {
+        qWarning() << "File too small to be valid .rob file:" << path;
+        return false;
+    }
+
+    // Check if file is not empty
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Could not open file for validation:" << path;
+        return false;
+    }
+
+    // Read first line and check for expected .rob file markers
+    QTextStream in(&file);
+    QString firstLine = in.readLine();
+    file.close();
+
+    // .rob files typically start with comments or data
+    // Just verify it's not binary data
+    if (firstLine.isEmpty() && info.size() > 0) {
+        qWarning() << "File appears to be binary or invalid:" << path;
+        return false;
+    }
+
     return true;
 }
 
@@ -398,10 +423,19 @@ bool isOnUsbDrive(const QString& path)
     QString rootPath = storage.rootPath();
 
 #ifdef Q_OS_WIN
-    // On Windows, check if it's a removable drive
-    return storage.isReady();  // TODO: Better detection
+    // On Windows, check if it's a removable drive type
+    if (storage.deviceType() == QStorageInfo::RemovableDrive) {
+        return true;
+    }
+    // Also check if it's not a fixed system drive
+    // USB drives typically are not mounted at boot
+    return storage.isReady() && storage.isRoot();
 #else
     // On Linux, check common USB mount points
+    // Also verify it's actually a removable device
+    if (!storage.isReady() || storage.isRoot()) {
+        return false;
+    }
     return rootPath.startsWith("/media/") ||
            rootPath.startsWith("/mnt/usb") ||
            rootPath.startsWith("/run/media/");
@@ -420,13 +454,19 @@ QStringList getUsbMountPoints()
         QString rootPath = storage.rootPath();
 
 #ifdef Q_OS_WIN
-        // On Windows, include all removable drives
-        // TODO: Filter to actual USB drives
-        if (rootPath.length() == 3 && rootPath[1] == ':') {
+        // On Windows, filter for removable drives specifically
+        if (storage.deviceType() == QStorageInfo::RemovableDrive) {
+            mountPoints.append(rootPath);
+        }
+        // Also include drives that are not system drives
+        if (rootPath.length() == 3 && rootPath[1] == ':'
+            && rootPath[0] != 'C' && rootPath[0] != 'c') {
+            // Likely a USB drive (not C: system drive)
             mountPoints.append(rootPath);
         }
 #else
         // On Linux, check common USB mount points
+        // Filter out system mounts
         if (rootPath.startsWith("/media/") ||
             rootPath.startsWith("/mnt/usb") ||
             rootPath.startsWith("/run/media/")) {

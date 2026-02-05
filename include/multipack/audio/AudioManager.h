@@ -11,6 +11,7 @@
 #include <QObject>
 #include <QString>
 #include <QUrl>
+#include <QHash>
 #include <memory>
 
 class QMediaPlayer;
@@ -28,6 +29,7 @@ class AudioQueue;
 enum class AudioType {
     Info,       ///< Informational sound (info.wav)
     Warning,    ///< Warning sound (warning.wav)
+    ScannerWarning, ///< Scanner warning sound
     Error,      ///< Error sound
     Success,    ///< Success sound
     Alarm,      ///< Continuous alarm
@@ -114,6 +116,13 @@ public:
     void playResource(const QString& resource);
 
     /**
+     * @brief Set a custom audio file for a notification type
+     * @param type Notification type
+     * @param path Path to audio file (empty to clear)
+     */
+    void setCustomFile(AudioType type, const QString& path);
+
+    /**
      * @brief Start playing alarm (loops until stopped)
      */
     void startAlarm();
@@ -169,6 +178,7 @@ private:
      * @return Resource path
      */
     QString getResourcePath(AudioType type) const;
+    QString customFilePath(AudioType type) const;
 
     /**
      * @brief Play next item from queue
@@ -182,6 +192,7 @@ private:
     bool m_enabled = true;
     bool m_alarmActive = false;
     bool m_initialized = false;
+    QHash<int, QString> m_customFiles;
 };
 
 } // namespace audio

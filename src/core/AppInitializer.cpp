@@ -9,6 +9,8 @@
 #include "multipack/network/XmlRpcServer.h"
 #include "multipack/robot/RobotController.h"
 #include "multipack/audio/AudioManager.h"
+#include "multipack/system/UsbMonitor.h"
+#include "multipack/system/AutoUpdater.h"
 
 #include <QDebug>
 #include <QDir>
@@ -58,28 +60,41 @@ bool AppInitializer::initialize(ProgressCallback progressCallback)
         return false;
     }
 
-    // Step 4: Start XML-RPC server (50%)
+    // Step 4: Refresh database from USB (40%)
+    reportProgress(40, "Updating database from USB...");
+    if (!initializeUsbMonitor()) {
+        qWarning() << "USB monitoring initialization failed - continuing without USB updates";
+    }
+
+    // Step 5: Start XML-RPC server (50%)
     reportProgress(50, "Starting XML-RPC server...");
     if (!initializeXmlRpcServer()) {
         // Not fatal - continue without server
         qWarning() << "XML-RPC server failed to start - continuing";
     }
 
-    // Step 5: Initialize robot controller (70%)
+    // Step 6: Initialize robot controller (70%)
     reportProgress(70, "Connecting to robot...");
     if (!initializeRobotController()) {
         // Robot connection failure is not fatal
         qWarning() << "Robot connection failed - continuing without robot";
     }
 
-    // Step 6: Initialize audio (85%)
+    // Step 7: Initialize audio (85%)
     reportProgress(85, "Initializing audio...");
     if (!initializeAudio()) {
         // Audio failure is not fatal
         qWarning() << "Audio initialization failed - continuing without audio";
     }
 
-    // Step 7: Complete (100%)
+    // Step 8: Initialize auto-updater (90%)
+    reportProgress(90, "Initializing update system...");
+    if (!initializeAutoUpdater()) {
+        // Auto-updater failure is not fatal
+        qWarning() << "Auto-updater initialization failed - continuing without auto-update";
+    }
+
+    // Step 9: Complete (100%)
     reportProgress(100, "Initialization complete");
 
     m_initialized = true;
@@ -112,6 +127,11 @@ void AppInitializer::shutdown()
     if (m_xmlRpcServer) {
         qDebug() << "Shutting down XML-RPC server...";
         m_xmlRpcServer.reset();
+    }
+
+    if (m_usbMonitor) {
+        qDebug() << "Stopping USB monitor...";
+        m_usbMonitor.reset();
     }
 
     if (m_databaseManager) {
@@ -157,6 +177,11 @@ audio::AudioManager* AppInitializer::audioManager() const
     return m_audioManager.get();
 }
 
+system::AutoUpdater* AppInitializer::autoUpdater() const
+{
+    return m_autoUpdater.get();
+}
+
 bool AppInitializer::initializeLogging()
 {
     qDebug() << "AppInitializer - initializing logging";
@@ -199,9 +224,9 @@ bool AppInitializer::initializeDatabase()
     m_databaseManager = std::make_unique<database::DatabaseManager>();
 
     // Open database
-    QString dbPath = QDir::currentPath() + "/paletten.db";
-    if (!m_databaseManager->open(dbPath)) {
-        qCritical() << "Failed to open database:" << dbPath;
+    m_databasePath = QDir::currentPath() + "/paletten.db";
+    if (!m_databaseManager->open(m_databasePath)) {
+        qCritical() << "Failed to open database:" << m_databasePath;
         return false;
     }
 
@@ -211,7 +236,7 @@ bool AppInitializer::initializeDatabase()
         return false;
     }
 
-    qDebug() << "Database opened:" << dbPath;
+    qDebug() << "Database opened:" << m_databasePath;
     return true;
 }
 
@@ -247,10 +272,52 @@ bool AppInitializer::initializeAudio()
 
     m_audioManager = std::make_unique<audio::AudioManager>();
 
+    if (!m_audioManager->initialize()) {
+        qWarning() << "Failed to initialize audio manager";
+        m_audioManager.reset();
+        return false;
+    }
+
     // Load default audio files if they exist
     QString audioPath = QDir::currentPath() + "/audio";
     if (QDir(audioPath).exists()) {
         // Audio manager will load files when needed
+    }
+
+    return true;
+}
+
+bool AppInitializer::initializeAutoUpdater()
+{
+    qDebug() << "AppInitializer - initializing auto-updater";
+
+    m_autoUpdater = std::make_unique<system::AutoUpdater>();
+
+    qDebug() << "Auto-updater initialized";
+    return true;
+}
+
+bool AppInitializer::initializeUsbMonitor()
+{
+    if (!m_settingsManager || !m_databaseManager) {
+        qWarning() << "Cannot initialize USB monitor: missing settings or database";
+        return false;
+    }
+
+    QString usbPath = m_settingsManager->usbPath();
+    if (usbPath.isEmpty()) {
+        qWarning() << "USB path is empty; skipping USB monitor";
+        return false;
+    }
+
+    m_usbMonitor = std::make_unique<system::UsbMonitor>(usbPath, m_databasePath);
+
+    m_usbMonitor->updateDatabaseFromUsbAsync();
+    qDebug() << "USB database update triggered";
+
+    if (!m_usbMonitor->startMonitoring()) {
+        qWarning() << "Failed to start USB monitoring";
+        return false;
     }
 
     return true;

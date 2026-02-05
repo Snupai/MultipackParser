@@ -200,8 +200,8 @@ void VisualizationWidget::setZoom(double zoom)
 
 void VisualizationWidget::resetView()
 {
-    m_elevation = 30.0;
-    m_azimuth = 40.0;
+    m_elevation = -30.0;
+    m_azimuth = 45.0;
     m_zoom = 1.0;
 
     // Pre-calculate trig values
@@ -223,8 +223,9 @@ void VisualizationWidget::paintEvent(QPaintEvent* event)
     // Clear background
     painter.fillRect(rect(), QWidget::palette().color(QPalette::Window));
 
-    if (m_palette.packages.isEmpty()) {
-        // Draw placeholder text
+    bool hasDimensions = m_palette.length > 0 && m_palette.width > 0 &&
+                         m_palette.packageHeight > 0 && m_palette.totalLayers > 0;
+    if (!hasDimensions) {
         painter.setPen(Qt::gray);
         painter.setFont(QFont("Arial", 14));
         painter.drawText(rect(), Qt::AlignCenter, tr("No palette loaded"));
@@ -234,6 +235,12 @@ void VisualizationWidget::paintEvent(QPaintEvent* event)
     // Calculate scale based on widget size and pallet dimensions
     double maxDim = std::max({m_palette.length, m_palette.width,
                               static_cast<double>(m_palette.packageHeight * m_palette.totalLayers)});
+    if (maxDim <= 0.0) {
+        painter.setPen(Qt::gray);
+        painter.setFont(QFont("Arial", 14));
+        painter.drawText(rect(), Qt::AlignCenter, tr("Invalid palette data"));
+        return;
+    }
     double viewSize = std::min(width(), height()) * 0.7;
     m_scale = viewSize / maxDim * m_zoom;
 
@@ -243,13 +250,108 @@ void VisualizationWidget::paintEvent(QPaintEvent* event)
     // Draw components back to front
     drawPalletBase(painter);
 
-    // Draw packages (already sorted by depth)
-    for (const auto& pkg : m_palette.packages) {
-        // Skip if filtering by layer
-        if (m_currentLayer > 0 && pkg.layer != m_currentLayer - 1) {
-            continue;
+    if (!m_palette.packages.isEmpty()) {
+        struct FaceDraw {
+            QPolygonF poly;
+            QColor color;
+            double depth;
+        };
+
+        QVector<FaceDraw> faces;
+        faces.reserve(m_palette.packages.size() * 6);
+
+        auto projectWithDepth = [this](double x, double y, double z) {
+            double cx = m_palette.length / 2.0;
+            double cy = m_palette.width / 2.0;
+            double cz = (m_palette.packageHeight * m_palette.totalLayers) / 2.0;
+
+            double dx = x - cx;
+            double dy = y - cy;
+            double dz = z - cz;
+
+            double rx = dx * m_cosAzim + dy * m_sinAzim;
+            double ry = -dx * m_sinAzim + dy * m_cosAzim;
+            double rz = dz;
+
+            double screenX = rx * m_scale;
+            double screenY = (ry * m_sinElev + rz * m_cosElev) * m_scale;
+            // Depth: for negative elevation, invert Z contribution
+            double depth = ry * m_cosElev - rz * m_sinElev;
+
+            return qMakePair(m_offset + QPointF(screenX, -screenY), depth);
+        };
+
+        for (const auto& pkg : m_palette.packages) {
+            if (m_currentLayer > 0 && pkg.layer != m_currentLayer - 1) {
+                continue;
+            }
+
+            double w = pkg.width;
+            double l = pkg.length;
+            if (pkg.rotation == 90 || pkg.rotation == 270) {
+                std::swap(w, l);
+            }
+
+            double z = pkg.layer * pkg.height;
+            double hw = w / 2.0;
+            double hl = l / 2.0;
+
+            struct Vertex { double x, y, z; };
+            Vertex vertices[8] = {
+                {pkg.x - hw, pkg.y - hl, z},              // 0
+                {pkg.x + hw, pkg.y - hl, z},              // 1
+                {pkg.x + hw, pkg.y + hl, z},              // 2
+                {pkg.x - hw, pkg.y + hl, z},              // 3
+                {pkg.x - hw, pkg.y - hl, z + pkg.height}, // 4
+                {pkg.x + hw, pkg.y - hl, z + pkg.height}, // 5
+                {pkg.x + hw, pkg.y + hl, z + pkg.height}, // 6
+                {pkg.x - hw, pkg.y + hl, z + pkg.height}, // 7
+            };
+
+            struct Face {
+                int v[4];
+                int faceType;
+            };
+
+            Face faceDefs[6] = {
+                {{0, 1, 2, 3}, 0},  // bottom
+                {{4, 5, 6, 7}, 1},  // top
+                {{0, 1, 5, 4}, 2},  // front
+                {{2, 3, 7, 6}, 3},  // back
+                {{0, 3, 7, 4}, 4},  // left
+                {{1, 2, 6, 5}, 5},  // right
+            };
+
+            for (const auto& face : faceDefs) {
+                QPolygonF poly;
+                double depthSum = 0.0;
+                for (int i = 0; i < 4; ++i) {
+                    const auto& vert = vertices[face.v[i]];
+                    auto projected = projectWithDepth(vert.x, vert.y, vert.z);
+                    poly << projected.first;
+                    depthSum += projected.second;
+                }
+
+                FaceDraw draw;
+                draw.poly = poly;
+                draw.color = getFaceColor(pkg.rotation, face.faceType);
+                draw.depth = depthSum / 4.0;
+                faces.append(draw);
+            }
         }
-        drawBox(painter, pkg);
+
+        std::sort(faces.begin(), faces.end(),
+                  [](const FaceDraw& a, const FaceDraw& b) { return a.depth < b.depth; });
+
+        painter.setPen(QPen(COLOR_EDGE, 1));
+        for (const auto& face : faces) {
+            painter.setBrush(face.color);
+            painter.drawPolygon(face.poly);
+        }
+    } else {
+        painter.setPen(Qt::gray);
+        painter.setFont(QFont("Arial", 12));
+        painter.drawText(rect(), Qt::AlignCenter, tr("No packages to render"));
     }
 
     drawAxes(painter);
@@ -284,7 +386,7 @@ QPointF VisualizationWidget::project3D(double x, double y, double z) const
 
     // Project with elevation
     double screenX = rx * m_scale;
-    double screenY = (ry * m_sinElev - rz * m_cosElev) * m_scale;
+    double screenY = (ry * m_sinElev + rz * m_cosElev) * m_scale;
 
     return m_offset + QPointF(screenX, -screenY);  // Flip Y for screen coordinates
 }
@@ -310,14 +412,14 @@ void VisualizationWidget::drawBox(QPainter& painter, const VisualPackage& pkg)
     // 8 vertices of the box
     struct Vertex { double x, y, z; };
     Vertex vertices[8] = {
-        {pkg.x - hl, pkg.y - hw, z},              // 0: bottom-front-left
-        {pkg.x + hl, pkg.y - hw, z},              // 1: bottom-front-right
-        {pkg.x + hl, pkg.y + hw, z},              // 2: bottom-back-right
-        {pkg.x - hl, pkg.y + hw, z},              // 3: bottom-back-left
-        {pkg.x - hl, pkg.y - hw, z + pkg.height}, // 4: top-front-left
-        {pkg.x + hl, pkg.y - hw, z + pkg.height}, // 5: top-front-right
-        {pkg.x + hl, pkg.y + hw, z + pkg.height}, // 6: top-back-right
-        {pkg.x - hl, pkg.y + hw, z + pkg.height}, // 7: top-back-left
+        {pkg.x - hw, pkg.y - hl, z},              // 0: bottom-front-left
+        {pkg.x + hw, pkg.y - hl, z},              // 1: bottom-front-right
+        {pkg.x + hw, pkg.y + hl, z},              // 2: bottom-back-right
+        {pkg.x - hw, pkg.y + hl, z},              // 3: bottom-back-left
+        {pkg.x - hw, pkg.y - hl, z + pkg.height}, // 4: top-front-left
+        {pkg.x + hw, pkg.y - hl, z + pkg.height}, // 5: top-front-right
+        {pkg.x + hw, pkg.y + hl, z + pkg.height}, // 6: top-back-right
+        {pkg.x - hw, pkg.y + hl, z + pkg.height}, // 7: top-back-left
     };
 
     // Project all vertices

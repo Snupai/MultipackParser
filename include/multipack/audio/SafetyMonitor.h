@@ -139,6 +139,7 @@ private:
     static constexpr int WARNING_INTERVAL_SECONDS = 30;
     QDateTime m_reducedModeStartTime;
     QDateTime m_lastWarningTime;
+    QDateTime m_lastAlarmTime;
     bool m_inReducedMode = false;
 };
 

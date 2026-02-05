@@ -201,8 +201,8 @@ private:
     void sortPackagesByDepth();
 
     // View parameters
-    double m_elevation = 30.0;    ///< View elevation (degrees)
-    double m_azimuth = 40.0;      ///< View azimuth (degrees)
+    double m_elevation = -30.0;   ///< View elevation (degrees)
+    double m_azimuth = 45.0;      ///< View azimuth (degrees)
     double m_zoom = 1.0;          ///< Zoom factor
     double m_scale = 1.0;         ///< Calculated scale factor
     QPointF m_offset;             ///< Pan offset
