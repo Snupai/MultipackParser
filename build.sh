@@ -21,6 +21,7 @@ JOBS="${JOBS:-$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)}"
 CLEAN=false
 VERBOSE=false
 RUN_AFTER=false
+PORTABLE=false
 
 print_help() {
     echo ""
@@ -33,6 +34,7 @@ print_help() {
     echo "  -d, --debug      Build in Debug mode (default: Release)"
     echo "  -v, --verbose    Verbose build output"
     echo "  -r, --run        Run the application after building"
+    echo "  -p, --portable   Build a single-file portable launcher (Linux only)"
     echo "  -j, --jobs N     Number of parallel jobs (default: auto)"
     echo "  -h, --help       Show this help message"
     echo ""
@@ -40,6 +42,7 @@ print_help() {
     echo "  ./build.sh                 # Build in Release mode"
     echo "  ./build.sh --debug         # Build in Debug mode"
     echo "  ./build.sh --clean --run   # Clean build and run"
+    echo "  ./build.sh --portable      # Build + portable single-file launcher"
     echo ""
     echo "Requirements:"
     echo "  - CMake 3.16+"
@@ -66,6 +69,10 @@ while [[ $# -gt 0 ]]; do
             RUN_AFTER=true
             shift
             ;;
+        -p|--portable)
+            PORTABLE=true
+            shift
+            ;;
         -j|--jobs)
             JOBS="$2"
             shift 2
@@ -82,6 +89,12 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+if [[ "$PORTABLE" == "true" && "$(uname -s)" != "Linux" ]]; then
+    echo -e "${RED}Portable mode is currently supported on Linux only.${NC}"
+    echo "Use GitHub Actions or run ./build.sh --portable on a Linux host."
+    exit 1
+fi
+
 echo ""
 echo -e "${GREEN}==========================================${NC}"
 echo -e "${GREEN}MultipackParser C++ Build${NC}"
@@ -89,6 +102,7 @@ echo -e "${GREEN}==========================================${NC}"
 echo -e "Build type:    ${BLUE}${BUILD_TYPE}${NC}"
 echo -e "Build dir:     ${BLUE}${BUILD_DIR}${NC}"
 echo -e "Parallel jobs: ${BLUE}${JOBS}${NC}"
+echo -e "Portable mode: ${BLUE}${PORTABLE}${NC}"
 echo -e "${GREEN}==========================================${NC}"
 echo ""
 
@@ -102,6 +116,15 @@ check_requirements() {
     
     if ! command -v make &> /dev/null && ! command -v ninja &> /dev/null; then
         missing+=("make or ninja")
+    fi
+
+    if [[ "$PORTABLE" == "true" && "$(uname -s)" == "Linux" ]]; then
+        if ! command -v ldd &> /dev/null; then
+            missing+=("ldd")
+        fi
+        if ! command -v tar &> /dev/null; then
+            missing+=("tar")
+        fi
     fi
     
     if [[ ${#missing[@]} -gt 0 ]]; then
@@ -220,6 +243,28 @@ fi
 # Show size
 ls -lh "${BUILD_DIR}/bin/multipack-parser" | awk '{print "Size: " $5}'
 echo ""
+
+# Optional portable packaging
+if [[ "$PORTABLE" == "true" ]]; then
+    echo -e "${YELLOW}Creating portable runtime bundle...${NC}"
+    echo ""
+
+    PORTABLE_DIR="${BUILD_DIR}/portable"
+    PORTABLE_BINARY="${BUILD_DIR}/bin/multipack-parser-portable-$(uname -m).run"
+
+    bash "${SCRIPT_DIR}/scripts/bundle_linux_portable.sh" \
+        --binary "${BUILD_DIR}/bin/multipack-parser" \
+        --output-dir "${PORTABLE_DIR}"
+
+    bash "${SCRIPT_DIR}/scripts/create_portable_single_file.sh" \
+        --bundle-dir "${PORTABLE_DIR}" \
+        --output-file "${PORTABLE_BINARY}"
+
+    echo ""
+    echo -e "Portable binary: ${BLUE}${PORTABLE_BINARY}${NC}"
+    ls -lh "${PORTABLE_BINARY}" | awk '{print "Portable size: " $5}'
+    echo ""
+fi
 
 # Run if requested
 if [[ "$RUN_AFTER" == "true" ]]; then

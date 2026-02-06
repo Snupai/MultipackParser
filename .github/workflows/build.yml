@@ -40,71 +40,34 @@ jobs:
           # Create output directory
           mkdir -p output
           
-          # Extract binary and libraries from container
+          # Extract binary from container
           CONTAINER_ID=$(docker create multipack-builder-arm64)
           docker cp "$CONTAINER_ID:/app/build/bin/multipack-parser" output/
-          docker cp "$CONTAINER_ID:/app/build/lib" output/ 2>/dev/null || true
           docker rm "$CONTAINER_ID"
           
-          # Bundle Qt libraries
+          # Build a portable runtime directory (multipack-parser + lib + plugins + run.sh)
           docker run --rm \
             --platform linux/arm64 \
+            -v "$(pwd):/work" \
             -v "$(pwd)/output:/output" \
             multipack-builder-arm64 \
             bash -c '
-              mkdir -p /output/lib
-              
-              # Copy Qt libraries
-              for lib in libQt6Core libQt6Gui libQt6Widgets libQt6Network libQt6Sql libQt6Multimedia libQt6DBus libQt6XcbQpa libQt6OpenGL; do
-                find /usr/lib -name "${lib}.so*" -exec cp -a {} /output/lib/ \; 2>/dev/null || true
-              done
-              
-              # Copy Qt plugins
-              mkdir -p /output/plugins
-              cp -r /usr/lib/*/qt6/plugins/platforms /output/plugins/ 2>/dev/null || true
-              cp -r /usr/lib/*/qt6/plugins/sqldrivers /output/plugins/ 2>/dev/null || true
-              cp -r /usr/lib/*/qt6/plugins/multimedia /output/plugins/ 2>/dev/null || true
-              
-              # Copy ICU libraries
-              find /usr/lib -name "libicu*.so*" -exec cp -a {} /output/lib/ \; 2>/dev/null || true
-              
-              # Copy other dependencies
-              for lib in libpcre2-16 libdouble-conversion libxcb libxkbcommon libX11 libXext libXcursor libXfixes libXi libXrandr libXrender libXinerama; do
-                find /usr/lib -name "${lib}.so*" -exec cp -a {} /output/lib/ \; 2>/dev/null || true
-              done
+              bash /work/scripts/bundle_linux_portable.sh \
+                --binary /output/multipack-parser \
+                --output-dir /output/bundle
             '
-          
-          # Create run script
-          cat > output/run.sh << 'EOF'
-          #!/bin/bash
-          SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-          export LD_LIBRARY_PATH="$SCRIPT_DIR/lib:$LD_LIBRARY_PATH"
-          export QT_PLUGIN_PATH="$SCRIPT_DIR/plugins"
-          
-          # Force X11 for Openbox environments
-          export QT_QPA_PLATFORM=xcb
-          export QT_X11_NO_MITSHM=1
-          export LIBGL_ALWAYS_SOFTWARE=1
-          
-          exec "$SCRIPT_DIR/multipack-parser" "$@"
-          EOF
-          chmod +x output/run.sh
-          
-          # Create qt.conf to help Qt find plugins and libraries
-          cat > output/qt.conf << 'EOF'
-          [Paths]
-          Prefix = .
-          Plugins = plugins
-          Libraries = lib
-          EOF
-          chmod +x output/run.sh
-          
-          # Package everything
-          cd output
-          tar -czvf multipack-parser-arm64.tar.gz multipack-parser lib plugins run.sh
+
+          # Package updater payload (kept for AutoUpdater compatibility)
+          tar -czvf output/multipack-parser-arm64.tar.gz -C output/bundle .
+
+          # Build single-file portable launcher
+          bash scripts/create_portable_single_file.sh \
+            --bundle-dir output/bundle \
+            --output-file output/multipack-parser-arm64-portable.run
 
           # Generate unsigned manifest for build artifacts (release signing happens in release job)
-          APP_VERSION=$(grep -E 'constexpr const char\* VERSION' ../include/multipack/config/ConfigDefaults.h | sed -E 's/.*"([^"]+)".*/\1/')
+          APP_VERSION=$(grep -E 'constexpr const char\* VERSION' include/multipack/config/ConfigDefaults.h | sed -E 's/.*"([^"]+)".*/\1/')
+          cd output
           python3 ../scripts/generate_update_metadata.py \
             --package multipack-parser-arm64.tar.gz \
             --version "$APP_VERSION" \
@@ -114,8 +77,9 @@ jobs:
           echo "=== Package contents ==="
           tar -tzvf multipack-parser-arm64.tar.gz
           echo "=== Binary info ==="
-          file multipack-parser
+          file bundle/multipack-parser
           ls -lh multipack-parser-arm64.tar.gz
+          ls -lh multipack-parser-arm64-portable.run
           ls -lh multipack-parser-arm64-manifest.json
 
       - name: Upload ARM64 artifact
@@ -124,6 +88,7 @@ jobs:
           name: multipack-parser-arm64
           path: |
             output/multipack-parser-arm64.tar.gz
+            output/multipack-parser-arm64-portable.run
             output/multipack-parser-arm64-manifest.json
           retention-days: 30
 
@@ -173,6 +138,7 @@ jobs:
         with:
           files: |
             multipack-parser-arm64.tar.gz
+            multipack-parser-arm64-portable.run
             multipack-parser-arm64-manifest.json
             multipack-parser-arm64-manifest.sig
           draft: false

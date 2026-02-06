@@ -35,12 +35,15 @@ build.bat --arm64
 
 Output: `output/multipack-parser-arm64.tar.gz` (includes Qt libraries)
 
+Portable single-file output from GitHub Actions: `output/multipack-parser-arm64-portable.run`
+
 ### Native Build (Development)
 
 ```bash
 # macOS/Linux
 ./build.sh
 ./build.sh --debug --run
+./build.sh --portable
 
 # Windows
 build.bat
@@ -64,6 +67,9 @@ make -j$(nproc)
 | `--verbose`, `-v` | Enable debug logging |
 | `--license` | Show license information |
 | `--no-virtual-keyboard` | Disable on-screen keyboard |
+
+Build script option:
+- `./build.sh --portable` creates a single-file Linux launcher (`build/bin/multipack-parser-portable-<arch>.run`)
 
 ## Project Structure
 
