@@ -784,6 +784,8 @@ void MainWindow::loadRobFileList()
 void MainWindow::updateEnabledStates()
 {
     bool paletteLoaded = m_paletteLoaded;
+    bool canStartServer = paletteLoaded && !m_serverRunning;
+    QString startServerText = m_serverRunning ? "Server laeuft..." : "Server starten";
 
     // Enable/disable controls based on palette loaded state
     ui->EingabeStartlage->setEnabled(paletteLoaded);
@@ -792,7 +794,10 @@ void MainWindow::updateEnabledStates()
     ui->checkBoxEinzelpaket->setEnabled(paletteLoaded);
     ui->checkBoxLabelInvert->setEnabled(paletteLoaded);
     ui->ButtonOpenParameterRoboter->setEnabled(paletteLoaded);
-    ui->ButtonDatenSenden->setEnabled(paletteLoaded && !m_serverRunning);
+    ui->ButtonDatenSenden->setEnabled(canStartServer);
+    ui->ButtonDatenSenden_2->setEnabled(canStartServer);
+    ui->ButtonDatenSenden->setText(startServerText);
+    ui->ButtonDatenSenden_2->setText(startServerText);
 
     // Robot controls
     bool serverRunning = m_serverRunning;
@@ -915,8 +920,6 @@ void MainWindow::onStartServerClicked()
     }
 
     m_serverRunning = true;
-    ui->ButtonDatenSenden->setText("Server laeuft...");
-    ui->ButtonDatenSenden->setEnabled(false);
     updateEnabledStates();
 
     emit serverStartRequested();
@@ -1081,7 +1084,6 @@ void MainWindow::onRobotPauseClicked()
 void MainWindow::onStopRpcServerClicked()
 {
     m_serverRunning = false;
-    ui->ButtonDatenSenden->setText("Server starten");
     updateEnabledStates();
 
     emit serverStopRequested();
