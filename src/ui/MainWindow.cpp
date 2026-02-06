@@ -196,8 +196,8 @@ void MainWindow::setupConnections()
     connect(ui->LadePallettenplan, &QPushButton::clicked, this, &MainWindow::onLoadPaletteClicked);
     connect(ui->ButtonDatenSenden, &QPushButton::clicked, this, &MainWindow::onStartServerClicked);
     connect(ui->EingabePallettenplan, &QLineEdit::returnPressed, this, &MainWindow::onLoadPaletteClicked);
-    connect(ui->checkBoxEinzelpaket, &QCheckBox::stateChanged, this, &MainWindow::onEinzelpaketChanged);
-    connect(ui->checkBoxLabelInvert, &QCheckBox::stateChanged, this, &MainWindow::onLabelInvertChanged);
+    connect(ui->checkBoxEinzelpaket, &QCheckBox::checkStateChanged, this, &MainWindow::onEinzelpaketChanged);
+    connect(ui->checkBoxLabelInvert, &QCheckBox::checkStateChanged, this, &MainWindow::onLabelInvertChanged);
     connect(ui->EingabeStartlage, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onStartlageChanged);
 
     // Robot parameters - back buttons
@@ -213,7 +213,7 @@ void MainWindow::setupConnections()
     // Aufnahme tab
     connect(ui->EingabeVerschiebungX, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onVerschiebungXChanged);
     connect(ui->EingabeVerschiebungY, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onVerschiebungYChanged);
-    connect(ui->checkBoxKlemmung, &QCheckBox::stateChanged, this, &MainWindow::onKlemmungChanged);
+    connect(ui->checkBoxKlemmung, &QCheckBox::checkStateChanged, this, &MainWindow::onKlemmungChanged);
     connect(ui->ButtonDatenSenden_2, &QPushButton::clicked, this, &MainWindow::onAufnahmeServerStart);
 
     // Settings - back buttons
@@ -242,9 +242,9 @@ void MainWindow::setupConnections()
     connect(ui->lineEditCommand, &QLineEdit::returnPressed, this, &MainWindow::onConsoleCommandEntered);
 
     // Scanner overwrite checkboxes (UR20 specific)
-    connect(ui->checkBoxScanner1Overwrite, &QCheckBox::stateChanged, this, &MainWindow::onScanner1OverwriteChanged);
-    connect(ui->checkBoxScanner2Overwrite, &QCheckBox::stateChanged, this, &MainWindow::onScanner2OverwriteChanged);
-    connect(ui->checkBoxScanner3Overwrite, &QCheckBox::stateChanged, this, &MainWindow::onScanner3OverwriteChanged);
+    connect(ui->checkBoxScanner1Overwrite, &QCheckBox::checkStateChanged, this, &MainWindow::onScanner1OverwriteChanged);
+    connect(ui->checkBoxScanner2Overwrite, &QCheckBox::checkStateChanged, this, &MainWindow::onScanner2OverwriteChanged);
+    connect(ui->checkBoxScanner3Overwrite, &QCheckBox::checkStateChanged, this, &MainWindow::onScanner3OverwriteChanged);
 
     // Experimental - back button and actions
     connect(ui->ButtonZurueck_8, &QPushButton::clicked, this, &MainWindow::showMainMenu);

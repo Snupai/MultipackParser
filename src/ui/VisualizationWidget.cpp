@@ -278,7 +278,7 @@ void VisualizationWidget::paintEvent(QPaintEvent* event)
             // Depth: for negative elevation, invert Z contribution
             double depth = ry * m_cosElev - rz * m_sinElev;
 
-            return qMakePair(m_offset + QPointF(screenX, -screenY), depth);
+            return std::pair<QPointF, double>(m_offset + QPointF(screenX, -screenY), depth);
         };
 
         for (const auto& pkg : m_palette.packages) {
