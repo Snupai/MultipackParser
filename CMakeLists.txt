@@ -30,6 +30,7 @@ find_package(Qt6 REQUIRED COMPONENTS
     Network
     Sql
     Multimedia
+    Concurrent
     UiTools
 )
 
