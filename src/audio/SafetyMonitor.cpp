@@ -10,7 +10,6 @@
 #include <QDebug>
 #include <QTimer>
 #include <QDateTime>
-#include <QCoreApplication>
 
 namespace multipack {
 namespace audio {
@@ -89,7 +88,6 @@ void SafetyMonitor::onSafetyStatusChanged(robot::SafetyStatus status)
     qDebug() << "Safety status changed to:" << statusString;
     
     m_lastStatus = status;
-    checkSafetyStatus();
 }
 
 void SafetyMonitor::checkNow()
@@ -112,14 +110,30 @@ void SafetyMonitor::checkSafetyStatus()
     
     if (currentStatus != m_lastStatus) {
         onSafetyStatusChanged(currentStatus);
-        m_lastStatus = currentStatus;
+    }
+
+    // Ignore unknown state to avoid false alerts during startup/disconnect windows.
+    if (currentStatus == robot::SafetyStatus::Unknown) {
+        if (m_alarmActive && m_audioManager) {
+            m_audioManager->stopAlarm();
+        }
+        m_alarmActive = false;
+        m_lastAlarmTime = QDateTime();
+        m_inReducedMode = false;
+        m_reducedWarningActive = false;
+        m_reducedModeStartTime = QDateTime();
+        m_lastWarningTime = QDateTime();
+        return;
     }
 
     // Handle REDUCED mode with 30-second warning intervals (matching Python behavior)
     if (currentStatus == robot::SafetyStatus::ReducedMode) {
-        if (m_alarmActive && m_audioManager) {
-            m_audioManager->stopAlarm();
+        if (m_alarmActive) {
+            if (m_audioManager) {
+                m_audioManager->stopAlarm();
+            }
             m_alarmActive = false;
+            m_lastAlarmTime = QDateTime();
         }
         QDateTime currentTime = QDateTime::currentDateTime();
         
@@ -152,19 +166,21 @@ void SafetyMonitor::checkSafetyStatus()
             }
             m_lastWarningTime = currentTime;
             
-            if (!m_alarmActive) {
-                m_alarmActive = true;
+            if (!m_reducedWarningActive) {
+                m_reducedWarningActive = true;
                 emit safetyAlert("Reduced Mode - Warning (repeats every 30 seconds)");
             }
         }
     } else {
         // Not in reduced mode - reset tracking
+        const bool hadReducedWarning = m_reducedWarningActive;
         if (m_inReducedMode) {
             qDebug() << "SafetyMonitor: Exited REDUCED mode";
             m_inReducedMode = false;
             m_reducedModeStartTime = QDateTime();
             m_lastWarningTime = QDateTime();
         }
+        m_reducedWarningActive = false;
         
         // Handle other safety statuses
         if (currentStatus != robot::SafetyStatus::Normal) {
@@ -179,8 +195,12 @@ void SafetyMonitor::checkSafetyStatus()
                     m_lastAlarmTime = currentTime;
                 }
             }
-        } else if (m_alarmActive) {
-            clearAlarm();
+        } else {
+            if (m_alarmActive) {
+                clearAlarm();
+            } else if (hadReducedWarning) {
+                emit safetyRestored();
+            }
         }
     }
 }

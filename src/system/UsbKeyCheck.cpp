@@ -16,6 +16,9 @@
 #include <QDirIterator>
 #include <QStorageInfo>
 #include <QMessageAuthenticationCode>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QSettings>
 
 #ifdef HAVE_OPENSSL
 #include <openssl/evp.h>
@@ -32,6 +35,7 @@ namespace {
 constexpr const char* kDefaultFernetKey = "9G-1nNuw_tn7_lLkhpCwd_AG9McjQv_LarKcV2kUxrk=";
 constexpr const char* kDefaultExpectedPayload =
     "fc2f8726bb317b17a3cb322672818d2d$580c515fc8852dfd6e36faaaf46581c412683135b87dc8750c89efad4a38b54f";
+constexpr const char* kLegacyConfigPath = ".config/Multipack/MultipackParser.conf";
 
 QByteArray decodeBase64Url(const QByteArray& input)
 {
@@ -177,6 +181,80 @@ bool verifyFernetToken(const QByteArray& token,
     Q_UNUSED(expectedPayload);
     return true;
 #endif
+}
+
+bool loadUsbConfigFromJsonFile(const QString& path, QString& usbKey, QByteArray& expectedValue)
+{
+    QFile file(path);
+    if (!file.exists() || !file.open(QIODevice::ReadOnly)) {
+        return false;
+    }
+
+    QJsonParseError parseError;
+    const QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &parseError);
+    file.close();
+
+    if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
+        return false;
+    }
+
+    const QJsonObject root = doc.object();
+    const QJsonObject admin = root.value("admin").toObject();
+    const QString key = admin.value("usb_key").toString().trimmed();
+    const QString expected = admin.value("usb_expected_value").toString();
+    if (key.isEmpty() || expected.isEmpty()) {
+        return false;
+    }
+
+    usbKey = key;
+    expectedValue = expected.toUtf8();
+    return true;
+}
+
+bool loadUsbConfigFromLegacyIni(const QString& path, QString& usbKey, QByteArray& expectedValue)
+{
+    if (!QFileInfo::exists(path)) {
+        return false;
+    }
+
+    QSettings settings(path, QSettings::IniFormat);
+    const QString key = settings.value("admin/usb_key").toString().trimmed();
+    const QString expected = settings.value("admin/usb_expected_value").toString();
+    if (key.isEmpty() || expected.isEmpty()) {
+        return false;
+    }
+
+    usbKey = key;
+    expectedValue = expected.toUtf8();
+    return true;
+}
+
+void resolveUsbConfig(const multipack::config::SettingsManager* settingsManager,
+                      QString& usbKey,
+                      QByteArray& expectedValue)
+{
+    usbKey = QString::fromLatin1(kDefaultFernetKey);
+    expectedValue = QByteArray(kDefaultExpectedPayload);
+
+    if (settingsManager) {
+        const QString configuredKey = settingsManager->value(config::Keys::ADMIN_USB_KEY).toString().trimmed();
+        const QString configuredExpected = settingsManager->value(config::Keys::ADMIN_USB_EXPECTED_VALUE).toString();
+        if (!configuredKey.isEmpty() && !configuredExpected.isEmpty()) {
+            usbKey = configuredKey;
+            expectedValue = configuredExpected.toUtf8();
+            return;
+        }
+    }
+
+    const QString jsonPath = QDir::current().filePath("settings.json");
+    if (loadUsbConfigFromJsonFile(jsonPath, usbKey, expectedValue)) {
+        return;
+    }
+
+    const QString legacyPath = QDir::home().filePath(QLatin1String(kLegacyConfigPath));
+    if (loadUsbConfigFromLegacyIni(legacyPath, usbKey, expectedValue)) {
+        return;
+    }
 }
 } // namespace
 
@@ -362,20 +440,9 @@ bool UsbKeyCheck::verifyKeyFile(const QString& keyFilePath) const
         return false;
     }
 
-    QString usbKey = QString::fromLatin1(kDefaultFernetKey);
-    QByteArray expectedValue = QByteArray(kDefaultExpectedPayload);
-
-    if (m_settings) {
-        const QString configuredKey = m_settings->value(config::Keys::ADMIN_USB_KEY).toString().trimmed();
-        const QString configuredExpected = m_settings->value(config::Keys::ADMIN_USB_EXPECTED_VALUE).toString();
-
-        if (!configuredKey.isEmpty()) {
-            usbKey = configuredKey;
-        }
-        if (!configuredExpected.isEmpty()) {
-            expectedValue = configuredExpected.toUtf8();
-        }
-    }
+    QString usbKey;
+    QByteArray expectedValue;
+    resolveUsbConfig(m_settings, usbKey, expectedValue);
 
     const bool verified = verifyFernetToken(keyData, usbKey, expectedValue);
     if (!verified) {

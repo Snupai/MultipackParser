@@ -133,6 +133,7 @@ private:
 
     bool m_audioAlertsEnabled = true;
     bool m_alarmActive = false;
+    bool m_reducedWarningActive = false;
     robot::SafetyStatus m_lastStatus;
     
     // 30-second warning interval tracking (like Python version)
