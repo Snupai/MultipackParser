@@ -60,20 +60,6 @@ if(NOT SQLite3_FOUND)
     message(STATUS "SQLite3 not found, using Qt SQL module")
 endif()
 
-# Find XML-RPC library (xmlrpc-c) - optional for now
-find_package(PkgConfig)
-if(PkgConfig_FOUND)
-    pkg_check_modules(XMLRPC xmlrpc_server_abyss++ xmlrpc_server++ xmlrpc++)
-    if(XMLRPC_FOUND)
-        add_definitions(-DHAVE_XMLRPC)
-        message(STATUS "xmlrpc-c found")
-    else()
-        message(WARNING "xmlrpc-c not found - XML-RPC server will use stub implementation")
-    endif()
-else()
-    message(WARNING "PkgConfig not found - skipping xmlrpc-c detection")
-endif()
-
 # Find OpenSSL for cryptography
 find_package(OpenSSL QUIET)
 if(OpenSSL_FOUND)
@@ -91,10 +77,6 @@ include_directories(
 
 if(SQLite3_FOUND)
     include_directories(${SQLite3_INCLUDE_DIRS})
-endif()
-
-if(XMLRPC_FOUND)
-    include_directories(${XMLRPC_INCLUDE_DIRS})
 endif()
 
 if(OpenSSL_FOUND)
@@ -284,10 +266,6 @@ if(SQLite3_FOUND)
     target_link_libraries(multipack-parser SQLite::SQLite3)
 endif()
 
-if(XMLRPC_FOUND)
-    target_link_libraries(multipack-parser ${XMLRPC_LIBRARIES})
-endif()
-
 if(OpenSSL_FOUND)
     target_link_libraries(multipack-parser
         OpenSSL::SSL
@@ -345,7 +323,7 @@ message(STATUS "  VTK enabled: ${ENABLE_VTK}")
 if(ENABLE_VTK AND VTK_FOUND)
     message(STATUS "  VTK version: ${VTK_VERSION}")
 endif()
-message(STATUS "  XML-RPC support: ${XMLRPC_FOUND}")
+message(STATUS "  XML-RPC server: built-in")
 message(STATUS "  OpenSSL support: ${OpenSSL_FOUND}")
 message(STATUS "  Target architecture: ${CMAKE_SYSTEM_PROCESSOR}")
 message(STATUS "")
