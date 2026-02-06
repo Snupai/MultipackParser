@@ -292,6 +292,9 @@ bool AppInitializer::initializeAutoUpdater()
     qDebug() << "AppInitializer - initializing auto-updater";
 
     m_autoUpdater = std::make_unique<system::AutoUpdater>();
+    if (m_settingsManager) {
+        m_autoUpdater->setUsbUpdatePath(m_settingsManager->usbPath());
+    }
 
     qDebug() << "Auto-updater initialized";
     return true;

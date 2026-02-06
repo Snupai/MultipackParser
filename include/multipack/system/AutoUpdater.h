@@ -11,6 +11,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTimer>
+#include <QUrl>
+#include <QSslError>
 
 namespace multipack {
 namespace system {
@@ -46,6 +48,11 @@ struct UpdateInfo {
     QString downloadUrl;
     qint64 sizeBytes = 0;
     QString sha256;
+    QString manifestUrl;
+    QString signatureUrl;
+    QString packageFileName;
+    QString localFilePath;
+    bool signatureVerified = false;
     bool isPrerelease = false;
     bool isRequired = false;
 };
@@ -82,6 +89,13 @@ public:
      * @return true if update check was started successfully
      */
     bool checkForUpdates();
+
+    /**
+     * @brief Check for signed updates from a local USB/offline directory
+     * @param usbDirectory Directory containing update artifacts
+     * @return true if check completed
+     */
+    bool checkForUsbUpdates(const QString& usbDirectory);
 
     /**
      * @brief Start downloading and installing updates
@@ -123,6 +137,16 @@ public:
      * @param hours Check interval in hours
      */
     void setCheckInterval(int hours);
+
+    /**
+     * @brief Set fallback USB directory used if online checks fail
+     */
+    void setUsbUpdatePath(const QString& usbDirectory);
+
+    /**
+     * @brief Get configured fallback USB directory
+     */
+    QString usbUpdatePath() const;
 
 public slots:
     /**
@@ -224,6 +248,8 @@ private:
     UpdateInfo m_availableUpdate;
     QString m_currentVersion;
     QString m_updateCacheDir;
+    QString m_usbUpdateDir;
+    QString m_downloadTargetPath;
     int m_checkIntervalHours = 24; // Check every 24 hours
     
     /**
@@ -242,6 +268,67 @@ private:
      * @return true if successful
      */
     bool parseGitHubResponse(const QByteArray& data);
+
+    /**
+     * @brief Parse a single release object from GitHub API
+     */
+    bool parseReleaseObject(const QJsonObject& release, QString& errorMessage);
+
+    /**
+     * @brief Load and verify signed manifest from URLs
+     */
+    bool loadAndVerifyManifestFromUrls(const QString& manifestUrl,
+                                       const QString& signatureUrl,
+                                       UpdateInfo& info,
+                                       QString& errorMessage);
+
+    /**
+     * @brief Load and verify signed manifest from local directory
+     */
+    bool loadAndVerifyManifestFromDirectory(const QString& directory,
+                                            UpdateInfo& info,
+                                            QString& errorMessage);
+
+    /**
+     * @brief Parse manifest JSON into update info
+     */
+    bool parseManifest(const QByteArray& manifestBytes,
+                       UpdateInfo& info,
+                       QString& errorMessage) const;
+
+    /**
+     * @brief Verify manifest detached signature
+     */
+    bool verifyManifestSignature(const QByteArray& manifestBytes,
+                                 const QByteArray& signatureBytes,
+                                 QString& errorMessage) const;
+
+    /**
+     * @brief Verify file SHA-256
+     */
+    bool verifyFileSha256(const QString& filePath,
+                          const QString& expectedSha256,
+                          QString& errorMessage) const;
+
+    /**
+     * @brief Fetch URL synchronously
+     */
+    bool fetchUrlSync(const QUrl& url, QByteArray& data, QString& errorMessage) const;
+
+    /**
+     * @brief Resolve trusted public key PEM
+     */
+    QString trustedPublicKeyPem(QString& errorMessage) const;
+
+    /**
+     * @brief Normalize semantic version string
+     */
+    QString normalizeVersion(const QString& version) const;
+
+    /**
+     * @brief Clear cached update info
+     */
+    void clearAvailableUpdate();
     
     /**
      * @brief Download update file
