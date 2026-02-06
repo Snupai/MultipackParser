@@ -15,6 +15,11 @@
 #include <QDir>
 #include <QDirIterator>
 #include <QStorageInfo>
+#include <QMessageAuthenticationCode>
+
+#ifdef HAVE_OPENSSL
+#include <openssl/evp.h>
+#endif
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -22,6 +27,158 @@
 
 namespace multipack {
 namespace system {
+
+namespace {
+constexpr const char* kDefaultFernetKey = "9G-1nNuw_tn7_lLkhpCwd_AG9McjQv_LarKcV2kUxrk=";
+constexpr const char* kDefaultExpectedPayload =
+    "fc2f8726bb317b17a3cb322672818d2d$580c515fc8852dfd6e36faaaf46581c412683135b87dc8750c89efad4a38b54f";
+
+QByteArray decodeBase64Url(const QByteArray& input)
+{
+    QByteArray normalized = input.trimmed();
+    normalized.replace('-', '+');
+    normalized.replace('_', '/');
+
+    const int paddingNeeded = (4 - (normalized.size() % 4)) % 4;
+    normalized.append(QByteArray(paddingNeeded, '='));
+    return QByteArray::fromBase64(normalized);
+}
+
+bool constantTimeEqual(const QByteArray& a, const QByteArray& b)
+{
+    if (a.size() != b.size()) {
+        return false;
+    }
+
+    unsigned char diff = 0;
+    for (int i = 0; i < a.size(); ++i) {
+        diff |= static_cast<unsigned char>(a[i] ^ b[i]);
+    }
+    return diff == 0;
+}
+
+bool splitFernetKey(const QString& key, QByteArray& signingKey, QByteArray& encryptionKey)
+{
+    const QByteArray decodedKey = decodeBase64Url(key.toUtf8());
+    if (decodedKey.size() != 32) {
+        return false;
+    }
+
+    signingKey = decodedKey.left(16);
+    encryptionKey = decodedKey.mid(16, 16);
+    return true;
+}
+
+bool decryptAes128Cbc(const QByteArray& cipherText,
+                      const QByteArray& encryptionKey,
+                      const QByteArray& iv,
+                      QByteArray& plainText)
+{
+#ifdef HAVE_OPENSSL
+    if (cipherText.isEmpty() || (cipherText.size() % 16) != 0 ||
+        encryptionKey.size() != 16 || iv.size() != 16) {
+        return false;
+    }
+
+    EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
+    if (!ctx) {
+        return false;
+    }
+
+    int ok = EVP_DecryptInit_ex(
+        ctx,
+        EVP_aes_128_cbc(),
+        nullptr,
+        reinterpret_cast<const unsigned char*>(encryptionKey.constData()),
+        reinterpret_cast<const unsigned char*>(iv.constData()));
+    if (ok != 1) {
+        EVP_CIPHER_CTX_free(ctx);
+        return false;
+    }
+
+    QByteArray buffer(cipherText.size() + EVP_CIPHER_block_size(EVP_aes_128_cbc()), 0);
+    int outLen1 = 0;
+    ok = EVP_DecryptUpdate(
+        ctx,
+        reinterpret_cast<unsigned char*>(buffer.data()),
+        &outLen1,
+        reinterpret_cast<const unsigned char*>(cipherText.constData()),
+        cipherText.size());
+    if (ok != 1) {
+        EVP_CIPHER_CTX_free(ctx);
+        return false;
+    }
+
+    int outLen2 = 0;
+    ok = EVP_DecryptFinal_ex(
+        ctx,
+        reinterpret_cast<unsigned char*>(buffer.data()) + outLen1,
+        &outLen2);
+
+    EVP_CIPHER_CTX_free(ctx);
+
+    if (ok != 1) {
+        return false;
+    }
+
+    buffer.truncate(outLen1 + outLen2);
+    plainText = buffer;
+    return true;
+#else
+    Q_UNUSED(cipherText);
+    Q_UNUSED(encryptionKey);
+    Q_UNUSED(iv);
+    Q_UNUSED(plainText);
+    return false;
+#endif
+}
+
+bool verifyFernetToken(const QByteArray& token,
+                       const QString& fernetKey,
+                       const QByteArray& expectedPayload)
+{
+    // Minimum Fernet token size: version(1) + ts(8) + iv(16) + 1 block ciphertext(16) + hmac(32)
+    const QByteArray decodedToken = decodeBase64Url(token);
+    if (decodedToken.size() < 73) {
+        return false;
+    }
+
+    if (static_cast<unsigned char>(decodedToken[0]) != 0x80) {
+        return false;
+    }
+
+    const int hmacOffset = decodedToken.size() - 32;
+    const QByteArray signedData = decodedToken.left(hmacOffset);
+    const QByteArray hmacFromToken = decodedToken.mid(hmacOffset, 32);
+
+    QByteArray signingKey;
+    QByteArray encryptionKey;
+    if (!splitFernetKey(fernetKey, signingKey, encryptionKey)) {
+        return false;
+    }
+
+    const QByteArray computedHmac =
+        QMessageAuthenticationCode::hash(signedData, signingKey, QCryptographicHash::Sha256);
+    if (!constantTimeEqual(computedHmac, hmacFromToken)) {
+        return false;
+    }
+
+#ifdef HAVE_OPENSSL
+    const QByteArray iv = decodedToken.mid(9, 16);
+    const QByteArray cipherText = decodedToken.mid(25, hmacOffset - 25);
+    QByteArray plainText;
+    if (!decryptAes128Cbc(cipherText, encryptionKey, iv, plainText)) {
+        return false;
+    }
+
+    return constantTimeEqual(plainText, expectedPayload);
+#else
+    Q_UNUSED(encryptionKey);
+    Q_UNUSED(expectedPayload);
+    return true;
+#endif
+}
+} // namespace
 
 UsbKeyCheck::UsbKeyCheck(QObject* parent)
     : QObject(parent)
@@ -205,56 +362,26 @@ bool UsbKeyCheck::verifyKeyFile(const QString& keyFilePath) const
         return false;
     }
 
-    // Verify it looks like a valid Fernet token (base64 encoded, starts with 0x80 when decoded)
-    QByteArray decoded = QByteArray::fromBase64(keyData, QByteArray::Base64UrlEncoding);
+    QString usbKey = QString::fromLatin1(kDefaultFernetKey);
+    QByteArray expectedValue = QByteArray(kDefaultExpectedPayload);
 
-    if (decoded.size() < 32) {
-        qDebug() << "UsbKeyCheck - key data too short";
-        return false;
+    if (m_settings) {
+        const QString configuredKey = m_settings->value(config::Keys::ADMIN_USB_KEY).toString().trimmed();
+        const QString configuredExpected = m_settings->value(config::Keys::ADMIN_USB_EXPECTED_VALUE).toString();
+
+        if (!configuredKey.isEmpty()) {
+            usbKey = configuredKey;
+        }
+        if (!configuredExpected.isEmpty()) {
+            expectedValue = configuredExpected.toUtf8();
+        }
     }
 
-    // Check Fernet version byte
-    if (static_cast<unsigned char>(decoded[0]) != 0x80) {
-        qDebug() << "UsbKeyCheck - invalid Fernet version byte";
-        return false;
+    const bool verified = verifyFernetToken(keyData, usbKey, expectedValue);
+    if (!verified) {
+        qDebug() << "UsbKeyCheck - Fernet verification failed for key file:" << keyFilePath;
     }
-
-    // For full Fernet decryption, we would need to:
-    // 1. Extract the signing key and encryption key from the stored key
-    // 2. Verify the HMAC-SHA256 signature
-    // 3. Decrypt the payload using AES-128-CBC
-    // 4. Compare against expected value
-    //
-    // Since full Fernet implementation requires more crypto dependencies,
-    // we perform a simplified check: if the settings have no USB key configured,
-    // just verify the format is valid.
-
-    if (!m_settings) {
-        qDebug() << "UsbKeyCheck - no settings manager, accepting format-valid key";
-        return true;
-    }
-
-    // Check if USB key verification is configured
-    QString usbKey = m_settings->value(config::Keys::ADMIN_USB_KEY).toString();
-    QString expectedValue = m_settings->value(config::Keys::ADMIN_USB_EXPECTED_VALUE).toString();
-
-    if (usbKey.isEmpty() || expectedValue.isEmpty()) {
-        // No key configured, just check format
-        qDebug() << "UsbKeyCheck - no USB key configured, accepting format-valid key";
-        return true;
-    }
-
-    // Full decryption would require OpenSSL or similar crypto library
-    // For now, log that proper verification isn't available without crypto support
-    qDebug() << "UsbKeyCheck - Fernet decryption requires crypto library, accepting format-valid key";
-
-    // In production with OpenSSL available, implement:
-    // 1. Derive signing_key and encryption_key from usbKey
-    // 2. Verify HMAC-SHA256 of the token
-    // 3. Decrypt AES-128-CBC payload
-    // 4. Compare decrypted value with expectedValue
-
-    return true;
+    return verified;
 }
 
 QStringList UsbKeyCheck::getUsbDrives() const
