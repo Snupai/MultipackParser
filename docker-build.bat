@@ -129,10 +129,8 @@ mkdir "%BUNDLE_DIR%\plugins\multimedia"
 
 REM Copy all artifacts using docker run + volume mount (reliable on Windows cross-platform)
 echo Copying binary, libraries and plugins...
-docker run --rm --platform linux/arm64 ^
-    -v "%OUTPUT_DIR%:/output" ^
-    %IMAGE_NAME%:latest ^
-    bash -c "cp /app/build/bin/multipack-parser /output/multipack-parser-arm64/bin/ || exit 1; cp /usr/lib/aarch64-linux-gnu/libQt6Core.so.6 /usr/lib/aarch64-linux-gnu/libQt6Gui.so.6 /usr/lib/aarch64-linux-gnu/libQt6Widgets.so.6 /usr/lib/aarch64-linux-gnu/libQt6Network.so.6 /usr/lib/aarch64-linux-gnu/libQt6Sql.so.6 /usr/lib/aarch64-linux-gnu/libQt6Multimedia.so.6 /usr/lib/aarch64-linux-gnu/libQt6DBus.so.6 /usr/lib/aarch64-linux-gnu/libQt6XcbQpa.so.6 /usr/lib/aarch64-linux-gnu/libQt6OpenGL.so.6 /output/multipack-parser-arm64/lib/; cp /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqxcb.so /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqlinuxfb.so /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqeglfs.so /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqoffscreen.so /output/multipack-parser-arm64/plugins/platforms/; cp /usr/lib/aarch64-linux-gnu/qt6/plugins/sqldrivers/libqsqlite.so /output/multipack-parser-arm64/plugins/sqldrivers/; cp /usr/lib/aarch64-linux-gnu/libxcb.so.1 /usr/lib/aarch64-linux-gnu/libxcb-cursor.so.0 /usr/lib/aarch64-linux-gnu/libxcb-icccm.so.4 /usr/lib/aarch64-linux-gnu/libxcb-image.so.0 /usr/lib/aarch64-linux-gnu/libxcb-keysyms.so.1 /usr/lib/aarch64-linux-gnu/libxcb-render.so.0 /usr/lib/aarch64-linux-gnu/libxcb-render-util.so.0 /usr/lib/aarch64-linux-gnu/libxcb-shape.so.0 /usr/lib/aarch64-linux-gnu/libxcb-shm.so.0 /usr/lib/aarch64-linux-gnu/libxcb-sync.so.1 /usr/lib/aarch64-linux-gnu/libxcb-xfixes.so.0 /usr/lib/aarch64-linux-gnu/libxcb-xinerama.so.0 /usr/lib/aarch64-linux-gnu/libxcb-xkb.so.1 /usr/lib/aarch64-linux-gnu/libxkbcommon.so.0 /usr/lib/aarch64-linux-gnu/libxkbcommon-x11.so.0 /output/multipack-parser-arm64/lib/"
+set "BASH_CMD=cp /app/build/bin/multipack-parser /output/multipack-parser-arm64/bin/ && chmod +x /output/multipack-parser-arm64/bin/multipack-parser; cp /usr/lib/aarch64-linux-gnu/libQt6Core.so.6 /usr/lib/aarch64-linux-gnu/libQt6Gui.so.6 /usr/lib/aarch64-linux-gnu/libQt6Widgets.so.6 /usr/lib/aarch64-linux-gnu/libQt6Network.so.6 /usr/lib/aarch64-linux-gnu/libQt6Sql.so.6 /usr/lib/aarch64-linux-gnu/libQt6Multimedia.so.6 /usr/lib/aarch64-linux-gnu/libQt6DBus.so.6 /usr/lib/aarch64-linux-gnu/libQt6XcbQpa.so.6 /usr/lib/aarch64-linux-gnu/libQt6OpenGL.so.6 /usr/lib/aarch64-linux-gnu/libQt6Concurrent.so.6 /output/multipack-parser-arm64/lib/; cp /usr/lib/aarch64-linux-gnu/libicu*.so* /usr/lib/aarch64-linux-gnu/libpcre2-16*.so* /usr/lib/aarch64-linux-gnu/libdouble-conversion*.so* /usr/lib/aarch64-linux-gnu/libz.so* /output/multipack-parser-arm64/lib/ 2>/dev/null; cp /usr/lib/aarch64-linux-gnu/libxcb*.so* /usr/lib/aarch64-linux-gnu/libxkbcommon*.so* /usr/lib/aarch64-linux-gnu/libX11.so* /usr/lib/aarch64-linux-gnu/libXext.so* /usr/lib/aarch64-linux-gnu/libXcursor.so* /usr/lib/aarch64-linux-gnu/libXfixes.so* /usr/lib/aarch64-linux-gnu/libXi.so* /usr/lib/aarch64-linux-gnu/libXrandr.so* /usr/lib/aarch64-linux-gnu/libXrender.so* /usr/lib/aarch64-linux-gnu/libXinerama.so* /output/multipack-parser-arm64/lib/ 2>/dev/null; cp /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqxcb.so /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqlinuxfb.so /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqeglfs.so /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqoffscreen.so /output/multipack-parser-arm64/plugins/platforms/; cp /usr/lib/aarch64-linux-gnu/qt6/plugins/sqldrivers/libqsqlite.so /output/multipack-parser-arm64/plugins/sqldrivers/; true"
+docker run --rm --platform linux/arm64 -v "%OUTPUT_DIR%:/output" %IMAGE_NAME%:latest bash -c "%BASH_CMD%"
 if errorlevel 1 (
     echo ERROR: Failed to copy build artifacts
     exit /b 1
@@ -176,13 +174,13 @@ echo [Install]
 echo WantedBy=graphical.target
 ) > "%BUNDLE_DIR%\multipack-parser.service"
 
-REM Create tarball (Windows 10+ has tar)
+REM Set execute permissions and create tarball (inside container to preserve permissions)
 echo.
 echo Creating deployment archive...
-cd /d "%OUTPUT_DIR%"
-tar -czvf multipack-parser-arm64.tar.gz multipack-parser-arm64 2>nul
+set "TAR_CMD=chmod +x /output/multipack-parser-arm64/run.sh /output/multipack-parser-arm64/bin/multipack-parser; cd /output && tar -czvf multipack-parser-arm64.tar.gz multipack-parser-arm64"
+docker run --rm --platform linux/arm64 -v "%OUTPUT_DIR%:/output" %IMAGE_NAME%:latest bash -c "%TAR_CMD%"
 if errorlevel 1 (
-    echo WARNING: Could not create tarball. tar may not be available.
+    echo WARNING: Could not create tarball.
     echo Bundle is available at: %BUNDLE_DIR%
 )
 

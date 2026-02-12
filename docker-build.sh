@@ -103,11 +103,12 @@ mkdir -p "${BUNDLE_DIR}/plugins/platforms"
 mkdir -p "${BUNDLE_DIR}/plugins/sqldrivers"
 mkdir -p "${BUNDLE_DIR}/plugins/multimedia"
 
-# Copy the binary
+# Copy the binary (Dockerfile WORKDIR is /app)
 echo "Copying binary..."
+docker cp "${CONTAINER_NAME}:/app/build/bin/multipack-parser" "${BUNDLE_DIR}/bin/" 2>/dev/null || \
 docker cp "${CONTAINER_NAME}:/src/build/bin/multipack-parser" "${BUNDLE_DIR}/bin/" 2>/dev/null || \
-docker cp "${CONTAINER_NAME}:/opt/multipack-parser/multipack-parser" "${BUNDLE_DIR}/bin/" 2>/dev/null || \
 { echo -e "${RED}Failed to copy binary${NC}"; docker rm -f "${CONTAINER_NAME}"; exit 1; }
+chmod +x "${BUNDLE_DIR}/bin/multipack-parser"
 
 # Copy Qt libraries from the container
 echo "Copying Qt libraries..."
@@ -120,6 +121,30 @@ docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6Multimedia.so.6" "
 docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6DBus.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
 docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6XcbQpa.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
 docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6OpenGL.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6Concurrent.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+
+# Copy ICU and other Qt dependencies (required for libicui18n, etc.)
+# Ubuntu 22.04 has ICU 70; try common versions
+echo "Copying ICU and system libraries..."
+for ver in 70 72 74; do
+    docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libicuuc.so.${ver}" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+    docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libicui18n.so.${ver}" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+    docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libicudata.so.${ver}" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+done
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libpcre2-16.so.0" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libdouble-conversion.so.3" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libz.so.1" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+# Do NOT bundle libstdc++.so.6 or libgcc_s.so.1 - use system versions for GLIBCXX compatibility
+
+# Copy X11 libraries (needed for xcb platform plugin)
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libX11.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libXext.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libXcursor.so.1" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libXfixes.so.3" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libXi.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libXrandr.so.2" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libXrender.so.1" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libXinerama.so.1" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
 
 # Copy Qt plugins
 echo "Copying Qt plugins..."
