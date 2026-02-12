@@ -29,13 +29,15 @@ The recommended way to build for Raspberry Pi from any platform:
 # macOS/Linux
 ./docker-build.sh
 
-# Windows
-build.bat --arm64
+# Windows (equivalent to docker-build.sh)
+docker-build.bat
+docker-build.bat --portable   # Also create single-file launcher (.run)
+# Or: build.bat --arm64
 ```
 
 Output: `output/multipack-parser-arm64.tar.gz` (includes Qt libraries)
 
-Portable single-file output from GitHub Actions: `output/multipack-parser-arm64-portable.run`
+Portable single-file: `output/multipack-parser-arm64-portable.run` (use `docker-build.bat --portable` or GitHub Actions)
 
 ### Native Build (Development)
 
@@ -77,7 +79,8 @@ Build script option:
 MultipackParser/
 ├── CMakeLists.txt              # Build configuration
 ├── build.sh / build.bat        # Native build scripts
-├── docker-build.sh             # ARM64 cross-compilation
+├── docker-build.sh             # ARM64 cross-compilation (macOS/Linux)
+├── docker-build.bat            # ARM64 cross-compilation (Windows)
 ├── Dockerfile.arm64            # ARM64 build container
 ├── src/                        # Source files
 │   ├── main.cpp                # Entry point

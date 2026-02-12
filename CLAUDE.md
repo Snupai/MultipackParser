@@ -24,7 +24,8 @@ build.bat --debug --run
 
 # ARM64 cross-compilation for Raspberry Pi
 ./docker-build.sh             # macOS/Linux
-build.bat --arm64             # Windows
+docker-build.bat              # Windows (equivalent to docker-build.sh)
+build.bat --arm64             # Windows (alternative)
 ```
 
 Output binaries are in `build/bin/` (native) or `output/` (ARM64).

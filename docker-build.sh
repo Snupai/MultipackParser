@@ -5,10 +5,11 @@
 set -e
 
 # Configuration
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 IMAGE_NAME="multipack-parser-arm64-builder"
 CONTAINER_NAME="multipack-builder"
-OUTPUT_DIR="output"
-DOCKERFILE="Dockerfile.arm64"
+OUTPUT_DIR="${SCRIPT_DIR}/output"
+DOCKERFILE="${SCRIPT_DIR}/Dockerfile.arm64"
 
 # Colors for output
 RED='\033[0;31m'
@@ -149,31 +150,8 @@ docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libxkbcommon-x11.so.0" "
 # Clean up container
 docker rm -f "${CONTAINER_NAME}"
 
-# Create run script
-cat > "${BUNDLE_DIR}/run.sh" << 'EOF'
-#!/bin/bash
-# MultipackParser ARM64 Startup Script
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# Set library paths
-export LD_LIBRARY_PATH="${SCRIPT_DIR}/lib:${LD_LIBRARY_PATH}"
-export QT_PLUGIN_PATH="${SCRIPT_DIR}/plugins"
-export QT_QPA_PLATFORM_PLUGIN_PATH="${SCRIPT_DIR}/plugins/platforms"
-
-# Qt environment for Raspberry Pi
-export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-xcb}"
-export QT_OPENGL="${QT_OPENGL:-software}"
-export QT_X11_NO_MITSHM=1
-export LIBGL_ALWAYS_SOFTWARE=1
-
-# Virtual keyboard support
-export QT_IM_MODULE="${QT_IM_MODULE:-qtvirtualkeyboard}"
-
-echo "Starting MultipackParser..."
-echo "Platform: ${QT_QPA_PLATFORM}"
-exec "${SCRIPT_DIR}/bin/multipack-parser" "$@"
-EOF
+# Create run script from template
+cp "${SCRIPT_DIR}/scripts/run_arm64.sh" "${BUNDLE_DIR}/run.sh"
 chmod +x "${BUNDLE_DIR}/run.sh"
 
 # Create qt.conf
