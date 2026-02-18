@@ -71,6 +71,7 @@ if [[ "${USE_BUILDX}" == "true" ]]; then
         --platform linux/arm64 \
         --file "${DOCKERFILE}" \
         --tag "${IMAGE_NAME}:latest" \
+        --build-arg CMAKE_BUILD_JOBS=2 \
         --load \
         --progress=plain \
         .
@@ -79,6 +80,7 @@ else
     docker build \
         --file "${DOCKERFILE}" \
         --tag "${IMAGE_NAME}:latest" \
+        --build-arg CMAKE_BUILD_JOBS=2 \
         --progress=plain \
         .
 fi
@@ -102,6 +104,9 @@ mkdir -p "${BUNDLE_DIR}/lib"
 mkdir -p "${BUNDLE_DIR}/plugins/platforms"
 mkdir -p "${BUNDLE_DIR}/plugins/sqldrivers"
 mkdir -p "${BUNDLE_DIR}/plugins/multimedia"
+mkdir -p "${BUNDLE_DIR}/plugins/platforminputcontexts"
+mkdir -p "${BUNDLE_DIR}/qml"
+mkdir -p "${BUNDLE_DIR}/data"
 
 # Copy the binary (Dockerfile WORKDIR is /app)
 echo "Copying binary..."
@@ -122,6 +127,15 @@ docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6DBus.so.6" "${BUND
 docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6XcbQpa.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
 docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6OpenGL.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
 docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6Concurrent.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6Qml.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6QmlModels.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6Quick.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6QuickControls2.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6QuickTemplates2.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6QuickLayouts.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6VirtualKeyboard.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6Svg.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/libQt6LabsFolderListModel.so.6" "${BUNDLE_DIR}/lib/" 2>/dev/null || true
 
 # Copy ICU and other Qt dependencies (required for libicui18n, etc.)
 # Ubuntu 22.04 has ICU 70; try common versions
@@ -153,6 +167,10 @@ docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/li
 docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqeglfs.so" "${BUNDLE_DIR}/plugins/platforms/" 2>/dev/null || true
 docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqoffscreen.so" "${BUNDLE_DIR}/plugins/platforms/" 2>/dev/null || true
 docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/qt6/plugins/sqldrivers/libqsqlite.so" "${BUNDLE_DIR}/plugins/sqldrivers/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/qt6/plugins/platforminputcontexts/libqtvirtualkeyboardplugin.so" "${BUNDLE_DIR}/plugins/platforminputcontexts/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/qt6/qml" "${BUNDLE_DIR}/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/share/qt6/qtvirtualkeyboard" "${BUNDLE_DIR}/data/" 2>/dev/null || true
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/qt6/qtvirtualkeyboard" "${BUNDLE_DIR}/data/" 2>/dev/null || true
 
 # Copy additional required libraries
 echo "Copying additional libraries..."
@@ -185,6 +203,8 @@ cat > "${BUNDLE_DIR}/bin/qt.conf" << 'EOF'
 Prefix = ..
 Plugins = plugins
 Libraries = lib
+Data = data
+Qml2Imports = qml
 EOF
 
 # Create systemd service file

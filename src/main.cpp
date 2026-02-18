@@ -15,11 +15,53 @@
 #include <QLoggingCategory>
 #include <QCommandLineParser>
 #include <QCommandLineOption>
+#include <QEvent>
+#include <QGuiApplication>
+#include <QInputMethod>
+#include <QLineEdit>
+#include <QTextEdit>
+#include <QPlainTextEdit>
+#include <QAbstractSpinBox>
 #include <cstring>
 
 #include "multipack/core/Application.h"
 #include "multipack/core/GlobalState.h"
 #include "multipack/config/ConfigDefaults.h"
+
+class VirtualKeyboardFocusFilter final : public QObject
+{
+public:
+    explicit VirtualKeyboardFocusFilter(QObject* parent = nullptr)
+        : QObject(parent)
+    {
+    }
+
+protected:
+    bool eventFilter(QObject* watched, QEvent* event) override
+    {
+        if (event && event->type() == QEvent::FocusIn) {
+            QWidget* widget = qobject_cast<QWidget*>(watched);
+            if (!widget) {
+                return QObject::eventFilter(watched, event);
+            }
+
+            const bool isTextInput =
+                qobject_cast<QLineEdit*>(widget) != nullptr ||
+                qobject_cast<QTextEdit*>(widget) != nullptr ||
+                qobject_cast<QPlainTextEdit*>(widget) != nullptr ||
+                qobject_cast<QAbstractSpinBox*>(widget) != nullptr;
+
+            if (isTextInput) {
+                widget->setAttribute(Qt::WA_InputMethodEnabled, true);
+                if (QInputMethod* inputMethod = QGuiApplication::inputMethod()) {
+                    inputMethod->show();
+                }
+            }
+        }
+
+        return QObject::eventFilter(watched, event);
+    }
+};
 
 /**
  * @brief Set environment variables for platform compatibility
@@ -31,7 +73,11 @@ void setupEnvironment()
     qputenv("QT_X11_NO_MITSHM", "1");
     qputenv("LIBGL_ALWAYS_SOFTWARE", "1");
     qputenv("QT_OPENGL", "software");
+    qputenv("QT_QUICK_BACKEND", "software");
+    qputenv("QSG_RHI_BACKEND", "software");
+    qputenv("QT_XCB_GL_INTEGRATION", "none");
     qputenv("QT_QPA_PLATFORM", "xcb");
+    qputenv("QT_VIRTUALKEYBOARD_DESKTOP_DISABLE", "0");
 #elif defined(Q_OS_MACOS)
     // macOS uses cocoa platform (default)
     // No special environment setup needed
@@ -130,6 +176,11 @@ int main(int argc, char* argv[])
 
     // Create application
     multipack::core::Application app(argc, argv);
+
+    // For QWidget apps on touch devices, explicitly show VK on focus.
+    if (qEnvironmentVariable("QT_IM_MODULE") == "qtvirtualkeyboard") {
+        app.installEventFilter(new VirtualKeyboardFocusFilter(&app));
+    }
 
     // Set application metadata
     app.setApplicationName(multipack::config::Defaults::APP_NAME);
