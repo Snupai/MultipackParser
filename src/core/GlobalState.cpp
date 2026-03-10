@@ -4,6 +4,7 @@
  */
 
 #include "multipack/core/GlobalState.h"
+#include "multipack/database/DatabaseManager.h"
 #include "multipack/system/FileOperations.h"
 #include <QMutexLocker>
 #include <QDebug>
@@ -305,6 +306,18 @@ void GlobalState::setPaketQuer(bool value)
 {
     QMutexLocker locker(&m_mutex);
     m_paketQuer = value;
+}
+
+QVector<double> GlobalState::centerOfGravity() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_centerOfGravity;
+}
+
+void GlobalState::setCenterOfGravity(const QVector<double>& cog)
+{
+    QMutexLocker locker(&m_mutex);
+    m_centerOfGravity = cog;
 }
 
 
@@ -773,6 +786,56 @@ void GlobalState::loadFromRobFileData(const system::RobFileData& data)
     emit positionsChanged();
 
     qDebug() << "GlobalState::loadFromRobFileData - complete";
+}
+
+void GlobalState::applyPaletteData(const database::PaletteData& data)
+{
+    qDebug() << "GlobalState::applyPaletteData -" << data.metadata.fileName;
+
+    QVector<QVector<int>> positions;
+    positions.reserve(data.packagePositions.size());
+    for (const auto& pos : data.packagePositions) {
+        positions.append({
+            pos.xp, pos.yp, pos.ap,
+            pos.xd, pos.yd, pos.ad,
+            pos.nop, pos.xvec, pos.yvec
+        });
+    }
+
+    {
+        QMutexLocker locker(&m_mutex);
+        m_rawData = data.rawData;
+        m_paletteLength = data.paletteDimensions.length;
+        m_paletteWidth = data.paletteDimensions.width;
+        m_paletteHeight = data.paletteDimensions.height;
+        m_packageLength = data.packageDimensions.length;
+        m_packageWidth = data.packageDimensions.width;
+        m_packageHeight = data.packageDimensions.height;
+        m_packageGap = data.packageDimensions.gap;
+        m_packageWeight = data.packageDimensions.weight;
+        m_einzelpaketLaengs = data.packageDimensions.einzelpaketLaengs;
+        m_layerTypeCount = data.metadata.lageArten;
+        m_numberOfLayers = data.metadata.anzLagen;
+        m_layerAssignments = data.layerAssignments;
+        m_intermediateLayers = data.intermediaryLayers;
+        m_packagesPerLayerType = data.packagesPerLayerType;
+        m_packagePositions = positions;
+        m_totalPackages = data.metadata.anzahlPakete;
+        m_currentFileName = data.metadata.fileName;
+        m_currentFileTimestamp = data.metadata.fileTimestamp;
+        m_currentFilePath.clear();
+        m_paketQuer = (data.metadata.paketQuer != 0);
+        m_centerOfGravity = data.metadata.centerOfGravity;
+        m_currentLayer = 1;
+        m_startLayer = 1;
+    }
+
+    emit fileChanged(data.metadata.fileName);
+    emit paletteDataChanged();
+    emit packageDataChanged();
+    emit layerDataChanged();
+    emit positionsChanged();
+    emit additionalDataChanged();
 }
 
 void GlobalState::clear()

@@ -41,6 +41,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QProcess>
 #include <QSignalBlocker>
 #include <QThread>
 
@@ -87,6 +88,11 @@ MainWindow::MainWindow(QWidget* parent)
 
     // Start on main menu
     ui->stackedWidget->setCurrentIndex(PAGE_MAIN_MENU);
+    if (ui->lineEditCommand) {
+        ui->lineEditCommand->setText("> ");
+        ui->lineEditCommand->setPlaceholderText("command");
+    }
+    updateEnabledStates();
 
     // Set window properties
     setWindowTitle("Palletierer");
@@ -130,6 +136,9 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::setSettingsManager(config::SettingsManager* settings)
 {
     m_settings = settings;
+    if (m_usbKeyCheck) {
+        m_usbKeyCheck->setSettingsManager(settings);
+    }
     loadSettings();
     maybeStartUr20Ui();
     maybeStartRobotStatusMonitor();
@@ -226,7 +235,7 @@ void MainWindow::setupConnections()
     // Settings actions
     connect(ui->pushButtonSpeichern, &QPushButton::clicked, this, &MainWindow::onSaveSettingsClicked);
     connect(ui->pushButtonSpeichern_2, &QPushButton::clicked, this, &MainWindow::onSaveSettingsClicked);
-    connect(ui->pushButtonSpeichern_3, &QPushButton::clicked, this, &MainWindow::onSaveSettingsClicked);
+    connect(ui->pushButtonSpeichern_3, &QPushButton::clicked, this, &MainWindow::onSaveOpenFileClicked);
     connect(ui->pushButtonSpeichern_4, &QPushButton::clicked, this, &MainWindow::onSaveSettingsClicked);
     connect(ui->comboBoxChooseURModel, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::onUrModelChanged);
     connect(ui->pushButtonExitApp, &QPushButton::clicked, this, &MainWindow::onExitAppClicked);
@@ -287,8 +296,12 @@ void MainWindow::loadSettings()
                                ui->scannerWarningSoundPathEdit->text());
     }
 
+    const QString robotIp = m_settings->robotIp();
+    if (m_state) {
+        m_state->setRobotIp(robotIp);
+    }
+
     if (m_statusMonitor) {
-        QString robotIp = m_settings->robotIp();
         QMetaObject::invokeMethod(m_statusMonitor, [this, robotIp]() {
             m_statusMonitor->setRobotIp(robotIp);
         }, Qt::QueuedConnection);
@@ -315,6 +328,35 @@ void MainWindow::loadSettings()
     updateVolumeIcon();
 
     qDebug() << "MainWindow - settings loaded";
+}
+
+bool MainWindow::ensureRobotConnected()
+{
+    if (!m_robot || !m_settings) {
+        showMessage("Roboter nicht verfuegbar");
+        return false;
+    }
+
+    if (m_robot->isConnected()) {
+        return true;
+    }
+
+    const QString robotIp = m_settings->robotIp();
+    if (robotIp.isEmpty()) {
+        showMessage("Keine Roboter-IP konfiguriert");
+        return false;
+    }
+
+    if (m_state) {
+        m_state->setRobotIp(robotIp);
+    }
+
+    if (!m_robot->connect(robotIp)) {
+        showMessage("Verbindung zum Roboter fehlgeschlagen");
+        return false;
+    }
+
+    return true;
 }
 
 void MainWindow::maybeStartUr20Ui()
@@ -866,7 +908,11 @@ void MainWindow::onLoadPaletteClicked()
     if (m_database) {
         auto data = m_database->loadPaletteData(fileName);
         if (data.has_value()) {
-            m_currentPaletteFile = fileName;
+            if (m_state) {
+                m_state->applyPaletteData(*data);
+            }
+
+            m_currentPaletteFile = data->metadata.fileName;
             m_paletteLoaded = true;
             m_packageLength = data->packageDimensions.length;
             m_packageWidth = data->packageDimensions.width;
@@ -890,6 +936,12 @@ void MainWindow::onLoadPaletteClicked()
                 m_weightEstimated = false;
             }
 
+            if (m_state) {
+                m_state->setPackageWeight(weight);
+                m_state->setMassePaket(weight);
+                m_state->setStartLayer(ui->EingabeStartlage->value());
+            }
+
             ui->EingabeKartonGewicht->setText(QString::number(weight, 'f', 2));
             m_lastConfirmedHeight = data->packageDimensions.height;
             m_lastConfirmedWeight = weight;
@@ -897,15 +949,15 @@ void MainWindow::onLoadPaletteClicked()
             ui->checkBoxEinzelpaket->setChecked(data->packageDimensions.einzelpaketLaengs);
 
             ui->LabelPalletenplanInfo->setText(QString("Geladen: %1 - %2 Lagen, %3 Pakete")
-                .arg(fileName)
+                .arg(m_currentPaletteFile)
                 .arg(data->metadata.anzLagen)
                 .arg(data->metadata.anzahlPakete));
 
             updateEnabledStates();
             updateVisualizationFromPaletteData(*data);
-            emit paletteLoadRequested(fileName);
+            emit paletteLoadRequested(m_currentPaletteFile);
 
-            qDebug() << "Palette loaded successfully:" << fileName;
+            qDebug() << "Palette loaded successfully:" << m_currentPaletteFile;
         } else {
             showMessage("Palletierplan nicht gefunden: " + fileName);
         }
@@ -918,9 +970,6 @@ void MainWindow::onStartServerClicked()
         showMessage("Bitte zuerst Palletierplan laden");
         return;
     }
-
-    m_serverRunning = true;
-    updateEnabledStates();
 
     emit serverStartRequested();
     qDebug() << "Server start requested";
@@ -1060,7 +1109,7 @@ void MainWindow::onStartlageChanged(int value)
 void MainWindow::onRobotStartClicked()
 {
     qDebug() << "Robot start clicked";
-    if (m_robot && m_robot->isConnected()) {
+    if (ensureRobotConnected()) {
         m_robot->play();
     }
 }
@@ -1068,7 +1117,7 @@ void MainWindow::onRobotStartClicked()
 void MainWindow::onRobotStopClicked()
 {
     qDebug() << "Robot stop clicked";
-    if (m_robot && m_robot->isConnected()) {
+    if (ensureRobotConnected()) {
         m_robot->stop();
     }
 }
@@ -1076,16 +1125,13 @@ void MainWindow::onRobotStopClicked()
 void MainWindow::onRobotPauseClicked()
 {
     qDebug() << "Robot pause clicked";
-    if (m_robot && m_robot->isConnected()) {
+    if (ensureRobotConnected()) {
         m_robot->pause();
     }
 }
 
 void MainWindow::onStopRpcServerClicked()
 {
-    m_serverRunning = false;
-    updateEnabledStates();
-
     emit serverStopRequested();
     qDebug() << "Server stop requested";
 }
@@ -1178,6 +1224,8 @@ void MainWindow::onSaveSettingsClicked()
         return;
     }
 
+    const QString previousRobotIp = m_settings->robotIp();
+
     // Save all settings to SettingsManager
     m_settings->setValue(config::Keys::INFO_UR_MODEL, ui->comboBoxChooseURModel->currentText());
     m_settings->setValue(config::Keys::INFO_UR_SERIAL_NUMBER, ui->lineEditURSerialNo->text());
@@ -1191,6 +1239,7 @@ void MainWindow::onSaveSettingsClicked()
     m_settings->setValue(config::Keys::ADMIN_ALARM_SOUND_FILE, ui->audioPathEdit->text());
     m_settings->setValue(config::Keys::ADMIN_SCANNER_WARNING_SOUND_FILE,
                          ui->scannerWarningSoundPathEdit->text());
+    m_settings->setRobotIp(previousRobotIp);
 
     // Update password if changed (not empty)
     QString newPassword = ui->passwordEdit->text();
@@ -1220,6 +1269,8 @@ void MainWindow::onSaveSettingsClicked()
         m_audio->setCustomFile(audio::AudioType::ScannerWarning,
                                ui->scannerWarningSoundPathEdit->text());
     }
+
+    loadSettings();
 }
 
 void MainWindow::onUrModelChanged(int index)
@@ -1328,7 +1379,7 @@ void MainWindow::onSendCommandClicked()
     QString command = ui->comboBoxCommandRemoteControl->currentText();
     qDebug() << "Send command:" << command;
 
-    if (m_robot && m_robot->isConnected()) {
+    if (ensureRobotConnected()) {
         QString response = m_robot->sendCommand(command);
         appendConsoleLog(">> " + command);
         appendConsoleLog("<< " + response);
@@ -1674,26 +1725,112 @@ void MainWindow::onOpenFileClicked()
     }
 }
 
+void MainWindow::onSaveOpenFileClicked()
+{
+    QString path = ui->lineEditFilePath->text().trimmed();
+    if (path.isEmpty()) {
+        showMessage("Bitte Datei auswaehlen");
+        return;
+    }
+
+    if (QFile::exists(path)) {
+        const auto overwrite = QMessageBox::question(
+            this,
+            tr("Datei ueberschreiben?"),
+            tr("Die Datei %1 existiert bereits. Soll sie ueberschrieben werden?").arg(path),
+            QMessageBox::Yes | QMessageBox::No
+        );
+        if (overwrite != QMessageBox::Yes) {
+            return;
+        }
+    }
+
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
+        showMessage("Datei konnte nicht gespeichert werden");
+        return;
+    }
+
+    const QByteArray data = ui->textEditFile->toPlainText().toUtf8();
+    if (file.write(data) != data.size()) {
+        showMessage("Datei konnte nicht vollstaendig gespeichert werden");
+        return;
+    }
+
+    file.close();
+    showMessage("Datei gespeichert");
+}
+
 void MainWindow::onConsoleCommandEntered()
 {
-    QString command = ui->lineEditCommand->text().trimmed();
-    if (command.isEmpty()) return;
+    QString enteredText = ui->lineEditCommand->text();
+    if (enteredText.trimmed().isEmpty()) {
+        return;
+    }
 
+    QString command = enteredText.trimmed();
     appendConsoleLog("$ " + command);
-    ui->lineEditCommand->clear();
+    ui->lineEditCommand->setText("> ");
 
-    // Process console command
-    if (command == "clear") {
+    QString actualCommand = command;
+    if (actualCommand == ">") {
+        return;
+    }
+    if (actualCommand.startsWith('>')) {
+        actualCommand = actualCommand.mid(1).trimmed();
+    }
+
+    if (actualCommand.isEmpty()) {
+        return;
+    }
+
+    if (actualCommand.compare("clear", Qt::CaseInsensitive) == 0) {
         ui->textEditConsole->clear();
-    } else if (command == "help") {
-        appendConsoleLog("Available commands: clear, help, status, version");
-    } else if (command == "status") {
-        appendConsoleLog("Server: " + QString(m_serverRunning ? "running" : "stopped"));
-        appendConsoleLog("Palette: " + QString(m_paletteLoaded ? m_currentPaletteFile : "none"));
-    } else if (command == "version") {
-        appendConsoleLog(QString("MultipackParser C++ v%1").arg(config::Defaults::VERSION));
-    } else {
-        appendConsoleLog("Unknown command: " + command);
+        return;
+    }
+
+    if (m_consoleProcess) {
+        m_consoleProcess->disconnect(this);
+        m_consoleProcess->kill();
+        m_consoleProcess->deleteLater();
+        m_consoleProcess = nullptr;
+    }
+
+    m_consoleProcess = new QProcess(this);
+    m_consoleProcess->setProcessChannelMode(QProcess::MergedChannels);
+    connect(m_consoleProcess, &QProcess::readyRead, this, [this]() {
+        if (!m_consoleProcess) {
+            return;
+        }
+        const QString output = QString::fromUtf8(m_consoleProcess->readAll());
+        if (!output.isEmpty()) {
+            appendConsoleLog(output.trimmed());
+        }
+    });
+    connect(m_consoleProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
+            [this](int exitCode, QProcess::ExitStatus exitStatus) {
+        if (exitStatus != QProcess::NormalExit) {
+            appendConsoleLog("Command terminated unexpectedly");
+        } else if (exitCode != 0) {
+            appendConsoleLog(QString("Command exited with code %1").arg(exitCode));
+        }
+
+        if (m_consoleProcess) {
+            m_consoleProcess->deleteLater();
+            m_consoleProcess = nullptr;
+        }
+    });
+
+#if defined(Q_OS_WIN)
+    m_consoleProcess->start("cmd.exe", {"/C", actualCommand});
+#else
+    m_consoleProcess->start("sh", {"-c", actualCommand});
+#endif
+
+    if (!m_consoleProcess->waitForStarted(1000)) {
+        appendConsoleLog("Failed to start command");
+        m_consoleProcess->deleteLater();
+        m_consoleProcess = nullptr;
     }
 }
 
@@ -1770,6 +1907,9 @@ void MainWindow::updateRobotStatus()
     if (!m_robot) return;
 
     bool connected = m_robot->isConnected();
+    if (m_state) {
+        m_state->setRobotConnected(connected);
+    }
 
     // Update UI based on robot status
     if (connected) {
@@ -1787,6 +1927,24 @@ void MainWindow::updatePaletteInfo()
 void MainWindow::showMessage(const QString& message)
 {
     message::StatusManager::instance().showTemporaryStatus(message, message::StatusType::Normal, 3000);
+}
+
+void MainWindow::setServerRunning(bool running, const QString& error)
+{
+    const bool wasRunning = m_serverRunning;
+    m_serverRunning = running;
+    updateEnabledStates();
+
+    if (!error.isEmpty()) {
+        showMessage("XML-RPC Fehler: " + error);
+        return;
+    }
+
+    if (running && !wasRunning) {
+        showMessage("XMLRPC Server gestartet");
+    } else if (!running && wasRunning) {
+        showMessage("XMLRPC Server gestoppt");
+    }
 }
 
 void MainWindow::onStatusChanged(const QString& message, message::StatusType type)

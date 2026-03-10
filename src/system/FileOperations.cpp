@@ -16,6 +16,9 @@
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <QStringConverter>
 #endif
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 
 namespace multipack {
 namespace system {
@@ -423,13 +426,11 @@ bool isOnUsbDrive(const QString& path)
     QString rootPath = storage.rootPath();
 
 #ifdef Q_OS_WIN
-    // On Windows, check if it's a removable drive type
-    if (storage.deviceType() == QStorageInfo::RemovableDrive) {
+    const std::wstring rootPathW = rootPath.toStdWString();
+    if (GetDriveTypeW(rootPathW.c_str()) == DRIVE_REMOVABLE) {
         return true;
     }
-    // Also check if it's not a fixed system drive
-    // USB drives typically are not mounted at boot
-    return storage.isReady() && storage.isRoot();
+    return false;
 #else
     // On Linux, check common USB mount points
     // Also verify it's actually a removable device
@@ -454,14 +455,8 @@ QStringList getUsbMountPoints()
         QString rootPath = storage.rootPath();
 
 #ifdef Q_OS_WIN
-        // On Windows, filter for removable drives specifically
-        if (storage.deviceType() == QStorageInfo::RemovableDrive) {
-            mountPoints.append(rootPath);
-        }
-        // Also include drives that are not system drives
-        if (rootPath.length() == 3 && rootPath[1] == ':'
-            && rootPath[0] != 'C' && rootPath[0] != 'c') {
-            // Likely a USB drive (not C: system drive)
+        const std::wstring rootPathW = rootPath.toStdWString();
+        if (GetDriveTypeW(rootPathW.c_str()) == DRIVE_REMOVABLE) {
             mountPoints.append(rootPath);
         }
 #else

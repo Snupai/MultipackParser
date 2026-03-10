@@ -11,6 +11,7 @@
 #include "multipack/audio/AudioManager.h"
 #include "multipack/system/UsbMonitor.h"
 #include "multipack/system/AutoUpdater.h"
+#include "multipack/core/GlobalState.h"
 
 #include <QDebug>
 #include <QDir>
@@ -245,6 +246,9 @@ bool AppInitializer::initializeXmlRpcServer()
     qDebug() << "AppInitializer - initializing XML-RPC server";
 
     m_xmlRpcServer = std::make_unique<network::XmlRpcServer>();
+    m_xmlRpcServer->setDatabaseManager(m_databaseManager.get());
+    m_xmlRpcServer->setGlobalState(&GlobalState::instance());
+    m_xmlRpcServer->registerStandardMethods();
     // Server will be started when user clicks "Start Server" in UI
     return true;
 }
@@ -255,14 +259,19 @@ bool AppInitializer::initializeRobotController()
 
     m_robotController = std::make_unique<robot::RobotController>();
 
-    // Try to connect to robot at default IP
-    // Connection is optional - robot may not be available during development
-    QString robotIp = "192.168.0.1";
+    QString robotIp = GlobalState::instance().robotIp();
     if (m_settingsManager) {
-        // Could get IP from settings if configured
+        robotIp = m_settingsManager->robotIp();
     }
 
-    qDebug() << "Robot controller initialized (not connected yet)";
+    GlobalState::instance().setRobotIp(robotIp);
+
+    if (!robotIp.isEmpty() && !m_robotController->connect(robotIp)) {
+        qWarning() << "Initial robot connection failed for" << robotIp;
+        return false;
+    }
+
+    qDebug() << "Robot controller initialized for" << robotIp;
     return true;
 }
 

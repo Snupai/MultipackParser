@@ -10,6 +10,7 @@
 #include "multipack/ui/SplashScreen.h"
 #include "multipack/config/SettingsManager.h"
 #include "multipack/database/DatabaseManager.h"
+#include "multipack/network/XmlRpcServer.h"
 #include "multipack/robot/RobotController.h"
 
 #include <QDebug>
@@ -106,6 +107,10 @@ bool Application::initialize()
             m_mainWindow.get(), &ui::MainWindow::updateRobotStatus);
         QObject::connect(m_initializer->robotController(), &robot::RobotController::disconnected,
             m_mainWindow.get(), &ui::MainWindow::updateRobotStatus);
+        QObject::connect(m_initializer->robotController(), &robot::RobotController::connected,
+            &GlobalState::instance(), []() { GlobalState::instance().setRobotConnected(true); });
+        QObject::connect(m_initializer->robotController(), &robot::RobotController::disconnected,
+            &GlobalState::instance(), []() { GlobalState::instance().setRobotConnected(false); });
     }
 
     // Connect to global state
@@ -117,6 +122,27 @@ bool Application::initialize()
 
     if (m_initializer->autoUpdater()) {
         m_mainWindow->setAutoUpdater(m_initializer->autoUpdater());
+    }
+
+    if (m_initializer->xmlRpcServer()) {
+        auto* server = m_initializer->xmlRpcServer();
+        QObject::connect(m_mainWindow.get(), &ui::MainWindow::serverStartRequested,
+            server, [server]() {
+                const bool started = server->start(network::XmlRpcServer::DEFAULT_PORT);
+                Q_UNUSED(started);
+            });
+        QObject::connect(m_mainWindow.get(), &ui::MainWindow::serverStopRequested,
+            server, &network::XmlRpcServer::stop);
+        QObject::connect(server, &network::XmlRpcServer::started,
+            m_mainWindow.get(), [this]() { m_mainWindow->setServerRunning(true); });
+        QObject::connect(server, &network::XmlRpcServer::stopped,
+            m_mainWindow.get(), [this]() { m_mainWindow->setServerRunning(false); });
+        QObject::connect(server, &network::XmlRpcServer::error,
+            m_mainWindow.get(), [this](const QString& error) { m_mainWindow->setServerRunning(false, error); });
+
+        if (server->isRunning()) {
+            m_mainWindow->setServerRunning(true);
+        }
     }
 
     splash.finish(m_mainWindow.get());

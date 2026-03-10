@@ -14,6 +14,7 @@ QT_BEGIN_NAMESPACE
 class QPushButton;
 class QLabel;
 class QThread;
+class QProcess;
 QT_END_NAMESPACE
 
 // Forward declaration of generated UI class
@@ -85,6 +86,7 @@ public slots:
     void updatePaletteInfo();
     void showMessage(const QString& message);
     void appendConsoleLog(const QString& text);
+    void setServerRunning(bool running, const QString& error = QString());
 
 private slots:
     // Navigation
@@ -137,6 +139,7 @@ private slots:
     void onTestScannerAudioClicked();
     void onImportRobFileClicked();
     void onOpenFileClicked();
+    void onSaveOpenFileClicked();
     void onConsoleCommandEntered();
     void onScanner1OverwriteChanged(int state);
     void onScanner2OverwriteChanged(int state);
@@ -177,6 +180,7 @@ private:
     void updateZwischenlagePopup();
     void updatePaletteClearIndicators();
     void onPaletteClearClicked(int paletteNumber);
+    bool ensureRobotConnected();
 
     // Generated UI
     Ui::Form* ui = nullptr;
@@ -193,6 +197,7 @@ private:
     std::unique_ptr<DimensionInputHandler> m_dimensionHandler;
     system::UsbKeyCheck* m_usbKeyCheck = nullptr;
     system::AutoUpdater* m_autoUpdater = nullptr;
+    QProcess* m_consoleProcess = nullptr;
 
     // Page indices (matching stackedWidget pages)
     enum PageIndex {

@@ -14,6 +14,9 @@
 
 // Forward declaration
 namespace multipack {
+namespace database {
+struct PaletteData;
+}
 namespace system {
     struct RobFileData;
     struct PackagePosition;
@@ -326,6 +329,9 @@ public:
 
     /** @brief Load data from parsed RobFileData */
     void loadFromRobFileData(const system::RobFileData& data);
+
+    /** @brief Load data from database palette structure */
+    void applyPaletteData(const database::PaletteData& data);
 
     /** @brief Clear all state to defaults */
     void clear();

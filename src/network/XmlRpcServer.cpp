@@ -145,11 +145,27 @@ void XmlRpcServer::registerStandardMethods()
     registerMethod("UR_ReadDataFromUsbStick", [this](const QVector<RpcValue>& params) {
         Q_UNUSED(params);
         qDebug() << "RPC: UR_ReadDataFromUsbStick called";
-        // Data loading is handled elsewhere - return success
-        if (m_state && m_state->hasLoadedData()) {
-            return RpcValue(0);  // Success
+
+        if (!m_state || !m_database) {
+            return RpcValue(1);
         }
-        return RpcValue(1);  // Error
+
+        const QString fileName = m_state->currentFileName();
+        if (fileName.isEmpty()) {
+            qWarning() << "UR_ReadDataFromUsbStick: no file selected";
+            return RpcValue(1);
+        }
+
+        m_state->clear();
+
+        auto data = m_database->loadPaletteData(fileName);
+        if (!data.has_value()) {
+            qWarning() << "UR_ReadDataFromUsbStick: palette not found:" << fileName;
+            return RpcValue(1);
+        }
+
+        m_state->applyPaletteData(*data);
+        return RpcValue(0);
     });
 
     // Palette dimensions [length, width, height]
@@ -935,8 +951,7 @@ RpcValue XmlRpcServer::rpcGetKlemmungAktiv(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
     qDebug() << "RPC: getKlemmungAktiv called";
-    // Clamping is always active in this implementation
-    return RpcValue(true);
+    return m_state ? RpcValue(m_state->klemmungAktiv()) : RpcValue(false);
 }
 
 RpcValue XmlRpcServer::rpcGetVerschiebungX(const QVector<RpcValue>& params)
