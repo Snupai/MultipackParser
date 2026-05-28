@@ -154,10 +154,11 @@ int main(int argc, char* argv[])
     qputenv("MULTIPACK_VIRTUAL_KEYBOARD", vkEnabled ? "1" : "0");
     qunsetenv("QT_IM_MODULE");
 
-    // HMI is operated in Germany. Keep the process locale stable for number
-    // formatting and any locale-aware Qt widgets.
+    // HMI is operated in Germany. Prefer German when the process has no usable
+    // locale, but keep C.UTF-8 intact so packaged launchers can safely fall back
+    // on systems where de_DE.UTF-8 has not been generated.
     if (qEnvironmentVariableIsEmpty("LANG") || qEnvironmentVariable("LANG") == "C"
-        || qEnvironmentVariable("LANG") == "C.UTF-8" || qEnvironmentVariable("LANG") == "POSIX") {
+        || qEnvironmentVariable("LANG") == "POSIX") {
         qputenv("LANG", "de_DE.UTF-8");
     }
     if (qEnvironmentVariable("LC_ALL") == "C" || qEnvironmentVariable("LC_ALL") == "C.UTF-8"
