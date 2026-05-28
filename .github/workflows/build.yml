@@ -115,8 +115,10 @@ jobs:
           Data = data
           EOF
 
-          # Package updater payload (kept for AutoUpdater compatibility)
-          tar -czvf output/multipack-parser-arm64.tar.gz -C output/multipack-parser-arm64 .
+          # Package deployable bundle with the top-level directory preserved so
+          # fresh Raspberry Pi installs can extract it and run
+          # ./multipack-parser-arm64/run.sh as documented.
+          tar -czvf output/multipack-parser-arm64.tar.gz -C output multipack-parser-arm64
 
           # Build single-file portable launcher from the same tested run.sh bundle.
           bash scripts/create_portable_single_file.sh \

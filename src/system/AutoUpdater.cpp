@@ -22,6 +22,7 @@
 #include <QNetworkRequest>
 #include <QProcess>
 #include <QRegularExpression>
+#include <QStringList>
 #include <QTimer>
 
 #ifdef HAVE_OPENSSL
@@ -1048,10 +1049,51 @@ bool AutoUpdater::installUpdate(const QString& filePath)
         }
     }
 
+    QProcess listProcess;
+    listProcess.setProgram("tar");
+    listProcess.setArguments({"-tzf", filePath});
+    listProcess.start();
+    listProcess.waitForFinished();
+
+    QStringList extractArguments = {"-xzf", filePath, "-C", installDir};
+    if (listProcess.exitStatus() == QProcess::NormalExit && listProcess.exitCode() == 0) {
+        const QString archiveListing = QString::fromUtf8(listProcess.readAllStandardOutput());
+        const QStringList entries = archiveListing.split('\n', Qt::SkipEmptyParts);
+        bool hasEntries = false;
+        bool hasBundleRoot = false;
+        bool allEntriesUnderBundleRoot = true;
+        for (const QString& entry : entries) {
+            const QString cleanEntry = entry.trimmed();
+            if (cleanEntry.isEmpty()) {
+                continue;
+            }
+
+            hasEntries = true;
+            if (cleanEntry == "multipack-parser-arm64/" || cleanEntry == "multipack-parser-arm64") {
+                hasBundleRoot = true;
+                continue;
+            }
+            if (cleanEntry.startsWith("multipack-parser-arm64/")) {
+                hasBundleRoot = true;
+                continue;
+            }
+
+            allEntriesUnderBundleRoot = false;
+            break;
+        }
+
+        if (hasEntries && hasBundleRoot && allEntriesUnderBundleRoot) {
+            extractArguments << "--strip-components=1";
+        }
+    } else {
+        qWarning() << "AutoUpdater: Failed to inspect update archive before extraction"
+                   << listProcess.readAllStandardError();
+    }
+
     QProcess extractProcess;
     extractProcess.setWorkingDirectory(installDir);
     extractProcess.setProgram("tar");
-    extractProcess.setArguments({"-xzf", filePath, "-C", installDir});
+    extractProcess.setArguments(extractArguments);
 
     qDebug() << "AutoUpdater: Extracting update" << filePath;
 
