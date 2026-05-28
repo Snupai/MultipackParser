@@ -1052,7 +1052,7 @@ void MainWindow::loadRobFileList()
 void MainWindow::updateEnabledStates()
 {
     bool paletteLoaded = m_paletteLoaded;
-    bool canStartServer = paletteLoaded && !m_serverRunning && m_xmlRpcServer != nullptr;
+    bool canStartServer = !m_serverRunning && m_xmlRpcServer != nullptr;
     QString startServerText = m_serverRunning ? "Server laeuft..." : "Server starten";
 
     // Enable/disable controls based on palette loaded state
@@ -1212,11 +1212,6 @@ void MainWindow::onLoadPaletteClicked()
 
 void MainWindow::onStartServerClicked()
 {
-    if (!m_paletteLoaded) {
-        showMessage("Bitte zuerst Palletierplan laden");
-        return;
-    }
-
     if (!m_xmlRpcServer) {
         showMessage("XML-RPC-Server nicht verfuegbar");
         return;

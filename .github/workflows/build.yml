@@ -116,7 +116,7 @@ jobs:
           EOF
 
           # Package updater payload (kept for AutoUpdater compatibility)
-          tar -czvf output/multipack-parser-arm64.tar.gz -C output multipack-parser-arm64
+          tar -czvf output/multipack-parser-arm64.tar.gz -C output/multipack-parser-arm64 .
 
           # Build single-file portable launcher from the same tested run.sh bundle.
           bash scripts/create_portable_single_file.sh \

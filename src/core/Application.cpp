@@ -136,8 +136,14 @@ bool Application::initialize()
     if (m_initializer->xmlRpcServer()) {
         auto* server = m_initializer->xmlRpcServer();
         QObject::connect(m_mainWindow.get(), &ui::MainWindow::serverStartRequested,
-            server, [server]() {
-                const bool started = server->start(network::XmlRpcServer::DEFAULT_PORT);
+            server, [this, server]() {
+                if (server->isRunning()) {
+                    return;
+                }
+                const int port = m_initializer && m_initializer->settingsManager()
+                    ? m_initializer->settingsManager()->xmlRpcPort()
+                    : network::XmlRpcServer::DEFAULT_PORT;
+                const bool started = server->start(port);
                 Q_UNUSED(started);
             });
         QObject::connect(m_mainWindow.get(), &ui::MainWindow::serverStopRequested,

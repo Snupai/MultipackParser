@@ -91,6 +91,7 @@ if [[ -z "$PAYLOAD_LINE" ]]; then
 fi
 
 tail -n +"$PAYLOAD_LINE" "$SELF" | tar -xzf - -C "$WORK_DIR"
+export MULTIPACK_PORTABLE_RUN=1
 exec "$WORK_DIR/ENTRYPOINT_PLACEHOLDER" "$@"
 
 __PORTABLE_PAYLOAD_BELOW__

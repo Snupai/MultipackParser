@@ -70,6 +70,13 @@ struct RpcValue {
         }
         return v;
     }
+
+    static RpcValue fromStruct(const QMap<QString, RpcValue>& values) {
+        RpcValue v;
+        v.type = Struct;
+        v.structValue = values;
+        return v;
+    }
 };
 
 /**
@@ -174,6 +181,7 @@ private:
      * @brief Build XML-RPC response
      */
     QByteArray buildResponse(const RpcValue& result);
+    QString buildValueXml(const RpcValue& value);
 
     /**
      * @brief Build fault response
@@ -189,6 +197,8 @@ private:
      * @brief Call RPC method
      */
     RpcValue callMethod(const QString& name, const QVector<RpcValue>& params);
+    bool isReady() const;
+    bool isReadinessExemptMethod(const QString& name) const;
 
     // Standard RPC method implementations
     RpcValue rpcGetPalettenDaten(const QVector<RpcValue>& params);

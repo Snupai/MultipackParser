@@ -38,6 +38,16 @@ target_link_libraries(test_mainwindow_integration
 )
 add_test(NAME test_mainwindow_integration COMMAND $<TARGET_FILE:test_mainwindow_integration>)
 
+add_executable(test_application_startup
+    test_application_startup.cpp
+)
+target_link_libraries(test_application_startup
+    PRIVATE
+        multipack-lib
+        Qt6::Test
+)
+add_test(NAME test_application_startup COMMAND $<TARGET_FILE:test_application_startup>)
+
 add_executable(test_logging_config
     test_logging_config.cpp
 )
@@ -55,6 +65,7 @@ if(NOT WIN32)
         test_xmlrpcserver
         test_usbmonitor
         test_mainwindow_integration
+        test_application_startup
         test_logging_config
         PROPERTIES
             ENVIRONMENT "${TEST_QT_ENV}"

@@ -13,6 +13,7 @@
 #include <QDebug>
 #include <QLoggingCategory>
 #include <QDateTime>
+#include <QMap>
 
 namespace multipack {
 namespace network {
@@ -87,14 +88,20 @@ bool XmlRpcServer::start(int port)
     m_port = port;
 
     if (!m_server->listen(QHostAddress::Any, port)) {
-        qCCritical(serverLog) << "XmlRpcServer failed to start:" << m_server->errorString();
+        qCCritical(serverLog).noquote()
+            << QString("XML-RPC failed to listen on 0.0.0.0:%1: %2 (socket error %3)")
+                   .arg(port)
+                   .arg(m_server->errorString())
+                   .arg(static_cast<int>(m_server->serverError()));
         emit error(m_server->errorString());
         return false;
     }
 
     m_port = static_cast<int>(m_server->serverPort());
     m_running = true;
-    qCDebug(serverLog) << "XmlRpcServer started on port" << m_port;
+    qCInfo(serverLog).noquote()
+        << QString("XML-RPC listening on 0.0.0.0:%1; robot should use http://192.168.0.10:%1/RPC2")
+               .arg(m_port);
     emit started();
     return true;
 }
@@ -170,6 +177,21 @@ void XmlRpcServer::registerStandardMethods()
 
     // Register all standard methods using lambdas that call member functions
     // Use Python-style names (UR_*) for compatibility with robot URscript
+
+    registerMethod("get_status", [this](const QVector<RpcValue>& params) {
+        Q_UNUSED(params);
+        const bool ready = isReady();
+        return RpcValue::fromStruct({
+            {QStringLiteral("ready"), RpcValue(ready)},
+            {QStringLiteral("file"), RpcValue(m_state ? m_state->currentFileName() : QString())},
+            {QStringLiteral("message"), RpcValue(ready
+                ? QStringLiteral("ready")
+                : QStringLiteral("XML-RPC listening; palette data not ready"))}
+        });
+    });
+    registerMethod("UR_GetStatus", [this](const QVector<RpcValue>& params) {
+        return callMethod(QStringLiteral("get_status"), params);
+    });
 
     // Set filename - robot calls this to specify which palette to load
     registerMethod("UR_SetFileName", [this](const QVector<RpcValue>& params) {
@@ -629,6 +651,16 @@ void XmlRpcServer::processHttpRequest(QTcpSocket* socket, const QByteArray& requ
     qCDebug(serverLog) << "RPC call:" << methodName << "with" << params.size() << "params";
     emit methodCalled(methodName, clientIp);
 
+    if (m_state && !isReady() && !isReadinessExemptMethod(methodName)) {
+        qCWarning(serverLog) << "RPC rejected before ready:" << methodName;
+        const QByteArray response = buildFaultResponse(
+            503,
+            "Application not ready: load a palette first. Poll get_status until ready is true.");
+        socket->write(buildHttpResponse(response));
+        socket->flush();
+        return;
+    }
+
     const RpcValue result = callMethod(methodName, params);
     const QByteArray xmlResponse = buildResponse(result);
     socket->write(buildHttpResponse(xmlResponse));
@@ -737,50 +769,48 @@ RpcValue XmlRpcServer::parseValue(const QString& xml)
 QByteArray XmlRpcServer::buildResponse(const RpcValue& result)
 {
     QString xml = "<?xml version=\"1.0\"?>\n<methodResponse>\n<params>\n<param>\n<value>";
+    xml += buildValueXml(result);
+    xml += "</value>\n</param>\n</params>\n</methodResponse>\n";
+    return xml.toUtf8();
+}
 
-    switch (result.type) {
+QString XmlRpcServer::buildValueXml(const RpcValue& value)
+{
+    QString xml;
+    switch (value.type) {
         case RpcValue::Int:
-            xml += QString("<int>%1</int>").arg(result.intValue);
+            xml += QString("<int>%1</int>").arg(value.intValue);
             break;
         case RpcValue::Double:
-            xml += QString("<double>%1</double>").arg(result.doubleValue, 0, 'f', 6);
+            xml += QString("<double>%1</double>").arg(value.doubleValue, 0, 'f', 6);
             break;
         case RpcValue::Bool:
-            xml += QString("<boolean>%1</boolean>").arg(result.boolValue ? 1 : 0);
+            xml += QString("<boolean>%1</boolean>").arg(value.boolValue ? 1 : 0);
             break;
         case RpcValue::String:
-            xml += QString("<string>%1</string>").arg(result.stringValue);
+            xml += QString("<string>%1</string>").arg(value.stringValue);
             break;
         case RpcValue::Array:
             xml += "<array><data>\n";
-            for (const auto& item : result.arrayValue) {
+            for (const auto& item : value.arrayValue) {
                 xml += "<value>";
-                switch (item.type) {
-                    case RpcValue::Int:
-                        xml += QString("<int>%1</int>").arg(item.intValue);
-                        break;
-                    case RpcValue::Double:
-                        xml += QString("<double>%1</double>").arg(item.doubleValue, 0, 'f', 6);
-                        break;
-                    case RpcValue::Bool:
-                        xml += QString("<boolean>%1</boolean>").arg(item.boolValue ? 1 : 0);
-                        break;
-                    case RpcValue::String:
-                        xml += QString("<string>%1</string>").arg(item.stringValue);
-                        break;
-                    default:
-                        xml += "<nil/>";
-                }
+                xml += buildValueXml(item);
                 xml += "</value>\n";
             }
             xml += "</data></array>";
             break;
+        case RpcValue::Struct:
+            xml += "<struct>\n";
+            for (auto it = value.structValue.constBegin(); it != value.structValue.constEnd(); ++it) {
+                xml += QString("<member><name>%1</name><value>%2</value></member>\n")
+                           .arg(it.key(), buildValueXml(it.value()));
+            }
+            xml += "</struct>";
+            break;
         default:
             xml += "<nil/>";
     }
-
-    xml += "</value>\n</param>\n</params>\n</methodResponse>\n";
-    return xml.toUtf8();
+    return xml;
 }
 
 QByteArray XmlRpcServer::buildFaultResponse(int code, const QString& message)
@@ -825,6 +855,20 @@ RpcValue XmlRpcServer::callMethod(const QString& name, const QVector<RpcValue>& 
         qCWarning(serverLog) << "RPC method error:" << e.what();
         return RpcValue(QString("Error: %1").arg(e.what()));
     }
+}
+
+bool XmlRpcServer::isReady() const
+{
+    return m_state && m_state->hasLoadedData();
+}
+
+bool XmlRpcServer::isReadinessExemptMethod(const QString& name) const
+{
+    return name == QStringLiteral("get_status")
+        || name == QStringLiteral("UR_GetStatus")
+        || name == QStringLiteral("get_available_functions")
+        || name == QStringLiteral("UR_SetFileName")
+        || name == QStringLiteral("UR_ReadDataFromUsbStick");
 }
 
 // === RPC Method Implementations ===

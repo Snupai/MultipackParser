@@ -28,6 +28,7 @@ constexpr const char* ORGANIZATION = "Multipack";
 constexpr const char* ROBOT_IP = "192.168.0.1";
 constexpr int DASHBOARD_PORT = 29999;
 constexpr int XMLRPC_PORT = 8080;
+constexpr bool XMLRPC_AUTO_START = true;
 
 // Database
 constexpr const char* DATABASE_NAME = "paletten.db";
@@ -166,6 +167,7 @@ constexpr const char* ADMIN_USB_EXPECTED_VALUE = "admin.usb_expected_value";
 // Server
 constexpr const char* SERVER_PORT = "server.port";
 constexpr const char* SERVER_USB_PATH = "server.usb_path";
+constexpr const char* SERVER_AUTO_START = "server.auto_start";
 
 } // namespace Keys
 

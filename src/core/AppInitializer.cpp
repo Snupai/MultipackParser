@@ -19,6 +19,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QStandardPaths>
+#include <QtGlobal>
 
 namespace multipack {
 namespace core {
@@ -270,7 +271,18 @@ bool AppInitializer::initializeXmlRpcServer()
     m_xmlRpcServer->setDatabaseManager(m_databaseManager.get());
     m_xmlRpcServer->setGlobalState(&GlobalState::instance());
     m_xmlRpcServer->registerStandardMethods();
-    // Server will be started when user clicks "Start Server" in UI
+    const bool autoStart = !m_settingsManager || m_settingsManager->xmlRpcAutoStart();
+    if (!autoStart) {
+        qInfo() << "XML-RPC auto-start disabled by settings";
+        return true;
+    }
+
+    const int port = m_settingsManager ? m_settingsManager->xmlRpcPort() : config::Defaults::XMLRPC_PORT;
+    if (!m_xmlRpcServer->start(port)) {
+        qWarning() << "XML-RPC server failed to auto-start on port" << port;
+        return false;
+    }
+
     return true;
 }
 
@@ -320,6 +332,12 @@ bool AppInitializer::initializeAudio()
 bool AppInitializer::initializeAutoUpdater()
 {
     qDebug() << "AppInitializer - initializing auto-updater";
+
+    if (qEnvironmentVariableIsSet("MULTIPACK_PORTABLE_RUN")) {
+        qInfo() << "Auto-updater disabled for single-file portable launcher";
+        m_autoUpdater.reset();
+        return true;
+    }
 
     m_autoUpdater = std::make_unique<system::AutoUpdater>();
     if (m_settingsManager) {

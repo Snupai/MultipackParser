@@ -188,6 +188,7 @@ void SettingsManager::resetToDefaults()
     // Server section
     QJsonObject server;
     server["port"] = Defaults::XMLRPC_PORT;
+    server["auto_start"] = Defaults::XMLRPC_AUTO_START;
     server["usb_path"] = Defaults::defaultUsbPath();
     m_settings["server"] = server;
 
@@ -311,6 +312,16 @@ int SettingsManager::xmlRpcPort() const
 void SettingsManager::setXmlRpcPort(int port)
 {
     setValue(Keys::SERVER_PORT, port);
+}
+
+bool SettingsManager::xmlRpcAutoStart() const
+{
+    return value(Keys::SERVER_AUTO_START, Defaults::XMLRPC_AUTO_START).toBool();
+}
+
+void SettingsManager::setXmlRpcAutoStart(bool enabled)
+{
+    setValue(Keys::SERVER_AUTO_START, enabled);
 }
 
 QString SettingsManager::usbPath() const

@@ -110,6 +110,9 @@ public:
     int xmlRpcPort() const;
     void setXmlRpcPort(int port);
 
+    bool xmlRpcAutoStart() const;
+    void setXmlRpcAutoStart(bool enabled);
+
     QString usbPath() const;
     void setUsbPath(const QString& path);
 

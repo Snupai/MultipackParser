@@ -1017,7 +1017,23 @@ bool AutoUpdater::installUpdate(const QString& filePath)
     emit installationStarted();
 
     const QString appDir = QCoreApplication::applicationDirPath();
-    const QString currentBinary = appDir + "/multipack-parser";
+    QString installDir = appDir;
+    QString currentBinary = QDir(appDir).filePath("multipack-parser");
+
+    // ARM64 deployment runs from <bundle>/bin/multipack-parser via run.sh.
+    // Install release archives at the bundle root so lib/, plugins/, and
+    // run.sh are updated together with bin/multipack-parser.
+    const QFileInfo appDirInfo(appDir);
+    if (appDirInfo.fileName() == "bin") {
+        QDir bundleRoot(appDir);
+        if (bundleRoot.cdUp() && QFileInfo(bundleRoot.filePath("run.sh")).isFile()
+            && QFileInfo(bundleRoot.filePath("lib")).isDir()
+            && QFileInfo(bundleRoot.filePath("plugins")).isDir()) {
+            installDir = bundleRoot.absolutePath();
+            currentBinary = QDir(installDir).filePath("bin/multipack-parser");
+        }
+    }
+
     const QString backupPath = appDir + "/multipack-parser.backup";
 
     if (QFile::exists(currentBinary)) {
@@ -1033,9 +1049,9 @@ bool AutoUpdater::installUpdate(const QString& filePath)
     }
 
     QProcess extractProcess;
-    extractProcess.setWorkingDirectory(appDir);
+    extractProcess.setWorkingDirectory(installDir);
     extractProcess.setProgram("tar");
-    extractProcess.setArguments({"-xzf", filePath, "-C", appDir});
+    extractProcess.setArguments({"-xzf", filePath, "-C", installDir});
 
     qDebug() << "AutoUpdater: Extracting update" << filePath;
 

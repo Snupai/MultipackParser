@@ -162,6 +162,19 @@ The application communicates with Universal Robots via:
 - **XML-RPC Server (port 8080):** Serves palette data, package positions, layer info
 - **Dashboard Server (port 29999):** Monitors robot status, program state, safety
 
+### XML-RPC Boot Contract
+
+On HMI boot the XML-RPC server auto-starts on `0.0.0.0:8080`. The robot should
+connect to `http://192.168.0.10:8080/RPC2` on the eth0 robot subnet. The eth0
+address is only a reachability target; it is not an application readiness signal.
+
+Robots must poll `get_status()` or `UR_GetStatus()` and treat operational RPCs
+as valid only when the returned `ready` field is `true`. Before a palette is
+loaded, operational RPCs return an XML-RPC fault instead of default or partial
+palette data. Setup/status methods such as `UR_SetFileName`,
+`UR_ReadDataFromUsbStick`, `get_status`, and `get_available_functions` remain
+available before readiness.
+
 ### Supported Robots
 
 | Model | Features |
