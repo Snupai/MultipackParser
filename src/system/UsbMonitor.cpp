@@ -4,376 +4,43 @@
  */
 
 #include "multipack/system/UsbMonitor.h"
-#include <QDir>
-#include <QFileInfo>
+
 #include <QDebug>
+#include <QFileInfo>
 #include <QMutexLocker>
-#include <QApplication>
 #include <QtConcurrent/QtConcurrent>
 
 namespace multipack {
 namespace system {
 
-UsbMonitor::UsbMonitor(const QString& usbPath,
-                       const QString& databasePath,
-                       QObject* parent)
-    : QObject(parent)
-    , m_usbPath(usbPath)
-    , m_databasePath(databasePath)
-    , m_fileSystemWatcher(new QFileSystemWatcher(this))
-    , m_periodicScanTimer(new QTimer(this))
-    , m_updateWatcher(new QFutureWatcher<int>(this))
-    , m_isMonitoring(false)
-    , m_isProcessing(false)
-{
-    // Connect file system watcher signals
-    connect(m_fileSystemWatcher, &QFileSystemWatcher::directoryChanged,
-            this, &UsbMonitor::onDirectoryChanged);
-    connect(m_fileSystemWatcher, &QFileSystemWatcher::fileChanged,
-            this, &UsbMonitor::onFileChanged);
-    
-    // Set up periodic scan timer (backup mechanism every 30 seconds)
-    m_periodicScanTimer->setInterval(30000);
-    connect(m_periodicScanTimer, &QTimer::timeout,
-            this, &UsbMonitor::performPeriodicScan);
+namespace {
 
-    connect(m_updateWatcher, &QFutureWatcher<int>::finished, this, [this]() {
-        int updatedCount = m_updateWatcher->result();
-        Q_UNUSED(updatedCount);
-        m_isProcessing = false;
-        if (m_updateQueued) {
-            m_updateQueued = false;
-            updateDatabaseFromUsbAsync();
-        }
-    });
-}
-
-UsbMonitor::~UsbMonitor()
-{
-    stopMonitoring();
-}
-
-bool UsbMonitor::startMonitoring()
-{
-    QMutexLocker locker(&m_mutex);
-    
-    if (m_isMonitoring) {
-        qWarning() << "USB monitoring is already active";
-        return true;
-    }
-    
-    if (m_databasePath.isEmpty()) {
-        qWarning() << "Cannot start USB monitoring: Database path is empty";
-        return false;
-    }
-    
-    // Check if USB directory exists
-    QDir usbDir(m_usbPath);
-    if (!usbDir.exists()) {
-        qWarning() << "USB directory does not exist:" << m_usbPath;
-        return false;
-    }
-    
-    // Initialize file system watcher
-    if (!initializeWatcher()) {
-        qWarning() << "Failed to initialize file system watcher";
-        return false;
-    }
-    
-    // Set up initial tracking
-    setupInitialTracking();
-    
-    // Start periodic scan timer
-    m_periodicScanTimer->start();
-    
-    m_isMonitoring = true;
-    qDebug() << "USB monitoring started for path:" << m_usbPath;
-    
-    return true;
-}
-
-void UsbMonitor::stopMonitoring()
-{
-    QMutexLocker locker(&m_mutex);
-    
-    if (!m_isMonitoring) {
-        return;
-    }
-    
-    m_periodicScanTimer->stop();
-    m_fileSystemWatcher->removePaths(m_fileSystemWatcher->files());
-    m_fileSystemWatcher->removePaths(m_fileSystemWatcher->directories());
-    
-    m_isMonitoring = false;
-    qDebug() << "USB monitoring stopped";
-}
-
-bool UsbMonitor::isMonitoring() const
-{
-    QMutexLocker locker(&m_mutex);
-    return m_isMonitoring;
-}
-
-void UsbMonitor::setUsbPath(const QString& path)
-{
-    QMutexLocker locker(&m_mutex);
-    
-    if (m_isMonitoring) {
-        qWarning() << "Cannot change USB path while monitoring is active";
-        return;
-    }
-    
-    m_usbPath = path;
-}
-
-QString UsbMonitor::getUsbPath() const
-{
-    QMutexLocker locker(&m_mutex);
-    return m_usbPath;
-}
-
-int UsbMonitor::updateDatabaseFromUsb()
-{
-    if (m_databasePath.isEmpty()) {
-        qCritical() << "Cannot update database: Database path is empty";
-        emit databaseUpdateFailed("Database path is empty");
-        return 0;
-    }
-    
-    QDir usbDir(m_usbPath);
-    if (!usbDir.exists()) {
-        QString error = QString("USB directory does not exist: %1").arg(m_usbPath);
-        qCritical() << error;
-        emit databaseUpdateFailed(error);
-        return 0;
-    }
-    
-    emit databaseUpdateStarted();
-    
-    QStringList robFiles = scanDirectory();
-    qDebug() << "Found" << robFiles.size() << ".rob files to process";
-    
-    database::DatabaseManager dbManager;
-    if (!dbManager.open(m_databasePath)) {
-        QString error = QString("Failed to open database: %1").arg(m_databasePath);
-        qCritical() << error;
-        emit databaseUpdateFailed(error);
-        return 0;
-    }
-
-    QStringList updatedFiles;
-    
-    for (const QString& filename : robFiles) {
-        // Skip files that previously failed in this session
-        if (isFailedFile(filename)) {
-            qDebug() << "Skipping previously failed file:" << filename;
-            continue;
-        }
-        
-        if (needsUpdate(filename)) {
-            qDebug() << "Processing file:" << filename;
-            
-            if (processFile(filename, dbManager)) {
-                updatedFiles.append(filename);
-                qDebug() << "Successfully processed:" << filename;
-            } else {
-                addFailedFile(filename);
-                qWarning() << "Failed to process file:" << filename;
-            }
-        } else {
-            qDebug() << "File is up to date:" << filename;
-        }
-    }
-    
-    if (!updatedFiles.isEmpty()) {
-        emit databaseUpdateCompleted(updatedFiles);
-    }
-    
-    return updatedFiles.size();
-}
-
-QStringList UsbMonitor::getAvailableRobFiles()
-{
-    QMutexLocker locker(&m_mutex);
-    return scanDirectory();
-}
-
-QSet<QString> UsbMonitor::getFailedFiles() const
-{
-    QMutexLocker locker(&m_mutex);
-    return m_failedFiles;
-}
-
-void UsbMonitor::clearFailedFiles()
-{
-    QMutexLocker locker(&m_mutex);
-    m_failedFiles.clear();
-    qDebug() << "Failed files cache cleared";
-}
-
-void UsbMonitor::onDirectoryChanged(const QString& path)
-{
-    Q_UNUSED(path);
-    qDebug() << "Directory changed:" << path;
-    
-    // Use a timer to batch multiple rapid changes
-    QTimer::singleShot(1000, this, &UsbMonitor::processChanges);
-}
-
-void UsbMonitor::onFileChanged(const QString& path)
-{
-    Q_UNUSED(path);
-    qDebug() << "File changed:" << path;
-    
-    // Use a timer to batch multiple rapid changes
-    QTimer::singleShot(1000, this, &UsbMonitor::processChanges);
-}
-
-void UsbMonitor::performPeriodicScan()
-{
-    if (m_isProcessing) {
-        return; // Skip if already processing
-    }
-    
-    qDebug() << "Performing periodic scan for USB changes";
-    processChanges();
-}
-
-void UsbMonitor::processChanges()
-{
-    if (m_isProcessing) {
-        return;
-    }
-    
-    m_isProcessing = true;
-    
-    try {
-        QStringList currentFiles = scanDirectory();
-        
-        // Detect new files
-        QStringList newFiles;
-        for (const QString& filename : currentFiles) {
-            if (!m_knownFiles.contains(filename)) {
-                newFiles.append(filename);
-                m_knownFiles.insert(filename);
-                emit newFilesDetected({filename});
-            }
-        }
-        
-        // Detect modified files
-        QStringList modifiedFiles;
-        for (const QString& filename : currentFiles) {
-            QDateTime currentTimestamp = getFileTimestamp(filename);
-            QDateTime knownTimestamp = m_fileTimestamps.value(filename);
-            
-            if (knownTimestamp.isValid() && currentTimestamp > knownTimestamp) {
-                modifiedFiles.append(filename);
-                updateFileTracking(filename, currentTimestamp);
-                emit filesModified({filename});
-            } else if (!knownTimestamp.isValid()) {
-                // New file, track its timestamp
-                updateFileTracking(filename, currentTimestamp);
-            }
-        }
-        
-        // Remove files that no longer exist
-        QSet<QString> removedFiles = m_knownFiles - QSet<QString>(currentFiles.begin(), currentFiles.end());
-        for (const QString& filename : removedFiles) {
-            m_knownFiles.remove(filename);
-            m_fileTimestamps.remove(filename);
-            m_failedFiles.remove(filename);
-        }
-        
-        // Update database if there are changes
-        if (!newFiles.isEmpty() || !modifiedFiles.isEmpty()) {
-            updateDatabaseFromUsbAsync();
-        }
-        
-    } catch (const std::exception& e) {
-        qCritical() << "Exception during change processing:" << e.what();
-    }
-    
-    m_isProcessing = false;
-}
-
-bool UsbMonitor::initializeWatcher()
-{
-    if (!m_usbPath.isEmpty()) {
-        if (!m_fileSystemWatcher->addPath(m_usbPath)) {
-            qWarning() << "Failed to watch directory:" << m_usbPath;
-            return false;
-        }
-    }
-    
-    return true;
-}
-
-QStringList UsbMonitor::scanDirectory()
+QStringList scanRobFiles(const QString& usbPath)
 {
     QStringList robFiles;
-    QDir usbDir(m_usbPath);
-    
+    QDir usbDir(usbPath);
+
     if (!usbDir.exists()) {
-        qWarning() << "USB directory does not exist:" << m_usbPath;
+        qWarning() << "USB directory does not exist:" << usbPath;
         return robFiles;
     }
-    
-    QStringList filters;
-    filters << "*.rob";
-    usbDir.setNameFilters(filters);
-    
-    QFileInfoList fileList = usbDir.entryInfoList(QDir::Files, QDir::Name);
+
+    const QFileInfoList fileList = usbDir.entryInfoList({"*.rob"}, QDir::Files, QDir::Name);
     for (const QFileInfo& fileInfo : fileList) {
         robFiles.append(fileInfo.fileName());
     }
-    
+
     return robFiles;
 }
 
-bool UsbMonitor::needsUpdate(const QString& filename)
+QDateTime getRobFileTimestamp(const QString& usbPath, const QString& filename)
 {
-    // Check if file is in failed list
-    if (isFailedFile(filename)) {
-        return false;
-    }
-
-    // Compare file timestamp to last processed timestamp
-    QDateTime fileTimestamp = getFileTimestamp(filename);
-    QDateTime knownTimestamp = m_fileTimestamps.value(filename);
-
-    if (!knownTimestamp.isValid()) {
-        return true;
-    }
-
-    return fileTimestamp > knownTimestamp;
+    const QFileInfo fileInfo(QDir(usbPath).filePath(filename));
+    return fileInfo.exists() ? fileInfo.lastModified() : QDateTime();
 }
 
-void UsbMonitor::updateDatabaseFromUsbAsync()
+database::PaletteData toPaletteData(const RobFileData& fileData)
 {
-    if (m_isProcessing) {
-        m_updateQueued = true;
-        return;
-    }
-
-    m_isProcessing = true;
-    auto future = QtConcurrent::run([this]() {
-        return updateDatabaseFromUsb();
-    });
-    m_updateWatcher->setFuture(future);
-}
-
-bool UsbMonitor::processFile(const QString& filename, database::DatabaseManager& dbManager)
-{
-    // Parse the file using RobFileParser
-    RobFileParser parser(m_usbPath);
-    RobFileData fileData = parser.parseFile(filename);
-    
-    if (!fileData.isValid) {
-        qWarning() << "Failed to parse file" << filename << ":" << fileData.errorMessage;
-        return false;
-    }
-    
-    // Save to database
     database::PaletteData paletteData;
     paletteData.metadata.fileName = QFileInfo(fileData.filePath).fileName();
     paletteData.metadata.fileTimestamp = fileData.fileTimestamp.toMSecsSinceEpoch();
@@ -405,6 +72,7 @@ bool UsbMonitor::processFile(const QString& filename, database::DatabaseManager&
         if (pos.size() < 9) {
             continue;
         }
+
         database::PackagePosition position;
         position.xp = pos[0];
         position.yp = pos[1];
@@ -418,22 +86,434 @@ bool UsbMonitor::processFile(const QString& filename, database::DatabaseManager&
         paletteData.packagePositions.append(position);
     }
 
-    bool saved = dbManager.savePaletteData(paletteData);
-    if (saved) {
-        updateFileTracking(filename, fileData.fileTimestamp);
+    return paletteData;
+}
+
+database::SaveResult processRobFile(const QString& usbPath,
+                                    const QString& filename,
+                                    database::DatabaseManager& dbManager,
+                                    QString* errorMessage)
+{
+    RobFileParser parser(usbPath);
+    const RobFileData fileData = parser.parseFile(filename);
+
+    if (!fileData.isValid) {
+        if (errorMessage) {
+            *errorMessage = fileData.errorMessage;
+        }
+        qWarning() << "Failed to parse file" << filename << ":" << fileData.errorMessage;
+        return database::SaveResult::Error;
     }
-    return saved;
+
+    const database::SaveResult saveResult = dbManager.savePaletteData(toPaletteData(fileData));
+    if (saveResult == database::SaveResult::Error && errorMessage) {
+        *errorMessage = QString("Database save failed for %1").arg(filename);
+    }
+
+    return saveResult;
+}
+
+UsbMonitor::UpdateResult runUpdatePass(const QString& usbPath,
+                                       const QString& databasePath,
+                                       const QSet<QString>& failedFilesSnapshot,
+                                       const QHash<QString, QDateTime>& knownTimestampsSnapshot)
+{
+    UsbMonitor::UpdateResult result;
+
+    if (databasePath.isEmpty()) {
+        result.errorMessage = "Database path is empty";
+        return result;
+    }
+
+    QDir usbDir(usbPath);
+    if (!usbDir.exists()) {
+        result.errorMessage = QString("USB directory does not exist: %1").arg(usbPath);
+        return result;
+    }
+
+    database::DatabaseManager dbManager;
+    if (!dbManager.open(databasePath)) {
+        result.errorMessage = QString("Failed to open database: %1").arg(databasePath);
+        return result;
+    }
+
+    const QStringList robFiles = scanRobFiles(usbPath);
+    for (const QString& filename : robFiles) {
+        const QDateTime currentTimestamp = getRobFileTimestamp(usbPath, filename);
+        result.currentFiles.insert(filename);
+        result.currentFileTimestamps.insert(filename, currentTimestamp);
+
+        const QDateTime knownTimestamp = knownTimestampsSnapshot.value(filename);
+        const bool previouslyFailed = failedFilesSnapshot.contains(filename);
+        const bool unchangedFailedFile = previouslyFailed &&
+            knownTimestamp.isValid() &&
+            currentTimestamp.isValid() &&
+            currentTimestamp <= knownTimestamp;
+
+        if (unchangedFailedFile) {
+            result.failedFiles.insert(filename);
+            continue;
+        }
+
+        const bool requiresUpdate = !knownTimestamp.isValid() ||
+            (currentTimestamp.isValid() && currentTimestamp > knownTimestamp) ||
+            previouslyFailed;
+        if (!requiresUpdate) {
+            continue;
+        }
+
+        QString errorMessage;
+        const database::SaveResult saveResult = processRobFile(usbPath, filename, dbManager, &errorMessage);
+        if (saveResult == database::SaveResult::Error) {
+            result.failedFiles.insert(filename);
+            if (result.errorMessage.isEmpty()) {
+                result.errorMessage = errorMessage;
+            }
+            continue;
+        }
+
+        if (saveResult == database::SaveResult::Inserted || saveResult == database::SaveResult::Updated) {
+            result.updatedFiles.append(filename);
+        }
+    }
+
+    result.success = true;
+    return result;
+}
+
+} // namespace
+
+UsbMonitor::UsbMonitor(const QString& usbPath,
+                       const QString& databasePath,
+                       QObject* parent)
+    : QObject(parent)
+    , m_usbPath(usbPath)
+    , m_databasePath(databasePath)
+    , m_fileSystemWatcher(new QFileSystemWatcher(this))
+    , m_periodicScanTimer(new QTimer(this))
+    , m_updateWatcher(new QFutureWatcher<UpdateResult>(this))
+    , m_isMonitoring(false)
+{
+    connect(m_fileSystemWatcher, &QFileSystemWatcher::directoryChanged,
+            this, &UsbMonitor::onDirectoryChanged);
+    connect(m_fileSystemWatcher, &QFileSystemWatcher::fileChanged,
+            this, &UsbMonitor::onFileChanged);
+
+    m_periodicScanTimer->setInterval(30000);
+    connect(m_periodicScanTimer, &QTimer::timeout,
+            this, &UsbMonitor::performPeriodicScan);
+
+    connect(m_updateWatcher, &QFutureWatcher<UpdateResult>::finished, this, [this]() {
+        const UpdateResult result = m_updateWatcher->result();
+        applyUpdateResult(result);
+
+        bool shouldRestart = false;
+        {
+            QMutexLocker locker(&m_mutex);
+            m_updateInFlight = false;
+            if (m_updateQueued && !m_shutdownRequested) {
+                m_updateQueued = false;
+                shouldRestart = true;
+            } else {
+                m_updateQueued = false;
+            }
+        }
+
+        if (shouldRestart) {
+            updateDatabaseFromUsbAsync();
+        }
+    });
+}
+
+UsbMonitor::~UsbMonitor()
+{
+    stopMonitoring();
+    waitForPendingUpdate();
+}
+
+bool UsbMonitor::startMonitoring()
+{
+    QMutexLocker locker(&m_mutex);
+
+    if (m_isMonitoring) {
+        qWarning() << "USB monitoring is already active";
+        return true;
+    }
+
+    if (m_databasePath.isEmpty()) {
+        qWarning() << "Cannot start USB monitoring: Database path is empty";
+        return false;
+    }
+
+    const QDir usbDir(m_usbPath);
+    if (!usbDir.exists()) {
+        qWarning() << "USB directory does not exist:" << m_usbPath;
+        return false;
+    }
+
+    if (!initializeWatcher()) {
+        qWarning() << "Failed to initialize file system watcher";
+        return false;
+    }
+
+    m_shutdownRequested = false;
+    setupInitialTracking();
+    m_periodicScanTimer->start();
+    m_isMonitoring = true;
+    qDebug() << "USB monitoring started for path:" << m_usbPath;
+    return true;
+}
+
+void UsbMonitor::stopMonitoring()
+{
+    {
+        QMutexLocker locker(&m_mutex);
+        m_shutdownRequested = true;
+
+        if (m_isMonitoring) {
+            m_periodicScanTimer->stop();
+            m_fileSystemWatcher->removePaths(m_fileSystemWatcher->files());
+            m_fileSystemWatcher->removePaths(m_fileSystemWatcher->directories());
+            m_isMonitoring = false;
+            qDebug() << "USB monitoring stopped";
+        }
+    }
+
+    waitForPendingUpdate();
+}
+
+bool UsbMonitor::isMonitoring() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_isMonitoring;
+}
+
+void UsbMonitor::setUsbPath(const QString& path)
+{
+    QMutexLocker locker(&m_mutex);
+
+    if (m_isMonitoring) {
+        qWarning() << "Cannot change USB path while monitoring is active";
+        return;
+    }
+
+    m_usbPath = path;
+}
+
+QString UsbMonitor::getUsbPath() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_usbPath;
+}
+
+int UsbMonitor::updateDatabaseFromUsb()
+{
+    QString usbPath;
+    QString databasePath;
+    QSet<QString> failedFilesSnapshot;
+    QHash<QString, QDateTime> knownTimestampsSnapshot;
+
+    {
+        QMutexLocker locker(&m_mutex);
+        usbPath = m_usbPath;
+        databasePath = m_databasePath;
+        failedFilesSnapshot = m_failedFiles;
+        knownTimestampsSnapshot = m_fileTimestamps;
+    }
+
+    emit databaseUpdateStarted();
+    const UpdateResult result = runUpdatePass(usbPath, databasePath, failedFilesSnapshot, knownTimestampsSnapshot);
+    applyUpdateResult(result);
+    return result.updatedFiles.size();
+}
+
+void UsbMonitor::updateDatabaseFromUsbAsync()
+{
+    QString usbPath;
+    QString databasePath;
+    QSet<QString> failedFilesSnapshot;
+    QHash<QString, QDateTime> knownTimestampsSnapshot;
+
+    {
+        QMutexLocker locker(&m_mutex);
+        if (m_shutdownRequested) {
+            return;
+        }
+
+        if (m_updateInFlight) {
+            m_updateQueued = true;
+            return;
+        }
+
+        m_updateInFlight = true;
+        usbPath = m_usbPath;
+        databasePath = m_databasePath;
+        failedFilesSnapshot = m_failedFiles;
+        knownTimestampsSnapshot = m_fileTimestamps;
+    }
+
+    emit databaseUpdateStarted();
+    auto future = QtConcurrent::run([usbPath, databasePath, failedFilesSnapshot, knownTimestampsSnapshot]() {
+        return runUpdatePass(usbPath, databasePath, failedFilesSnapshot, knownTimestampsSnapshot);
+    });
+    m_updateWatcher->setFuture(future);
+}
+
+QStringList UsbMonitor::getAvailableRobFiles()
+{
+    return scanDirectory();
+}
+
+QSet<QString> UsbMonitor::getFailedFiles() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_failedFiles;
+}
+
+void UsbMonitor::clearFailedFiles()
+{
+    QMutexLocker locker(&m_mutex);
+    m_failedFiles.clear();
+    qDebug() << "Failed files cache cleared";
+}
+
+void UsbMonitor::onDirectoryChanged(const QString& path)
+{
+    qDebug() << "Directory changed:" << path;
+    QTimer::singleShot(1000, this, &UsbMonitor::processChanges);
+}
+
+void UsbMonitor::onFileChanged(const QString& path)
+{
+    qDebug() << "File changed:" << path;
+    QTimer::singleShot(1000, this, &UsbMonitor::processChanges);
+}
+
+void UsbMonitor::performPeriodicScan()
+{
+    qDebug() << "Performing periodic scan for USB changes";
+    processChanges();
+}
+
+void UsbMonitor::processChanges()
+{
+    QSet<QString> knownFilesSnapshot;
+    QHash<QString, QDateTime> knownTimestampsSnapshot;
+
+    {
+        QMutexLocker locker(&m_mutex);
+        if (m_shutdownRequested) {
+            return;
+        }
+
+        knownFilesSnapshot = m_knownFiles;
+        knownTimestampsSnapshot = m_fileTimestamps;
+    }
+
+    const QStringList currentFiles = scanDirectory();
+    const QSet<QString> currentFileSet(currentFiles.begin(), currentFiles.end());
+
+    QStringList newFiles;
+    QStringList modifiedFiles;
+    for (const QString& filename : currentFiles) {
+        if (!knownFilesSnapshot.contains(filename)) {
+            newFiles.append(filename);
+            continue;
+        }
+
+        const QDateTime currentTimestamp = getFileTimestamp(filename);
+        const QDateTime knownTimestamp = knownTimestampsSnapshot.value(filename);
+        if (knownTimestamp.isValid() && currentTimestamp.isValid() && currentTimestamp > knownTimestamp) {
+            modifiedFiles.append(filename);
+        }
+    }
+
+    {
+        QMutexLocker locker(&m_mutex);
+        m_knownFiles = currentFileSet;
+
+        for (auto it = m_fileTimestamps.begin(); it != m_fileTimestamps.end();) {
+            if (!currentFileSet.contains(it.key())) {
+                it = m_fileTimestamps.erase(it);
+            } else {
+                ++it;
+            }
+        }
+
+        for (auto it = m_failedFiles.begin(); it != m_failedFiles.end();) {
+            if (!currentFileSet.contains(*it)) {
+                it = m_failedFiles.erase(it);
+            } else {
+                ++it;
+            }
+        }
+    }
+
+    if (!newFiles.isEmpty()) {
+        emit newFilesDetected(newFiles);
+    }
+    if (!modifiedFiles.isEmpty()) {
+        emit filesModified(modifiedFiles);
+    }
+
+    if (!newFiles.isEmpty() || !modifiedFiles.isEmpty()) {
+        updateDatabaseFromUsbAsync();
+    }
+}
+
+bool UsbMonitor::initializeWatcher()
+{
+    if (!m_usbPath.isEmpty() && !m_fileSystemWatcher->addPath(m_usbPath)) {
+        qWarning() << "Failed to watch directory:" << m_usbPath;
+        return false;
+    }
+
+    return true;
+}
+
+QStringList UsbMonitor::scanDirectory()
+{
+    QString usbPath;
+    {
+        QMutexLocker locker(&m_mutex);
+        usbPath = m_usbPath;
+    }
+
+    return scanRobFiles(usbPath);
+}
+
+bool UsbMonitor::needsUpdate(const QString& filename)
+{
+    const QDateTime fileTimestamp = getFileTimestamp(filename);
+
+    QMutexLocker locker(&m_mutex);
+    const QDateTime knownTimestamp = m_fileTimestamps.value(filename);
+    if (m_failedFiles.contains(filename)) {
+        return !knownTimestamp.isValid() || (fileTimestamp.isValid() && fileTimestamp > knownTimestamp);
+    }
+
+    return !knownTimestamp.isValid() || (fileTimestamp.isValid() && fileTimestamp > knownTimestamp);
+}
+
+database::SaveResult UsbMonitor::processFile(const QString& filename, database::DatabaseManager& dbManager)
+{
+    return processRobFile(m_usbPath, filename, dbManager, nullptr);
 }
 
 QDateTime UsbMonitor::getFileTimestamp(const QString& filename)
 {
-    QString fullPath = QDir(m_usbPath).filePath(filename);
-    QFileInfo fileInfo(fullPath);
-    return fileInfo.exists() ? fileInfo.lastModified() : QDateTime();
+    QString usbPath;
+    {
+        QMutexLocker locker(&m_mutex);
+        usbPath = m_usbPath;
+    }
+
+    return getRobFileTimestamp(usbPath, filename);
 }
 
 void UsbMonitor::updateFileTracking(const QString& filename, const QDateTime& timestamp)
 {
+    QMutexLocker locker(&m_mutex);
     m_fileTimestamps[filename] = timestamp;
 }
 
@@ -451,14 +531,35 @@ bool UsbMonitor::isFailedFile(const QString& filename) const
 
 void UsbMonitor::setupInitialTracking()
 {
-    QStringList initialFiles = scanDirectory();
-    
-    for (const QString& filename : initialFiles) {
-        m_knownFiles.insert(filename);
-        updateFileTracking(filename, getFileTimestamp(filename));
-    }
-    
+    const QStringList initialFiles = scanRobFiles(m_usbPath);
+    m_knownFiles = QSet<QString>(initialFiles.begin(), initialFiles.end());
     qDebug() << "Initial tracking set up for" << initialFiles.size() << "files";
+}
+
+void UsbMonitor::waitForPendingUpdate()
+{
+    if (m_updateWatcher->isRunning()) {
+        m_updateWatcher->waitForFinished();
+    }
+}
+
+void UsbMonitor::applyUpdateResult(const UpdateResult& result)
+{
+    if (result.success) {
+        QMutexLocker locker(&m_mutex);
+        m_knownFiles = result.currentFiles;
+        m_fileTimestamps = result.currentFileTimestamps;
+        m_failedFiles = result.failedFiles;
+    }
+
+    if (!result.errorMessage.isEmpty()) {
+        qWarning() << result.errorMessage;
+        emit databaseUpdateFailed(result.errorMessage);
+    }
+
+    if (!result.updatedFiles.isEmpty()) {
+        emit databaseUpdateCompleted(result.updatedFiles);
+    }
 }
 
 } // namespace system

@@ -7,6 +7,7 @@
 
 #include <QMainWindow>
 #include <QListWidgetItem>
+#include <QStringList>
 #include <memory>
 #include <QTimer>
 
@@ -15,6 +16,16 @@ class QPushButton;
 class QLabel;
 class QThread;
 class QProcess;
+class QCompleter;
+class QStringListModel;
+class QCheckBox;
+class QDoubleSpinBox;
+class QLineEdit;
+class QListView;
+class QListWidget;
+class QSpinBox;
+class QTableWidget;
+class QTabWidget;
 QT_END_NAMESPACE
 
 // Forward declaration of generated UI class
@@ -29,7 +40,9 @@ namespace config { class SettingsManager; }
 namespace database {
 class DatabaseManager;
 struct PaletteData;
+enum class SaveResult;
 }
+namespace network { class XmlRpcServer; }
 namespace robot { class RobotController; }
 namespace robot {
 class RobotStatusMonitor;
@@ -43,6 +56,7 @@ class SafetyMonitor;
 }
 namespace system {
 class UsbKeyCheck;
+class UsbMonitor;
 class AutoUpdater;
 struct UpdateProgress;
 }
@@ -53,6 +67,7 @@ namespace ui {
 class NotificationPopup;
 class DimensionInputHandler;
 class VisualizationWidget;
+class OnScreenKeyboard;
 
 /**
  * @class MainWindow
@@ -72,6 +87,8 @@ public:
     void setGlobalState(core::GlobalState* state);
     void setAudioManager(audio::AudioManager* audio);
     void setAutoUpdater(system::AutoUpdater* updater);
+    void setUsbMonitor(system::UsbMonitor* monitor);
+    void setXmlRpcServer(network::XmlRpcServer* server);
 
 signals:
     void serverStartRequested();
@@ -151,20 +168,35 @@ private slots:
     void onFilterChanged();
     void onClearFiltersClicked();
     void onLoadSelectedRobFile();
+    void onDatabasePlanSelectionChanged();
+    void onDatabaseSaveClicked();
+    void onDatabaseNewClicked();
+    void onDatabaseDuplicateClicked();
+    void onDatabaseDeleteClicked();
+    void onDatabaseAddPositionClicked();
+    void onDatabaseRemovePositionClicked();
+    void onDatabaseAddRawRowClicked();
+    void onDatabaseRemoveRawRowClicked();
+    void onDatabaseAddRawColumnClicked();
+    void onDatabaseRemoveRawColumnClicked();
     void onScannerStatusChanged(const QString& status, const QString& imagePath);
     void onStatusChanged(const QString& message, message::StatusType type);
 
 private:
     void setupConnections();
+    void applyResourceIcons();
     void loadSettings();
     void loadRobFileList();
     void updateEnabledStates();
     void updateVolumeIcon();
     void setupPalettePlanCompleter();
-    QStringList loadPalettePlanWordlist();
+    void refreshPalettePlanCompleter();
+    void updatePalettePlanCompletionPopup(const QString& text);
+    void hidePalettePlanCompletionPopup();
     void maybeStartUr20Ui();
     void maybeStartSafetyMonitor();
     void maybeStartRobotStatusMonitor();
+    void stopRobotStatusMonitor();
     void setupStatusTab();
     void updateStatusTab(const robot::RobotStatus& status);
     void onStatusDetailsUpdated(const QString& polyscopeVersion,
@@ -176,10 +208,18 @@ private:
     void revertDimensionChanges();
     void updateVisualizationFromPaletteData(const database::PaletteData& data);
     void showPaletteConfigDialog();
+    void setupDatabaseManagerTab();
+    void refreshDatabaseManagerPlans();
+    void loadDatabaseEditor(const database::PaletteData& data);
+    bool collectDatabaseEditorData(database::PaletteData& data) const;
+    QString selectedDatabasePlanFileName() const;
+    QString databasePlanNameInput() const;
+    static QString paletteStorageName(const QString& displayName);
     void setupUr20Timers();
     void updateZwischenlagePopup();
     void updatePaletteClearIndicators();
     void onPaletteClearClicked(int paletteNumber);
+    void incrementUseCycleCount();
     bool ensureRobotConnected();
 
     // Generated UI
@@ -196,7 +236,9 @@ private:
     QThread* m_statusThread = nullptr;
     std::unique_ptr<DimensionInputHandler> m_dimensionHandler;
     system::UsbKeyCheck* m_usbKeyCheck = nullptr;
+    system::UsbMonitor* m_usbMonitor = nullptr;
     system::AutoUpdater* m_autoUpdater = nullptr;
+    network::XmlRpcServer* m_xmlRpcServer = nullptr;
     QProcess* m_consoleProcess = nullptr;
 
     // Page indices (matching stackedWidget pages)
@@ -235,6 +277,33 @@ private:
     QLabel* m_statusPolyscopeVersion = nullptr;
     QLabel* m_statusSerialNumber = nullptr;
     QLabel* m_statusLoadedProgram = nullptr;
+    OnScreenKeyboard* m_onScreenKeyboard = nullptr;
+    QListView* m_palettePlanCompletionView = nullptr;
+    QStringListModel* m_palettePlanCompleterModel = nullptr;
+    QStringList m_palettePlanCompletionWords;
+    QListWidget* m_databasePlanList = nullptr;
+    QLineEdit* m_databasePlanNameEdit = nullptr;
+    QSpinBox* m_databasePaketQuerSpin = nullptr;
+    QDoubleSpinBox* m_databaseCogXSpin = nullptr;
+    QDoubleSpinBox* m_databaseCogYSpin = nullptr;
+    QDoubleSpinBox* m_databaseCogZSpin = nullptr;
+    QSpinBox* m_databaseLayerTypesSpin = nullptr;
+    QSpinBox* m_databaseLayerCountSpin = nullptr;
+    QSpinBox* m_databasePackageCountSpin = nullptr;
+    QSpinBox* m_databasePalletLengthSpin = nullptr;
+    QSpinBox* m_databasePalletWidthSpin = nullptr;
+    QSpinBox* m_databasePalletHeightSpin = nullptr;
+    QSpinBox* m_databasePackageLengthSpin = nullptr;
+    QSpinBox* m_databasePackageWidthSpin = nullptr;
+    QSpinBox* m_databasePackageHeightSpin = nullptr;
+    QSpinBox* m_databasePackageGapSpin = nullptr;
+    QDoubleSpinBox* m_databasePackageWeightSpin = nullptr;
+    QCheckBox* m_databaseEinzelpaketCheck = nullptr;
+    QTableWidget* m_databasePositionsTable = nullptr;
+    QTableWidget* m_databaseLayersTable = nullptr;
+    QTableWidget* m_databaseRawTable = nullptr;
+    std::unique_ptr<database::PaletteData> m_databaseEditorData;
+    QString m_databaseEditorOriginalFileName;
 };
 
 } // namespace ui

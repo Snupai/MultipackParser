@@ -504,21 +504,21 @@ void GlobalState::setScannerStatus(const QString& status)
 
         // Determine image path based on status
         if (status == "True,True,True") {
-            imagePath = ":/ScannerUR20/imgs/UR20/scanner123io.png";
+            imagePath = ":/icons/UR20/scanner123io.png";
         } else if (status == "False,False,False") {
-            imagePath = ":/ScannerUR20/imgs/UR20/scanner123nio.png";
+            imagePath = ":/icons/UR20/scanner123nio.png";
         } else if (status == "True,False,False") {
-            imagePath = ":/ScannerUR20/imgs/UR20/scanner1io.png";
+            imagePath = ":/icons/UR20/scanner1io.png";
         } else if (status == "False,True,False") {
-            imagePath = ":/ScannerUR20/imgs/UR20/scanner2io.png";
+            imagePath = ":/icons/UR20/scanner2io.png";
         } else if (status == "False,False,True") {
-            imagePath = ":/ScannerUR20/imgs/UR20/scanner3io.png";
+            imagePath = ":/icons/UR20/scanner3io.png";
         } else if (status == "True,True,False") {
-            imagePath = ":/ScannerUR20/imgs/UR20/scanner3nio.png";
+            imagePath = ":/icons/UR20/scanner3nio.png";
         } else if (status == "True,False,True") {
-            imagePath = ":/ScannerUR20/imgs/UR20/scanner2nio.png";
+            imagePath = ":/icons/UR20/scanner2nio.png";
         } else if (status == "False,True,True") {
-            imagePath = ":/ScannerUR20/imgs/UR20/scanner1nio.png";
+            imagePath = ":/icons/UR20/scanner1nio.png";
         }
     }
 

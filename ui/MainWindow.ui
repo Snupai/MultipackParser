@@ -1662,7 +1662,7 @@ Application</string>
         <item row="7" column="0">
          <widget class="QLabel" name="label_import_rob">
           <property name="text">
-           <string>.rob Datei importieren</string>
+           <string>Palettierplan importieren</string>
           </property>
          </widget>
         </item>
@@ -1974,7 +1974,7 @@ Application</string>
       </rect>
      </property>
      <property name="text">
-      <string>Available .rob files</string>
+      <string>Verfuegbare Palettierplaene</string>
      </property>
     </widget>
     <widget class="QPushButton" name="ButtonZurueck_8">

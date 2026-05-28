@@ -4,6 +4,7 @@
  */
 
 #include "multipack/core/AppInitializer.h"
+#include "multipack/config/ConfigDefaults.h"
 #include "multipack/config/SettingsManager.h"
 #include "multipack/database/DatabaseManager.h"
 #include "multipack/network/XmlRpcServer.h"
@@ -15,10 +16,22 @@
 
 #include <QDebug>
 #include <QDir>
+#include <QFileInfo>
 #include <QStandardPaths>
 
 namespace multipack {
 namespace core {
+
+namespace {
+
+QString resolveConfiguredPath(const QString& configuredPath, const QString& fallback)
+{
+    const QString path = configuredPath.trimmed().isEmpty() ? fallback : configuredPath.trimmed();
+    QFileInfo info(path);
+    return info.isAbsolute() ? info.absoluteFilePath() : QDir::current().absoluteFilePath(path);
+}
+
+}
 
 AppInitializer::AppInitializer(QObject* parent)
     : QObject(parent)
@@ -183,6 +196,11 @@ system::AutoUpdater* AppInitializer::autoUpdater() const
     return m_autoUpdater.get();
 }
 
+system::UsbMonitor* AppInitializer::usbMonitor() const
+{
+    return m_usbMonitor.get();
+}
+
 bool AppInitializer::initializeLogging()
 {
     qDebug() << "AppInitializer - initializing logging";
@@ -225,15 +243,10 @@ bool AppInitializer::initializeDatabase()
     m_databaseManager = std::make_unique<database::DatabaseManager>();
 
     // Open database
-    m_databasePath = QDir::currentPath() + "/paletten.db";
+    const QString configuredPath = m_settingsManager ? m_settingsManager->databasePath() : QString();
+    m_databasePath = resolveConfiguredPath(configuredPath, config::Defaults::defaultDatabasePath());
     if (!m_databaseManager->open(m_databasePath)) {
         qCritical() << "Failed to open database:" << m_databasePath;
-        return false;
-    }
-
-    // Create tables if needed
-    if (!m_databaseManager->createTables()) {
-        qCritical() << "Failed to create database tables";
         return false;
     }
 
@@ -302,7 +315,8 @@ bool AppInitializer::initializeAutoUpdater()
 
     m_autoUpdater = std::make_unique<system::AutoUpdater>();
     if (m_settingsManager) {
-        m_autoUpdater->setUsbUpdatePath(m_settingsManager->usbPath());
+        m_autoUpdater->setUsbUpdatePath(
+            resolveConfiguredPath(m_settingsManager->usbPath(), config::Defaults::defaultUsbPath()));
     }
 
     qDebug() << "Auto-updater initialized";
@@ -322,6 +336,7 @@ bool AppInitializer::initializeUsbMonitor()
         return false;
     }
 
+    usbPath = resolveConfiguredPath(usbPath, config::Defaults::defaultUsbPath());
     m_usbMonitor = std::make_unique<system::UsbMonitor>(usbPath, m_databasePath);
 
     m_usbMonitor->updateDatabaseFromUsbAsync();

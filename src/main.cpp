@@ -15,53 +15,13 @@
 #include <QLoggingCategory>
 #include <QCommandLineParser>
 #include <QCommandLineOption>
-#include <QEvent>
-#include <QGuiApplication>
-#include <QInputMethod>
-#include <QLineEdit>
-#include <QTextEdit>
-#include <QPlainTextEdit>
-#include <QAbstractSpinBox>
+#include <QLocale>
+#include <QtGlobal>
 #include <cstring>
 
 #include "multipack/core/Application.h"
 #include "multipack/core/GlobalState.h"
 #include "multipack/config/ConfigDefaults.h"
-
-class VirtualKeyboardFocusFilter final : public QObject
-{
-public:
-    explicit VirtualKeyboardFocusFilter(QObject* parent = nullptr)
-        : QObject(parent)
-    {
-    }
-
-protected:
-    bool eventFilter(QObject* watched, QEvent* event) override
-    {
-        if (event && event->type() == QEvent::FocusIn) {
-            QWidget* widget = qobject_cast<QWidget*>(watched);
-            if (!widget) {
-                return QObject::eventFilter(watched, event);
-            }
-
-            const bool isTextInput =
-                qobject_cast<QLineEdit*>(widget) != nullptr ||
-                qobject_cast<QTextEdit*>(widget) != nullptr ||
-                qobject_cast<QPlainTextEdit*>(widget) != nullptr ||
-                qobject_cast<QAbstractSpinBox*>(widget) != nullptr;
-
-            if (isTextInput) {
-                widget->setAttribute(Qt::WA_InputMethodEnabled, true);
-                if (QInputMethod* inputMethod = QGuiApplication::inputMethod()) {
-                    inputMethod->show();
-                }
-            }
-        }
-
-        return QObject::eventFilter(watched, event);
-    }
-};
 
 /**
  * @brief Set environment variables for platform compatibility
@@ -69,15 +29,29 @@ protected:
 void setupEnvironment()
 {
 #if defined(Q_OS_LINUX)
-    // Force software rendering for Raspberry Pi
-    qputenv("QT_X11_NO_MITSHM", "1");
-    qputenv("LIBGL_ALWAYS_SOFTWARE", "1");
-    qputenv("QT_OPENGL", "software");
-    qputenv("QT_QUICK_BACKEND", "software");
-    qputenv("QSG_RHI_BACKEND", "software");
-    qputenv("QT_XCB_GL_INTEGRATION", "none");
-    qputenv("QT_QPA_PLATFORM", "xcb");
-    qputenv("QT_VIRTUALKEYBOARD_DESKTOP_DISABLE", "0");
+    // Use safe defaults for Raspberry Pi, but allow runtime scripts to override.
+    if (qEnvironmentVariableIsEmpty("QT_X11_NO_MITSHM")) {
+        qputenv("QT_X11_NO_MITSHM", "1");
+    }
+    if (qEnvironmentVariableIsEmpty("LIBGL_ALWAYS_SOFTWARE")) {
+        qputenv("LIBGL_ALWAYS_SOFTWARE", "1");
+    }
+    if (qEnvironmentVariableIsEmpty("QT_OPENGL")) {
+        qputenv("QT_OPENGL", "software");
+    }
+    if (qEnvironmentVariableIsEmpty("QT_QUICK_BACKEND")) {
+        qputenv("QT_QUICK_BACKEND", "software");
+    }
+    if (qEnvironmentVariableIsEmpty("QSG_RHI_BACKEND")) {
+        qputenv("QSG_RHI_BACKEND", "software");
+    }
+    if (qEnvironmentVariableIsEmpty("QT_XCB_GL_INTEGRATION")) {
+        qputenv("QT_XCB_GL_INTEGRATION", "none");
+    }
+    if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) {
+        qputenv("QT_QPA_PLATFORM", "xcb");
+    }
+    qunsetenv("QT_IM_MODULE");
 #elif defined(Q_OS_MACOS)
     // macOS uses cocoa platform (default)
     // No special environment setup needed
@@ -167,20 +141,30 @@ bool parseArguments(QCoreApplication& app)
  */
 int main(int argc, char* argv[])
 {
+    Q_INIT_RESOURCE(multipack);
+    Q_INIT_RESOURCE(MainWindowResources);
+
     // Setup environment before creating QApplication
     setupEnvironment();
 
-    if (shouldEnableVirtualKeyboard(argc, argv)) {
-        qputenv("QT_IM_MODULE", "qtvirtualkeyboard");
+    const bool vkEnabled = shouldEnableVirtualKeyboard(argc, argv);
+    qputenv("MULTIPACK_VIRTUAL_KEYBOARD", vkEnabled ? "1" : "0");
+    qunsetenv("QT_IM_MODULE");
+
+    // HMI is operated in Germany. Keep the process locale stable for number
+    // formatting and any locale-aware Qt widgets.
+    if (qEnvironmentVariableIsEmpty("LANG") || qEnvironmentVariable("LANG") == "C"
+        || qEnvironmentVariable("LANG") == "C.UTF-8" || qEnvironmentVariable("LANG") == "POSIX") {
+        qputenv("LANG", "de_DE.UTF-8");
     }
+    if (qEnvironmentVariable("LC_ALL") == "C" || qEnvironmentVariable("LC_ALL") == "C.UTF-8"
+        || qEnvironmentVariable("LC_ALL") == "POSIX") {
+        qunsetenv("LC_ALL");
+    }
+    QLocale::setDefault(QLocale(QLocale::German, QLocale::Germany));
 
     // Create application
     multipack::core::Application app(argc, argv);
-
-    // For QWidget apps on touch devices, explicitly show VK on focus.
-    if (qEnvironmentVariable("QT_IM_MODULE") == "qtvirtualkeyboard") {
-        app.installEventFilter(new VirtualKeyboardFocusFilter(&app));
-    }
 
     // Set application metadata
     app.setApplicationName(multipack::config::Defaults::APP_NAME);

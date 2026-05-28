@@ -10,33 +10,24 @@ LABEL description="ARM64 build environment for MultipackParser C++"
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Berlin
 
-# Install build dependencies
+# Layer 1: original system + Qt base/widgets/sql/network/multimedia + xcb dev.
+# Kept in its own RUN so existing BuildKit caches stay valid.
 RUN apt-get update && apt-get install -y \
-    # Build tools
     build-essential \
     cmake \
     ninja-build \
     pkg-config \
     git \
-    # Qt6 development packages
     qt6-base-dev \
     qt6-base-dev-tools \
     qt6-tools-dev \
     qt6-tools-dev-tools \
     qt6-multimedia-dev \
-    qt6-virtualkeyboard-plugin \
-    qml6-module-qtquick-virtualkeyboard \
-    qml6-module-qtqml-workerscript \
-    qml6-module-qtquick-window \
-    qml6-module-qtquick-layouts \
-    qml6-module-qt-labs-folderlistmodel \
     libqt6svg6 \
     libqt6sql6-sqlite \
-    # OpenGL/EGL for Qt6Gui
     libgl1-mesa-dev \
     libegl1-mesa-dev \
     libgles2-mesa-dev \
-    # X11/XCB for Qt platform plugins
     libxcb1-dev \
     libxcb-cursor-dev \
     libxcb-icccm4-dev \
@@ -51,18 +42,42 @@ RUN apt-get update && apt-get install -y \
     libxcb-xkb-dev \
     libxkbcommon-dev \
     libxkbcommon-x11-dev \
-    # SQLite
     libsqlite3-dev \
-    # SSL for network operations
     libssl-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# Layer 2: reinstall base dev tools to repair any cached layer that lost Qt6
+# tool CMake configs (the symptom is "Could NOT find Qt6CoreTools").
+RUN apt-get update && apt-get install -y --reinstall \
+        qt6-base-dev \
+        qt6-base-dev-tools \
+        qt6-tools-dev \
+        qt6-tools-dev-tools \
+    && rm -rf /var/lib/apt/lists/*
+
+# Sanity check: every CMake config we need must exist before configuring.
+# Fails loudly with the contents of the cmake dir so a missing/cached package
+# becomes obvious instead of producing a confusing "Qt6 not found" later.
+RUN set -eu; \
+    QT_CMAKE=/usr/lib/aarch64-linux-gnu/cmake; \
+    for pkg in Qt6Core Qt6CoreTools Qt6Widgets Qt6Network Qt6Sql Qt6Multimedia \
+               Qt6Concurrent Qt6UiTools; do \
+        cfg="$QT_CMAKE/$pkg/${pkg}Config.cmake"; \
+        if [ ! -f "$cfg" ]; then \
+            echo "MISSING: $cfg"; \
+            echo "Available cmake packages:"; \
+            ls -1 "$QT_CMAKE" || true; \
+            exit 1; \
+        fi; \
+    done; \
+    echo "All required Qt6 CMake configs present."
 
 # Set Qt6 cmake path
 ENV Qt6_DIR="/usr/lib/aarch64-linux-gnu/cmake/Qt6"
 
-# Set Raspberry Pi 4 optimization flags
-ENV CFLAGS="-mcpu=cortex-a72 -mtune=cortex-a72 -O2"
-ENV CXXFLAGS="-mcpu=cortex-a72 -mtune=cortex-a72 -O2"
+# Keep compiler flags conservative for stable builds under QEMU emulation.
+ENV CFLAGS="-O0"
+ENV CXXFLAGS="-O0"
 
 # Create working directory
 WORKDIR /app
@@ -80,17 +95,37 @@ RUN cmake -B build \
     -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_CXX_STANDARD=17 \
-    -DCMAKE_CXX_FLAGS="-mcpu=cortex-a72 -mtune=cortex-a72 -O2" \
-    -DCMAKE_C_FLAGS="-mcpu=cortex-a72 -mtune=cortex-a72 -O2" \
+    -DCMAKE_THREAD_PREFER_PTHREAD=ON \
+    -DTHREADS_PREFER_PTHREAD_FLAG=ON \
+    -DCMAKE_C_FLAGS_RELEASE="-O0 -DNDEBUG" \
+    -DCMAKE_CXX_FLAGS_RELEASE="-O0 -DNDEBUG" \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+    -DMULTIPACK_SAFE_ARM64_EMULATION=ON \
     -DENABLE_VTK=OFF
 
 # Under QEMU ARM64 emulation (x86 host), high parallelism can make GCC crash.
 # Keep this conservative for reliable cross-builds.
-ARG CMAKE_BUILD_JOBS=2
+ARG CMAKE_BUILD_JOBS=1
 
-# Build
-RUN cmake --build build --target multipack-parser -j${CMAKE_BUILD_JOBS}
+# Build. GCC occasionally segfaults under Docker Desktop's ARM64/QEMU
+# emulation even with -j1 and -O0; retry in the same layer so Ninja reuses
+# completed objects and resumes at the failed translation unit.
+RUN set -eu; \
+    attempt=1; \
+    max_attempts=4; \
+    while true; do \
+        echo "ARM64 build attempt ${attempt}/${max_attempts}"; \
+        if cmake --build build --target multipack-parser -j${CMAKE_BUILD_JOBS}; then \
+            break; \
+        fi; \
+        if [ "${attempt}" -ge "${max_attempts}" ]; then \
+            echo "ARM64 build failed after ${max_attempts} attempts"; \
+            exit 1; \
+        fi; \
+        attempt=$((attempt + 1)); \
+        echo "ARM64 build failed; retrying to recover from possible QEMU/GCC segfault"; \
+        sleep 2; \
+    done
 
 # Verify the binary was built
 RUN ls -la build/bin/

@@ -13,11 +13,14 @@
 #include "multipack/audio/SafetyMonitor.h"
 #include "multipack/config/ConfigDefaults.h"
 #include "multipack/system/UsbKeyCheck.h"
+#include "multipack/system/UsbMonitor.h"
 #include "multipack/ui/PasswordDialog.h"
 #include "multipack/ui/InputValidation.h"
 #include "multipack/ui/PaletteConfigDialog.h"
 #include "multipack/ui/NotificationPopup.h"
+#include "multipack/ui/OnScreenKeyboard.h"
 #include "multipack/message/StatusManager.h"
+#include "multipack/network/XmlRpcServer.h"
 #include "multipack/robot/RobotStatusMonitor.h"
 #include "multipack/system/RobFileParser.h"
 #include "multipack/ui/VisualizationWidget.h"
@@ -28,9 +31,10 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDateTime>
-#include <QFileSystemModel>
 #include <QCompleter>
+#include <QAbstractItemView>
 #include <QDebug>
+#include <QFileInfo>
 #include <QIcon>
 #include <QPixmap>
 #include <QCloseEvent>
@@ -38,15 +42,49 @@
 #include <QPushButton>
 #include <QTimer>
 #include <QFormLayout>
+#include <QGridLayout>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QLineEdit>
+#include <QCheckBox>
+#include <QDoubleSpinBox>
+#include <QGroupBox>
+#include <QHeaderView>
+#include <QInputDialog>
+#include <QListView>
+#include <QListWidget>
 #include <QProcess>
 #include <QSignalBlocker>
+#include <QSpinBox>
+#include <QStringListModel>
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QTabWidget>
 #include <QThread>
 
 namespace multipack {
 namespace ui {
+
+namespace {
+QString palettePlanDisplayName(const QString& fileName)
+{
+    QString displayName = QFileInfo(fileName).fileName().trimmed();
+    if (displayName.endsWith(QStringLiteral(".rob"), Qt::CaseInsensitive)) {
+        displayName.chop(4);
+    }
+    return displayName;
+}
+
+QString palettePlanItemFileName(QListWidgetItem* item)
+{
+    if (!item) {
+        return QString();
+    }
+    const QString storedName = item->data(Qt::UserRole).toString().trimmed();
+    return storedName.isEmpty() ? item->text().trimmed() : storedName;
+}
+} // namespace
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -59,6 +97,16 @@ MainWindow::MainWindow(QWidget* parent)
     m_centralWidget = new QWidget(this);
     setCentralWidget(m_centralWidget);
     ui->setupUi(m_centralWidget);
+    applyResourceIcons();
+
+    // Absolute-positioned UI pages stack widgets in creation order; raise every
+    // "Zurück" control so flat icon buttons stay above overlapping frames (e.g.
+    // experimental 3D canvas vs. ButtonZurueck_8).
+    for (QPushButton* btn : m_centralWidget->findChildren<QPushButton*>()) {
+        if (btn->objectName().startsWith(QStringLiteral("ButtonZurueck"))) {
+            btn->raise();
+        }
+    }
 
     auto* closeShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::ALT | Qt::Key_C), this);
     closeShortcut->setContext(Qt::ApplicationShortcut);
@@ -70,6 +118,7 @@ MainWindow::MainWindow(QWidget* parent)
     // Setup connections
     setupConnections();
     setupStatusTab();
+    setupDatabaseManagerTab();
     setupDimensionHandlers();
 
     if (ui->MatplotLibCanvasFrame) {
@@ -88,6 +137,10 @@ MainWindow::MainWindow(QWidget* parent)
 
     // Start on main menu
     ui->stackedWidget->setCurrentIndex(PAGE_MAIN_MENU);
+    if (ui->EingabePallettenplan) {
+        ui->EingabePallettenplan->setInputMethodHints(
+            Qt::ImhFormattedNumbersOnly | Qt::ImhNoPredictiveText);
+    }
     if (ui->lineEditCommand) {
         ui->lineEditCommand->setText("> ");
         ui->lineEditCommand->setPlaceholderText("command");
@@ -98,12 +151,32 @@ MainWindow::MainWindow(QWidget* parent)
     setWindowTitle("Palletierer");
     setFixedSize(1280, 720);
 
+    // Embedded on-screen keyboard. Parented to the central widget so it can
+    // overlay the bottom of the UI; raised above siblings on demand. Avoids
+    // QDockWidget (no room under setFixedSize) and Qt::Tool top-level (z-order
+    // issues under non-compositing X11 kiosk).
+    if (QApplication::platformName() != QStringLiteral("offscreen")
+        && qEnvironmentVariable("MULTIPACK_VIRTUAL_KEYBOARD") != QStringLiteral("0")) {
+        m_onScreenKeyboard = new OnScreenKeyboard(m_centralWidget);
+        if (!m_onScreenKeyboard->isReady()) {
+            qWarning() << "MainWindow - on-screen keyboard failed to initialize; disabling";
+            delete m_onScreenKeyboard;
+            m_onScreenKeyboard = nullptr;
+        } else {
+            qInfo() << "MainWindow - on-screen keyboard ready";
+        }
+    } else {
+        qInfo() << "MainWindow - virtual keyboard disabled (MULTIPACK_VIRTUAL_KEYBOARD="
+                << qEnvironmentVariable("MULTIPACK_VIRTUAL_KEYBOARD") << ", platform="
+                << QApplication::platformName() << ")";
+    }
+
     qDebug() << "MainWindow - initialized";
 }
 
 MainWindow::~MainWindow()
 {
-    // Thread cleanup is already handled in closeEvent
+    stopRobotStatusMonitor();
     delete ui;
     qDebug() << "MainWindow - destroyed";
 }
@@ -111,23 +184,7 @@ MainWindow::~MainWindow()
 void MainWindow::closeEvent(QCloseEvent* event)
 {
     qDebug() << "MainWindow - close event received";
-
-    // Stop status monitor (thread-safe via atomic flag)
-    if (m_statusMonitor) {
-        m_statusMonitor->stop();
-    }
-
-    // Quit the thread event loop
-    if (m_statusThread) {
-        m_statusThread->quit();
-        // Wait for thread to finish (up to 3 seconds)
-        if (!m_statusThread->wait(3000)) {
-            qWarning() << "RobotStatusMonitor thread did not finish, terminating";
-            m_statusThread->terminate();
-            m_statusThread->wait(1000);
-        }
-        qDebug() << "RobotStatusMonitor thread stopped";
-    }
+    stopRobotStatusMonitor();
 
     // Accept the close event
     event->accept();
@@ -146,7 +203,15 @@ void MainWindow::setSettingsManager(config::SettingsManager* settings)
 
 void MainWindow::setDatabaseManager(database::DatabaseManager* database)
 {
+    if (m_database) {
+        disconnect(m_database, nullptr, this, nullptr);
+    }
+
     m_database = database;
+    if (m_database) {
+        connect(m_database, &database::DatabaseManager::dataChanged,
+                this, &MainWindow::loadRobFileList);
+    }
     loadRobFileList();
 }
 
@@ -191,6 +256,105 @@ void MainWindow::setAutoUpdater(system::AutoUpdater* updater)
         connect(m_autoUpdater, &system::AutoUpdater::updateFailed,
                 this, &MainWindow::onUpdateFailed);
     }
+}
+
+void MainWindow::setUsbMonitor(system::UsbMonitor* monitor)
+{
+    if (m_usbMonitor == monitor) {
+        return;
+    }
+
+    if (m_usbMonitor) {
+        disconnect(m_usbMonitor, nullptr, this, nullptr);
+    }
+
+    m_usbMonitor = monitor;
+    if (!m_usbMonitor) {
+        return;
+    }
+
+    connect(m_usbMonitor, &system::UsbMonitor::databaseUpdateCompleted,
+            this, [this](const QStringList& filesUpdated) {
+                qInfo() << "MainWindow - palette plan folder update completed:" << filesUpdated;
+                loadRobFileList();
+            });
+    connect(m_usbMonitor, &system::UsbMonitor::newFilesDetected,
+            this, [](const QStringList& files) {
+                qInfo() << "MainWindow - new palette plan files detected:" << files;
+            });
+    connect(m_usbMonitor, &system::UsbMonitor::filesModified,
+            this, [](const QStringList& files) {
+                qInfo() << "MainWindow - modified palette plan files detected:" << files;
+            });
+    connect(m_usbMonitor, &system::UsbMonitor::databaseUpdateFailed,
+            this, [](const QString& error) {
+                qWarning() << "MainWindow - palette plan folder update failed:" << error;
+            });
+
+    QTimer::singleShot(0, m_usbMonitor, &system::UsbMonitor::updateDatabaseFromUsbAsync);
+}
+
+void MainWindow::setXmlRpcServer(network::XmlRpcServer* server)
+{
+    if (m_xmlRpcServer == server) {
+        return;
+    }
+
+    if (m_xmlRpcServer) {
+        disconnect(m_xmlRpcServer, nullptr, this, nullptr);
+    }
+
+    m_xmlRpcServer = server;
+
+    if (m_xmlRpcServer) {
+        connect(m_xmlRpcServer, &network::XmlRpcServer::started,
+                this, [this]() { setServerRunning(true); });
+        connect(m_xmlRpcServer, &network::XmlRpcServer::stopped,
+                this, [this]() { setServerRunning(false); });
+        connect(m_xmlRpcServer, &network::XmlRpcServer::error,
+                this, [this](const QString& message) { setServerRunning(false, message); });
+        connect(m_xmlRpcServer, &network::XmlRpcServer::paletteDataLoaded,
+                this, [this](const QString& fileName) {
+                    qInfo() << "MainWindow - robot loaded palette plan:" << fileName;
+                    incrementUseCycleCount();
+                });
+        setServerRunning(m_xmlRpcServer->isRunning());
+    } else {
+        setServerRunning(false);
+    }
+}
+
+void MainWindow::applyResourceIcons()
+{
+    auto iconFromResource = [](const char* path) -> QIcon {
+        const QIcon icon(QString::fromUtf8(path));
+        if (icon.isNull()) {
+            qWarning() << "MainWindow - missing resource icon:" << path;
+        }
+        return icon;
+    };
+
+    const QIcon backIcon = iconFromResource(":/icons/back.png");
+    const QIcon loadButtonIcon = iconFromResource(":/icons/load.png");
+
+    for (QPushButton* btn : m_centralWidget->findChildren<QPushButton*>()) {
+        if (btn->objectName().startsWith(QStringLiteral("ButtonZurueck"))) {
+            btn->setIcon(backIcon);
+        }
+    }
+
+    if (ui->ButtonSettings) {
+        ui->ButtonSettings->setIcon(QIcon());
+        ui->ButtonSettings->setIconSize(QSize());
+    }
+    if (ui->LadePallettenplan) {
+        ui->LadePallettenplan->setIcon(loadButtonIcon);
+    }
+    if (ui->LadePallettenplan_2) {
+        ui->LadePallettenplan_2->setIcon(loadButtonIcon);
+    }
+
+    updateVolumeIcon();
 }
 
 void MainWindow::setupConnections()
@@ -283,6 +447,7 @@ void MainWindow::loadSettings()
     ui->lineEditURSoftwareVer->setText(m_settings->value(config::Keys::INFO_UR_SOFTWARE_VERSION).toString());
     ui->lineEditURName->setText(m_settings->value(config::Keys::INFO_PALLETTIERER_NAME).toString());
     ui->lineEditURStandort->setText(m_settings->value(config::Keys::INFO_PALLETTIERER_STANDORT).toString());
+    ui->lineEditNumberCycles->setText(QString::number(m_settings->numberOfUseCycles()));
 
     // Load paths
     ui->pathEdit->setText(m_settings->value(config::Keys::SERVER_USB_PATH).toString());
@@ -393,6 +558,11 @@ void MainWindow::maybeStartRobotStatusMonitor()
         return;
     }
 
+    if (qEnvironmentVariableIsSet("MULTIPACK_DISABLE_ROBOT_STATUS_MONITOR")) {
+        qDebug() << "RobotStatusMonitor disabled by environment";
+        return;
+    }
+
     m_statusThread = new QThread(this);
     m_statusMonitor = new robot::RobotStatusMonitor();
     m_statusMonitor->moveToThread(m_statusThread);
@@ -415,6 +585,40 @@ void MainWindow::maybeStartRobotStatusMonitor()
         m_statusMonitor->setRobotIp(robotIp);
         m_statusMonitor->start(robot::RobotStatusMonitor::DEFAULT_INTERVAL_MS);
     }, Qt::QueuedConnection);
+}
+
+void MainWindow::stopRobotStatusMonitor()
+{
+    robot::RobotStatusMonitor* statusMonitor = m_statusMonitor;
+    QThread* statusThread = m_statusThread;
+
+    if (!statusMonitor && !statusThread) {
+        return;
+    }
+
+    m_statusMonitor = nullptr;
+    m_statusThread = nullptr;
+
+    if (statusMonitor) {
+        if (statusMonitor->thread() == QThread::currentThread()) {
+            statusMonitor->stop();
+        } else {
+            QMetaObject::invokeMethod(
+                statusMonitor,
+                [statusMonitor]() { statusMonitor->stop(); },
+                Qt::BlockingQueuedConnection);
+        }
+    }
+
+    if (statusThread) {
+        statusThread->quit();
+        if (!statusThread->wait(3000)) {
+            qWarning() << "RobotStatusMonitor thread did not finish, terminating";
+            statusThread->terminate();
+            statusThread->wait(1000);
+        }
+        qDebug() << "RobotStatusMonitor thread stopped";
+    }
 }
 
 void MainWindow::setupStatusTab()
@@ -807,18 +1011,40 @@ void MainWindow::onPaletteClearClicked(int paletteNumber)
     updatePaletteClearIndicators();
 }
 
+void MainWindow::incrementUseCycleCount()
+{
+    if (!m_settings) {
+        return;
+    }
+
+    const int nextCount = m_settings->numberOfUseCycles() + 1;
+    m_settings->setNumberOfUseCycles(nextCount);
+    ui->lineEditNumberCycles->setText(QString::number(nextCount));
+
+    if (!m_settings->save()) {
+        qWarning() << "MainWindow - failed to persist use cycle count";
+    }
+}
+
 void MainWindow::loadRobFileList()
 {
-    if (!m_database) return;
+    if (!m_database) {
+        refreshPalettePlanCompleter();
+        refreshDatabaseManagerPlans();
+        return;
+    }
 
     ui->robFilesListWidget->clear();
 
     auto files = m_database->listAvailableFiles();
     for (const auto& file : files) {
-        ui->robFilesListWidget->addItem(file.fileName);
+        auto* item = new QListWidgetItem(palettePlanDisplayName(file.fileName), ui->robFilesListWidget);
+        item->setData(Qt::UserRole, file.fileName);
     }
 
     ui->lineEditNumberPlans->setText(QString::number(files.size()));
+    refreshPalettePlanCompleter();
+    refreshDatabaseManagerPlans();
 
     qDebug() << "MainWindow - loaded" << files.size() << "rob files";
 }
@@ -826,7 +1052,7 @@ void MainWindow::loadRobFileList()
 void MainWindow::updateEnabledStates()
 {
     bool paletteLoaded = m_paletteLoaded;
-    bool canStartServer = paletteLoaded && !m_serverRunning;
+    bool canStartServer = paletteLoaded && !m_serverRunning && m_xmlRpcServer != nullptr;
     QString startServerText = m_serverRunning ? "Server laeuft..." : "Server starten";
 
     // Enable/disable controls based on palette loaded state
@@ -851,10 +1077,13 @@ void MainWindow::updateEnabledStates()
 
 void MainWindow::updateVolumeIcon()
 {
+    if (!ui->pushButtonVolumeOnOff) {
+        return;
+    }
     if (m_volumeOn) {
-        ui->pushButtonVolumeOnOff->setIcon(QIcon(":/Sound/imgs/volume-on.png"));
+        ui->pushButtonVolumeOnOff->setIcon(QIcon(QStringLiteral(":/icons/volume-on.png")));
     } else {
-        ui->pushButtonVolumeOnOff->setIcon(QIcon(":/Sound/imgs/volume-off.png"));
+        ui->pushButtonVolumeOnOff->setIcon(QIcon(QStringLiteral(":/icons/volume-off.png")));
     }
 }
 
@@ -872,15 +1101,30 @@ void MainWindow::showRobotParameters()
 
 void MainWindow::showSettings()
 {
+    if (ui->tabWidget_2 && ui->stackedWidget) {
+        ui->tabWidget_2->setGeometry(0, 0, ui->stackedWidget->width(), ui->stackedWidget->height());
+    }
     ui->stackedWidget->setCurrentIndex(PAGE_SETTINGS);
 }
 
 void MainWindow::showPasswordDialog()
 {
     PasswordDialog dialog(this, m_settings);
+    if (m_onScreenKeyboard) {
+        m_onScreenKeyboard->setHostWidget(&dialog, true);
+    }
+    QTimer::singleShot(0, &dialog, [&dialog]() {
+        dialog.focusPasswordInput();
+    });
     
     // Show the dialog and wait for user response
-    if (dialog.exec() == QDialog::Accepted && dialog.wasAccepted()) {
+    const int result = dialog.exec();
+
+    if (m_onScreenKeyboard && m_centralWidget) {
+        m_onScreenKeyboard->setHostWidget(m_centralWidget);
+    }
+
+    if (result == QDialog::Accepted && dialog.wasAccepted()) {
         qDebug() << "Password authenticated - opening settings";
         showSettings();
     } else {
@@ -897,6 +1141,8 @@ void MainWindow::showExperimental()
 
 void MainWindow::onLoadPaletteClicked()
 {
+    hidePalettePlanCompletionPopup();
+
     QString fileName = ui->EingabePallettenplan->text().trimmed();
     if (fileName.isEmpty()) {
         showMessage("Bitte Palletierplan eingeben");
@@ -949,7 +1195,7 @@ void MainWindow::onLoadPaletteClicked()
             ui->checkBoxEinzelpaket->setChecked(data->packageDimensions.einzelpaketLaengs);
 
             ui->LabelPalletenplanInfo->setText(QString("Geladen: %1 - %2 Lagen, %3 Pakete")
-                .arg(m_currentPaletteFile)
+                .arg(palettePlanDisplayName(m_currentPaletteFile))
                 .arg(data->metadata.anzLagen)
                 .arg(data->metadata.anzahlPakete));
 
@@ -971,8 +1217,19 @@ void MainWindow::onStartServerClicked()
         return;
     }
 
+    if (!m_xmlRpcServer) {
+        showMessage("XML-RPC-Server nicht verfuegbar");
+        return;
+    }
+
+    const int port = m_settings ? m_settings->xmlRpcPort() : config::Defaults::XMLRPC_PORT;
+    if (!m_xmlRpcServer->start(port)) {
+        qWarning() << "Failed to start XML-RPC server on port" << port;
+        return;
+    }
+
     emit serverStartRequested();
-    qDebug() << "Server start requested";
+    qDebug() << "Server start requested on port" << port;
 }
 
 void MainWindow::onParameterRobotClicked()
@@ -983,7 +1240,7 @@ void MainWindow::onParameterRobotClicked()
 void MainWindow::onSettingsClicked()
 {
     qDebug() << "Settings button clicked - checking for USB key or password";
-    
+
     // First check for valid USB key
     if (m_usbKeyCheck && m_usbKeyCheck->isKeyPresent()) {
         qDebug() << "Valid USB key found - opening settings directly";
@@ -1132,6 +1389,12 @@ void MainWindow::onRobotPauseClicked()
 
 void MainWindow::onStopRpcServerClicked()
 {
+    if (!m_xmlRpcServer) {
+        showMessage("XML-RPC-Server nicht verfuegbar");
+        return;
+    }
+
+    m_xmlRpcServer->stop();
     emit serverStopRequested();
     qDebug() << "Server stop requested";
 }
@@ -1449,9 +1712,9 @@ void MainWindow::onImportRobFileClicked()
 
     QString filePath = QFileDialog::getOpenFileName(
         this,
-        tr(".rob Datei auswaehlen"),
+        tr("Palettierplan auswaehlen"),
         QString(),
-        tr("ROB Files (*.rob)")
+        tr("Palettierplan-Dateien (*)")
     );
 
     if (filePath.isEmpty()) {
@@ -1509,12 +1772,17 @@ void MainWindow::onImportRobFileClicked()
         paletteData.packagePositions.append(position);
     }
 
-    if (!m_database->savePaletteData(paletteData)) {
+    const database::SaveResult saveResult = m_database->savePaletteData(paletteData);
+    if (saveResult == database::SaveResult::Error) {
         showMessage("Import fehlgeschlagen: Datenbankfehler");
         return;
     }
 
-    showMessage(".rob Datei importiert");
+    if (saveResult == database::SaveResult::Unchanged) {
+        showMessage("Palettierplan bereits aktuell");
+    } else {
+        showMessage("Palettierplan importiert");
+    }
     loadRobFileList();
     updateVisualizationFromPaletteData(paletteData);
 }
@@ -1559,7 +1827,7 @@ void MainWindow::updateVisualizationFromPaletteData(const database::PaletteData&
     };
 
     ui::VisualPalette palette;
-    palette.name = data.metadata.fileName;
+    palette.name = palettePlanDisplayName(data.metadata.fileName);
 
     const auto& lines = data.rawData;
     bool hasRawData = lines.size() >= 4 && lines[0].size() >= 2 && lines[1].size() >= 4
@@ -1840,15 +2108,15 @@ void MainWindow::onRobFileSelected(QListWidgetItem* item)
 {
     if (!item) return;
 
-    QString fileName = item->text();
-    qDebug() << "Rob file selected:" << fileName;
+    const QString fileName = palettePlanItemFileName(item);
+    qDebug() << "Palette plan selected:" << palettePlanDisplayName(fileName);
 
     // Immediately load and visualize the selected file
     if (m_database) {
         auto data = m_database->loadPaletteData(fileName);
         if (data.has_value()) {
             updateVisualizationFromPaletteData(*data);
-            qDebug() << "Visualization updated for:" << fileName;
+            qDebug() << "Visualization updated for:" << palettePlanDisplayName(fileName);
         }
     }
 }
@@ -1875,7 +2143,8 @@ void MainWindow::onFilterChanged()
 
     ui->robFilesListWidget->clear();
     for (const auto& name : matching) {
-        ui->robFilesListWidget->addItem(name);
+        auto* item = new QListWidgetItem(palettePlanDisplayName(name), ui->robFilesListWidget);
+        item->setData(Qt::UserRole, name);
     }
 }
 
@@ -1895,9 +2164,648 @@ void MainWindow::onLoadSelectedRobFile()
         return;
     }
 
-    ui->EingabePallettenplan->setText(items.first()->text());
+    ui->EingabePallettenplan->setText(palettePlanDisplayName(palettePlanItemFileName(items.first())));
     showMainMenu();
     onLoadPaletteClicked();
+}
+
+// === Database Manager Tab ===
+
+void MainWindow::setupDatabaseManagerTab()
+{
+    if (!ui->consoleSettingsTab) {
+        return;
+    }
+
+    if (ui->tabWidget_2) {
+        if (ui->stackedWidget) {
+            ui->tabWidget_2->setGeometry(0, 0, ui->stackedWidget->width(), ui->stackedWidget->height());
+        }
+        ui->tabWidget_2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+        const int index = ui->tabWidget_2->indexOf(ui->consoleSettingsTab);
+        if (index >= 0) {
+            ui->tabWidget_2->setTabText(index, tr("Datenbank"));
+        }
+    }
+
+    if (ui->textEditConsole) {
+        ui->textEditConsole->hide();
+    }
+    if (ui->lineEditCommand) {
+        ui->lineEditCommand->hide();
+    }
+
+    auto* rootLayout = new QHBoxLayout(ui->consoleSettingsTab);
+    rootLayout->setContentsMargins(8, 8, 8, 8);
+    rootLayout->setSpacing(10);
+
+    auto* sidePanel = new QWidget(ui->consoleSettingsTab);
+    sidePanel->setFixedWidth(270);
+    auto* sideLayout = new QVBoxLayout(sidePanel);
+    sideLayout->setContentsMargins(0, 0, 0, 0);
+    sideLayout->setSpacing(6);
+
+    if (ui->ButtonZurueck_7) {
+        ui->ButtonZurueck_7->setFixedSize(64, 64);
+        sideLayout->addWidget(ui->ButtonZurueck_7, 0, Qt::AlignLeft);
+    }
+
+    auto* listLabel = new QLabel(tr("Palettierplaene"), sidePanel);
+    listLabel->setStyleSheet(QStringLiteral("font-weight: bold; font-size: 16px;"));
+    sideLayout->addWidget(listLabel);
+
+    m_databasePlanList = new QListWidget(sidePanel);
+    m_databasePlanList->setSelectionMode(QAbstractItemView::SingleSelection);
+    sideLayout->addWidget(m_databasePlanList, 1);
+
+    auto* actionGrid = new QGridLayout();
+    actionGrid->setHorizontalSpacing(6);
+    actionGrid->setVerticalSpacing(6);
+
+    auto* refreshButton = new QPushButton(tr("Aktualisieren"), sidePanel);
+    auto* importButton = new QPushButton(tr("Import"), sidePanel);
+    auto* newButton = new QPushButton(tr("Neu"), sidePanel);
+    auto* duplicateButton = new QPushButton(tr("Duplizieren"), sidePanel);
+    auto* deleteButton = new QPushButton(tr("Loeschen"), sidePanel);
+
+    actionGrid->addWidget(refreshButton, 0, 0, 1, 2);
+    actionGrid->addWidget(importButton, 1, 0);
+    actionGrid->addWidget(newButton, 1, 1);
+    actionGrid->addWidget(duplicateButton, 2, 0, 1, 2);
+    actionGrid->addWidget(deleteButton, 3, 0, 1, 2);
+    sideLayout->addLayout(actionGrid);
+
+    auto* editorPanel = new QWidget(ui->consoleSettingsTab);
+    auto* editorLayout = new QVBoxLayout(editorPanel);
+    editorLayout->setContentsMargins(0, 0, 0, 0);
+    editorLayout->setSpacing(8);
+
+    auto* formGroup = new QGroupBox(tr("Stammdaten"), editorPanel);
+    auto* form = new QGridLayout(formGroup);
+    form->setHorizontalSpacing(8);
+    form->setVerticalSpacing(6);
+
+    auto makeIntSpin = [](int min, int max) {
+        auto* spin = new QSpinBox();
+        spin->setRange(min, max);
+        spin->setButtonSymbols(QAbstractSpinBox::PlusMinus);
+        return spin;
+    };
+    auto makeDoubleSpin = [](double min, double max, int decimals) {
+        auto* spin = new QDoubleSpinBox();
+        spin->setRange(min, max);
+        spin->setDecimals(decimals);
+        spin->setButtonSymbols(QAbstractSpinBox::PlusMinus);
+        return spin;
+    };
+
+    m_databasePlanNameEdit = new QLineEdit(formGroup);
+    m_databasePaketQuerSpin = makeIntSpin(0, 999999);
+    m_databaseCogXSpin = makeDoubleSpin(-999999.0, 999999.0, 3);
+    m_databaseCogYSpin = makeDoubleSpin(-999999.0, 999999.0, 3);
+    m_databaseCogZSpin = makeDoubleSpin(-999999.0, 999999.0, 3);
+    m_databaseLayerTypesSpin = makeIntSpin(0, 999999);
+    m_databaseLayerCountSpin = makeIntSpin(0, 999999);
+    m_databasePackageCountSpin = makeIntSpin(0, 999999);
+    m_databasePalletLengthSpin = makeIntSpin(0, 999999);
+    m_databasePalletWidthSpin = makeIntSpin(0, 999999);
+    m_databasePalletHeightSpin = makeIntSpin(0, 999999);
+    m_databasePackageLengthSpin = makeIntSpin(0, 999999);
+    m_databasePackageWidthSpin = makeIntSpin(0, 999999);
+    m_databasePackageHeightSpin = makeIntSpin(0, 999999);
+    m_databasePackageGapSpin = makeIntSpin(0, 999999);
+    m_databasePackageWeightSpin = makeDoubleSpin(0.0, 999999.0, 3);
+    m_databaseEinzelpaketCheck = new QCheckBox(tr("Einzelpaket laengs"), formGroup);
+
+    form->addWidget(new QLabel(tr("Name"), formGroup), 0, 0);
+    form->addWidget(m_databasePlanNameEdit, 0, 1, 1, 3);
+    form->addWidget(new QLabel(tr("Paket quer"), formGroup), 1, 0);
+    form->addWidget(m_databasePaketQuerSpin, 1, 1);
+    form->addWidget(new QLabel(tr("Lagearten"), formGroup), 1, 2);
+    form->addWidget(m_databaseLayerTypesSpin, 1, 3);
+    form->addWidget(new QLabel(tr("Lagen"), formGroup), 2, 0);
+    form->addWidget(m_databaseLayerCountSpin, 2, 1);
+    form->addWidget(new QLabel(tr("Pakete"), formGroup), 2, 2);
+    form->addWidget(m_databasePackageCountSpin, 2, 3);
+    form->addWidget(new QLabel(tr("Schwerpunkt X/Y/Z"), formGroup), 3, 0);
+    form->addWidget(m_databaseCogXSpin, 3, 1);
+    form->addWidget(m_databaseCogYSpin, 3, 2);
+    form->addWidget(m_databaseCogZSpin, 3, 3);
+    form->addWidget(new QLabel(tr("Palette L/B/H"), formGroup), 4, 0);
+    form->addWidget(m_databasePalletLengthSpin, 4, 1);
+    form->addWidget(m_databasePalletWidthSpin, 4, 2);
+    form->addWidget(m_databasePalletHeightSpin, 4, 3);
+    form->addWidget(new QLabel(tr("Karton L/B/H"), formGroup), 5, 0);
+    form->addWidget(m_databasePackageLengthSpin, 5, 1);
+    form->addWidget(m_databasePackageWidthSpin, 5, 2);
+    form->addWidget(m_databasePackageHeightSpin, 5, 3);
+    form->addWidget(new QLabel(tr("Spalt / Gewicht"), formGroup), 6, 0);
+    form->addWidget(m_databasePackageGapSpin, 6, 1);
+    form->addWidget(m_databasePackageWeightSpin, 6, 2);
+    form->addWidget(m_databaseEinzelpaketCheck, 6, 3);
+
+    editorLayout->addWidget(formGroup, 0);
+
+    auto* tableTabs = new QTabWidget(editorPanel);
+    tableTabs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    auto* positionTab = new QWidget(tableTabs);
+    auto* positionLayout = new QVBoxLayout(positionTab);
+    positionLayout->setContentsMargins(0, 0, 0, 0);
+    positionLayout->setSpacing(6);
+    auto* positionButtons = new QHBoxLayout();
+    auto* addPositionButton = new QPushButton(tr("Zeile +"), positionTab);
+    auto* removePositionButton = new QPushButton(tr("Zeile -"), positionTab);
+    positionButtons->addWidget(addPositionButton);
+    positionButtons->addWidget(removePositionButton);
+    positionButtons->addStretch(1);
+    m_databasePositionsTable = new QTableWidget(positionTab);
+    m_databasePositionsTable->setColumnCount(9);
+    m_databasePositionsTable->setHorizontalHeaderLabels(
+        {tr("xp"), tr("yp"), tr("ap"), tr("xd"), tr("yd"), tr("ad"), tr("nop"), tr("xvec"), tr("yvec")});
+    m_databasePositionsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    m_databasePositionsTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    positionLayout->addLayout(positionButtons);
+    positionLayout->addWidget(m_databasePositionsTable, 1);
+    tableTabs->addTab(positionTab, tr("Paketpositionen"));
+
+    auto* layerTab = new QWidget(tableTabs);
+    auto* layerLayout = new QVBoxLayout(layerTab);
+    layerLayout->setContentsMargins(0, 0, 0, 0);
+    layerLayout->setSpacing(6);
+    m_databaseLayersTable = new QTableWidget(layerTab);
+    m_databaseLayersTable->setColumnCount(3);
+    m_databaseLayersTable->setHorizontalHeaderLabels(
+        {tr("Lage-Zuordnung"), tr("Zwischenlage"), tr("Pakete je Lageart")});
+    m_databaseLayersTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    m_databaseLayersTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    layerLayout->addWidget(m_databaseLayersTable, 1);
+    tableTabs->addTab(layerTab, tr("Lagen"));
+
+    auto* rawTab = new QWidget(tableTabs);
+    auto* rawLayout = new QVBoxLayout(rawTab);
+    rawLayout->setContentsMargins(0, 0, 0, 0);
+    rawLayout->setSpacing(6);
+    auto* rawButtons = new QHBoxLayout();
+    auto* addRawRowButton = new QPushButton(tr("Zeile +"), rawTab);
+    auto* removeRawRowButton = new QPushButton(tr("Zeile -"), rawTab);
+    auto* addRawColumnButton = new QPushButton(tr("Spalte +"), rawTab);
+    auto* removeRawColumnButton = new QPushButton(tr("Spalte -"), rawTab);
+    rawButtons->addWidget(addRawRowButton);
+    rawButtons->addWidget(removeRawRowButton);
+    rawButtons->addWidget(addRawColumnButton);
+    rawButtons->addWidget(removeRawColumnButton);
+    rawButtons->addStretch(1);
+    m_databaseRawTable = new QTableWidget(rawTab);
+    m_databaseRawTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    rawLayout->addLayout(rawButtons);
+    rawLayout->addWidget(m_databaseRawTable, 1);
+    tableTabs->addTab(rawTab, tr("Rohdaten"));
+
+    editorLayout->addWidget(tableTabs, 1);
+
+    auto* saveRow = new QHBoxLayout();
+    saveRow->addStretch(1);
+    auto* saveButton = new QPushButton(tr("Speichern / Umbenennen"), editorPanel);
+    saveButton->setMinimumHeight(36);
+    saveRow->addWidget(saveButton);
+    editorLayout->addLayout(saveRow);
+
+    rootLayout->addWidget(sidePanel, 0);
+    rootLayout->addWidget(editorPanel, 1);
+
+    connect(refreshButton, &QPushButton::clicked, this, &MainWindow::refreshDatabaseManagerPlans);
+    connect(importButton, &QPushButton::clicked, this, &MainWindow::onImportRobFileClicked);
+    connect(newButton, &QPushButton::clicked, this, &MainWindow::onDatabaseNewClicked);
+    connect(duplicateButton, &QPushButton::clicked, this, &MainWindow::onDatabaseDuplicateClicked);
+    connect(deleteButton, &QPushButton::clicked, this, &MainWindow::onDatabaseDeleteClicked);
+    connect(saveButton, &QPushButton::clicked, this, &MainWindow::onDatabaseSaveClicked);
+    connect(addPositionButton, &QPushButton::clicked, this, &MainWindow::onDatabaseAddPositionClicked);
+    connect(removePositionButton, &QPushButton::clicked, this, &MainWindow::onDatabaseRemovePositionClicked);
+    connect(addRawRowButton, &QPushButton::clicked, this, &MainWindow::onDatabaseAddRawRowClicked);
+    connect(removeRawRowButton, &QPushButton::clicked, this, &MainWindow::onDatabaseRemoveRawRowClicked);
+    connect(addRawColumnButton, &QPushButton::clicked, this, &MainWindow::onDatabaseAddRawColumnClicked);
+    connect(removeRawColumnButton, &QPushButton::clicked, this, &MainWindow::onDatabaseRemoveRawColumnClicked);
+    connect(m_databasePlanList, &QListWidget::currentItemChanged,
+            this, &MainWindow::onDatabasePlanSelectionChanged);
+
+    refreshDatabaseManagerPlans();
+}
+
+void MainWindow::refreshDatabaseManagerPlans()
+{
+    if (!m_databasePlanList) {
+        return;
+    }
+
+    {
+        const QString previousSelection = selectedDatabasePlanFileName();
+        QSignalBlocker blocker(m_databasePlanList);
+        m_databasePlanList->clear();
+
+        if (!m_database) {
+            return;
+        }
+
+        const auto files = m_database->listAvailableFiles();
+        int rowToSelect = -1;
+        for (const auto& file : files) {
+            auto* item = new QListWidgetItem(palettePlanDisplayName(file.fileName), m_databasePlanList);
+            item->setData(Qt::UserRole, file.fileName);
+            item->setData(Qt::UserRole + 1, file.id);
+            item->setToolTip(file.timestampStr);
+            if (file.fileName == previousSelection || file.fileName == m_databaseEditorOriginalFileName) {
+                rowToSelect = m_databasePlanList->row(item);
+            }
+        }
+
+        if (rowToSelect < 0 && m_databasePlanList->count() > 0) {
+            rowToSelect = 0;
+        }
+
+        if (rowToSelect >= 0) {
+            m_databasePlanList->setCurrentRow(rowToSelect);
+        }
+    }
+
+    if (m_databasePlanList->currentItem()) {
+        onDatabasePlanSelectionChanged();
+    }
+}
+
+void MainWindow::onDatabasePlanSelectionChanged()
+{
+    if (!m_database || !m_databasePlanList || !m_databasePlanList->currentItem()) {
+        return;
+    }
+
+    const int metadataId = m_databasePlanList->currentItem()->data(Qt::UserRole + 1).toInt();
+    auto data = m_database->loadPaletteData(QString(), metadataId);
+    if (!data.has_value()) {
+        showMessage("Palettierplan konnte nicht geladen werden");
+        return;
+    }
+
+    loadDatabaseEditor(*data);
+}
+
+void MainWindow::loadDatabaseEditor(const database::PaletteData& data)
+{
+    m_databaseEditorData = std::make_unique<database::PaletteData>(data);
+    m_databaseEditorOriginalFileName = data.metadata.fileName;
+
+    m_databasePlanNameEdit->setText(palettePlanDisplayName(data.metadata.fileName));
+    m_databasePaketQuerSpin->setValue(data.metadata.paketQuer);
+    m_databaseCogXSpin->setValue(data.metadata.centerOfGravity.value(0, 0.0));
+    m_databaseCogYSpin->setValue(data.metadata.centerOfGravity.value(1, 0.0));
+    m_databaseCogZSpin->setValue(data.metadata.centerOfGravity.value(2, 0.0));
+    m_databaseLayerTypesSpin->setValue(data.metadata.lageArten);
+    m_databaseLayerCountSpin->setValue(data.metadata.anzLagen);
+    m_databasePackageCountSpin->setValue(data.metadata.anzahlPakete);
+    m_databasePalletLengthSpin->setValue(data.paletteDimensions.length);
+    m_databasePalletWidthSpin->setValue(data.paletteDimensions.width);
+    m_databasePalletHeightSpin->setValue(data.paletteDimensions.height);
+    m_databasePackageLengthSpin->setValue(data.packageDimensions.length);
+    m_databasePackageWidthSpin->setValue(data.packageDimensions.width);
+    m_databasePackageHeightSpin->setValue(data.packageDimensions.height);
+    m_databasePackageGapSpin->setValue(data.packageDimensions.gap);
+    m_databasePackageWeightSpin->setValue(data.packageDimensions.weight);
+    m_databaseEinzelpaketCheck->setChecked(data.packageDimensions.einzelpaketLaengs);
+
+    m_databasePositionsTable->setRowCount(data.packagePositions.size());
+    for (int row = 0; row < data.packagePositions.size(); ++row) {
+        const auto& pos = data.packagePositions.at(row);
+        const QVector<int> values = {pos.xp, pos.yp, pos.ap, pos.xd, pos.yd, pos.ad, pos.nop, pos.xvec, pos.yvec};
+        for (int col = 0; col < values.size(); ++col) {
+            m_databasePositionsTable->setItem(row, col, new QTableWidgetItem(QString::number(values.at(col))));
+        }
+    }
+
+    const int layerRows = qMax(data.layerAssignments.size(),
+                               qMax(data.intermediaryLayers.size(), data.packagesPerLayerType.size()));
+    m_databaseLayersTable->setRowCount(layerRows);
+    for (int row = 0; row < layerRows; ++row) {
+        const QVector<int> values = {
+            data.layerAssignments.value(row, 0),
+            data.intermediaryLayers.value(row, 0),
+            data.packagesPerLayerType.value(row, 0)
+        };
+        for (int col = 0; col < values.size(); ++col) {
+            m_databaseLayersTable->setItem(row, col, new QTableWidgetItem(QString::number(values.at(col))));
+        }
+    }
+
+    int rawColumns = 0;
+    for (const auto& row : data.rawData) {
+        rawColumns = qMax(rawColumns, row.size());
+    }
+    m_databaseRawTable->setRowCount(data.rawData.size());
+    m_databaseRawTable->setColumnCount(rawColumns);
+    for (int row = 0; row < data.rawData.size(); ++row) {
+        for (int col = 0; col < rawColumns; ++col) {
+            m_databaseRawTable->setItem(row, col,
+                                        new QTableWidgetItem(QString::number(data.rawData.at(row).value(col, 0))));
+        }
+    }
+}
+
+bool MainWindow::collectDatabaseEditorData(database::PaletteData& data) const
+{
+    const QString displayName = databasePlanNameInput();
+    if (displayName.isEmpty()) {
+        return false;
+    }
+
+    data.metadata.fileName = paletteStorageName(displayName);
+    data.metadata.fileTimestamp = QDateTime::currentMSecsSinceEpoch();
+    data.metadata.paketQuer = m_databasePaketQuerSpin->value();
+    data.metadata.centerOfGravity = {
+        m_databaseCogXSpin->value(),
+        m_databaseCogYSpin->value(),
+        m_databaseCogZSpin->value()
+    };
+    data.metadata.lageArten = m_databaseLayerTypesSpin->value();
+    data.metadata.anzLagen = m_databaseLayerCountSpin->value();
+    data.metadata.anzahlPakete = m_databasePackageCountSpin->value();
+
+    data.paletteDimensions.length = m_databasePalletLengthSpin->value();
+    data.paletteDimensions.width = m_databasePalletWidthSpin->value();
+    data.paletteDimensions.height = m_databasePalletHeightSpin->value();
+
+    data.packageDimensions.length = m_databasePackageLengthSpin->value();
+    data.packageDimensions.width = m_databasePackageWidthSpin->value();
+    data.packageDimensions.height = m_databasePackageHeightSpin->value();
+    data.packageDimensions.gap = m_databasePackageGapSpin->value();
+    data.packageDimensions.weight = m_databasePackageWeightSpin->value();
+    data.packageDimensions.einzelpaketLaengs = m_databaseEinzelpaketCheck->isChecked();
+
+    auto tableInt = [](QTableWidget* table, int row, int col) {
+        QTableWidgetItem* item = table->item(row, col);
+        return item ? item->text().trimmed().toInt() : 0;
+    };
+
+    data.packagePositions.clear();
+    for (int row = 0; row < m_databasePositionsTable->rowCount(); ++row) {
+        database::PackagePosition pos;
+        pos.xp = tableInt(m_databasePositionsTable, row, 0);
+        pos.yp = tableInt(m_databasePositionsTable, row, 1);
+        pos.ap = tableInt(m_databasePositionsTable, row, 2);
+        pos.xd = tableInt(m_databasePositionsTable, row, 3);
+        pos.yd = tableInt(m_databasePositionsTable, row, 4);
+        pos.ad = tableInt(m_databasePositionsTable, row, 5);
+        pos.nop = tableInt(m_databasePositionsTable, row, 6);
+        pos.xvec = tableInt(m_databasePositionsTable, row, 7);
+        pos.yvec = tableInt(m_databasePositionsTable, row, 8);
+        data.packagePositions.append(pos);
+    }
+
+    data.layerAssignments.clear();
+    data.intermediaryLayers.clear();
+    data.packagesPerLayerType.clear();
+    for (int row = 0; row < m_databaseLayersTable->rowCount(); ++row) {
+        data.layerAssignments.append(tableInt(m_databaseLayersTable, row, 0));
+        data.intermediaryLayers.append(tableInt(m_databaseLayersTable, row, 1));
+        data.packagesPerLayerType.append(tableInt(m_databaseLayersTable, row, 2));
+    }
+
+    data.rawData.clear();
+    for (int row = 0; row < m_databaseRawTable->rowCount(); ++row) {
+        QVector<int> rawRow;
+        for (int col = 0; col < m_databaseRawTable->columnCount(); ++col) {
+            rawRow.append(tableInt(m_databaseRawTable, row, col));
+        }
+        data.rawData.append(rawRow);
+    }
+
+    return true;
+}
+
+void MainWindow::onDatabaseSaveClicked()
+{
+    if (!m_database || !m_databaseEditorData) {
+        showMessage("Kein Palettierplan ausgewaehlt");
+        return;
+    }
+
+    database::PaletteData data = *m_databaseEditorData;
+    if (!collectDatabaseEditorData(data)) {
+        showMessage("Bitte Namen eingeben");
+        return;
+    }
+
+    if (data.metadata.fileName != m_databaseEditorOriginalFileName) {
+        const auto files = m_database->listAvailableFiles();
+        for (const auto& file : files) {
+            if (file.fileName.compare(data.metadata.fileName, Qt::CaseInsensitive) == 0) {
+                showMessage("Name bereits vorhanden");
+                return;
+            }
+        }
+    }
+
+    const database::SaveResult result = m_database->savePaletteData(data);
+    if (result == database::SaveResult::Error) {
+        showMessage("Speichern fehlgeschlagen");
+        return;
+    }
+
+    if (!m_databaseEditorOriginalFileName.isEmpty()
+        && data.metadata.fileName != m_databaseEditorOriginalFileName) {
+        (void)m_database->deletePalette(m_databaseEditorOriginalFileName);
+    }
+
+    m_databaseEditorOriginalFileName = data.metadata.fileName;
+    m_databaseEditorData = std::make_unique<database::PaletteData>(data);
+    loadRobFileList();
+    showMessage("Palettierplan gespeichert");
+}
+
+void MainWindow::onDatabaseNewClicked()
+{
+    database::PaletteData data;
+    data.metadata.fileName = paletteStorageName("neuer-plan");
+    data.metadata.fileTimestamp = QDateTime::currentMSecsSinceEpoch();
+    data.metadata.paketQuer = 1;
+    data.metadata.centerOfGravity = {0.0, 0.0, 0.0};
+    data.metadata.lageArten = 1;
+    data.metadata.anzLagen = 1;
+    data.metadata.anzahlPakete = 0;
+    data.paletteDimensions.length = 1200;
+    data.paletteDimensions.width = 800;
+    data.packageDimensions.einzelpaketLaengs = false;
+
+    m_databaseEditorOriginalFileName.clear();
+    loadDatabaseEditor(data);
+    m_databasePlanNameEdit->setFocus();
+    showMessage("Neuer Palettierplan vorbereitet");
+}
+
+void MainWindow::onDatabaseDuplicateClicked()
+{
+    if (!m_database || !m_databaseEditorData) {
+        showMessage("Bitte Palettierplan auswaehlen");
+        return;
+    }
+
+    database::PaletteData data = *m_databaseEditorData;
+    const QString baseName = palettePlanDisplayName(data.metadata.fileName);
+    QString candidate = baseName + QStringLiteral("-kopie");
+    int suffix = 2;
+    const auto files = m_database->listAvailableFiles();
+    auto exists = [&files](const QString& storageName) {
+        for (const auto& file : files) {
+            if (file.fileName.compare(storageName, Qt::CaseInsensitive) == 0) {
+                return true;
+            }
+        }
+        return false;
+    };
+    while (exists(paletteStorageName(candidate))) {
+        candidate = QStringLiteral("%1-kopie-%2").arg(baseName).arg(suffix++);
+    }
+
+    data.metadata.fileName = paletteStorageName(candidate);
+    data.metadata.fileTimestamp = QDateTime::currentMSecsSinceEpoch();
+    const database::SaveResult result = m_database->savePaletteData(data);
+    if (result == database::SaveResult::Error) {
+        showMessage("Duplizieren fehlgeschlagen");
+        return;
+    }
+
+    m_databaseEditorOriginalFileName = data.metadata.fileName;
+    loadRobFileList();
+    showMessage("Palettierplan dupliziert");
+}
+
+void MainWindow::onDatabaseDeleteClicked()
+{
+    if (!m_database || !m_databaseEditorData) {
+        showMessage("Bitte Palettierplan auswaehlen");
+        return;
+    }
+
+    const QString displayName = palettePlanDisplayName(m_databaseEditorOriginalFileName);
+    const QMessageBox::StandardButton response = QMessageBox::question(
+        this,
+        tr("Palettierplan loeschen"),
+        tr("Palettierplan \"%1\" wirklich loeschen?").arg(displayName));
+    if (response != QMessageBox::Yes) {
+        return;
+    }
+
+    if (!m_database->deletePalette(m_databaseEditorOriginalFileName)) {
+        showMessage("Loeschen fehlgeschlagen");
+        return;
+    }
+
+    m_databaseEditorData.reset();
+    m_databaseEditorOriginalFileName.clear();
+    loadRobFileList();
+    showMessage("Palettierplan geloescht");
+}
+
+void MainWindow::onDatabaseAddPositionClicked()
+{
+    if (!m_databasePositionsTable) {
+        return;
+    }
+    const int row = m_databasePositionsTable->rowCount();
+    m_databasePositionsTable->insertRow(row);
+    for (int col = 0; col < m_databasePositionsTable->columnCount(); ++col) {
+        m_databasePositionsTable->setItem(row, col, new QTableWidgetItem(QStringLiteral("0")));
+    }
+}
+
+void MainWindow::onDatabaseRemovePositionClicked()
+{
+    if (!m_databasePositionsTable) {
+        return;
+    }
+    const int row = m_databasePositionsTable->currentRow() >= 0
+        ? m_databasePositionsTable->currentRow()
+        : m_databasePositionsTable->rowCount() - 1;
+    if (row >= 0) {
+        m_databasePositionsTable->removeRow(row);
+    }
+}
+
+void MainWindow::onDatabaseAddRawRowClicked()
+{
+    if (!m_databaseRawTable) {
+        return;
+    }
+    if (m_databaseRawTable->columnCount() == 0) {
+        m_databaseRawTable->setColumnCount(1);
+    }
+    const int row = m_databaseRawTable->rowCount();
+    m_databaseRawTable->insertRow(row);
+    for (int col = 0; col < m_databaseRawTable->columnCount(); ++col) {
+        m_databaseRawTable->setItem(row, col, new QTableWidgetItem(QStringLiteral("0")));
+    }
+}
+
+void MainWindow::onDatabaseRemoveRawRowClicked()
+{
+    if (!m_databaseRawTable) {
+        return;
+    }
+    const int row = m_databaseRawTable->currentRow() >= 0
+        ? m_databaseRawTable->currentRow()
+        : m_databaseRawTable->rowCount() - 1;
+    if (row >= 0) {
+        m_databaseRawTable->removeRow(row);
+    }
+}
+
+void MainWindow::onDatabaseAddRawColumnClicked()
+{
+    if (!m_databaseRawTable) {
+        return;
+    }
+    const int col = m_databaseRawTable->columnCount();
+    m_databaseRawTable->insertColumn(col);
+    for (int row = 0; row < m_databaseRawTable->rowCount(); ++row) {
+        m_databaseRawTable->setItem(row, col, new QTableWidgetItem(QStringLiteral("0")));
+    }
+}
+
+void MainWindow::onDatabaseRemoveRawColumnClicked()
+{
+    if (!m_databaseRawTable) {
+        return;
+    }
+    const int col = m_databaseRawTable->currentColumn() >= 0
+        ? m_databaseRawTable->currentColumn()
+        : m_databaseRawTable->columnCount() - 1;
+    if (col >= 0) {
+        m_databaseRawTable->removeColumn(col);
+    }
+}
+
+QString MainWindow::selectedDatabasePlanFileName() const
+{
+    if (!m_databasePlanList || !m_databasePlanList->currentItem()) {
+        return QString();
+    }
+    return m_databasePlanList->currentItem()->data(Qt::UserRole).toString();
+}
+
+QString MainWindow::databasePlanNameInput() const
+{
+    if (!m_databasePlanNameEdit) {
+        return QString();
+    }
+    return palettePlanDisplayName(m_databasePlanNameEdit->text());
+}
+
+QString MainWindow::paletteStorageName(const QString& displayName)
+{
+    QString name = palettePlanDisplayName(displayName);
+    if (name.isEmpty()) {
+        return QString();
+    }
+    return name + QStringLiteral(".rob");
 }
 
 // === Public Slots ===
@@ -1976,24 +2884,43 @@ void MainWindow::setupPalettePlanCompleter()
 {
     qDebug() << "Setting up palette plan auto-completion";
     
-    if (!ui->lineEditFilePath) {
+    if (!ui->EingabePallettenplan) {
         return;
     }
+
+    m_palettePlanCompleterModel = new QStringListModel(this);
+    m_palettePlanCompletionView = new QListView(m_centralWidget);
+    m_palettePlanCompletionView->setObjectName(QStringLiteral("PalettePlanCompletionPopup"));
+    m_palettePlanCompletionView->setModel(m_palettePlanCompleterModel);
+    m_palettePlanCompletionView->setFocusPolicy(Qt::NoFocus);
+    m_palettePlanCompletionView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_palettePlanCompletionView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_palettePlanCompletionView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_palettePlanCompletionView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    m_palettePlanCompletionView->setStyleSheet(QStringLiteral(
+        "QListView#PalettePlanCompletionPopup {"
+        "background: white; border: 1px solid #707070; font-size: 20px; }"
+        "QListView#PalettePlanCompletionPopup::item { min-height: 34px; padding: 4px 8px; }"
+        "QListView#PalettePlanCompletionPopup::item:selected { background: #5555ff; color: white; }"));
+    m_palettePlanCompletionView->hide();
+
+    ui->EingabePallettenplan->setCompleter(nullptr);
+    connect(ui->EingabePallettenplan, &QLineEdit::textChanged,
+            this, &MainWindow::updatePalettePlanCompletionPopup);
+    connect(m_palettePlanCompletionView, &QListView::clicked, this,
+            [this](const QModelIndex& index) {
+                const QString value = index.data(Qt::DisplayRole).toString();
+                if (value.isEmpty()) {
+                    return;
+                }
+                ui->EingabePallettenplan->setText(value);
+                hidePalettePlanCompletionPopup();
+                ui->EingabePallettenplan->setFocus(Qt::OtherFocusReason);
+            });
+
+    refreshPalettePlanCompleter();
     
-    // Create completer for .rob files
-    QStringList wordList;
-    
-    // Load initial wordlist from current USB path
-    wordList = loadPalettePlanWordlist();
-    
-    QCompleter* completer = new QCompleter(wordList, this);
-    completer->setCompletionMode(QCompleter::PopupCompletion);
-    completer->setCaseSensitivity(Qt::CaseInsensitive);
-    completer->setFilterMode(Qt::MatchStartsWith);
-    
-    ui->lineEditFilePath->setCompleter(completer);
-    
-    qDebug() << "Palette plan completer set up with" << wordList.size() << "entries";
+    qDebug() << "Palette plan completer set up for Palettierplan input";
 }
 
 void MainWindow::appendConsoleLog(const QString& text)
@@ -2003,30 +2930,73 @@ void MainWindow::appendConsoleLog(const QString& text)
     }
 }
 
-QStringList MainWindow::loadPalettePlanWordlist()
+void MainWindow::refreshPalettePlanCompleter()
 {
-    QString usbPath = m_settings ? m_settings->usbPath() : "../";
-    QDir usbDir(usbPath);
-    
-    if (!usbDir.exists()) {
-        qWarning() << "USB directory does not exist:" << usbPath;
-        return QStringList();
+    if (!m_palettePlanCompleterModel) {
+        return;
     }
-    
-    // Get all .rob files
-    QStringList nameFilter;
-    nameFilter << "*.rob";
-    QFileInfoList robFiles = usbDir.entryInfoList(nameFilter, QDir::Files, QDir::Name);
-    
-    // Convert to wordlist (remove .rob extension)
-    QStringList wordList;
-    wordList.clear();
-    for (const QFileInfo& fileInfo : robFiles) {
-        wordList.append(fileInfo.completeBaseName());
+
+    m_palettePlanCompletionWords.clear();
+    if (m_database) {
+        const auto files = m_database->listAvailableFiles();
+        for (const auto& file : files) {
+            const QString fileName = palettePlanDisplayName(file.fileName);
+            if (!fileName.isEmpty()) {
+                m_palettePlanCompletionWords.append(fileName);
+            }
+        }
     }
-    
-    qDebug() << "Loaded" << wordList.size() << "palette plan files from USB";
-    return wordList;
+
+    m_palettePlanCompletionWords.removeDuplicates();
+    m_palettePlanCompletionWords.sort(Qt::CaseInsensitive);
+    updatePalettePlanCompletionPopup(ui->EingabePallettenplan ? ui->EingabePallettenplan->text() : QString());
+
+    qDebug() << "Palette plan completer refreshed with" << m_palettePlanCompletionWords.size() << "entries";
+}
+
+void MainWindow::updatePalettePlanCompletionPopup(const QString& text)
+{
+    if (!m_palettePlanCompletionView || !m_palettePlanCompleterModel || !ui->EingabePallettenplan) {
+        return;
+    }
+
+    const QString prefix = text.trimmed();
+    if (prefix.isEmpty()) {
+        hidePalettePlanCompletionPopup();
+        return;
+    }
+
+    QStringList matches;
+    for (const QString& word : m_palettePlanCompletionWords) {
+        if (word.startsWith(prefix, Qt::CaseInsensitive)) {
+            matches.append(word);
+        }
+    }
+
+    if (matches.isEmpty()) {
+        hidePalettePlanCompletionPopup();
+        return;
+    }
+
+    m_palettePlanCompleterModel->setStringList(matches);
+
+    const QPoint popupPos = ui->EingabePallettenplan->mapTo(m_centralWidget, QPoint(0, ui->EingabePallettenplan->height()));
+    const int rowHeight = 44;
+    const int visibleRows = qMin(matches.size(), 5);
+    m_palettePlanCompletionView->setGeometry(
+        popupPos.x(),
+        popupPos.y(),
+        ui->EingabePallettenplan->width(),
+        qMax(rowHeight, visibleRows * rowHeight));
+    m_palettePlanCompletionView->raise();
+    m_palettePlanCompletionView->show();
+}
+
+void MainWindow::hidePalettePlanCompletionPopup()
+{
+    if (m_palettePlanCompletionView) {
+        m_palettePlanCompletionView->hide();
+    }
 }
 } // namespace ui
 } // namespace multipack

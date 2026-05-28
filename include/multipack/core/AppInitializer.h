@@ -91,6 +91,7 @@ public:
     robot::RobotController* robotController() const;
     audio::AudioManager* audioManager() const;
     system::AutoUpdater* autoUpdater() const;
+    system::UsbMonitor* usbMonitor() const;
 
 signals:
     /**

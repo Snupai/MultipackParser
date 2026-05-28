@@ -254,8 +254,8 @@ void PaletteConfigDialog::setupActivePaletteGroup(QVBoxLayout* layout)
 void PaletteConfigDialog::loadImages()
 {
     // Load palette images - using fallback if resources not found
-    m_palette1Pixmap = QPixmap(":/ScannerUR20/imgs/UR20/scanner3nio.png");
-    m_palette2Pixmap = QPixmap(":/ScannerUR20/imgs/UR20/scanner1nio.png");
+    m_palette1Pixmap = QPixmap(":/icons/UR20/scanner3nio.png");
+    m_palette2Pixmap = QPixmap(":/icons/UR20/scanner1nio.png");
     
     // Create no palette pixmap
     m_noPalettePixmap = createNoPalettePixmap();

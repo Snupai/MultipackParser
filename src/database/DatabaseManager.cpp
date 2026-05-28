@@ -13,6 +13,15 @@
 namespace multipack {
 namespace database {
 
+namespace {
+
+QString formatTimestamp(qint64 timestampMs)
+{
+    return QDateTime::fromMSecsSinceEpoch(timestampMs).toString("yyyy-MM-dd hh:mm:ss");
+}
+
+}
+
 DatabaseManager::DatabaseManager(QObject* parent)
     : QObject(parent)
     , m_connectionName(QUuid::createUuid().toString())
@@ -68,6 +77,7 @@ void DatabaseManager::close()
         m_open = false;
         emit databaseClosed();
     }
+    m_db = QSqlDatabase();
     QSqlDatabase::removeDatabase(m_connectionName);
 }
 
@@ -228,17 +238,18 @@ void DatabaseManager::runMigrations()
     query.exec("ALTER TABLE paket_dim ADD COLUMN einzelpaket_laengs INTEGER");
 }
 
-bool DatabaseManager::savePaletteData(const PaletteData& data)
+SaveResult DatabaseManager::savePaletteData(const PaletteData& data)
 {
     if (!m_open) {
         qWarning() << "Database not open";
-        return false;
+        return SaveResult::Error;
     }
 
     QSqlQuery query(m_db);
 
     // Check if file already exists
     int existingId = getMetadataId(data.metadata.fileName);
+    const bool hadExistingData = (existingId > 0);
     if (existingId > 0) {
         // Check timestamps
         query.prepare("SELECT file_timestamp FROM paletten_metadata WHERE id = ?");
@@ -247,14 +258,32 @@ bool DatabaseManager::savePaletteData(const PaletteData& data)
             qint64 existingTimestamp = query.value(0).toLongLong();
             if (existingTimestamp >= data.metadata.fileTimestamp) {
                 qDebug() << "Skipping save - existing data is newer";
-                return false;
+                return SaveResult::Unchanged;
             }
+        } else {
+            qCritical() << "Failed to read existing metadata timestamp:" << query.lastError().text();
+            return SaveResult::Error;
         }
+    }
 
+    if (!m_db.transaction()) {
+        qCritical() << "Failed to start database transaction:" << m_db.lastError().text();
+        return SaveResult::Error;
+    }
+
+    auto rollbackWithError = [this](const QString& message) {
+        qCritical() << message;
+        m_db.rollback();
+        return SaveResult::Error;
+    };
+
+    if (existingId > 0) {
         // Delete existing data (CASCADE will clean up related tables)
         query.prepare("DELETE FROM paletten_metadata WHERE id = ?");
         query.addBindValue(existingId);
-        query.exec();
+        if (!query.exec()) {
+            return rollbackWithError(QString("Failed to delete existing metadata: %1").arg(query.lastError().text()));
+        }
     }
 
     // Insert metadata
@@ -275,8 +304,7 @@ bool DatabaseManager::savePaletteData(const PaletteData& data)
     query.addBindValue(data.metadata.fileName);
 
     if (!query.exec()) {
-        qCritical() << "Failed to insert metadata:" << query.lastError().text();
-        return false;
+        return rollbackWithError(QString("Failed to insert metadata: %1").arg(query.lastError().text()));
     }
 
     int metadataId = query.lastInsertId().toInt();
@@ -289,7 +317,9 @@ bool DatabaseManager::savePaletteData(const PaletteData& data)
             query.addBindValue(i);
             query.addBindValue(j);
             query.addBindValue(data.rawData[i][j]);
-            query.exec();
+            if (!query.exec()) {
+                return rollbackWithError(QString("Failed to insert raw data: %1").arg(query.lastError().text()));
+            }
         }
     }
 
@@ -299,7 +329,9 @@ bool DatabaseManager::savePaletteData(const PaletteData& data)
     query.addBindValue(data.paletteDimensions.length);
     query.addBindValue(data.paletteDimensions.width);
     query.addBindValue(data.paletteDimensions.height);
-    query.exec();
+    if (!query.exec()) {
+        return rollbackWithError(QString("Failed to insert pallet dimensions: %1").arg(query.lastError().text()));
+    }
 
     // Insert package dimensions
     query.prepare("INSERT INTO paket_dim (metadata_id, length, width, height, gap, weight, einzelpaket_laengs) VALUES (?, ?, ?, ?, ?, ?, ?)");
@@ -310,7 +342,9 @@ bool DatabaseManager::savePaletteData(const PaletteData& data)
     query.addBindValue(data.packageDimensions.gap);
     query.addBindValue(data.packageDimensions.weight);
     query.addBindValue(data.packageDimensions.einzelpaketLaengs ? 1 : 0);
-    query.exec();
+    if (!query.exec()) {
+        return rollbackWithError(QString("Failed to insert package dimensions: %1").arg(query.lastError().text()));
+    }
 
     // Insert layer assignments
     for (int i = 0; i < data.layerAssignments.size(); ++i) {
@@ -318,7 +352,9 @@ bool DatabaseManager::savePaletteData(const PaletteData& data)
         query.addBindValue(metadataId);
         query.addBindValue(i);
         query.addBindValue(data.layerAssignments[i]);
-        query.exec();
+        if (!query.exec()) {
+            return rollbackWithError(QString("Failed to insert layer assignments: %1").arg(query.lastError().text()));
+        }
     }
 
     // Insert intermediary layers
@@ -327,7 +363,9 @@ bool DatabaseManager::savePaletteData(const PaletteData& data)
         query.addBindValue(metadataId);
         query.addBindValue(i);
         query.addBindValue(data.intermediaryLayers[i]);
-        query.exec();
+        if (!query.exec()) {
+            return rollbackWithError(QString("Failed to insert intermediary layers: %1").arg(query.lastError().text()));
+        }
     }
 
     // Insert packages per layer type
@@ -336,7 +374,9 @@ bool DatabaseManager::savePaletteData(const PaletteData& data)
         query.addBindValue(metadataId);
         query.addBindValue(i);
         query.addBindValue(data.packagesPerLayerType[i]);
-        query.exec();
+        if (!query.exec()) {
+            return rollbackWithError(QString("Failed to insert packages per layer type: %1").arg(query.lastError().text()));
+        }
     }
 
     // Insert package positions
@@ -357,12 +397,18 @@ bool DatabaseManager::savePaletteData(const PaletteData& data)
         query.addBindValue(pos.nop);
         query.addBindValue(pos.xvec);
         query.addBindValue(pos.yvec);
-        query.exec();
+        if (!query.exec()) {
+            return rollbackWithError(QString("Failed to insert package positions: %1").arg(query.lastError().text()));
+        }
+    }
+
+    if (!m_db.commit()) {
+        return rollbackWithError(QString("Failed to commit palette transaction: %1").arg(m_db.lastError().text()));
     }
 
     qDebug() << "Saved palette data:" << data.metadata.fileName;
     emit dataChanged();
-    return true;
+    return hadExistingData ? SaveResult::Updated : SaveResult::Inserted;
 }
 
 std::optional<PaletteData> DatabaseManager::loadPaletteData(const QString& fileName, int metadataId)
@@ -537,7 +583,7 @@ QVector<FileInfo> DatabaseManager::listAvailableFiles()
             info.id = query.value(0).toInt();
             info.fileName = query.value(1).toString();
             info.timestamp = query.value(2).toLongLong();
-            info.timestampStr = QDateTime::fromSecsSinceEpoch(info.timestamp).toString("yyyy-MM-dd hh:mm:ss");
+            info.timestampStr = formatTimestamp(info.timestamp);
             files.append(info);
         }
     }
@@ -560,7 +606,7 @@ std::optional<FileInfo> DatabaseManager::findFile(const QString& fileName)
         info.id = query.value(0).toInt();
         info.fileName = query.value(1).toString();
         info.timestamp = query.value(2).toLongLong();
-        info.timestampStr = QDateTime::fromSecsSinceEpoch(info.timestamp).toString("yyyy-MM-dd hh:mm:ss");
+        info.timestampStr = formatTimestamp(info.timestamp);
         return info;
     }
 

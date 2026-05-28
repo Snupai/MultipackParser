@@ -96,6 +96,13 @@ struct FileInfo {
     QString timestampStr;
 };
 
+enum class SaveResult {
+    Inserted,
+    Updated,
+    Unchanged,
+    Error
+};
+
 /**
  * @class DatabaseManager
  * @brief Manages SQLite database for palette storage
@@ -135,7 +142,7 @@ public:
      * @param data Palette data to save
      * @return true on success
      */
-    [[nodiscard]] bool savePaletteData(const PaletteData& data);
+    [[nodiscard]] SaveResult savePaletteData(const PaletteData& data);
 
     /**
      * @brief Load palette data from database

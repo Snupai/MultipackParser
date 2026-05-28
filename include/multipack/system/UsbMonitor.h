@@ -10,6 +10,7 @@
 #include <QMutex>
 #include <QDir>
 #include <QFutureWatcher>
+#include <QHash>
 #include "multipack/system/RobFileParser.h"
 #include "multipack/database/DatabaseManager.h"
 
@@ -28,6 +29,15 @@ class UsbMonitor : public QObject
     Q_OBJECT
 
 public:
+    struct UpdateResult {
+        bool success = false;
+        QString errorMessage;
+        QStringList updatedFiles;
+        QSet<QString> failedFiles;
+        QSet<QString> currentFiles;
+        QHash<QString, QDateTime> currentFileTimestamps;
+    };
+
     /**
      * @brief Constructor
      * @param usbPath Path to USB stick directory to monitor
@@ -158,7 +168,7 @@ private:
     QString m_databasePath;
     QFileSystemWatcher* m_fileSystemWatcher;
     QTimer* m_periodicScanTimer;
-    QFutureWatcher<int>* m_updateWatcher;
+    QFutureWatcher<UpdateResult>* m_updateWatcher;
     
     // State tracking
     bool m_isMonitoring;
@@ -170,8 +180,8 @@ private:
     mutable QMutex m_mutex;
     
     // Processing state
-    bool m_isProcessing;
-    QStringList m_pendingChanges;
+    bool m_updateInFlight = false;
+    bool m_shutdownRequested = false;
     bool m_updateQueued = false;
     
     /**
@@ -198,7 +208,7 @@ private:
      * @param filename Name of the file to process
      * @return true if successful
      */
-    bool processFile(const QString& filename, database::DatabaseManager& dbManager);
+    database::SaveResult processFile(const QString& filename, database::DatabaseManager& dbManager);
     
     /**
      * @brief Get file timestamp
@@ -231,6 +241,16 @@ private:
      * @brief Set up initial file tracking
      */
     void setupInitialTracking();
+
+    /**
+     * @brief Wait for an in-flight background update to finish
+     */
+    void waitForPendingUpdate();
+
+    /**
+     * @brief Merge an update result back into monitored state
+     */
+    void applyUpdateResult(const UpdateResult& result);
 };
 
 } // namespace system

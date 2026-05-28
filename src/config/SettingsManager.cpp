@@ -17,6 +17,62 @@
 namespace multipack {
 namespace config {
 
+namespace {
+
+QJsonObject mergeObjects(const QJsonObject& defaults, const QJsonObject& overrides)
+{
+    QJsonObject merged = defaults;
+    for (auto it = overrides.constBegin(); it != overrides.constEnd(); ++it) {
+        if (it.value().isObject() && merged.value(it.key()).isObject()) {
+            merged[it.key()] = mergeObjects(merged.value(it.key()).toObject(), it.value().toObject());
+        } else {
+            merged[it.key()] = it.value();
+        }
+    }
+    return merged;
+}
+
+bool setNestedValue(QJsonObject& object, const QStringList& parts, int index, const QJsonValue& value)
+{
+    if (index >= parts.size()) {
+        return false;
+    }
+
+    if (index == parts.size() - 1) {
+        object[parts[index]] = value;
+        return true;
+    }
+
+    QJsonObject child = object.value(parts[index]).toObject();
+    const bool updated = setNestedValue(child, parts, index + 1, value);
+    object[parts[index]] = child;
+    return updated;
+}
+
+bool removeNestedValue(QJsonObject& object, const QStringList& parts, int index)
+{
+    if (index >= parts.size()) {
+        return false;
+    }
+
+    if (index == parts.size() - 1) {
+        const bool existed = object.contains(parts[index]);
+        object.remove(parts[index]);
+        return existed;
+    }
+
+    if (!object.value(parts[index]).isObject()) {
+        return false;
+    }
+
+    QJsonObject child = object.value(parts[index]).toObject();
+    const bool removed = removeNestedValue(child, parts, index + 1);
+    object[parts[index]] = child;
+    return removed;
+}
+
+}
+
 SettingsManager::SettingsManager(QObject* parent)
     : QObject(parent)
 {
@@ -56,16 +112,16 @@ bool SettingsManager::load(const QString& path)
         return false;
     }
 
-    m_settings = doc.object();
+    const QJsonObject loadedSettings = doc.object();
+    resetToDefaults();
+    m_settings = mergeObjects(m_settings, loadedSettings);
     m_currentPath = filePath;
 
-    // Ensure default admin password is set if missing
     QJsonObject admin = m_settings["admin"].toObject();
-    QString passwordHash = admin["password_hash"].toString();
-    if (passwordHash.isEmpty()) {
+    if (!admin.contains("password_hash")) {
         admin["password_hash"] = hashPassword("666666");
-        m_settings["admin"] = admin;
     }
+    m_settings["admin"] = admin;
 
     emit settingsLoaded();
     qDebug() << "Settings loaded successfully";
@@ -203,24 +259,7 @@ void SettingsManager::setValue(const QString& key, const QVariant& value)
         return;
     }
 
-    // Navigate to parent object
-    QJsonObject* current = &m_settings;
-    for (int i = 0; i < parts.size() - 1; ++i) {
-        if (!current->contains(parts[i])) {
-            (*current)[parts[i]] = QJsonObject();
-        }
-        QJsonObject nested = (*current)[parts[i]].toObject();
-        (*current)[parts[i]] = nested;
-        current = nullptr; // Can't get pointer into nested JSON
-    }
-
-    // This is a simplified implementation
-    // A full implementation would need recursive update
-    if (parts.size() == 2) {
-        QJsonObject section = m_settings[parts[0]].toObject();
-        section[parts[1]] = QJsonValue::fromVariant(value);
-        m_settings[parts[0]] = section;
-    }
+    setNestedValue(m_settings, parts, 0, QJsonValue::fromVariant(value));
 
     emit settingChanged(key, value);
 }
@@ -233,10 +272,12 @@ bool SettingsManager::contains(const QString& key) const
 void SettingsManager::remove(const QString& key)
 {
     QStringList parts = key.split('.');
-    if (parts.size() == 2) {
-        QJsonObject section = m_settings[parts[0]].toObject();
-        section.remove(parts[1]);
-        m_settings[parts[0]] = section;
+    if (parts.isEmpty()) {
+        return;
+    }
+
+    if (removeNestedValue(m_settings, parts, 0)) {
+        emit settingChanged(key, QVariant());
     }
 }
 

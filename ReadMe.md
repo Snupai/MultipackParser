@@ -21,7 +21,21 @@ C++ Qt6 rewrite of the MultipackParser application - a bridge connecting Multipa
 - **C++17** compatible compiler
 - **SQLite3**
 
-### Build for ARM64 (Raspberry Pi)
+### Build for Linux with Docker
+
+#### Linux x86_64 / amd64
+
+```bash
+docker build -f Dockerfile -t multipack-parser-linux-amd64 --build-arg CMAKE_BUILD_JOBS=8 .
+docker create --name multipack-linux-amd64 multipack-parser-linux-amd64
+mkdir -p output/multipack-parser-linux-amd64
+docker cp multipack-linux-amd64:/app/build/bin/multipack-parser output/multipack-parser-linux-amd64/
+docker rm -f multipack-linux-amd64
+```
+
+Output: `output/multipack-parser-linux-amd64/multipack-parser`
+
+#### Linux ARM64 / Raspberry Pi
 
 The recommended way to build for Raspberry Pi from any platform:
 
@@ -79,6 +93,7 @@ Build script option:
 MultipackParser/
 ├── CMakeLists.txt              # Build configuration
 ├── build.sh / build.bat        # Native build scripts
+├── Dockerfile                  # Linux x86_64 Docker build
 ├── docker-build.sh             # ARM64 cross-compilation (macOS/Linux)
 ├── docker-build.bat            # ARM64 cross-compilation (Windows)
 ├── Dockerfile.arm64            # ARM64 build container

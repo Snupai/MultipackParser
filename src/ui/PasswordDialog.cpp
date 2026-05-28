@@ -37,12 +37,8 @@ PasswordDialog::PasswordDialog(QWidget* parent, config::SettingsManager* setting
                    Qt::FramelessWindowHint);
     setWindowModality(Qt::WindowModal);
 
-    // Enable input method for virtual keyboard
-    setAttribute(Qt::WA_InputMethodEnabled, true);
-    m_lineEdit->setAttribute(Qt::WA_InputMethodEnabled, true);
-
     // Focus the password input
-    m_lineEdit->setFocus();
+    focusPasswordInput();
 
     qDebug() << "PasswordDialog - initialized";
 }
@@ -72,7 +68,7 @@ void PasswordDialog::setupUi()
     m_lineEdit->setInputMethodHints(Qt::ImhHiddenText |
                                      Qt::ImhNoAutoUppercase |
                                      Qt::ImhNoPredictiveText |
-                                     Qt::ImhPreferNumbers |
+                                     Qt::ImhDigitsOnly |
                                      Qt::ImhSensitiveData);
     m_lineEdit->setFocusPolicy(Qt::StrongFocus);
 
@@ -92,7 +88,6 @@ void PasswordDialog::setupUi()
     connect(m_buttonBox, &QDialogButtonBox::rejected, this, &PasswordDialog::reject);
 
     mainLayout->addLayout(inputLayout);
-
     // Styling
     setStyleSheet(R"(
         QDialog {
@@ -133,6 +128,15 @@ QString PasswordDialog::password() const
 void PasswordDialog::setSettingsManager(config::SettingsManager* settings)
 {
     m_settings = settings;
+}
+
+void PasswordDialog::focusPasswordInput()
+{
+    if (!m_lineEdit) {
+        return;
+    }
+
+    m_lineEdit->setFocus(Qt::OtherFocusReason);
 }
 
 void PasswordDialog::accept()

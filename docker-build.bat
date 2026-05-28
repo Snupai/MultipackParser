@@ -99,14 +99,14 @@ if "%USE_BUILDX%"=="1" (
     docker buildx build --platform linux/arm64 ^
         --file "%DOCKERFILE%" ^
         --tag %IMAGE_NAME%:latest ^
-        --build-arg CMAKE_BUILD_JOBS=2 ^
+        --build-arg CMAKE_BUILD_JOBS=1 ^
         --load ^
         --progress=plain ^
         "%SCRIPT_DIR%"
 ) else (
     docker build --file "%DOCKERFILE%" ^
         --tag %IMAGE_NAME%:latest ^
-        --build-arg CMAKE_BUILD_JOBS=2 ^
+        --build-arg CMAKE_BUILD_JOBS=1 ^
         --progress=plain ^
         "%SCRIPT_DIR%"
 )
@@ -129,12 +129,11 @@ mkdir "%BUNDLE_DIR%\plugins\platforms"
 mkdir "%BUNDLE_DIR%\plugins\sqldrivers"
 mkdir "%BUNDLE_DIR%\plugins\multimedia"
 mkdir "%BUNDLE_DIR%\plugins\platforminputcontexts"
-mkdir "%BUNDLE_DIR%\qml"
 mkdir "%BUNDLE_DIR%\data"
 
 REM Copy all artifacts using docker run + volume mount (reliable on Windows cross-platform)
 echo Copying binary, libraries and plugins...
-set "BASH_CMD=cp /app/build/bin/multipack-parser /output/multipack-parser-arm64/bin/ && chmod +x /output/multipack-parser-arm64/bin/multipack-parser; cp /usr/lib/aarch64-linux-gnu/libQt6Core.so.6 /usr/lib/aarch64-linux-gnu/libQt6Gui.so.6 /usr/lib/aarch64-linux-gnu/libQt6Widgets.so.6 /usr/lib/aarch64-linux-gnu/libQt6Network.so.6 /usr/lib/aarch64-linux-gnu/libQt6Sql.so.6 /usr/lib/aarch64-linux-gnu/libQt6Multimedia.so.6 /usr/lib/aarch64-linux-gnu/libQt6DBus.so.6 /usr/lib/aarch64-linux-gnu/libQt6XcbQpa.so.6 /usr/lib/aarch64-linux-gnu/libQt6OpenGL.so.6 /usr/lib/aarch64-linux-gnu/libQt6Concurrent.so.6 /output/multipack-parser-arm64/lib/; cp /usr/lib/aarch64-linux-gnu/libQt6Qml*.so* /usr/lib/aarch64-linux-gnu/libQt6Quick*.so* /usr/lib/aarch64-linux-gnu/libQt6VirtualKeyboard*.so* /usr/lib/aarch64-linux-gnu/libQt6Svg*.so* /usr/lib/aarch64-linux-gnu/libQt6LabsFolderListModel*.so* /output/multipack-parser-arm64/lib/ 2>/dev/null; cp /usr/lib/aarch64-linux-gnu/libicu*.so* /usr/lib/aarch64-linux-gnu/libpcre2-16*.so* /usr/lib/aarch64-linux-gnu/libdouble-conversion*.so* /usr/lib/aarch64-linux-gnu/libz.so* /output/multipack-parser-arm64/lib/ 2>/dev/null; cp /usr/lib/aarch64-linux-gnu/libxcb*.so* /usr/lib/aarch64-linux-gnu/libxkbcommon*.so* /usr/lib/aarch64-linux-gnu/libX11.so* /usr/lib/aarch64-linux-gnu/libXext.so* /usr/lib/aarch64-linux-gnu/libXcursor.so* /usr/lib/aarch64-linux-gnu/libXfixes.so* /usr/lib/aarch64-linux-gnu/libXi.so* /usr/lib/aarch64-linux-gnu/libXrandr.so* /usr/lib/aarch64-linux-gnu/libXrender.so* /usr/lib/aarch64-linux-gnu/libXinerama.so* /output/multipack-parser-arm64/lib/ 2>/dev/null; cp /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqxcb.so /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqlinuxfb.so /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqeglfs.so /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqoffscreen.so /output/multipack-parser-arm64/plugins/platforms/; cp /usr/lib/aarch64-linux-gnu/qt6/plugins/sqldrivers/libqsqlite.so /output/multipack-parser-arm64/plugins/sqldrivers/; cp /usr/lib/aarch64-linux-gnu/qt6/plugins/platforminputcontexts/libqtvirtualkeyboardplugin.so /output/multipack-parser-arm64/plugins/platforminputcontexts/ 2>/dev/null; cp -r /usr/lib/aarch64-linux-gnu/qt6/qml/* /output/multipack-parser-arm64/qml/ 2>/dev/null; cp -r /usr/share/qt6/qtvirtualkeyboard /output/multipack-parser-arm64/data/ 2>/dev/null; cp -r /usr/lib/aarch64-linux-gnu/qt6/qtvirtualkeyboard /output/multipack-parser-arm64/data/ 2>/dev/null; true"
+set "BASH_CMD=cp /app/build/bin/multipack-parser /output/multipack-parser-arm64/bin/ && chmod +x /output/multipack-parser-arm64/bin/multipack-parser; cp /usr/lib/aarch64-linux-gnu/libQt6Core.so.6 /usr/lib/aarch64-linux-gnu/libQt6Gui.so.6 /usr/lib/aarch64-linux-gnu/libQt6Widgets.so.6 /usr/lib/aarch64-linux-gnu/libQt6Network.so.6 /usr/lib/aarch64-linux-gnu/libQt6Sql.so.6 /usr/lib/aarch64-linux-gnu/libQt6Multimedia.so.6 /usr/lib/aarch64-linux-gnu/libQt6DBus.so.6 /usr/lib/aarch64-linux-gnu/libQt6XcbQpa.so.6 /usr/lib/aarch64-linux-gnu/libQt6OpenGL.so.6 /usr/lib/aarch64-linux-gnu/libQt6Concurrent.so.6 /output/multipack-parser-arm64/lib/; cp /usr/lib/aarch64-linux-gnu/libQt6Svg*.so* /output/multipack-parser-arm64/lib/ 2>/dev/null; cp /usr/lib/aarch64-linux-gnu/libicu*.so* /usr/lib/aarch64-linux-gnu/libpcre2-16*.so* /usr/lib/aarch64-linux-gnu/libdouble-conversion*.so* /usr/lib/aarch64-linux-gnu/libz.so* /usr/lib/aarch64-linux-gnu/libmd4c.so* /output/multipack-parser-arm64/lib/ 2>/dev/null; cp /usr/lib/aarch64-linux-gnu/libxcb*.so* /usr/lib/aarch64-linux-gnu/libxkbcommon*.so* /usr/lib/aarch64-linux-gnu/libX11.so* /usr/lib/aarch64-linux-gnu/libXext.so* /usr/lib/aarch64-linux-gnu/libXcursor.so* /usr/lib/aarch64-linux-gnu/libXfixes.so* /usr/lib/aarch64-linux-gnu/libXi.so* /usr/lib/aarch64-linux-gnu/libXrandr.so* /usr/lib/aarch64-linux-gnu/libXrender.so* /usr/lib/aarch64-linux-gnu/libXinerama.so* /output/multipack-parser-arm64/lib/ 2>/dev/null; cp /usr/lib/aarch64-linux-gnu/libOpenGL.so* /usr/lib/aarch64-linux-gnu/libGLX.so* /usr/lib/aarch64-linux-gnu/libGLdispatch.so* /usr/lib/aarch64-linux-gnu/libGL.so* /usr/lib/aarch64-linux-gnu/libEGL.so* /output/multipack-parser-arm64/lib/ 2>/dev/null; cp /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqxcb.so /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqlinuxfb.so /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqeglfs.so /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqoffscreen.so /output/multipack-parser-arm64/plugins/platforms/; cp /usr/lib/aarch64-linux-gnu/qt6/plugins/sqldrivers/libqsqlite.so /output/multipack-parser-arm64/plugins/sqldrivers/; true"
 docker run --rm --platform linux/arm64 -v "%OUTPUT_DIR%:/output" %IMAGE_NAME%:latest bash -c "%BASH_CMD%"
 if errorlevel 1 (
     echo ERROR: Failed to copy build artifacts
@@ -155,7 +154,6 @@ echo Prefix = ..
 echo Plugins = plugins
 echo Libraries = lib
 echo Data = data
-echo Qml2Imports = qml
 ) > "%BUNDLE_DIR%\bin\qt.conf"
 
 REM Create systemd service file

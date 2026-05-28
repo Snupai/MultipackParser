@@ -10,6 +10,7 @@
 #include <QVector>
 #include <QVariant>
 #include <QMap>
+#include <QHash>
 #include <functional>
 #include <memory>
 
@@ -143,6 +144,7 @@ signals:
     void started();
     void stopped();
     void methodCalled(const QString& method, const QString& clientIp);
+    void paletteDataLoaded(const QString& fileName);
     void error(const QString& message);
 
 private slots:
@@ -151,6 +153,8 @@ private slots:
     void onClientDisconnected();
 
 private:
+    void processHttpRequest(QTcpSocket* socket, const QByteArray& requestData);
+
     /**
      * @brief Parse HTTP request
      */
@@ -210,6 +214,7 @@ private:
     QMap<QString, RpcMethod> m_methods;
     database::DatabaseManager* m_database = nullptr;
     core::GlobalState* m_state = nullptr;
+    QHash<QTcpSocket*, QByteArray> m_socketBuffers;
     int m_port = DEFAULT_PORT;
     bool m_running = false;
 };

@@ -11,6 +11,7 @@ Creates a portable runtime directory containing:
   - multipack-parser binary
   - lib/ shared libraries
   - plugins/ Qt plugins
+  - data/ Qt runtime data
   - run.sh launcher script
   - qt.conf
 EOF
@@ -65,7 +66,7 @@ fi
 mkdir -p "$(dirname "$OUTPUT_DIR")"
 OUTPUT_DIR="$(cd "$(dirname "$OUTPUT_DIR")" && pwd)/$(basename "$OUTPUT_DIR")"
 rm -rf "$OUTPUT_DIR"
-mkdir -p "$OUTPUT_DIR/lib" "$OUTPUT_DIR/plugins"
+mkdir -p "$OUTPUT_DIR/lib" "$OUTPUT_DIR/plugins" "$OUTPUT_DIR/data"
 
 # Copy main executable.
 cp -a "$BINARY_PATH" "$OUTPUT_DIR/multipack-parser"
@@ -101,6 +102,7 @@ QT_LIB_BASENAMES=(
     libQt6DBus
     libQt6XcbQpa
     libQt6OpenGL
+    libQt6Svg
 )
 
 SYSTEM_LIB_BASENAMES=(
@@ -128,6 +130,8 @@ for base in "${QT_LIB_BASENAMES[@]}"; do
     copy_matching_libs "${base}.so*"
 done
 
+copy_matching_libs "libQt6Svg*.so*"
+
 for base in "${SYSTEM_LIB_BASENAMES[@]}"; do
     copy_matching_libs "${base}.so*"
 done
@@ -151,7 +155,7 @@ if [[ -z "$PLUGIN_ROOT" ]]; then
 fi
 
 if [[ -n "$PLUGIN_ROOT" && -d "$PLUGIN_ROOT" ]]; then
-    for plugin_dir in platforms sqldrivers multimedia imageformats iconengines styles platformthemes xcbglintegrations tls; do
+    for plugin_dir in platforms sqldrivers multimedia imageformats iconengines styles platformthemes xcbglintegrations tls platforminputcontexts; do
         if [[ -d "$PLUGIN_ROOT/$plugin_dir" ]]; then
             cp -a "$PLUGIN_ROOT/$plugin_dir" "$OUTPUT_DIR/plugins/" 2>/dev/null || true
         fi
@@ -227,7 +231,13 @@ export LD_LIBRARY_PATH="$SCRIPT_DIR/lib:${LD_LIBRARY_PATH:-}"
 export QT_PLUGIN_PATH="$SCRIPT_DIR/plugins"
 export QT_QPA_PLATFORM_PLUGIN_PATH="$SCRIPT_DIR/plugins/platforms"
 export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-xcb}"
+export QT_OPENGL="${QT_OPENGL:-software}"
+export QT_XCB_GL_INTEGRATION="${QT_XCB_GL_INTEGRATION:-none}"
+unset QT_IM_MODULE
 export QT_X11_NO_MITSHM=1
+export LIBGL_ALWAYS_SOFTWARE=1
+export MULTIPACK_FULLSCREEN="${MULTIPACK_FULLSCREEN:-1}"
+export MULTIPACK_VIRTUAL_KEYBOARD="${MULTIPACK_VIRTUAL_KEYBOARD:-1}"
 
 exec "$SCRIPT_DIR/multipack-parser" "$@"
 EOF
@@ -238,6 +248,7 @@ cat > "$OUTPUT_DIR/qt.conf" <<'EOF'
 Prefix = .
 Plugins = plugins
 Libraries = lib
+Data = data
 EOF
 
 echo "Portable runtime bundle created at: $OUTPUT_DIR"

@@ -25,6 +25,37 @@ namespace {
     const QRegularExpression RE_STRING("<string>([^<]*)</string>");
     const QRegularExpression RE_ARRAY("<array>\\s*<data>([\\s\\S]*)</data>\\s*</array>");
     const QRegularExpression RE_VALUE("<value>([\\s\\S]*?)</value>");
+
+    int findHeaderEnd(const QByteArray& buffer)
+    {
+        int headerEnd = buffer.indexOf("\r\n\r\n");
+        if (headerEnd >= 0) {
+            return headerEnd + 4;
+        }
+
+        headerEnd = buffer.indexOf("\n\n");
+        if (headerEnd >= 0) {
+            return headerEnd + 2;
+        }
+
+        return -1;
+    }
+
+    int extractContentLength(const QByteArray& headers)
+    {
+        const QList<QByteArray> lines = headers.split('\n');
+        for (QByteArray line : lines) {
+            line = line.trimmed();
+            if (line.toLower().startsWith("content-length:")) {
+                bool ok = false;
+                const int value = line.mid(sizeof("Content-Length:") - 1).trimmed().toInt(&ok);
+                if (ok) {
+                    return value;
+                }
+            }
+        }
+        return -1;
+    }
 } // anonymous namespace
 
 XmlRpcServer::XmlRpcServer(QObject* parent)
@@ -57,8 +88,9 @@ bool XmlRpcServer::start(int port)
         return false;
     }
 
+    m_port = static_cast<int>(m_server->serverPort());
     m_running = true;
-    qDebug() << "XmlRpcServer started on port" << port;
+    qDebug() << "XmlRpcServer started on port" << m_port;
     emit started();
     return true;
 }
@@ -68,6 +100,14 @@ void XmlRpcServer::stop()
     if (!m_running) {
         return;
     }
+
+    for (QTcpSocket* socket : m_socketBuffers.keys()) {
+        if (!socket) {
+            continue;
+        }
+        socket->disconnectFromHost();
+    }
+    m_socketBuffers.clear();
 
     m_server->close();
     m_running = false;
@@ -165,6 +205,7 @@ void XmlRpcServer::registerStandardMethods()
         }
 
         m_state->applyPaletteData(*data);
+        emit paletteDataLoaded(data->metadata.fileName);
         return RpcValue(0);
     });
 
@@ -504,6 +545,7 @@ void XmlRpcServer::onNewConnection()
         QTcpSocket* socket = m_server->nextPendingConnection();
 
         qDebug() << "New connection from" << socket->peerAddress().toString();
+        m_socketBuffers.insert(socket, QByteArray());
 
         connect(socket, &QTcpSocket::readyRead,
                 this, &XmlRpcServer::onClientReadyRead);
@@ -517,20 +559,63 @@ void XmlRpcServer::onClientReadyRead()
     QTcpSocket* socket = qobject_cast<QTcpSocket*>(sender());
     if (!socket) return;
 
-    QByteArray data = socket->readAll();
-    QString clientIp = socket->peerAddress().toString();
+    QByteArray& buffer = m_socketBuffers[socket];
+    buffer.append(socket->readAll());
 
-    qDebug() << "Received" << data.size() << "bytes from" << clientIp;
+    const QString clientIp = socket->peerAddress().toString();
+    qDebug() << "Buffered" << buffer.size() << "bytes from" << clientIp;
 
-    // Parse HTTP request and extract XML-RPC call
+    while (true) {
+        const int headerEnd = findHeaderEnd(buffer);
+        if (headerEnd < 0) {
+            return;
+        }
+
+        const QByteArray headers = buffer.left(headerEnd);
+        int contentLength = extractContentLength(headers);
+        if (contentLength < 0) {
+            contentLength = buffer.size() - headerEnd;
+        }
+
+        if (buffer.size() < headerEnd + contentLength) {
+            return;
+        }
+
+        const QByteArray requestData = buffer.left(headerEnd + contentLength);
+        buffer.remove(0, headerEnd + contentLength);
+        processHttpRequest(socket, requestData);
+
+        if (socket->state() != QAbstractSocket::ConnectedState) {
+            return;
+        }
+    }
+}
+
+void XmlRpcServer::onClientDisconnected()
+{
+    QTcpSocket* socket = qobject_cast<QTcpSocket*>(sender());
+    if (socket) {
+        m_socketBuffers.remove(socket);
+        qDebug() << "Client disconnected:" << socket->peerAddress().toString();
+        socket->deleteLater();
+    }
+}
+
+void XmlRpcServer::processHttpRequest(QTcpSocket* socket, const QByteArray& requestData)
+{
+    if (!socket) {
+        return;
+    }
+
+    const QString clientIp = socket->peerAddress().toString();
+
     QString methodName;
     QVector<RpcValue> params;
-    QString xmlBody = parseHttpRequest(data, methodName, params);
+    const QString xmlBody = parseHttpRequest(requestData, methodName, params);
 
     if (methodName.isEmpty()) {
-        // Try parsing the body as XML-RPC
         if (!parseMethodCall(xmlBody, methodName, params)) {
-            QByteArray response = buildFaultResponse(-1, "Invalid request");
+            const QByteArray response = buildFaultResponse(-1, "Invalid request");
             socket->write(buildHttpResponse(response));
             socket->flush();
             return;
@@ -540,24 +625,10 @@ void XmlRpcServer::onClientReadyRead()
     qDebug() << "RPC call:" << methodName << "with" << params.size() << "params";
     emit methodCalled(methodName, clientIp);
 
-    // Call the method
-    RpcValue result = callMethod(methodName, params);
-
-    // Build and send response
-    QByteArray xmlResponse = buildResponse(result);
-    QByteArray httpResponse = buildHttpResponse(xmlResponse);
-
-    socket->write(httpResponse);
+    const RpcValue result = callMethod(methodName, params);
+    const QByteArray xmlResponse = buildResponse(result);
+    socket->write(buildHttpResponse(xmlResponse));
     socket->flush();
-}
-
-void XmlRpcServer::onClientDisconnected()
-{
-    QTcpSocket* socket = qobject_cast<QTcpSocket*>(sender());
-    if (socket) {
-        qDebug() << "Client disconnected:" << socket->peerAddress().toString();
-        socket->deleteLater();
-    }
 }
 
 QString XmlRpcServer::parseHttpRequest(const QByteArray& data, QString& methodName,

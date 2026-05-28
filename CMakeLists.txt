@@ -15,6 +15,7 @@ endif()
 option(BUILD_TESTS "Build test suite" OFF)
 option(ENABLE_VTK "Enable VTK 3D visualization" ON)
 option(STATIC_BUILD "Build static binary" OFF)
+option(MULTIPACK_SAFE_ARM64_EMULATION "Disable ARM CPU tuning flags for QEMU cross-build stability" OFF)
 
 # Include CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
@@ -24,7 +25,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS
+set(QT_REQUIRED_COMPONENTS
     Core
     Widgets
     Network
@@ -33,6 +34,13 @@ find_package(Qt6 REQUIRED COMPONENTS
     Concurrent
     UiTools
 )
+
+if(BUILD_TESTS)
+    list(APPEND QT_REQUIRED_COMPONENTS Test)
+endif()
+
+find_package(Qt6 REQUIRED COMPONENTS ${QT_REQUIRED_COMPONENTS})
+find_package(Threads REQUIRED)
 
 # Find VTK for 3D visualization
 if(ENABLE_VTK)
@@ -95,8 +103,14 @@ endif()
 
 # ARM64 specific flags
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
-    add_compile_options(-mcpu=cortex-a72 -mtune=cortex-a72)
-    message(STATUS "Building for ARM64 architecture")
+    if(MULTIPACK_SAFE_ARM64_EMULATION)
+        set(CMAKE_CXX_FLAGS_RELEASE "-O0 -DNDEBUG" CACHE STRING
+            "Release flags for stable ARM64 Docker/QEMU builds" FORCE)
+        message(STATUS "Building for ARM64 architecture (safe emulation flags enabled)")
+    else()
+        add_compile_options(-mcpu=cortex-a72 -mtune=cortex-a72)
+        message(STATUS "Building for ARM64 architecture")
+    endif()
 endif()
 
 # Qt UI files location
@@ -120,6 +134,7 @@ set(MOC_HEADERS
     include/multipack/core/GlobalState.h
     include/multipack/core/AppInitializer.h
     include/multipack/ui/MainWindow.h
+    include/multipack/ui/OnScreenKeyboard.h
     include/multipack/ui/PasswordDialog.h
     include/multipack/ui/BlinkingLabel.h
     include/multipack/ui/MessageDialog.h
@@ -148,15 +163,19 @@ set(MOC_HEADERS
 
 # Source files organization
 set(CORE_SOURCES
-    src/main.cpp
     src/core/Application.cpp
     src/core/GlobalState.cpp
     src/core/AppInitializer.cpp
     src/core/ArgumentParser.cpp
 )
 
+set(MAIN_SOURCE
+    src/main.cpp
+)
+
 set(UI_SOURCES
     src/ui/MainWindow.cpp
+    src/ui/OnScreenKeyboard.cpp
     src/ui/PasswordDialog.cpp
     src/ui/VisualizationWidget.cpp
     src/ui/NotificationPopup.cpp
@@ -218,6 +237,15 @@ set(SYSTEM_SOURCES
     src/system/UsbMonitor.cpp
 )
 
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64" AND MULTIPACK_SAFE_ARM64_EMULATION)
+    # GCC 11 under Docker/QEMU can ICE/segfault on these translation units at -O2.
+    # Keep the workaround tightly scoped so the ARM64 release build stays fast.
+    set_source_files_properties(
+        src/system/AutoUpdater.cpp
+        src/ui/UIHelpers.cpp
+        PROPERTIES COMPILE_OPTIONS "-O1")
+endif()
+
 set(UTILS_SOURCES
     src/utils/StringUtils.cpp
     src/utils/SocketUtils.cpp
@@ -225,7 +253,7 @@ set(UTILS_SOURCES
 )
 
 # Combine all sources
-set(ALL_SOURCES
+set(LIBRARY_SOURCES
     ${MOC_HEADERS}
     ${CORE_SOURCES}
     ${UI_SOURCES}
@@ -241,8 +269,43 @@ set(ALL_SOURCES
     ${UI_FILES}
 )
 
+# Create reusable application library
+add_library(multipack-lib STATIC ${LIBRARY_SOURCES})
+
+target_link_libraries(multipack-lib
+    PUBLIC
+        Qt6::Core
+        Qt6::Widgets
+        Qt6::Network
+        Qt6::Sql
+        Qt6::Multimedia
+        Qt6::Concurrent
+        Threads::Threads
+)
+
+if(SQLite3_FOUND)
+    target_link_libraries(multipack-lib PUBLIC SQLite::SQLite3)
+endif()
+
+if(OpenSSL_FOUND)
+    target_link_libraries(multipack-lib
+        PUBLIC
+            OpenSSL::SSL
+            OpenSSL::Crypto
+    )
+endif()
+
+if(ENABLE_VTK AND VTK_FOUND)
+    target_link_libraries(multipack-lib PUBLIC ${VTK_LIBRARIES})
+    vtk_module_autoinit(
+        TARGETS multipack-lib
+        MODULES ${VTK_LIBRARIES}
+    )
+endif()
+
 # Create executable
-add_executable(multipack-parser ${ALL_SOURCES})
+add_executable(multipack-parser ${MAIN_SOURCE})
+target_link_libraries(multipack-parser PRIVATE multipack-lib)
 
 # Set output directory and RPATH for bundled libraries
 set_target_properties(multipack-parser PROPERTIES
@@ -250,37 +313,6 @@ set_target_properties(multipack-parser PROPERTIES
     INSTALL_RPATH "$ORIGIN/lib:$ORIGIN/../lib"
     BUILD_WITH_INSTALL_RPATH TRUE
 )
-
-# Link libraries
-target_link_libraries(multipack-parser
-    Qt6::Core
-    Qt6::Widgets
-    Qt6::Network
-    Qt6::Sql
-    Qt6::Multimedia
-    Qt6::Concurrent
-    pthread
-)
-
-if(SQLite3_FOUND)
-    target_link_libraries(multipack-parser SQLite::SQLite3)
-endif()
-
-if(OpenSSL_FOUND)
-    target_link_libraries(multipack-parser
-        OpenSSL::SSL
-        OpenSSL::Crypto
-    )
-endif()
-
-# Link VTK if enabled
-if(ENABLE_VTK AND VTK_FOUND)
-    target_link_libraries(multipack-parser ${VTK_LIBRARIES})
-    vtk_module_autoinit(
-        TARGETS multipack-parser
-        MODULES ${VTK_LIBRARIES}
-    )
-endif()
 
 # Installation
 install(TARGETS multipack-parser

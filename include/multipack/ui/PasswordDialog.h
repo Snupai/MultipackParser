@@ -57,6 +57,11 @@ public:
      */
     void setSettingsManager(config::SettingsManager* settings);
 
+    /**
+     * @brief Focus the password field and request the virtual keyboard.
+     */
+    void focusPasswordInput();
+
 public slots:
     void accept() override;
     void reject() override;

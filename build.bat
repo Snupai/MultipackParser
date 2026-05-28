@@ -89,14 +89,30 @@ echo ==========================================
 echo.
 
 REM Check for CMake
-where cmake >nul 2>&1
-if errorlevel 1 (
-    echo ERROR: CMake not found in PATH
+set "CMAKE_CMD="
+for /f "delims=" %%I in ('where cmake 2^>nul') do (
+    set "CMAKE_CMD=%%I"
+    goto :cmake_found
+)
+
+if exist "C:\Program Files\CMake\bin\cmake.exe" set "CMAKE_CMD=C:\Program Files\CMake\bin\cmake.exe"
+if not defined CMAKE_CMD if exist "C:\Program Files (x86)\CMake\bin\cmake.exe" set "CMAKE_CMD=C:\Program Files (x86)\CMake\bin\cmake.exe"
+if not defined CMAKE_CMD if exist "%ProgramFiles%\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" set "CMAKE_CMD=%ProgramFiles%\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
+if not defined CMAKE_CMD if exist "%ProgramFiles%\Microsoft Visual Studio\2022\Professional\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" set "CMAKE_CMD=%ProgramFiles%\Microsoft Visual Studio\2022\Professional\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
+if not defined CMAKE_CMD if exist "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" set "CMAKE_CMD=%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
+if not defined CMAKE_CMD if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\2022\BuildTools\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" set "CMAKE_CMD=%ProgramFiles(x86)%\Microsoft Visual Studio\2022\BuildTools\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
+if not defined CMAKE_CMD if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" set "CMAKE_CMD=%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
+
+:cmake_found
+if not defined CMAKE_CMD (
+    echo ERROR: CMake not found in PATH or common install locations
     echo.
     echo Please install CMake from https://cmake.org/download/
     echo Or install via: winget install Kitware.CMake
     exit /b 1
 )
+
+echo Using CMake: %CMAKE_CMD%
 
 REM Clean if requested
 if "%CLEAN%"=="1" (
@@ -116,6 +132,7 @@ echo.
 
 REM Try to find Qt6
 set "QT_CMAKE_ARGS="
+set "CMAKE_GENERATOR="
 if defined Qt6_DIR (
     set "QT_CMAKE_ARGS=-DCMAKE_PREFIX_PATH=%Qt6_DIR%"
     echo Using Qt6 from: %Qt6_DIR%
@@ -130,6 +147,10 @@ if defined Qt6_DIR (
     ) else if exist "C:\Qt\6.5.0\msvc2019_64\lib\cmake\Qt6" (
         set "QT_CMAKE_ARGS=-DCMAKE_PREFIX_PATH=C:\Qt\6.5.0\msvc2019_64"
         echo Found Qt6 at: C:\Qt\6.5.0\msvc2019_64
+    ) else if exist "C:\Qt\6.10.1\mingw_64\lib\cmake\Qt6" if exist "C:\Qt\Tools\mingw1310_64\bin\g++.exe" (
+        set "QT_CMAKE_ARGS=-DCMAKE_PREFIX_PATH=C:\Qt\6.10.1\mingw_64 -DCMAKE_C_COMPILER=C:\Qt\Tools\mingw1310_64\bin\gcc.exe -DCMAKE_CXX_COMPILER=C:\Qt\Tools\mingw1310_64\bin\g++.exe -DCMAKE_MAKE_PROGRAM=C:\Qt\Tools\mingw1310_64\bin\mingw32-make.exe"
+        set "CMAKE_GENERATOR=MinGW Makefiles"
+        echo Found Qt6/MinGW at: C:\Qt\6.10.1\mingw_64
     ) else (
         echo Warning: Qt6 not found. CMake will try to find it automatically.
         echo Set Qt6_DIR environment variable if build fails.
@@ -137,11 +158,34 @@ if defined Qt6_DIR (
 )
 echo.
 
-cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
-    -DCMAKE_CXX_STANDARD=17 ^
-    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ^
-    -DENABLE_VTK=OFF ^
-    %QT_CMAKE_ARGS%
+set "EXISTING_GENERATOR="
+if exist "%BUILD_DIR%\CMakeCache.txt" (
+    for /f "tokens=2 delims==" %%I in ('findstr /b "CMAKE_GENERATOR:INTERNAL=" "%BUILD_DIR%\CMakeCache.txt"') do set "EXISTING_GENERATOR=%%I"
+)
+
+if defined CMAKE_GENERATOR if defined EXISTING_GENERATOR if /i not "%EXISTING_GENERATOR%"=="%CMAKE_GENERATOR%" (
+    echo Existing build directory uses generator: %EXISTING_GENERATOR%
+    echo Recreating build directory for generator: %CMAKE_GENERATOR%
+    cd /d "%SCRIPT_DIR%"
+    if exist "%BUILD_DIR%" rmdir /s /q "%BUILD_DIR%"
+    mkdir "%BUILD_DIR%"
+    cd /d "%BUILD_DIR%"
+    echo.
+)
+
+if defined CMAKE_GENERATOR (
+    "%CMAKE_CMD%" -G "%CMAKE_GENERATOR%" .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
+        -DCMAKE_CXX_STANDARD=17 ^
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ^
+        -DENABLE_VTK=OFF ^
+        %QT_CMAKE_ARGS%
+) else (
+    "%CMAKE_CMD%" .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
+        -DCMAKE_CXX_STANDARD=17 ^
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ^
+        -DENABLE_VTK=OFF ^
+        %QT_CMAKE_ARGS%
+)
 
 if errorlevel 1 (
     echo.
@@ -157,7 +201,7 @@ echo.
 echo Building with %JOBS% parallel jobs...
 echo.
 
-cmake --build . --target multipack-parser --config %BUILD_TYPE% -j %JOBS%
+"%CMAKE_CMD%" --build . --target multipack-parser --config %BUILD_TYPE% -j %JOBS%
 
 if errorlevel 1 (
     echo.

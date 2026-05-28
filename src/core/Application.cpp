@@ -8,6 +8,7 @@
 #include "multipack/core/GlobalState.h"
 #include "multipack/ui/MainWindow.h"
 #include "multipack/ui/SplashScreen.h"
+#include "multipack/config/ConfigDefaults.h"
 #include "multipack/config/SettingsManager.h"
 #include "multipack/database/DatabaseManager.h"
 #include "multipack/network/XmlRpcServer.h"
@@ -27,8 +28,8 @@ Application::Application(int& argc, char** argv)
     qDebug() << "Application - constructor";
 
     // Set application info
-    setApplicationName("MultipackParser");
-    setApplicationVersion("1.0.0");
+    setApplicationName(config::Defaults::APP_NAME);
+    setApplicationVersion(config::Defaults::VERSION);
     setOrganizationName("Szaidel Cosmetic GmbH");
     setOrganizationDomain("szaidel.com");
 }
@@ -95,6 +96,10 @@ bool Application::initialize()
         m_mainWindow->setSettingsManager(m_initializer->settingsManager());
     }
 
+    if (m_initializer->usbMonitor()) {
+        m_mainWindow->setUsbMonitor(m_initializer->usbMonitor());
+    }
+
     if (m_initializer->databaseManager()) {
         m_mainWindow->setDatabaseManager(m_initializer->databaseManager());
     }
@@ -115,6 +120,10 @@ bool Application::initialize()
 
     // Connect to global state
     m_mainWindow->setGlobalState(&GlobalState::instance());
+
+    if (m_initializer->xmlRpcServer()) {
+        m_mainWindow->setXmlRpcServer(m_initializer->xmlRpcServer());
+    }
 
     if (m_initializer->audioManager()) {
         m_mainWindow->setAudioManager(m_initializer->audioManager());
@@ -160,8 +169,16 @@ int Application::run()
         return -1;
     }
 
-    // Show the main window
-    m_mainWindow->show();
+    // Kiosk mode can be controlled via environment:
+    // MULTIPACK_FULLSCREEN=1 (default) -> frameless maximized (kiosk without WM title bar)
+    // MULTIPACK_FULLSCREEN=0 -> regular windowed mode
+    const bool fullscreenEnabled = qEnvironmentVariable("MULTIPACK_FULLSCREEN", "1") != "0";
+    if (fullscreenEnabled) {
+        m_mainWindow->setWindowFlag(Qt::FramelessWindowHint, true);
+        m_mainWindow->showMaximized();
+    } else {
+        m_mainWindow->show();
+    }
 
     qDebug() << "Application - entering event loop";
     return exec();
