@@ -1,55 +1,62 @@
-# Dockerfile for building a Linux ARM64 executable
+# Dockerfile for MultipackParser C++ x86_64 Build
+# Based on Ubuntu 22.04 with Qt6
 
-# Stage 1: Build the executable
-FROM python:3.12-bookworm AS builder
+FROM ubuntu:22.04
 
-# Install required dependencies
-RUN apt-get update -y && apt-get install -y \
+LABEL maintainer="Szaidel Cosmetic GmbH"
+LABEL description="Build environment for MultipackParser C++ (x86_64)"
+
+# Prevent interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Berlin
+
+RUN apt-get update && apt-get install -y \
     build-essential \
-    libffi-dev \
+    cmake \
+    ninja-build \
+    pkg-config \
+    git \
+    libgl1-mesa-dev \
+    libegl1-mesa-dev \
+    libgles2-mesa-dev \
+    qt6-base-dev \
+    qt6-base-dev-tools \
+    qt6-tools-dev \
+    qt6-tools-dev-tools \
+    qt6-multimedia-dev \
+    libqt6sql6-sqlite \
+    libsqlite3-dev \
     libssl-dev \
-    wget \
-    libdbus-1-3 \
-    libxkbcommon0 \
-    libwayland-client0 \
-    libwayland-cursor0 \
-    libwayland-egl1 \
-    libxcb-keysyms1 \
-    libxcb-shape0 \
-    libxcb-xfixes0 \
-    libxcb-xkb1 \
-    libxcb-sync1 \
-    libxcb-randr0 \
-    libxcb-render-util0 \
-    libxcb-cursor0 \
-    libxcb-icccm4 \
-    libxcb-image0 \
-    libxcb-glx0 \
-    && apt-get clean
+    && rm -rf /var/lib/apt/lists/*
 
-# Install PyInstaller and required Python packages
-RUN pip install --upgrade pip
-RUN pip install pyinstaller pyside6 pyinstaller-hooks-contrib tomli_w matplotlib cryptography pygame requests packaging
+# Set up environment
+ENV PATH="/usr/lib/qt6/bin:${PATH}"
+ENV Qt6_DIR="/usr/lib/x86_64-linux-gnu/cmake/Qt6"
 
-# Set the working directory in the container
+# Create working directory
 WORKDIR /app
 
-# Copy the entire project into the container
-COPY . .
+# Copy source files
+COPY CMakeLists.txt ./
+COPY cmake/ ./cmake/
+COPY include/ ./include/
+COPY src/ ./src/
+COPY ui/ ./ui/
+COPY resources/ ./resources/
+COPY tests/ ./tests/
 
-# Create hooks directory for PyInstaller
-RUN mkdir -p ./hooks
+# Configure
+RUN cmake -B build \
+    -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_STANDARD=17 \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+    -DENABLE_VTK=OFF
 
-# Run PyInstaller using our spec file
-RUN pyinstaller MultipackParser.spec
+ARG CMAKE_BUILD_JOBS=4
 
-# Stage 2: Copy the executable to a minimal base image
-FROM python:3.12-slim-bookworm
+# Build
+RUN cmake --build build --target multipack-parser -j${CMAKE_BUILD_JOBS}
 
-WORKDIR /app
-
-# Copy the executable to the app directory
-COPY --from=builder /app/dist/MultipackParser /app/dist/MultipackParser
-
-# Set entrypoint to the built executable
-ENTRYPOINT ["/app/dist/MultipackParser/MultipackParser"]
+# Verify the binary was built
+RUN ls -la build/bin/

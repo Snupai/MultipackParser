@@ -1,0 +1,38 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/">
+        <!-- Application Icons -->
+        <file alias="icons/settings.png">icons/settings.png</file>
+        <file alias="icons/load.png">icons/load.png</file>
+        <file alias="icons/back.png">icons/back.png</file>
+        <file alias="icons/volume-on.png">icons/volume-on.png</file>
+        <file alias="icons/volume-off.png">icons/volume-off.png</file>
+
+        <!-- Scanner Status Icons (UR10) -->
+        <file alias="icons/scanner_ok.png">icons/scanner_ok.png</file>
+        <file alias="icons/scanner1_error.png">icons/scanner1_error.png</file>
+        <file alias="icons/scanner2_error.png">icons/scanner2_error.png</file>
+        <file alias="icons/scanner12_error.png">icons/scanner12_error.png</file>
+
+        <!-- Scanner Status Icons (UR20) -->
+        <file alias="icons/UR20/scanner1io.png">icons/UR20/scanner1io.png</file>
+        <file alias="icons/UR20/scanner1nio.png">icons/UR20/scanner1nio.png</file>
+        <file alias="icons/UR20/scanner2io.png">icons/UR20/scanner2io.png</file>
+        <file alias="icons/UR20/scanner2nio.png">icons/UR20/scanner2nio.png</file>
+        <file alias="icons/UR20/scanner3io.png">icons/UR20/scanner3io.png</file>
+        <file alias="icons/UR20/scanner3nio.png">icons/UR20/scanner3nio.png</file>
+        <file alias="icons/UR20/scanner123io.png">icons/UR20/scanner123io.png</file>
+        <file alias="icons/UR20/scanner123nio.png">icons/UR20/scanner123nio.png</file>
+
+        <!-- Images -->
+        <file alias="images/logo.png">images/logo.png</file>
+        <file alias="images/logo_small.png">images/logo_small.png</file>
+        <file alias="images/Aufnahmepos.png">images/Aufnahmepos.png</file>
+
+        <!-- Audio -->
+        <file alias="audio/info.wav">audio/info.wav</file>
+        <file alias="audio/warning.wav">audio/warning.wav</file>
+        <file alias="audio/stepback.wav">audio/stepback.wav</file>
+        <file alias="audio/output.wav">audio/output.wav</file>
+    </qresource>
+</RCC>

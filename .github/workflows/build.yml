@@ -1,28 +1,20 @@
-name: Build Binary
-permissions:
-  contents: write
-on:
-  workflow_dispatch:
-  push:
-    paths:
-      - "**.py"
-    branches:
-      - main
+name: Build ARM64
 
-env:
-  IMAGE_NAME: multipackparser-builder
-  EXECUTABLE_NAME: MultipackParser
-  EXECUTABLE_DIR_IN_DOCKER: /app/dist
-  EXECUTABLE_PATH_IN_DOCKER: /app/dist/MultipackParser
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:  # Allow manual trigger
 
 jobs:
-  build-and-release:
+  build-arm64:
+    name: Build ARM64 (Raspberry Pi)
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up QEMU (ARM emulation)
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
           platforms: arm64
@@ -30,86 +22,188 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker image
+      - name: Build ARM64 binary
         run: |
-          docker buildx build --platform linux/arm64 -t ${{ env.IMAGE_NAME }} --load -f Dockerfile .
+          # Build using Docker with ARM64 emulation
+          docker build \
+            --platform linux/arm64 \
+            -f Dockerfile.arm64 \
+            -t multipack-builder-arm64 \
+            .
+          
+          # Build the same ARM64 runtime layout used by docker-build.bat.
+          # Keep this curated bundle small: bundling container GLib/GStreamer
+          # libraries can make Qt load mismatched host GStreamer plugins on Pi.
+          rm -rf output
+          mkdir -p \
+            output/multipack-parser-arm64/bin \
+            output/multipack-parser-arm64/lib \
+            output/multipack-parser-arm64/plugins/platforms \
+            output/multipack-parser-arm64/plugins/sqldrivers \
+            output/multipack-parser-arm64/plugins/multimedia \
+            output/multipack-parser-arm64/plugins/platforminputcontexts \
+            output/multipack-parser-arm64/data
 
-      - name: Create container and extract binary
-        run: |
-          container_id=$(docker create ${{ env.IMAGE_NAME }})
-          mkdir -p ./output
-          docker cp $container_id:${{ env.EXECUTABLE_PATH_IN_DOCKER }} ./output/${{ env.EXECUTABLE_NAME }}
-          docker rm $container_id
+          cat > output/copy-runtime.sh <<'EOF'
+          set -euo pipefail
+          cp /app/build/bin/multipack-parser /output/multipack-parser-arm64/bin/
+          chmod +x /output/multipack-parser-arm64/bin/multipack-parser
 
-      - name: Upload binary to GitHub Actions
+          cp \
+            /usr/lib/aarch64-linux-gnu/libQt6Core.so.6 \
+            /usr/lib/aarch64-linux-gnu/libQt6Gui.so.6 \
+            /usr/lib/aarch64-linux-gnu/libQt6Widgets.so.6 \
+            /usr/lib/aarch64-linux-gnu/libQt6Network.so.6 \
+            /usr/lib/aarch64-linux-gnu/libQt6Sql.so.6 \
+            /usr/lib/aarch64-linux-gnu/libQt6Multimedia.so.6 \
+            /usr/lib/aarch64-linux-gnu/libQt6DBus.so.6 \
+            /usr/lib/aarch64-linux-gnu/libQt6XcbQpa.so.6 \
+            /usr/lib/aarch64-linux-gnu/libQt6OpenGL.so.6 \
+            /usr/lib/aarch64-linux-gnu/libQt6Concurrent.so.6 \
+            /output/multipack-parser-arm64/lib/
+
+          cp /usr/lib/aarch64-linux-gnu/libQt6Svg*.so* /output/multipack-parser-arm64/lib/ 2>/dev/null || true
+          cp \
+            /usr/lib/aarch64-linux-gnu/libicu*.so* \
+            /usr/lib/aarch64-linux-gnu/libpcre2-16*.so* \
+            /usr/lib/aarch64-linux-gnu/libdouble-conversion*.so* \
+            /usr/lib/aarch64-linux-gnu/libz.so* \
+            /usr/lib/aarch64-linux-gnu/libmd4c.so* \
+            /output/multipack-parser-arm64/lib/ 2>/dev/null || true
+          cp \
+            /usr/lib/aarch64-linux-gnu/libxcb*.so* \
+            /usr/lib/aarch64-linux-gnu/libxkbcommon*.so* \
+            /usr/lib/aarch64-linux-gnu/libX11.so* \
+            /usr/lib/aarch64-linux-gnu/libXext.so* \
+            /usr/lib/aarch64-linux-gnu/libXcursor.so* \
+            /usr/lib/aarch64-linux-gnu/libXfixes.so* \
+            /usr/lib/aarch64-linux-gnu/libXi.so* \
+            /usr/lib/aarch64-linux-gnu/libXrandr.so* \
+            /usr/lib/aarch64-linux-gnu/libXrender.so* \
+            /usr/lib/aarch64-linux-gnu/libXinerama.so* \
+            /output/multipack-parser-arm64/lib/ 2>/dev/null || true
+          cp \
+            /usr/lib/aarch64-linux-gnu/libOpenGL.so* \
+            /usr/lib/aarch64-linux-gnu/libGLX.so* \
+            /usr/lib/aarch64-linux-gnu/libGLdispatch.so* \
+            /usr/lib/aarch64-linux-gnu/libGL.so* \
+            /usr/lib/aarch64-linux-gnu/libEGL.so* \
+            /output/multipack-parser-arm64/lib/ 2>/dev/null || true
+
+          cp \
+            /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqxcb.so \
+            /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqlinuxfb.so \
+            /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqeglfs.so \
+            /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqoffscreen.so \
+            /output/multipack-parser-arm64/plugins/platforms/
+          cp /usr/lib/aarch64-linux-gnu/qt6/plugins/sqldrivers/libqsqlite.so /output/multipack-parser-arm64/plugins/sqldrivers/
+          EOF
+
+          docker run --rm \
+            --platform linux/arm64 \
+            -v "$(pwd)/output:/output" \
+            multipack-builder-arm64 \
+            bash /output/copy-runtime.sh
+
+          cp scripts/run_arm64.sh output/multipack-parser-arm64/run.sh
+          chmod +x output/multipack-parser-arm64/run.sh
+          cat > output/multipack-parser-arm64/bin/qt.conf <<'EOF'
+          [Paths]
+          Prefix = ..
+          Plugins = plugins
+          Libraries = lib
+          Data = data
+          EOF
+
+          # Package deployable bundle with the top-level directory preserved so
+          # fresh Raspberry Pi installs can extract it and run
+          # ./multipack-parser-arm64/run.sh as documented.
+          tar -czvf output/multipack-parser-arm64.tar.gz -C output multipack-parser-arm64
+
+          # Build single-file portable launcher from the same tested run.sh bundle.
+          bash scripts/create_portable_single_file.sh \
+            --bundle-dir output/multipack-parser-arm64 \
+            --output-file output/multipack-parser-arm64-portable.run \
+            --entrypoint run.sh
+
+          # Generate unsigned manifest for build artifacts (release signing happens in release job)
+          APP_VERSION=$(grep -E 'constexpr const char\* VERSION' include/multipack/config/ConfigDefaults.h | sed -E 's/.*"([^"]+)".*/\1/')
+          cd output
+          python3 ../scripts/generate_update_metadata.py \
+            --package multipack-parser-arm64.tar.gz \
+            --version "$APP_VERSION" \
+            --output-manifest multipack-parser-arm64-manifest.json
+          
+          # Show contents
+          echo "=== Package contents ==="
+          tar -tzvf multipack-parser-arm64.tar.gz
+          echo "=== Binary info ==="
+          file multipack-parser-arm64/bin/multipack-parser
+          ls -lh multipack-parser-arm64.tar.gz
+          ls -lh multipack-parser-arm64-portable.run
+          ls -lh multipack-parser-arm64-manifest.json
+
+      - name: Upload ARM64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.EXECUTABLE_NAME }}
-          path: ./output/${{ env.EXECUTABLE_NAME }}
+          name: multipack-parser-arm64
+          path: |
+            output/multipack-parser-arm64.tar.gz
+            output/multipack-parser-arm64-portable.run
+            output/multipack-parser-arm64-manifest.json
+          retention-days: 30
 
-      - name: Check version and tag
-        id: check_version_change
+  # Optional: Create release on tag push
+  release:
+    name: Create Release
+    needs: build-arm64
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: multipack-parser-arm64
+
+      - name: Generate signed release metadata
         run: |
-          # Get current version from global_vars.py
-          CURR_VERSION=$(grep -m 1 "VERSION: str = '" utils/system/core/global_vars.py | cut -d "'" -f 2)
-          echo "Current version: $CURR_VERSION"
-
-          # Fetch all tags
-          git fetch --tags --force
-
-          # Check if tag exists for current version
-          if git tag | grep -q "^v${CURR_VERSION}$"; then
-            echo "Tag v${CURR_VERSION} already exists. Skipping release."
-            echo "should_continue=false" >> $GITHUB_OUTPUT
-          else
-            echo "No tag found for version ${CURR_VERSION}. Will create release."
-            echo "should_continue=true" >> $GITHUB_OUTPUT
-            echo "version=$CURR_VERSION" >> $GITHUB_OUTPUT
-          fi
-        shell: bash
-
-      - name: Get version
-        id: get_version
-        if: steps.check_version_change.outputs.should_continue == 'true'
-        run: |
-          VERSION="${{ steps.check_version_change.outputs.version }}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "tag_name=v${VERSION}" >> $GITHUB_OUTPUT
-          echo "release_name=Release v${VERSION}" >> $GITHUB_OUTPUT
-        shell: bash
-
-      - name: Fetch all tags
-        if: steps.check_version_change.outputs.should_continue == 'true'
-        run: git fetch --tags --force
-
-      - name: Get latest tag
-        if: steps.check_version_change.outputs.should_continue == 'true'
-        id: get_latest_tag
-        run: |
-          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
-          echo "latest_tag=$latest_tag" >> $GITHUB_OUTPUT
-
-      - name: Check if tag already exists
-        if: steps.check_version_change.outputs.should_continue == 'true'
-        id: check_tag
-        run: |
-          if [ "${{ steps.get_version.outputs.tag_name }}" == "${{ steps.get_latest_tag.outputs.latest_tag }}" ]; then
-            echo "Tag ${{ steps.get_version.outputs.tag_name }} already exists. Stopping the workflow."
+          if [ -z "${{ secrets.UPDATE_SIGNING_PRIVATE_KEY_B64 }}" ]; then
+            echo "Missing required secret: UPDATE_SIGNING_PRIVATE_KEY_B64"
             exit 1
           fi
-        shell: bash
 
-      - name: Release
-        if: steps.check_version_change.outputs.should_continue == 'true'
-        uses: softprops/action-gh-release@v2.2.1
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PACKAGE_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${GITHUB_REF_NAME}/multipack-parser-arm64.tar.gz"
+
+          echo "${{ secrets.UPDATE_SIGNING_PRIVATE_KEY_B64 }}" | base64 -d > update-signing-private.pem
+          chmod 600 update-signing-private.pem
+
+          python3 scripts/generate_update_metadata.py \
+            --package multipack-parser-arm64.tar.gz \
+            --version "$TAG_VERSION" \
+            --package-url "$PACKAGE_URL" \
+            --output-manifest multipack-parser-arm64-manifest.json \
+            --signing-key update-signing-private.pem \
+            --output-signature multipack-parser-arm64-manifest.sig
+
+          rm -f update-signing-private.pem
+
+          ls -lh multipack-parser-arm64.tar.gz multipack-parser-arm64-manifest.json multipack-parser-arm64-manifest.sig
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            multipack-parser-arm64.tar.gz
+            multipack-parser-arm64-portable.run
+            multipack-parser-arm64-manifest.json
+            multipack-parser-arm64-manifest.sig
+          draft: false
+          prerelease: ${{ contains(github.ref, '-rc') || contains(github.ref, '-beta') || contains(github.ref, '-alpha') }}
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.get_version.outputs.tag_name }}
-          name: ${{ steps.get_version.outputs.release_name }}
-          files: ./output/${{ env.EXECUTABLE_NAME }}
-          draft: false
-          prerelease: false
-          generate_release_notes: true
-          fail_on_unmatched_files: true
-          make_latest: true
