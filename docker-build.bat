@@ -192,25 +192,16 @@ if errorlevel 1 (
 REM Optional: Create single-file portable launcher
 if "%PORTABLE%"=="1" (
     echo.
-    echo Creating portable single-file launcher...
+    echo Creating portable single-file launcher from tested ARM64 bundle...
     docker run --rm --platform linux/arm64 ^
         -v "%SCRIPT_DIR%:/work" ^
         -v "%OUTPUT_DIR%:/output" ^
         %IMAGE_NAME%:latest ^
-        bash -c "bash /work/scripts/bundle_linux_portable.sh --binary /output/multipack-parser-arm64/bin/multipack-parser --output-dir /output/bundle"
+        bash -c "bash /work/scripts/create_portable_single_file.sh --bundle-dir /output/multipack-parser-arm64 --output-file /output/multipack-parser-arm64-portable.run --entrypoint run.sh"
     if errorlevel 1 (
-        echo WARNING: Portable bundle creation failed
+        echo WARNING: Portable launcher creation failed
     ) else (
-        docker run --rm --platform linux/arm64 ^
-            -v "%SCRIPT_DIR%:/work" ^
-            -v "%OUTPUT_DIR%:/output" ^
-            %IMAGE_NAME%:latest ^
-            bash -c "bash /work/scripts/create_portable_single_file.sh --bundle-dir /output/bundle --output-file /output/multipack-parser-arm64-portable.run"
-        if errorlevel 1 (
-            echo WARNING: Portable launcher creation failed
-        ) else (
-            echo Portable launcher created: %OUTPUT_DIR%\multipack-parser-arm64-portable.run
-        )
+        echo Portable launcher created: %OUTPUT_DIR%\multipack-parser-arm64-portable.run
     )
 )
 
