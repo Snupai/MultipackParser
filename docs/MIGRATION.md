@@ -20,8 +20,36 @@ This document maps Python components to their C++ equivalents for the MultipackP
 | Python Module | C++ Class | Header |
 |--------------|-----------|--------|
 | `utils/system/config/settings.py` | `SettingsManager` | `include/multipack/config/SettingsManager.h` |
-| - | `LoggingConfig` | `include/multipack/config/LoggingConfig.h` |
+| `utils/system/config/logging_config.py` | `LoggingConfig` | `include/multipack/config/LoggingConfig.h` |
 | - | `ConfigDefaults` | `include/multipack/config/ConfigDefaults.h` |
+
+#### Logging Parity Contract
+
+The C++ `LoggingConfig` matches the original Python `logging_config.py` on the
+following observable behaviors:
+
+| Property | Python | C++ |
+|---|---|---|
+| App logger name | `multipack_parser` | `multipack_parser` |
+| Server logger name | `server` | `server` (via Qt category `serverLog`) |
+| Record format | `%(asctime)s - %(name)s - %(levelname)s - %(message)s` | `yyyy-MM-dd HH:mm:ss,zzz - <name> - <LEVEL> - <message>` |
+| App level | DEBUG if verbose, else INFO | Same (driven by `MULTIPACK_VERBOSE` / `--verbose`) |
+| Server level | Always DEBUG | Always DEBUG |
+| File rotation | `RotatingFileHandler` 5 MB / 5 backups | Custom rolling sink, 5 MB / 5 backups |
+| Active file names | `multipack_parser_<timestamp>.log`, `server_<timestamp>.log` | `multipack_parser.log`, `server.log` (with `.1`..`.5` backups) |
+| Fallback on failure | User home directory | User home directory |
+| Encoding | UTF-8 | UTF-8 |
+| Console mirror | stdout via `StreamHandler` | stderr |
+
+**Notes:**
+- File naming changed from per-launch timestamped files to stable names with
+  numeric backup suffixes. This is required for true size-based rotation; the
+  Python implementation produced timestamped files *per process launch* but
+  still rolled within each file via `RotatingFileHandler`.
+- Server-channel routing in C++ is explicit via the `multipack::config::serverLog`
+  Qt logging category; downstream code must emit through `qCDebug(serverLog)` /
+  `qCInfo(serverLog)` / `qCWarning(serverLog)` / `qCCritical(serverLog)` to be
+  routed to the server sink. There is no substring-based heuristic.
 
 ### Database
 

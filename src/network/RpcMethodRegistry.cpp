@@ -4,21 +4,25 @@
  */
 
 #include "multipack/network/RpcMethodRegistry.h"
+#include "multipack/config/LoggingConfig.h"
 
 #include <QDebug>
+#include <QLoggingCategory>
 
 namespace multipack {
 namespace network {
 
+using ::multipack::config::serverLog;
+
 RpcMethodRegistry::RpcMethodRegistry(QObject* parent)
     : QObject(parent)
 {
-    qDebug() << "RpcMethodRegistry::RpcMethodRegistry - constructor";
+    qCDebug(serverLog) << "RpcMethodRegistry::RpcMethodRegistry - constructor";
 }
 
 RpcMethodRegistry::~RpcMethodRegistry()
 {
-    qDebug() << "RpcMethodRegistry::~RpcMethodRegistry - destructor";
+    qCDebug(serverLog) << "RpcMethodRegistry::~RpcMethodRegistry - destructor";
 }
 
 void RpcMethodRegistry::registerMethod(const QString& name, RpcMethod method,
@@ -33,14 +37,14 @@ void RpcMethodRegistry::registerMethod(const QString& name, RpcMethod method,
 
     m_methods[name] = info;
 
-    qDebug() << "Registered RPC method:" << name;
+    qCDebug(serverLog) << "Registered RPC method:" << name;
     emit methodRegistered(name);
 }
 
 bool RpcMethodRegistry::unregisterMethod(const QString& name)
 {
     if (m_methods.remove(name) > 0) {
-        qDebug() << "Unregistered RPC method:" << name;
+        qCDebug(serverLog) << "Unregistered RPC method:" << name;
         emit methodUnregistered(name);
         return true;
     }
@@ -71,7 +75,7 @@ RpcValue RpcMethodRegistry::callMethod(const QString& name,
     try {
         return it.value().method(params);
     } catch (const std::exception& e) {
-        qCritical() << "Exception in RPC method" << name << ":" << e.what();
+        qCCritical(serverLog) << "Exception in RPC method" << name << ":" << e.what();
 
         RpcValue error;
         error.type = RpcValue::String;

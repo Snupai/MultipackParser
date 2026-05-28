@@ -187,6 +187,33 @@ cd build
 ctest --output-on-failure
 ```
 
+To build and run the test suite explicitly:
+
+```bash
+cmake -S . -B build-tests -DBUILD_TESTS=ON -DENABLE_VTK=OFF
+cmake --build build-tests
+ctest --test-dir build-tests --output-on-failure
+```
+
+On Windows (MinGW), the Qt6 `bin` directory must be on `PATH` when running
+tests directly so the runtime DLLs can be resolved.
+
+### Logging Parity Verification Matrix
+
+The `test_logging_config` suite locks the parity contract described in
+`docs/MIGRATION.md`. Manual verification steps for releases:
+
+| Check | How to verify |
+|---|---|
+| Format string | Inspect `logs/multipack_parser.log` and confirm lines match `YYYY-MM-DD HH:MM:SS,mmm - multipack_parser - <LEVEL> - <message>`. |
+| Logger names | Confirm app lines contain `- multipack_parser -` and server lines (after RPC calls) contain `- server -`. |
+| Routing | Server-channel messages appear only in `server.log`, not `multipack_parser.log`. |
+| Verbose level | Launch with `--verbose`; confirm DEBUG-level lines appear in the app log. Without `--verbose`, only INFO+ should appear in the app log; server log always contains DEBUG+. |
+| Rotation | Generate >5 MB of log output (e.g. enable verbose and trigger many RPC calls); confirm `multipack_parser.log.1` (and on continued load up to `.5`) appears. |
+| Retention | After sustained logging, confirm at most `multipack_parser.log` plus `.1` through `.5` exist; no `.6` or higher. |
+| Fallback | Replace `logs/` with a regular file of the same name, launch the app, confirm `LoggingConfig: preferred log directory unavailable ...` is printed and logs land in `$HOME` (or `%USERPROFILE%`). |
+| Shutdown | Confirm `Logging shutdown` line appears as the last entry on graceful exit. |
+
 ## Installing
 
 ```bash

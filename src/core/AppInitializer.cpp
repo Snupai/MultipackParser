@@ -5,6 +5,7 @@
 
 #include "multipack/core/AppInitializer.h"
 #include "multipack/config/ConfigDefaults.h"
+#include "multipack/config/LoggingConfig.h"
 #include "multipack/config/SettingsManager.h"
 #include "multipack/database/DatabaseManager.h"
 #include "multipack/network/XmlRpcServer.h"
@@ -162,6 +163,8 @@ void AppInitializer::shutdown()
         m_settingsManager.reset();
     }
 
+    config::LoggingConfig::shutdown();
+
     m_initialized = false;
     qDebug() << "AppInitializer - complete";
 }
@@ -205,14 +208,19 @@ bool AppInitializer::initializeLogging()
 {
     qDebug() << "AppInitializer - initializing logging";
 
-    // Create logs directory
-    QString logPath = QDir::currentPath() + "/logs";
-    QDir logDir(logPath);
-    if (!logDir.exists()) {
-        logDir.mkpath(".");
+    const QString logPath = QDir::currentPath() + "/logs";
+    const bool verboseEnabled = qEnvironmentVariable("MULTIPACK_VERBOSE", "0") == "1";
+    const config::LogLevel level = verboseEnabled ? config::LogLevel::Debug : config::LogLevel::Info;
+
+    if (!config::LoggingConfig::initialize(logPath, level, true)) {
+        qCritical() << "Failed to initialize logging subsystem";
+        return false;
     }
 
-    qDebug() << "Log directory:" << logPath;
+    // Rotation is size-based (5 MB / 5 backups per channel) and applied
+    // automatically on each write, matching the Python RotatingFileHandler.
+    qDebug() << "Log directory:" << config::LoggingConfig::logDirectory()
+             << "(fallback=" << config::LoggingConfig::isUsingFallbackDirectory() << ")";
     return true;
 }
 

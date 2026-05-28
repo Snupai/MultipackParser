@@ -126,8 +126,11 @@ bool parseArguments(QCoreApplication& app)
     // Handle verbose
     if (parser.isSet(verboseOption)) {
         // Enable debug logging
+        qputenv("MULTIPACK_VERBOSE", "1");
         QLoggingCategory::setFilterRules("*.debug=true\nqt.*.debug=false");
         qInfo() << "Verbose logging enabled";
+    } else {
+        qputenv("MULTIPACK_VERBOSE", "0");
     }
 
     return true;

@@ -9,13 +9,17 @@
 #include "multipack/network/RpcMethodRegistry.h"
 #include "multipack/core/GlobalState.h"
 #include "multipack/audio/AudioManager.h"
+#include "multipack/config/LoggingConfig.h"
 
 #include <QDebug>
+#include <QLoggingCategory>
 #include <QDateTime>
 
 namespace multipack {
 namespace network {
 namespace UR20ServerFunctions {
+
+using ::multipack::config::serverLog;
 
 // Helper function to mark palette as not empty and record timestamp
 static void markPaletteNotEmpty(int paletteNumber)
@@ -23,7 +27,7 @@ static void markPaletteNotEmpty(int paletteNumber)
     auto& state = core::GlobalState::instance();
     qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
 
-    qDebug() << "UR20: Marking palette" << paletteNumber << "as not empty";
+    qCDebug(serverLog) << "UR20: Marking palette" << paletteNumber << "as not empty";
 
     if (paletteNumber == 1) {
         state.setUr20Palette1Empty(false);
@@ -36,18 +40,18 @@ static void markPaletteNotEmpty(int paletteNumber)
             state.setPalette2NonEmptyTimestamp(currentTime);
         }
     } else {
-        qWarning() << "UR20: Invalid palette number:" << paletteNumber;
+        qCWarning(serverLog) << "UR20: Invalid palette number:" << paletteNumber;
     }
 }
 
 void registerMethods(RpcMethodRegistry* registry)
 {
     if (!registry) {
-        qWarning() << "UR20ServerFunctions: Registry is null";
+        qCWarning(serverLog) << "UR20ServerFunctions: Registry is null";
         return;
     }
 
-    qDebug() << "UR20ServerFunctions::registerMethods - registering UR20 methods";
+    qCDebug(serverLog) << "UR20ServerFunctions::registerMethods - registering UR20 methods";
 
     auto& state = core::GlobalState::instance();
 
@@ -55,12 +59,12 @@ void registerMethods(RpcMethodRegistry* registry)
     registry->registerMethod("UR20_scannerStatus",
         [&state](const QVector<RpcValue>& params) -> RpcValue {
             if (params.isEmpty()) {
-                qWarning() << "RPC: UR20_scannerStatus - missing status parameter";
+                qCWarning(serverLog) << "RPC: UR20_scannerStatus - missing status parameter";
                 return RpcValue(-1);
             }
 
             QString status = params[0].toString();
-            qDebug() << "RPC: UR20_scannerStatus -" << status;
+            qCDebug(serverLog) << "RPC: UR20_scannerStatus -" << status;
 
             QString previousStatus = state.previousScannerStatus();
             qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
@@ -74,7 +78,7 @@ void registerMethods(RpcMethodRegistry* registry)
 
                 // Clear scanner fault timestamp when all safe
                 if (state.timestampScannerFault() != 0) {
-                    qDebug() << "UR20: Scanner fault cleared";
+                    qCDebug(serverLog) << "UR20: Scanner fault cleared";
                     state.setTimestampScannerFault(0);
                 }
             } else {
@@ -83,7 +87,7 @@ void registerMethods(RpcMethodRegistry* registry)
                     qint64 lastWarning = state.lastScannerWarningTime();
                     // Only play warning if not played in last 15 seconds
                     if (lastWarning == 0 || (currentTime - lastWarning) >= 15000) {
-                        qDebug() << "UR20: Scanner status changed to unsafe, would play warning";
+                        qCDebug(serverLog) << "UR20: Scanner status changed to unsafe, would play warning";
                         // Audio playback would be triggered here via signal
                         state.setLastScannerWarningTime(currentTime);
                     }
@@ -100,16 +104,16 @@ void registerMethods(RpcMethodRegistry* registry)
     registry->registerMethod("UR20_SetActivePalette",
         [&state](const QVector<RpcValue>& params) -> RpcValue {
             if (params.isEmpty()) {
-                qWarning() << "RPC: UR20_SetActivePalette - missing palette number";
+                qCWarning(serverLog) << "RPC: UR20_SetActivePalette - missing palette number";
                 return RpcValue(404);
             }
 
             int paletteNumber = params[0].toInt();
-            qDebug() << "RPC: UR20_SetActivePalette -" << paletteNumber;
+            qCDebug(serverLog) << "RPC: UR20_SetActivePalette -" << paletteNumber;
 
             // Validate palette number
             if (paletteNumber != 1 && paletteNumber != 2) {
-                qWarning() << "UR20: Invalid palette number:" << paletteNumber;
+                qCWarning(serverLog) << "UR20: Invalid palette number:" << paletteNumber;
                 return RpcValue(404);
             }
 
@@ -118,7 +122,7 @@ void registerMethods(RpcMethodRegistry* registry)
                                                  : state.ur20Palette2Empty();
 
             if (!isEmpty) {
-                qWarning() << "UR20: Cannot set palette" << paletteNumber << "as active - not empty";
+                qCWarning(serverLog) << "UR20: Cannot set palette" << paletteNumber << "as active - not empty";
                 return RpcValue(503);
             }
 
@@ -128,7 +132,7 @@ void registerMethods(RpcMethodRegistry* registry)
             // Mark as not empty since it will be used
             markPaletteNotEmpty(paletteNumber);
 
-            qDebug() << "UR20: Active palette set to" << paletteNumber;
+            qCDebug(serverLog) << "UR20: Active palette set to" << paletteNumber;
             return RpcValue(paletteNumber);
         },
         "Set active palette (1 or 2)",
@@ -139,19 +143,19 @@ void registerMethods(RpcMethodRegistry* registry)
     registry->registerMethod("UR20_RequestPaletteChange",
         [&state](const QVector<RpcValue>& params) -> RpcValue {
             if (params.size() < 2) {
-                qWarning() << "RPC: UR20_RequestPaletteChange - missing parameters";
+                qCWarning(serverLog) << "RPC: UR20_RequestPaletteChange - missing parameters";
                 return RpcValue(404);
             }
 
             int oldPalette = params[0].toInt();
             int newPalette = params[1].toInt();
-            qDebug() << "RPC: UR20_RequestPaletteChange -" << oldPalette << "->" << newPalette;
+            qCDebug(serverLog) << "RPC: UR20_RequestPaletteChange -" << oldPalette << "->" << newPalette;
 
             Q_UNUSED(oldPalette);  // Only check new palette status
 
             // Validate new palette number
             if (newPalette != 1 && newPalette != 2) {
-                qWarning() << "UR20: Invalid new palette number:" << newPalette;
+                qCWarning(serverLog) << "UR20: Invalid new palette number:" << newPalette;
                 return RpcValue(404);
             }
 
@@ -160,7 +164,7 @@ void registerMethods(RpcMethodRegistry* registry)
                                                : state.ur20Palette2Empty();
 
             if (!newEmpty) {
-                qWarning() << "UR20: New palette" << newPalette << "is not empty - cannot change";
+                qCWarning(serverLog) << "UR20: New palette" << newPalette << "is not empty - cannot change";
                 return RpcValue(0);
             }
 
@@ -168,7 +172,7 @@ void registerMethods(RpcMethodRegistry* registry)
             state.setUr20ActivePalette(newPalette);
             markPaletteNotEmpty(newPalette);
 
-            qDebug() << "UR20: Palette change approved to" << newPalette;
+            qCDebug(serverLog) << "UR20: Palette change approved to" << newPalette;
             return RpcValue(1);
         },
         "Request palette change",
@@ -179,26 +183,26 @@ void registerMethods(RpcMethodRegistry* registry)
     registry->registerMethod("UR20_GetActivePaletteNumber",
         [&state](const QVector<RpcValue>& params) -> RpcValue {
             Q_UNUSED(params);
-            qDebug() << "RPC: UR20_GetActivePaletteNumber called";
+            qCDebug(serverLog) << "RPC: UR20_GetActivePaletteNumber called";
 
             int activePalette = state.ur20ActivePalette();
 
             if (activePalette == 1) {
                 if (state.ur20Palette1Empty()) {
-                    qDebug() << "UR20: Palette 1 is empty - returning palette 1";
+                    qCDebug(serverLog) << "UR20: Palette 1 is empty - returning palette 1";
                     markPaletteNotEmpty(1);
                     return RpcValue(1);
                 } else {
-                    qDebug() << "UR20: Palette 1 is not empty - returning 0";
+                    qCDebug(serverLog) << "UR20: Palette 1 is not empty - returning 0";
                     return RpcValue(0);
                 }
             } else if (activePalette == 2) {
                 if (state.ur20Palette2Empty()) {
-                    qDebug() << "UR20: Palette 2 is empty - returning palette 2";
+                    qCDebug(serverLog) << "UR20: Palette 2 is empty - returning palette 2";
                     markPaletteNotEmpty(2);
                     return RpcValue(2);
                 } else {
-                    qDebug() << "UR20: Palette 2 is not empty - returning 0";
+                    qCDebug(serverLog) << "UR20: Palette 2 is not empty - returning 0";
                     return RpcValue(0);
                 }
             }
@@ -213,24 +217,24 @@ void registerMethods(RpcMethodRegistry* registry)
     registry->registerMethod("UR20_GetPaletteStatus",
         [&state](const QVector<RpcValue>& params) -> RpcValue {
             if (params.isEmpty()) {
-                qWarning() << "RPC: UR20_GetPaletteStatus - missing palette number";
+                qCWarning(serverLog) << "RPC: UR20_GetPaletteStatus - missing palette number";
                 return RpcValue(-1);
             }
 
             int paletteNumber = params[0].toInt();
-            qDebug() << "RPC: UR20_GetPaletteStatus -" << paletteNumber;
+            qCDebug(serverLog) << "RPC: UR20_GetPaletteStatus -" << paletteNumber;
 
             if (paletteNumber == 1) {
                 int status = state.ur20Palette1Empty() ? 1 : 0;
-                qDebug() << "UR20: Palette 1 status:" << (status ? "empty" : "not empty");
+                qCDebug(serverLog) << "UR20: Palette 1 status:" << (status ? "empty" : "not empty");
                 return RpcValue(status);
             } else if (paletteNumber == 2) {
                 int status = state.ur20Palette2Empty() ? 1 : 0;
-                qDebug() << "UR20: Palette 2 status:" << (status ? "empty" : "not empty");
+                qCDebug(serverLog) << "UR20: Palette 2 status:" << (status ? "empty" : "not empty");
                 return RpcValue(status);
             }
 
-            qWarning() << "UR20: Invalid palette number:" << paletteNumber;
+            qCWarning(serverLog) << "UR20: Invalid palette number:" << paletteNumber;
             return RpcValue(-1);
         },
         "Get palette status (1=empty, 0=not empty, -1=invalid)",
@@ -241,19 +245,19 @@ void registerMethods(RpcMethodRegistry* registry)
     registry->registerMethod("UR20_SetZwischenLageLegen",
         [&state](const QVector<RpcValue>& params) -> RpcValue {
             if (params.isEmpty()) {
-                qWarning() << "RPC: UR20_SetZwischenLageLegen - missing parameter";
+                qCWarning(serverLog) << "RPC: UR20_SetZwischenLageLegen - missing parameter";
                 return RpcValue(0);
             }
 
             bool aktiv = params[0].toBool();
-            qDebug() << "RPC: UR20_SetZwischenLageLegen -" << aktiv;
+            qCDebug(serverLog) << "RPC: UR20_SetZwischenLageLegen -" << aktiv;
 
             state.setUr20Zwischenlage(aktiv);
 
             if (aktiv) {
-                qDebug() << "UR20: Zwischenlage legen und mit Reset bestätigen";
+                qCDebug(serverLog) << "UR20: Zwischenlage legen und mit Reset bestätigen";
             } else {
-                qDebug() << "UR20: Zwischenlage reset confirmed";
+                qCDebug(serverLog) << "UR20: Zwischenlage reset confirmed";
             }
 
             return RpcValue(1);
@@ -266,7 +270,7 @@ void registerMethods(RpcMethodRegistry* registry)
     registry->registerMethod("UR20_GetKlemmungAktiv",
         [&state](const QVector<RpcValue>& params) -> RpcValue {
             Q_UNUSED(params);
-            qDebug() << "RPC: UR20_GetKlemmungAktiv called";
+            qCDebug(serverLog) << "RPC: UR20_GetKlemmungAktiv called";
             return RpcValue(state.klemmungAktiv());
         },
         "Check if clamping is active",
@@ -277,7 +281,7 @@ void registerMethods(RpcMethodRegistry* registry)
     registry->registerMethod("UR20_GetScannerOverride",
         [&state](const QVector<RpcValue>& params) -> RpcValue {
             Q_UNUSED(params);
-            qDebug() << "RPC: UR20_GetScannerOverride called";
+            qCDebug(serverLog) << "RPC: UR20_GetScannerOverride called";
 
             QVector<bool> override = state.scannerOverride();
 
@@ -293,7 +297,7 @@ void registerMethods(RpcMethodRegistry* registry)
         "array[bool]"
     );
 
-    qDebug() << "UR20ServerFunctions: Registered 8 methods";
+    qCDebug(serverLog) << "UR20ServerFunctions: Registered 8 methods";
 }
 
 } // namespace UR20ServerFunctions

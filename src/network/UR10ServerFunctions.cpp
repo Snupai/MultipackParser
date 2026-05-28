@@ -8,21 +8,25 @@
 #include "multipack/network/UR10ServerFunctions.h"
 #include "multipack/network/RpcMethodRegistry.h"
 #include "multipack/core/GlobalState.h"
+#include "multipack/config/LoggingConfig.h"
 
 #include <QDebug>
+#include <QLoggingCategory>
 
 namespace multipack {
 namespace network {
 namespace UR10ServerFunctions {
 
+using ::multipack::config::serverLog;
+
 void registerMethods(RpcMethodRegistry* registry)
 {
     if (!registry) {
-        qWarning() << "UR10ServerFunctions: Registry is null";
+        qCWarning(serverLog) << "UR10ServerFunctions: Registry is null";
         return;
     }
 
-    qDebug() << "UR10ServerFunctions::registerMethods - registering UR10 methods";
+    qCDebug(serverLog) << "UR10ServerFunctions::registerMethods - registering UR10 methods";
 
     auto& state = core::GlobalState::instance();
 
@@ -30,7 +34,7 @@ void registerMethods(RpcMethodRegistry* registry)
     registry->registerMethod("UR10_scanner1and2niobild",
         [&state](const QVector<RpcValue>& params) -> RpcValue {
             Q_UNUSED(params);
-            qDebug() << "RPC: UR10_scanner1and2niobild called";
+            qCDebug(serverLog) << "RPC: UR10_scanner1and2niobild called";
             return RpcValue(state.scanner1and2NioValue());
         },
         "Get scanner 1&2 NIO status value",
@@ -41,7 +45,7 @@ void registerMethods(RpcMethodRegistry* registry)
     registry->registerMethod("UR10_scanner1bild",
         [&state](const QVector<RpcValue>& params) -> RpcValue {
             Q_UNUSED(params);
-            qDebug() << "RPC: UR10_scanner1bild called";
+            qCDebug(serverLog) << "RPC: UR10_scanner1bild called";
             return RpcValue(state.scanner1Value());
         },
         "Get scanner 1 status value",
@@ -52,7 +56,7 @@ void registerMethods(RpcMethodRegistry* registry)
     registry->registerMethod("UR10_scanner2bild",
         [&state](const QVector<RpcValue>& params) -> RpcValue {
             Q_UNUSED(params);
-            qDebug() << "RPC: UR10_scanner2bild called";
+            qCDebug(serverLog) << "RPC: UR10_scanner2bild called";
             return RpcValue(state.scanner2Value());
         },
         "Get scanner 2 status value",
@@ -63,14 +67,14 @@ void registerMethods(RpcMethodRegistry* registry)
     registry->registerMethod("UR10_scanner1and2iobild",
         [&state](const QVector<RpcValue>& params) -> RpcValue {
             Q_UNUSED(params);
-            qDebug() << "RPC: UR10_scanner1and2iobild called";
+            qCDebug(serverLog) << "RPC: UR10_scanner1and2iobild called";
             return RpcValue(state.scanner1and2IoValue());
         },
         "Get scanner 1&2 IO status value",
         "int"
     );
 
-    qDebug() << "UR10ServerFunctions: Registered 4 methods";
+    qCDebug(serverLog) << "UR10ServerFunctions: Registered 4 methods";
 }
 
 } // namespace UR10ServerFunctions

@@ -1,6 +1,7 @@
 /**
  * @file LoggingConfig.cpp
- * @brief Implementation of logging configuration
+ * @brief Implementation of logging configuration with rotating sinks and
+ *        Python-equivalent format/routing.
  */
 
 #include "multipack/config/LoggingConfig.h"
@@ -8,19 +9,58 @@
 
 #include <QDebug>
 #include <QDir>
+#include <QFileInfo>
 #include <QDateTime>
+#include <QMutexLocker>
 #include <QTextStream>
 #include <iostream>
 
 namespace multipack {
 namespace config {
 
+Q_LOGGING_CATEGORY(serverLog, "server")
+
 // Static member initialization
-std::unique_ptr<QFile> LoggingConfig::s_logFile;
-std::unique_ptr<QFile> LoggingConfig::s_serverLogFile;
+LoggingConfig::ChannelSink LoggingConfig::s_appSink;
+LoggingConfig::ChannelSink LoggingConfig::s_serverSink;
+QString LoggingConfig::s_logDirectory;
+bool LoggingConfig::s_usingFallbackDir = false;
 LogLevel LoggingConfig::s_logLevel = LogLevel::Info;
 bool LoggingConfig::s_consoleOutput = true;
 bool LoggingConfig::s_initialized = false;
+QMutex LoggingConfig::s_writeMutex;
+
+namespace {
+
+QString joinPath(const QString& dir, const QString& name)
+{
+    if (dir.isEmpty()) {
+        return name;
+    }
+    if (dir.endsWith('/') || dir.endsWith('\\')) {
+        return dir + name;
+    }
+    return dir + '/' + name;
+}
+
+bool ensureDirectoryWritable(const QString& path)
+{
+    QDir dir(path);
+    if (!dir.exists() && !dir.mkpath(".")) {
+        return false;
+    }
+    // Probe writability with a sentinel file.
+    const QString probe = joinPath(path, ".multipack_log_probe");
+    QFile probeFile(probe);
+    if (!probeFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        return false;
+    }
+    probeFile.close();
+    QFile::remove(probe);
+    return true;
+}
+
+} // namespace
 
 bool LoggingConfig::initialize(const QString& logDir, LogLevel level, bool consoleOutput)
 {
@@ -31,36 +71,51 @@ bool LoggingConfig::initialize(const QString& logDir, LogLevel level, bool conso
 
     s_logLevel = level;
     s_consoleOutput = consoleOutput;
+    s_usingFallbackDir = false;
 
-    // Create log directory
-    QString dir = logDir.isEmpty() ? Defaults::defaultLogDir() : logDir;
-    QDir logDirectory(dir);
-    if (!logDirectory.exists()) {
-        if (!logDirectory.mkpath(".")) {
-            std::cerr << "Failed to create log directory: "
-                      << dir.toStdString() << std::endl;
+    const QString requested = logDir.isEmpty() ? Defaults::defaultLogDir() : logDir;
+
+    QString chosen = requested;
+    if (!ensureDirectoryWritable(chosen)) {
+        // Fallback to user home directory (Python parity).
+        const QString fallback = QDir::homePath();
+        std::cerr << "LoggingConfig: preferred log directory unavailable ("
+                  << chosen.toStdString() << "), falling back to "
+                  << fallback.toStdString() << std::endl;
+        if (!ensureDirectoryWritable(fallback)) {
+            std::cerr << "LoggingConfig: fallback log directory also unavailable: "
+                      << fallback.toStdString() << std::endl;
             return false;
         }
+        chosen = fallback;
+        s_usingFallbackDir = true;
     }
 
-    // Create log files
-    s_logFile = std::make_unique<QFile>(generateLogFileName("multipack_parser"));
-    if (!s_logFile->open(QIODevice::WriteOnly | QIODevice::Append)) {
-        std::cerr << "Failed to open log file" << std::endl;
+    s_logDirectory = chosen;
+
+    if (!openChannelFile(LogChannel::App, chosen)) {
+        std::cerr << "LoggingConfig: failed to open app log file in "
+                  << chosen.toStdString() << std::endl;
+        return false;
+    }
+    if (!openChannelFile(LogChannel::Server, chosen)) {
+        std::cerr << "LoggingConfig: failed to open server log file in "
+                  << chosen.toStdString() << std::endl;
+        // Close app sink to keep state consistent.
+        if (s_appSink.file && s_appSink.file->isOpen()) {
+            s_appSink.file->close();
+        }
+        s_appSink.file.reset();
         return false;
     }
 
-    s_serverLogFile = std::make_unique<QFile>(generateLogFileName("server"));
-    if (!s_serverLogFile->open(QIODevice::WriteOnly | QIODevice::Append)) {
-        std::cerr << "Failed to open server log file" << std::endl;
-        return false;
-    }
-
-    // Install message handler
     qInstallMessageHandler(messageHandler);
 
     s_initialized = true;
-    qInfo() << "Logging initialized - level:" << static_cast<int>(level);
+    qInfo().noquote() << QString("Logging initialized - dir=%1 level=%2 fallback=%3")
+                                 .arg(chosen)
+                                 .arg(static_cast<int>(level))
+                                 .arg(s_usingFallbackDir ? "true" : "false");
 
     return true;
 }
@@ -75,17 +130,22 @@ void LoggingConfig::shutdown()
 
     qInstallMessageHandler(nullptr);
 
-    if (s_logFile && s_logFile->isOpen()) {
-        s_logFile->close();
-    }
-    s_logFile.reset();
+    QMutexLocker lock(&s_writeMutex);
 
-    if (s_serverLogFile && s_serverLogFile->isOpen()) {
-        s_serverLogFile->close();
+    if (s_appSink.file && s_appSink.file->isOpen()) {
+        s_appSink.file->flush();
+        s_appSink.file->close();
     }
-    s_serverLogFile.reset();
+    s_appSink.file.reset();
+
+    if (s_serverSink.file && s_serverSink.file->isOpen()) {
+        s_serverSink.file->flush();
+        s_serverSink.file->close();
+    }
+    s_serverSink.file.reset();
 
     s_initialized = false;
+    s_usingFallbackDir = false;
 }
 
 void LoggingConfig::setLogLevel(LogLevel level)
@@ -110,88 +170,56 @@ bool LoggingConfig::consoleOutputEnabled()
 
 QString LoggingConfig::logFilePath()
 {
-    if (s_logFile) {
-        return s_logFile->fileName();
-    }
-    return QString();
+    return s_appSink.file ? s_appSink.file->fileName() : QString();
 }
 
 QString LoggingConfig::serverLogFilePath()
 {
-    if (s_serverLogFile) {
-        return s_serverLogFile->fileName();
-    }
-    return QString();
+    return s_serverSink.file ? s_serverSink.file->fileName() : QString();
 }
 
-void LoggingConfig::rotateLogFiles(int maxFiles)
+QString LoggingConfig::logDirectory()
 {
-    QString logDir = Defaults::defaultLogDir();
-    QDir dir(logDir);
+    return s_logDirectory;
+}
 
-    if (!dir.exists()) {
-        return;
-    }
-
-    // Get all log files sorted by modification time (oldest first)
-    QStringList filters;
-    filters << "*.log";
-    QFileInfoList logFiles = dir.entryInfoList(filters, QDir::Files, QDir::Time | QDir::Reversed);
-
-    qDebug() << "LoggingConfig::rotateLogFiles - found" << logFiles.size() << "log files, keeping" << maxFiles;
-
-    // Group files by prefix (multipack_parser, server)
-    QMap<QString, QFileInfoList> filesByPrefix;
-    for (const QFileInfo& fi : logFiles) {
-        QString name = fi.baseName();
-        // Extract prefix (everything before the timestamp)
-        int underscoreIdx = name.lastIndexOf('_');
-        if (underscoreIdx > 0) {
-            // Try to find the second-to-last underscore for timestamp pattern
-            int prevUnderscore = name.lastIndexOf('_', underscoreIdx - 1);
-            if (prevUnderscore > 0) {
-                QString prefix = name.left(prevUnderscore);
-                filesByPrefix[prefix].append(fi);
-            } else {
-                // Simple prefix_timestamp pattern
-                filesByPrefix[name.left(underscoreIdx)].append(fi);
-            }
-        }
-    }
-
-    // Delete old files for each prefix
-    for (auto it = filesByPrefix.begin(); it != filesByPrefix.end(); ++it) {
-        Q_UNUSED(it.key()); // prefix not used but kept for potential future logging
-        QFileInfoList& files = it.value();
-
-        // Keep only maxFiles per prefix
-        while (files.size() > maxFiles) {
-            QFileInfo oldest = files.takeFirst();
-
-            // Don't delete currently open log files
-            if (s_logFile && oldest.absoluteFilePath() == s_logFile->fileName()) {
-                continue;
-            }
-            if (s_serverLogFile && oldest.absoluteFilePath() == s_serverLogFile->fileName()) {
-                continue;
-            }
-
-            if (QFile::remove(oldest.absoluteFilePath())) {
-                qDebug() << "Deleted old log file:" << oldest.fileName();
-            } else {
-                qWarning() << "Failed to delete old log file:" << oldest.fileName();
-            }
-        }
-    }
+bool LoggingConfig::isUsingFallbackDirectory()
+{
+    return s_usingFallbackDir;
 }
 
 void LoggingConfig::flush()
 {
-    if (s_logFile && s_logFile->isOpen()) {
-        s_logFile->flush();
+    QMutexLocker lock(&s_writeMutex);
+    if (s_appSink.file && s_appSink.file->isOpen()) {
+        s_appSink.file->flush();
     }
-    if (s_serverLogFile && s_serverLogFile->isOpen()) {
-        s_serverLogFile->flush();
+    if (s_serverSink.file && s_serverSink.file->isOpen()) {
+        s_serverSink.file->flush();
+    }
+}
+
+void LoggingConfig::writeRecord(LogChannel channel, LogLevel level, const QString& message)
+{
+    if (!s_initialized) {
+        return;
+    }
+
+    // Server channel always logs DEBUG and above (Python parity).
+    if (channel == LogChannel::App
+        && static_cast<int>(level) < static_cast<int>(s_logLevel)) {
+        return;
+    }
+
+    const QString line = formatRecord(channel, level, message);
+
+    {
+        QMutexLocker lock(&s_writeMutex);
+        appendToChannel(channel, line);
+    }
+
+    if (s_consoleOutput) {
+        std::cerr << line.toStdString() << std::endl;
     }
 }
 
@@ -199,77 +227,182 @@ void LoggingConfig::messageHandler(QtMsgType type,
                                    const QMessageLogContext& context,
                                    const QString& msg)
 {
-    // Check log level
-    LogLevel msgLevel = LogLevel::Debug;  // Default to Debug
-    QString levelStr;
+    const LogLevel msgLevel = levelFromMsgType(type);
 
-    switch (type) {
-        case QtDebugMsg:
-            msgLevel = LogLevel::Debug;
-            levelStr = "DEBUG";
-            break;
-        case QtInfoMsg:
-            msgLevel = LogLevel::Info;
-            levelStr = "INFO";
-            break;
-        case QtWarningMsg:
-            msgLevel = LogLevel::Warning;
-            levelStr = "WARNING";
-            break;
-        case QtCriticalMsg:
-            msgLevel = LogLevel::Error;
-            levelStr = "ERROR";
-            break;
-        case QtFatalMsg:
-            msgLevel = LogLevel::Error;
-            levelStr = "FATAL";
-            break;
-    }
+    const QByteArray category = context.category ? QByteArray(context.category) : QByteArray("default");
+    const bool isServer = (category == QByteArrayLiteral("server"));
+    const LogChannel channel = isServer ? LogChannel::Server : LogChannel::App;
 
-    // Skip if below log level
-    if (static_cast<int>(msgLevel) < static_cast<int>(s_logLevel)) {
+    // App channel honors configured level. Server channel always logs DEBUG+.
+    if (channel == LogChannel::App
+        && static_cast<int>(msgLevel) < static_cast<int>(s_logLevel)) {
         return;
     }
 
-    // Format message
-    QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
-    QString formattedMsg = QString("[%1] [%2] %3")
-        .arg(timestamp)
-        .arg(levelStr)
-        .arg(msg);
+    const QString formatted = formatRecord(channel, msgLevel, msg);
 
-    // Add context in debug mode
-    if (s_logLevel == LogLevel::Debug && context.file) {
-        formattedMsg += QString(" (%1:%2)")
-            .arg(context.file)
-            .arg(context.line);
+    {
+        QMutexLocker lock(&s_writeMutex);
+        appendToChannel(channel, formatted);
     }
 
-    // Write to file
-    if (s_logFile && s_logFile->isOpen()) {
-        QTextStream stream(s_logFile.get());
-        stream << formattedMsg << "\n";
-    }
-
-    // Write to console
     if (s_consoleOutput) {
-        std::cerr << formattedMsg.toStdString() << std::endl;
+        std::cerr << formatted.toStdString() << std::endl;
     }
 
-    // Handle fatal messages
     if (type == QtFatalMsg) {
         flush();
         abort();
     }
 }
 
-QString LoggingConfig::generateLogFileName(const QString& prefix)
+QString LoggingConfig::formatRecord(LogChannel channel,
+                                    LogLevel level,
+                                    const QString& message)
 {
-    QString timestamp = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
-    return QString("%1/%2_%3.log")
-        .arg(Defaults::defaultLogDir())
-        .arg(prefix)
-        .arg(timestamp);
+    // Python format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    // Python uses comma as the millisecond separator in asctime by default.
+    const QString timestamp = QDateTime::currentDateTime()
+                                  .toString("yyyy-MM-dd HH:mm:ss,zzz");
+    return QStringLiteral("%1 - %2 - %3 - %4")
+        .arg(timestamp,
+             QString::fromLatin1(loggerName(channel)),
+             QString::fromLatin1(levelString(level)),
+             message);
+}
+
+void LoggingConfig::appendToChannel(LogChannel channel, const QString& formattedLine)
+{
+    ChannelSink& sink = (channel == LogChannel::Server) ? s_serverSink : s_appSink;
+    if (!sink.file || !sink.file->isOpen()) {
+        return;
+    }
+
+    const QByteArray payload = (formattedLine + QLatin1Char('\n')).toUtf8();
+
+    // Pre-write rotation check: rotate if next write would exceed the cap.
+    const qint64 currentSize = sink.file->size();
+    if (currentSize + payload.size() > MAX_FILE_BYTES) {
+        rotateChannel(channel);
+    }
+
+    if (!sink.file || !sink.file->isOpen()) {
+        return;
+    }
+
+    sink.file->write(payload);
+    sink.file->flush();
+}
+
+void LoggingConfig::rotateChannel(LogChannel channel)
+{
+    ChannelSink& sink = (channel == LogChannel::Server) ? s_serverSink : s_appSink;
+    if (!sink.file) {
+        return;
+    }
+
+    const QString activePath = sink.file->fileName();
+
+    // Close active file before renames (required on Windows).
+    if (sink.file->isOpen()) {
+        sink.file->flush();
+        sink.file->close();
+    }
+
+    // Shift .N -> .(N+1) from highest down to 1, dropping the oldest.
+    const QString suffixBase = activePath;
+    auto suffixPath = [&suffixBase](int n) {
+        return suffixBase + QStringLiteral(".") + QString::number(n);
+    };
+
+    // Remove the oldest backup if it exists.
+    const QString oldest = suffixPath(BACKUP_COUNT);
+    if (QFile::exists(oldest)) {
+        QFile::remove(oldest);
+    }
+
+    for (int n = BACKUP_COUNT - 1; n >= 1; --n) {
+        const QString src = suffixPath(n);
+        const QString dst = suffixPath(n + 1);
+        if (QFile::exists(src)) {
+            if (QFile::exists(dst)) {
+                QFile::remove(dst);
+            }
+            QFile::rename(src, dst);
+        }
+    }
+
+    // Rename active -> .1
+    if (QFile::exists(activePath)) {
+        const QString firstBackup = suffixPath(1);
+        if (QFile::exists(firstBackup)) {
+            QFile::remove(firstBackup);
+        }
+        QFile::rename(activePath, firstBackup);
+    }
+
+    // Reopen a fresh active file.
+    sink.file = std::make_unique<QFile>(activePath);
+    if (!sink.file->open(QIODevice::WriteOnly | QIODevice::Append)) {
+        // Failed to reopen - drop sink so we don't keep trying.
+        sink.file.reset();
+    }
+}
+
+bool LoggingConfig::openChannelFile(LogChannel channel, const QString& directory)
+{
+    ChannelSink& sink = (channel == LogChannel::Server) ? s_serverSink : s_appSink;
+    const QString path = joinPath(directory, activeFileName(channel));
+    sink.file = std::make_unique<QFile>(path);
+    if (!sink.file->open(QIODevice::WriteOnly | QIODevice::Append)) {
+        sink.file.reset();
+        return false;
+    }
+    return true;
+}
+
+QString LoggingConfig::activeFileName(LogChannel channel)
+{
+    switch (channel) {
+        case LogChannel::App:
+            return QStringLiteral("multipack_parser.log");
+        case LogChannel::Server:
+            return QStringLiteral("server.log");
+    }
+    return QStringLiteral("multipack_parser.log");
+}
+
+const char* LoggingConfig::loggerName(LogChannel channel)
+{
+    switch (channel) {
+        case LogChannel::App:    return "multipack_parser";
+        case LogChannel::Server: return "server";
+    }
+    return "multipack_parser";
+}
+
+const char* LoggingConfig::levelString(LogLevel level)
+{
+    switch (level) {
+        case LogLevel::Debug:   return "DEBUG";
+        case LogLevel::Info:    return "INFO";
+        case LogLevel::Warning: return "WARNING";
+        case LogLevel::Error:   return "ERROR";
+        case LogLevel::Silent:  return "SILENT";
+    }
+    return "INFO";
+}
+
+LogLevel LoggingConfig::levelFromMsgType(QtMsgType type)
+{
+    switch (type) {
+        case QtDebugMsg:    return LogLevel::Debug;
+        case QtInfoMsg:     return LogLevel::Info;
+        case QtWarningMsg:  return LogLevel::Warning;
+        case QtCriticalMsg: return LogLevel::Error;
+        case QtFatalMsg:    return LogLevel::Error;
+    }
+    return LogLevel::Info;
 }
 
 } // namespace config

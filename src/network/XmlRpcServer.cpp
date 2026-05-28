@@ -6,14 +6,18 @@
 #include "multipack/database/DatabaseManager.h"
 #include "multipack/core/GlobalState.h"
 #include "multipack/network/URCommonFunctions.h"
+#include "multipack/config/LoggingConfig.h"
 
 #include <QTcpSocket>
 #include <QRegularExpression>
 #include <QDebug>
+#include <QLoggingCategory>
 #include <QDateTime>
 
 namespace multipack {
 namespace network {
+
+using ::multipack::config::serverLog;
 
 // Pre-compiled regex patterns for XML-RPC parsing (file scope for efficiency)
 namespace {
@@ -62,7 +66,7 @@ XmlRpcServer::XmlRpcServer(QObject* parent)
     : QObject(parent)
     , m_server(std::make_unique<QTcpServer>(this))
 {
-    qDebug() << "XmlRpcServer - initialized";
+    qCDebug(serverLog) << "XmlRpcServer - initialized";
 
     connect(m_server.get(), &QTcpServer::newConnection,
             this, &XmlRpcServer::onNewConnection);
@@ -76,21 +80,21 @@ XmlRpcServer::~XmlRpcServer()
 bool XmlRpcServer::start(int port)
 {
     if (m_running) {
-        qWarning() << "XmlRpcServer already running";
+        qCWarning(serverLog) << "XmlRpcServer already running";
         return true;
     }
 
     m_port = port;
 
     if (!m_server->listen(QHostAddress::Any, port)) {
-        qCritical() << "XmlRpcServer failed to start:" << m_server->errorString();
+        qCCritical(serverLog) << "XmlRpcServer failed to start:" << m_server->errorString();
         emit error(m_server->errorString());
         return false;
     }
 
     m_port = static_cast<int>(m_server->serverPort());
     m_running = true;
-    qDebug() << "XmlRpcServer started on port" << m_port;
+    qCDebug(serverLog) << "XmlRpcServer started on port" << m_port;
     emit started();
     return true;
 }
@@ -111,7 +115,7 @@ void XmlRpcServer::stop()
 
     m_server->close();
     m_running = false;
-    qDebug() << "XmlRpcServer stopped";
+    qCDebug(serverLog) << "XmlRpcServer stopped";
     emit stopped();
 }
 
@@ -123,7 +127,7 @@ bool XmlRpcServer::isRunning() const
 void XmlRpcServer::registerMethod(const QString& name, RpcMethod method)
 {
     m_methods[name] = method;
-    qDebug() << "Registered RPC method:" << name;
+    qCDebug(serverLog) << "Registered RPC method:" << name;
 }
 
 void XmlRpcServer::unregisterMethod(const QString& name)
@@ -143,7 +147,7 @@ void XmlRpcServer::setGlobalState(core::GlobalState* state)
 
 void XmlRpcServer::registerStandardMethods()
 {
-    qDebug() << "Registering standard RPC methods";
+    qCDebug(serverLog) << "Registering standard RPC methods";
 
     auto markPaletteNotEmpty = [this](int paletteNumber) {
         if (!m_state) {
@@ -174,7 +178,7 @@ void XmlRpcServer::registerStandardMethods()
         }
         QString articleNumber = params[0].toString();
         QString filename = articleNumber + ".rob";
-        qDebug() << "RPC: UR_SetFileName -" << filename;
+        qCDebug(serverLog) << "RPC: UR_SetFileName -" << filename;
         if (m_state) {
             m_state->setCurrentFileName(filename);
         }
@@ -184,7 +188,7 @@ void XmlRpcServer::registerStandardMethods()
     // Read data from USB stick / database
     registerMethod("UR_ReadDataFromUsbStick", [this](const QVector<RpcValue>& params) {
         Q_UNUSED(params);
-        qDebug() << "RPC: UR_ReadDataFromUsbStick called";
+        qCDebug(serverLog) << "RPC: UR_ReadDataFromUsbStick called";
 
         if (!m_state || !m_database) {
             return RpcValue(1);
@@ -192,7 +196,7 @@ void XmlRpcServer::registerStandardMethods()
 
         const QString fileName = m_state->currentFileName();
         if (fileName.isEmpty()) {
-            qWarning() << "UR_ReadDataFromUsbStick: no file selected";
+            qCWarning(serverLog) << "UR_ReadDataFromUsbStick: no file selected";
             return RpcValue(1);
         }
 
@@ -200,7 +204,7 @@ void XmlRpcServer::registerStandardMethods()
 
         auto data = m_database->loadPaletteData(fileName);
         if (!data.has_value()) {
-            qWarning() << "UR_ReadDataFromUsbStick: palette not found:" << fileName;
+            qCWarning(serverLog) << "UR_ReadDataFromUsbStick: palette not found:" << fileName;
             return RpcValue(1);
         }
 
@@ -266,7 +270,7 @@ void XmlRpcServer::registerStandardMethods()
 
     // Center of gravity calculation
     registerMethod("UR_CoG", [this](const QVector<RpcValue>& params) {
-        qDebug() << "RPC: UR_CoG called";
+        qCDebug(serverLog) << "RPC: UR_CoG called";
         if (params.size() < 2 || !m_state) {
             return RpcValue::fromDoubleArray({0.0, 0.0, 0.0});
         }
@@ -370,34 +374,34 @@ void XmlRpcServer::registerStandardMethods()
     // UR10 scanner status methods
     registerMethod("UR_scanner1and2niobild", [this](const QVector<RpcValue>& params) {
         Q_UNUSED(params);
-        qDebug() << "RPC: UR_scanner1and2niobild called";
+        qCDebug(serverLog) << "RPC: UR_scanner1and2niobild called";
         return m_state ? RpcValue(m_state->scanner1and2NioValue()) : RpcValue(0);
     });
     registerMethod("UR_scanner1bild", [this](const QVector<RpcValue>& params) {
         Q_UNUSED(params);
-        qDebug() << "RPC: UR_scanner1bild called";
+        qCDebug(serverLog) << "RPC: UR_scanner1bild called";
         return m_state ? RpcValue(m_state->scanner1Value()) : RpcValue(0);
     });
     registerMethod("UR_scanner2bild", [this](const QVector<RpcValue>& params) {
         Q_UNUSED(params);
-        qDebug() << "RPC: UR_scanner2bild called";
+        qCDebug(serverLog) << "RPC: UR_scanner2bild called";
         return m_state ? RpcValue(m_state->scanner2Value()) : RpcValue(0);
     });
     registerMethod("UR_scanner1and2iobild", [this](const QVector<RpcValue>& params) {
         Q_UNUSED(params);
-        qDebug() << "RPC: UR_scanner1and2iobild called";
+        qCDebug(serverLog) << "RPC: UR_scanner1and2iobild called";
         return m_state ? RpcValue(m_state->scanner1and2IoValue()) : RpcValue(0);
     });
 
     // UR20-specific methods
     registerMethod("UR_scannerStatus", [this](const QVector<RpcValue>& params) {
         if (params.isEmpty() || !m_state) {
-            qWarning() << "RPC: UR_scannerStatus - missing status";
+            qCWarning(serverLog) << "RPC: UR_scannerStatus - missing status";
             return RpcValue(-1);
         }
 
         QString status = params[0].toString();
-        qDebug() << "RPC: UR_scannerStatus -" << status;
+        qCDebug(serverLog) << "RPC: UR_scannerStatus -" << status;
 
         QString previousStatus = m_state->previousScannerStatus();
         qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
@@ -536,7 +540,7 @@ void XmlRpcServer::registerStandardMethods()
         return RpcValue::fromArray(result);
     });
 
-    qDebug() << "Registered" << m_methods.size() << "RPC methods";
+    qCDebug(serverLog) << "Registered" << m_methods.size() << "RPC methods";
 }
 
 void XmlRpcServer::onNewConnection()
@@ -544,7 +548,7 @@ void XmlRpcServer::onNewConnection()
     while (m_server->hasPendingConnections()) {
         QTcpSocket* socket = m_server->nextPendingConnection();
 
-        qDebug() << "New connection from" << socket->peerAddress().toString();
+        qCDebug(serverLog) << "New connection from" << socket->peerAddress().toString();
         m_socketBuffers.insert(socket, QByteArray());
 
         connect(socket, &QTcpSocket::readyRead,
@@ -563,7 +567,7 @@ void XmlRpcServer::onClientReadyRead()
     buffer.append(socket->readAll());
 
     const QString clientIp = socket->peerAddress().toString();
-    qDebug() << "Buffered" << buffer.size() << "bytes from" << clientIp;
+    qCDebug(serverLog) << "Buffered" << buffer.size() << "bytes from" << clientIp;
 
     while (true) {
         const int headerEnd = findHeaderEnd(buffer);
@@ -596,7 +600,7 @@ void XmlRpcServer::onClientDisconnected()
     QTcpSocket* socket = qobject_cast<QTcpSocket*>(sender());
     if (socket) {
         m_socketBuffers.remove(socket);
-        qDebug() << "Client disconnected:" << socket->peerAddress().toString();
+        qCDebug(serverLog) << "Client disconnected:" << socket->peerAddress().toString();
         socket->deleteLater();
     }
 }
@@ -622,7 +626,7 @@ void XmlRpcServer::processHttpRequest(QTcpSocket* socket, const QByteArray& requ
         }
     }
 
-    qDebug() << "RPC call:" << methodName << "with" << params.size() << "params";
+    qCDebug(serverLog) << "RPC call:" << methodName << "with" << params.size() << "params";
     emit methodCalled(methodName, clientIp);
 
     const RpcValue result = callMethod(methodName, params);
@@ -811,14 +815,14 @@ QByteArray XmlRpcServer::buildHttpResponse(const QByteArray& content)
 RpcValue XmlRpcServer::callMethod(const QString& name, const QVector<RpcValue>& params)
 {
     if (!m_methods.contains(name)) {
-        qWarning() << "Unknown RPC method:" << name;
+        qCWarning(serverLog) << "Unknown RPC method:" << name;
         return RpcValue(QString("Unknown method: %1").arg(name));
     }
 
     try {
         return m_methods[name](params);
     } catch (const std::exception& e) {
-        qWarning() << "RPC method error:" << e.what();
+        qCWarning(serverLog) << "RPC method error:" << e.what();
         return RpcValue(QString("Error: %1").arg(e.what()));
     }
 }
@@ -828,7 +832,7 @@ RpcValue XmlRpcServer::callMethod(const QString& name, const QVector<RpcValue>& 
 RpcValue XmlRpcServer::rpcGetPalettenDaten(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: UR_Palette called";
+    qCDebug(serverLog) << "RPC: UR_Palette called";
 
     if (!m_state) {
         return RpcValue::fromIntArray({0, 0, 0});
@@ -840,7 +844,7 @@ RpcValue XmlRpcServer::rpcGetPalettenDaten(const QVector<RpcValue>& params)
 RpcValue XmlRpcServer::rpcGetPaketDaten(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: UR_Karton called";
+    qCDebug(serverLog) << "RPC: UR_Karton called";
 
     if (!m_state) {
         return RpcValue::fromIntArray({0, 0, 0, 0});
@@ -851,10 +855,10 @@ RpcValue XmlRpcServer::rpcGetPaketDaten(const QVector<RpcValue>& params)
 
 RpcValue XmlRpcServer::rpcGetPaketPos(const QVector<RpcValue>& params)
 {
-    qDebug() << "RPC: UR_PaketPos called";
+    qCDebug(serverLog) << "RPC: UR_PaketPos called";
 
     if (params.isEmpty()) {
-        qWarning() << "UR_PaketPos: missing package index parameter";
+        qCWarning(serverLog) << "UR_PaketPos: missing package index parameter";
         return RpcValue::fromIntArray({});
     }
 
@@ -866,7 +870,7 @@ RpcValue XmlRpcServer::rpcGetPaketPos(const QVector<RpcValue>& params)
 
     QVector<int> pos = m_state->packagePosition(packageIndex);
     if (pos.isEmpty()) {
-        qWarning() << "UR_PaketPos: invalid package index" << packageIndex;
+        qCWarning(serverLog) << "UR_PaketPos: invalid package index" << packageIndex;
         return RpcValue::fromIntArray({});
     }
 
@@ -901,7 +905,7 @@ RpcValue XmlRpcServer::rpcGetPaketPos(const QVector<RpcValue>& params)
 RpcValue XmlRpcServer::rpcGetLageArten(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: UR_LageArten called";
+    qCDebug(serverLog) << "RPC: UR_LageArten called";
 
     if (!m_state) {
         return RpcValue(0);
@@ -913,7 +917,7 @@ RpcValue XmlRpcServer::rpcGetLageArten(const QVector<RpcValue>& params)
 RpcValue XmlRpcServer::rpcGetAnzLagen(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: UR_AnzLagen called";
+    qCDebug(serverLog) << "RPC: UR_AnzLagen called";
 
     if (!m_state) {
         return RpcValue(0);
@@ -925,7 +929,7 @@ RpcValue XmlRpcServer::rpcGetAnzLagen(const QVector<RpcValue>& params)
 RpcValue XmlRpcServer::rpcGetAnzPakete(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: UR_AnzPakete called";
+    qCDebug(serverLog) << "RPC: UR_AnzPakete called";
 
     if (!m_state) {
         return RpcValue(0);
@@ -937,7 +941,7 @@ RpcValue XmlRpcServer::rpcGetAnzPakete(const QVector<RpcValue>& params)
 RpcValue XmlRpcServer::rpcGetLageZuordnung(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: UR_Lagen called";
+    qCDebug(serverLog) << "RPC: UR_Lagen called";
 
     if (!m_state) {
         return RpcValue::fromIntArray({});
@@ -949,7 +953,7 @@ RpcValue XmlRpcServer::rpcGetLageZuordnung(const QVector<RpcValue>& params)
 RpcValue XmlRpcServer::rpcGetZwischenlagen(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: UR_Zwischenlagen called";
+    qCDebug(serverLog) << "RPC: UR_Zwischenlagen called";
 
     if (!m_state) {
         return RpcValue::fromIntArray({});
@@ -961,7 +965,7 @@ RpcValue XmlRpcServer::rpcGetZwischenlagen(const QVector<RpcValue>& params)
 RpcValue XmlRpcServer::rpcGetPaketeZuordnung(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: UR_PaketeZuordnung called";
+    qCDebug(serverLog) << "RPC: UR_PaketeZuordnung called";
 
     if (!m_state) {
         return RpcValue::fromIntArray({});
@@ -973,7 +977,7 @@ RpcValue XmlRpcServer::rpcGetPaketeZuordnung(const QVector<RpcValue>& params)
 RpcValue XmlRpcServer::rpcGetStartlage(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: UR_Startlage called";
+    qCDebug(serverLog) << "RPC: UR_Startlage called";
 
     if (!m_state) {
         return RpcValue(1);
@@ -985,7 +989,7 @@ RpcValue XmlRpcServer::rpcGetStartlage(const QVector<RpcValue>& params)
 RpcValue XmlRpcServer::rpcGetEinzelpaketLaengs(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: UR_Quergreifen called";
+    qCDebug(serverLog) << "RPC: UR_Quergreifen called";
 
     if (!m_state) {
         return RpcValue(false);
@@ -997,7 +1001,7 @@ RpcValue XmlRpcServer::rpcGetEinzelpaketLaengs(const QVector<RpcValue>& params)
 RpcValue XmlRpcServer::rpcGetKartonhoehe(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: UR_Paket_hoehe called";
+    qCDebug(serverLog) << "RPC: UR_Paket_hoehe called";
 
     if (!m_state) {
         return RpcValue(0);
@@ -1009,7 +1013,7 @@ RpcValue XmlRpcServer::rpcGetKartonhoehe(const QVector<RpcValue>& params)
 RpcValue XmlRpcServer::rpcGetGewicht(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: UR_MasseGeschaetzt called";
+    qCDebug(serverLog) << "RPC: UR_MasseGeschaetzt called";
 
     if (!m_state) {
         return RpcValue(0.0);
@@ -1021,14 +1025,14 @@ RpcValue XmlRpcServer::rpcGetGewicht(const QVector<RpcValue>& params)
 RpcValue XmlRpcServer::rpcGetKlemmungAktiv(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: getKlemmungAktiv called";
+    qCDebug(serverLog) << "RPC: getKlemmungAktiv called";
     return m_state ? RpcValue(m_state->klemmungAktiv()) : RpcValue(false);
 }
 
 RpcValue XmlRpcServer::rpcGetVerschiebungX(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: UR_PickOffsetX called";
+    qCDebug(serverLog) << "RPC: UR_PickOffsetX called";
     if (!m_state) {
         return RpcValue(0);
     }
@@ -1039,7 +1043,7 @@ RpcValue XmlRpcServer::rpcGetVerschiebungX(const QVector<RpcValue>& params)
 RpcValue XmlRpcServer::rpcGetVerschiebungY(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: UR_PickOffsetY called";
+    qCDebug(serverLog) << "RPC: UR_PickOffsetY called";
     if (!m_state) {
         return RpcValue(0);
     }
@@ -1049,14 +1053,14 @@ RpcValue XmlRpcServer::rpcGetVerschiebungY(const QVector<RpcValue>& params)
 
 RpcValue XmlRpcServer::rpcSetLage(const QVector<RpcValue>& params)
 {
-    qDebug() << "RPC: setLage called";
+    qCDebug(serverLog) << "RPC: setLage called";
 
     if (params.isEmpty()) {
         return RpcValue(false);
     }
 
     int layer = params[0].toInt();
-    qDebug() << "Setting current layer to:" << layer;
+    qCDebug(serverLog) << "Setting current layer to:" << layer;
 
     if (m_state) {
         m_state->setCurrentLayer(layer);
@@ -1068,7 +1072,7 @@ RpcValue XmlRpcServer::rpcSetLage(const QVector<RpcValue>& params)
 RpcValue XmlRpcServer::rpcGetLabelInvert(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    qDebug() << "RPC: getLabelInvert called";
+    qCDebug(serverLog) << "RPC: getLabelInvert called";
     if (!m_state) {
         return RpcValue(false);
     }

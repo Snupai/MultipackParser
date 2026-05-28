@@ -38,6 +38,16 @@ target_link_libraries(test_mainwindow_integration
 )
 add_test(NAME test_mainwindow_integration COMMAND $<TARGET_FILE:test_mainwindow_integration>)
 
+add_executable(test_logging_config
+    test_logging_config.cpp
+)
+target_link_libraries(test_logging_config
+    PRIVATE
+        multipack-lib
+        Qt6::Test
+)
+add_test(NAME test_logging_config COMMAND $<TARGET_FILE:test_logging_config>)
+
 if(NOT WIN32)
     set(TEST_QT_ENV "QT_QPA_PLATFORM=offscreen")
     set_tests_properties(
@@ -45,6 +55,7 @@ if(NOT WIN32)
         test_xmlrpcserver
         test_usbmonitor
         test_mainwindow_integration
+        test_logging_config
         PROPERTIES
             ENVIRONMENT "${TEST_QT_ENV}"
     )
