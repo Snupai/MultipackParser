@@ -205,14 +205,15 @@ The `test_logging_config` suite locks the parity contract described in
 
 | Check | How to verify |
 |---|---|
-| Format string | Inspect `logs/multipack_parser.log` and confirm lines match `YYYY-MM-DD HH:MM:SS,mmm - multipack_parser - <LEVEL> - <message>`. |
-| Logger names | Confirm app lines contain `- multipack_parser -` and server lines (after RPC calls) contain `- server -`. |
-| Routing | Server-channel messages appear only in `server.log`, not `multipack_parser.log`. |
+| Per-launch files | Each launch creates a new pair `logs/multipack_parser_<yyyymmdd_HHMMSS>.log` and `logs/server_<yyyymmdd_HHMMSS>.log`. |
+| Format string | Confirm record lines match `YYYY-MM-DD HH:MM:SS,mmm - multipack_parser - <LEVEL> - <message>`. |
+| Logger names | App lines contain `- multipack_parser -` and server lines (after RPC calls) contain `- server -`. |
+| Routing | Server-channel messages appear only in the `server_*.log`, not in `multipack_parser_*.log`. |
 | Verbose level | Launch with `--verbose`; confirm DEBUG-level lines appear in the app log. Without `--verbose`, only INFO+ should appear in the app log; server log always contains DEBUG+. |
-| Rotation | Generate >5 MB of log output (e.g. enable verbose and trigger many RPC calls); confirm `multipack_parser.log.1` (and on continued load up to `.5`) appears. |
-| Retention | After sustained logging, confirm at most `multipack_parser.log` plus `.1` through `.5` exist; no `.6` or higher. |
+| Rotation | Generate >5 MB of log output within a single launch; confirm `multipack_parser_<stamp>.log.1` (and on continued load up to `.5`) appears alongside the active file. |
+| Retention | After sustained logging, confirm at most the active file plus `.1` through `.5` exist for that launch; no `.6` or higher. |
 | Fallback | Replace `logs/` with a regular file of the same name, launch the app, confirm `LoggingConfig: preferred log directory unavailable ...` is printed and logs land in `$HOME` (or `%USERPROFILE%`). |
-| Shutdown | Confirm `Logging shutdown` line appears as the last entry on graceful exit. |
+| Shutdown | Confirm `Logging shutdown` line appears as the last entry of the active file on graceful exit. |
 
 ## Installing
 

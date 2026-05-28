@@ -194,6 +194,7 @@ private:
     static ChannelSink s_appSink;
     static ChannelSink s_serverSink;
     static QString s_logDirectory;
+    static QString s_sessionStamp;
     static bool s_usingFallbackDir;
     static LogLevel s_logLevel;
     static bool s_consoleOutput;

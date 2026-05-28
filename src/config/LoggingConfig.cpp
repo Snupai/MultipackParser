@@ -24,6 +24,7 @@ Q_LOGGING_CATEGORY(serverLog, "server")
 LoggingConfig::ChannelSink LoggingConfig::s_appSink;
 LoggingConfig::ChannelSink LoggingConfig::s_serverSink;
 QString LoggingConfig::s_logDirectory;
+QString LoggingConfig::s_sessionStamp;
 bool LoggingConfig::s_usingFallbackDir = false;
 LogLevel LoggingConfig::s_logLevel = LogLevel::Info;
 bool LoggingConfig::s_consoleOutput = true;
@@ -72,6 +73,7 @@ bool LoggingConfig::initialize(const QString& logDir, LogLevel level, bool conso
     s_logLevel = level;
     s_consoleOutput = consoleOutput;
     s_usingFallbackDir = false;
+    s_sessionStamp = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
 
     const QString requested = logDir.isEmpty() ? Defaults::defaultLogDir() : logDir;
 
@@ -146,6 +148,7 @@ void LoggingConfig::shutdown()
 
     s_initialized = false;
     s_usingFallbackDir = false;
+    s_sessionStamp.clear();
 }
 
 void LoggingConfig::setLogLevel(LogLevel level)
@@ -363,13 +366,21 @@ bool LoggingConfig::openChannelFile(LogChannel channel, const QString& directory
 
 QString LoggingConfig::activeFileName(LogChannel channel)
 {
+    // Per-launch timestamped files keep each session in its own log family,
+    // so debugging a single launch never requires grepping through a single
+    // multi-MB megafile. Size-based rotation still applies within a session
+    // via the .1 .. .BACKUP_COUNT suffixes appended to the active path.
+    const QString stamp = s_sessionStamp.isEmpty()
+        ? QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss")
+        : s_sessionStamp;
+
     switch (channel) {
         case LogChannel::App:
-            return QStringLiteral("multipack_parser.log");
+            return QStringLiteral("multipack_parser_%1.log").arg(stamp);
         case LogChannel::Server:
-            return QStringLiteral("server.log");
+            return QStringLiteral("server_%1.log").arg(stamp);
     }
-    return QStringLiteral("multipack_parser.log");
+    return QStringLiteral("multipack_parser_%1.log").arg(stamp);
 }
 
 const char* LoggingConfig::loggerName(LogChannel channel)

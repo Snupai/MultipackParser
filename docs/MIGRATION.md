@@ -36,16 +36,17 @@ following observable behaviors:
 | App level | DEBUG if verbose, else INFO | Same (driven by `MULTIPACK_VERBOSE` / `--verbose`) |
 | Server level | Always DEBUG | Always DEBUG |
 | File rotation | `RotatingFileHandler` 5 MB / 5 backups | Custom rolling sink, 5 MB / 5 backups |
-| Active file names | `multipack_parser_<timestamp>.log`, `server_<timestamp>.log` | `multipack_parser.log`, `server.log` (with `.1`..`.5` backups) |
+| Active file names | `multipack_parser_<timestamp>.log`, `server_<timestamp>.log` | `multipack_parser_<timestamp>.log`, `server_<timestamp>.log` (with `.1`..`.5` rotation backups per session) |
 | Fallback on failure | User home directory | User home directory |
 | Encoding | UTF-8 | UTF-8 |
 | Console mirror | stdout via `StreamHandler` | stderr |
 
 **Notes:**
-- File naming changed from per-launch timestamped files to stable names with
-  numeric backup suffixes. This is required for true size-based rotation; the
-  Python implementation produced timestamped files *per process launch* but
-  still rolled within each file via `RotatingFileHandler`.
+- Each launch creates a fresh timestamped file pair so a single process run is
+  self-contained and easy to debug. Within a run, the file rotates at 5 MB
+  using `.1`..`.5` numeric suffixes appended to the active path (matching the
+  Python `RotatingFileHandler` semantics, but against the per-launch active
+  file).
 - Server-channel routing in C++ is explicit via the `multipack::config::serverLog`
   Qt logging category; downstream code must emit through `qCDebug(serverLog)` /
   `qCInfo(serverLog)` / `qCWarning(serverLog)` / `qCCritical(serverLog)` to be
