@@ -3,6 +3,7 @@ name: Build ARM64
 on:
   push:
     branches: [feat/cpp-rewrite, main]
+    tags: ['v*']
     paths-ignore:
       - '*.md'
       - 'docs/**'

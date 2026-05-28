@@ -429,12 +429,33 @@ std::optional<PaletteData> DatabaseManager::loadPaletteData(const QString& fileN
         )");
         query.addBindValue(metadataId);
     } else if (!fileName.isEmpty()) {
+        const QString normalizedFileName = fileName.trimmed();
+        const QString robFileName = normalizedFileName.endsWith(".rob", Qt::CaseInsensitive)
+            ? normalizedFileName
+            : normalizedFileName + ".rob";
+
         query.prepare(R"(
             SELECT id, paket_quer, center_of_gravity_x, center_of_gravity_y, center_of_gravity_z,
                    lage_arten, anz_lagen, anzahl_pakete, file_timestamp, file_name
-            FROM paletten_metadata WHERE file_name LIKE ?
+            FROM paletten_metadata
+            WHERE file_name = ?
+               OR file_name = ?
+               OR file_name LIKE ?
+            ORDER BY
+                CASE
+                    WHEN file_name = ? THEN 0
+                    WHEN file_name = ? THEN 1
+                    ELSE 2
+                END,
+                LENGTH(file_name) ASC,
+                file_timestamp DESC
+            LIMIT 1
         )");
-        query.addBindValue("%" + fileName + "%");
+        query.addBindValue(normalizedFileName);
+        query.addBindValue(robFileName);
+        query.addBindValue("%" + normalizedFileName + "%");
+        query.addBindValue(normalizedFileName);
+        query.addBindValue(robFileName);
     } else {
         query.prepare(R"(
             SELECT id, paket_quer, center_of_gravity_x, center_of_gravity_y, center_of_gravity_z,
