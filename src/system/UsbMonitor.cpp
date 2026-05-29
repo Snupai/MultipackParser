@@ -233,34 +233,39 @@ UsbMonitor::~UsbMonitor()
 
 bool UsbMonitor::startMonitoring()
 {
-    QMutexLocker locker(&m_mutex);
+    {
+        QMutexLocker locker(&m_mutex);
 
-    if (m_isMonitoring) {
-        qWarning() << "USB monitoring is already active";
-        return true;
+        if (m_isMonitoring) {
+            qWarning() << "USB monitoring is already active";
+            return true;
+        }
+
+        if (m_databasePath.isEmpty()) {
+            qWarning() << "Cannot start USB monitoring: Database path is empty";
+            return false;
+        }
+
+        if (m_usbPath.trimmed().isEmpty()) {
+            qWarning() << "Cannot start USB monitoring: USB path is empty";
+            return false;
+        }
+
+        m_shutdownRequested = false;
+        m_updateQueued = false;
+
+        const bool watcherReady = initializeWatcher();
+        if (!watcherReady) {
+            qWarning() << "USB directory is not available yet; periodic scan will keep checking:" << m_usbPath;
+        }
+
+        setupInitialTracking();
+        m_periodicScanTimer->start();
+        m_isMonitoring = true;
+        qDebug() << "USB monitoring started for path:" << m_usbPath;
     }
 
-    if (m_databasePath.isEmpty()) {
-        qWarning() << "Cannot start USB monitoring: Database path is empty";
-        return false;
-    }
-
-    const QDir usbDir(m_usbPath);
-    if (!usbDir.exists()) {
-        qWarning() << "USB directory does not exist:" << m_usbPath;
-        return false;
-    }
-
-    if (!initializeWatcher()) {
-        qWarning() << "Failed to initialize file system watcher";
-        return false;
-    }
-
-    m_shutdownRequested = false;
-    setupInitialTracking();
-    m_periodicScanTimer->start();
-    m_isMonitoring = true;
-    qDebug() << "USB monitoring started for path:" << m_usbPath;
+    updateDatabaseFromUsbAsync();
     return true;
 }
 
@@ -298,6 +303,9 @@ void UsbMonitor::setUsbPath(const QString& path)
     }
 
     m_usbPath = path;
+    m_failedFiles.clear();
+    m_knownFiles.clear();
+    m_fileTimestamps.clear();
 }
 
 QString UsbMonitor::getUsbPath() const
@@ -406,6 +414,10 @@ void UsbMonitor::processChanges()
             return;
         }
 
+        if (m_isMonitoring) {
+            initializeWatcher();
+        }
+
         knownFilesSnapshot = m_knownFiles;
         knownTimestampsSnapshot = m_fileTimestamps;
     }
@@ -463,8 +475,21 @@ void UsbMonitor::processChanges()
 
 bool UsbMonitor::initializeWatcher()
 {
-    if (!m_usbPath.isEmpty() && !m_fileSystemWatcher->addPath(m_usbPath)) {
-        qWarning() << "Failed to watch directory:" << m_usbPath;
+    if (m_usbPath.trimmed().isEmpty()) {
+        return false;
+    }
+
+    const QString watchedPath = QDir(m_usbPath).absolutePath();
+    if (m_fileSystemWatcher->directories().contains(watchedPath)) {
+        return true;
+    }
+
+    if (!QDir(watchedPath).exists()) {
+        return false;
+    }
+
+    if (!m_fileSystemWatcher->addPath(watchedPath)) {
+        qWarning() << "Failed to watch directory:" << watchedPath;
         return false;
     }
 

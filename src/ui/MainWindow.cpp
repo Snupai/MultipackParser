@@ -1483,6 +1483,8 @@ void MainWindow::onSaveSettingsClicked()
     }
 
     const QString previousRobotIp = m_settings->robotIp();
+    const QString previousUsbPath = m_settings->usbPath().trimmed();
+    const QString requestedUsbPath = ui->pathEdit->text().trimmed();
 
     // Save all settings to SettingsManager
     m_settings->setValue(config::Keys::INFO_UR_MODEL, ui->comboBoxChooseURModel->currentText());
@@ -1493,7 +1495,7 @@ void MainWindow::onSaveSettingsClicked()
     m_settings->setValue(config::Keys::INFO_PALLETTIERER_STANDORT, ui->lineEditURStandort->text());
 
     // Save admin settings
-    m_settings->setValue(config::Keys::SERVER_USB_PATH, ui->pathEdit->text());
+    m_settings->setValue(config::Keys::SERVER_USB_PATH, requestedUsbPath);
     m_settings->setValue(config::Keys::ADMIN_ALARM_SOUND_FILE, ui->audioPathEdit->text());
     m_settings->setValue(config::Keys::ADMIN_SCANNER_WARNING_SOUND_FILE,
                          ui->scannerWarningSoundPathEdit->text());
@@ -1526,6 +1528,19 @@ void MainWindow::onSaveSettingsClicked()
         m_audio->setCustomFile(audio::AudioType::Alarm, ui->audioPathEdit->text());
         m_audio->setCustomFile(audio::AudioType::ScannerWarning,
                                ui->scannerWarningSoundPathEdit->text());
+    }
+
+    if (m_usbMonitor && requestedUsbPath != previousUsbPath) {
+        m_usbMonitor->stopMonitoring();
+        m_usbMonitor->setUsbPath(requestedUsbPath);
+        if (requestedUsbPath.isEmpty()) {
+            qInfo() << "MainWindow - palette plan folder monitoring disabled";
+        } else if (m_usbMonitor->startMonitoring()) {
+            qInfo() << "MainWindow - palette plan folder monitoring restarted for" << requestedUsbPath;
+        } else {
+            qWarning() << "MainWindow - failed to restart palette plan folder monitoring for" << requestedUsbPath;
+            showMessage("Palettierplan-Ordner konnte nicht ueberwacht werden");
+        }
     }
 
     loadSettings();

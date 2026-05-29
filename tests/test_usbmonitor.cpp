@@ -18,6 +18,8 @@ class UsbMonitorTest : public QObject
 
 private slots:
     void unchangedFileIsNotMarkedFailed();
+    void startMonitoringImportsExistingFiles();
+    void folderCreatedAfterMonitoringStartsIsImported();
     void newFileAddedWhileMonitoringIsImported();
     void destroyingMonitorWaitsForAsyncUpdate();
 };
@@ -35,6 +37,46 @@ void UsbMonitorTest::unchangedFileIsNotMarkedFailed()
     QCOMPARE(monitor.updateDatabaseFromUsb(), 1);
     QCOMPARE(monitor.updateDatabaseFromUsb(), 0);
     QVERIFY(monitor.getFailedFiles().isEmpty());
+
+    DatabaseManager database;
+    QVERIFY(database.open(dbPath));
+    QCOMPARE(database.listAvailableFiles().size(), 1);
+}
+
+void UsbMonitorTest::startMonitoringImportsExistingFiles()
+{
+    QTemporaryDir tempDir;
+    QVERIFY(tempDir.isValid());
+
+    const QString usbDir = tempDir.filePath("usb");
+    const QString dbPath = tempDir.filePath("palettes.db");
+    QVERIFY(testhelpers::writeSampleRobFile(usbDir, "startup.rob"));
+
+    UsbMonitor monitor(usbDir, dbPath);
+    QSignalSpy completedSpy(&monitor, &UsbMonitor::databaseUpdateCompleted);
+    QVERIFY(monitor.startMonitoring());
+    QTRY_VERIFY_WITH_TIMEOUT(completedSpy.count() > 0, 5000);
+
+    DatabaseManager database;
+    QVERIFY(database.open(dbPath));
+    QCOMPARE(database.listAvailableFiles().size(), 1);
+}
+
+void UsbMonitorTest::folderCreatedAfterMonitoringStartsIsImported()
+{
+    QTemporaryDir tempDir;
+    QVERIFY(tempDir.isValid());
+
+    const QString usbDir = tempDir.filePath("usb");
+    const QString dbPath = tempDir.filePath("palettes.db");
+
+    UsbMonitor monitor(usbDir, dbPath);
+    QSignalSpy completedSpy(&monitor, &UsbMonitor::databaseUpdateCompleted);
+    QVERIFY(monitor.startMonitoring());
+
+    QVERIFY(testhelpers::writeSampleRobFile(usbDir, "mounted-later.rob"));
+    QVERIFY(QMetaObject::invokeMethod(&monitor, "processChanges", Qt::DirectConnection));
+    QTRY_VERIFY_WITH_TIMEOUT(completedSpy.count() > 0, 5000);
 
     DatabaseManager database;
     QVERIFY(database.open(dbPath));

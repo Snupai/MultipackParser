@@ -365,14 +365,12 @@ bool AppInitializer::initializeUsbMonitor()
     usbPath = resolveConfiguredPath(usbPath, config::Defaults::defaultUsbPath());
     m_usbMonitor = std::make_unique<system::UsbMonitor>(usbPath, m_databasePath);
 
-    m_usbMonitor->updateDatabaseFromUsbAsync();
-    qDebug() << "USB database update triggered";
-
     if (!m_usbMonitor->startMonitoring()) {
         qWarning() << "Failed to start USB monitoring";
         return false;
     }
 
+    qDebug() << "USB monitoring started and initial database update triggered";
     return true;
 }
 
