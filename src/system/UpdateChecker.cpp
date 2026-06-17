@@ -5,6 +5,7 @@
 
 #include "multipack/system/UpdateChecker.h"
 #include "multipack/config/ConfigDefaults.h"
+#include "multipack/utils/VersionUtils.h"
 
 #include <QNetworkRequest>
 #include <QJsonDocument>
@@ -66,24 +67,7 @@ UpdateInfo UpdateChecker::updateInfo() const
 
 int UpdateChecker::compareVersions(const QString& v1, const QString& v2)
 {
-    // Remove 'v' prefix if present
-    QString ver1 = v1.startsWith('v') ? v1.mid(1) : v1;
-    QString ver2 = v2.startsWith('v') ? v2.mid(1) : v2;
-
-    QStringList parts1 = ver1.split('.');
-    QStringList parts2 = ver2.split('.');
-
-    int maxLen = qMax(parts1.size(), parts2.size());
-
-    for (int i = 0; i < maxLen; ++i) {
-        int num1 = (i < parts1.size()) ? parts1[i].toInt() : 0;
-        int num2 = (i < parts2.size()) ? parts2[i].toInt() : 0;
-
-        if (num1 < num2) return -1;
-        if (num1 > num2) return 1;
-    }
-
-    return 0;
+    return utils::VersionUtils::compare(v1, v2);
 }
 
 void UpdateChecker::onNetworkReply(QNetworkReply* reply)
@@ -143,7 +127,7 @@ void UpdateChecker::parseGitHubResponse(const QByteArray& data)
 
     // Get version from tag_name
     QString tagName = root["tag_name"].toString();
-    QString version = tagName.startsWith('v') ? tagName.mid(1) : tagName;
+    QString version = utils::VersionUtils::normalize(tagName);
 
     if (version.isEmpty()) {
         qWarning() << "UpdateChecker - no version found";

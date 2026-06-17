@@ -172,6 +172,13 @@ CMAKE_ARGS=(
     -DENABLE_VTK=OFF
 )
 
+if [[ -n "${MULTIPACK_APP_VERSION:-}" ]]; then
+    CMAKE_ARGS+=(-DMULTIPACK_APP_VERSION="${MULTIPACK_APP_VERSION}")
+fi
+if [[ -n "${MULTIPACK_PROJECT_VERSION:-}" ]]; then
+    CMAKE_ARGS+=(-DMULTIPACK_PROJECT_VERSION="${MULTIPACK_PROJECT_VERSION}")
+fi
+
 # Platform-specific settings
 case "$(uname -s)" in
     Darwin*)

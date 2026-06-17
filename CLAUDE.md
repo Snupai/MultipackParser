@@ -282,14 +282,19 @@ For development without hardware, mock the robot connections in `RobotController
 
 ## Release Process
 
-GitHub Actions automatically builds when:
-1. Code changes pushed to `feat/cpp-rewrite` or `main`
-2. Creates ARM64 binary artifact
+GitHub Actions automatically builds ARM64 release artifacts on tags matching
+`v*`. Tags containing `-alpha`, `-beta`, or `-rc` are published as GitHub
+prereleases.
 
-To manually release:
-1. Update `VERSION` in `CMakeLists.txt` and `ConfigDefaults.h`
-2. Tag the commit: `git tag v1.x.x`
-3. Push: `git push --tags`
+To release:
+1. Tag the prepared release commit, for example `git tag v2.0.0-beta`.
+2. Build and test the ARM64 package with `docker-build.bat --portable` if
+   doing local release validation from the tagged commit.
+3. Push the tag with `git push origin v2.0.0-beta`.
+
+The tag workflow injects the tag into CMake as `MULTIPACK_APP_VERSION`, so the
+binary reports the tag version without editing `ConfigDefaults.h` for each
+release. CMake/CPack use the numeric `MULTIPACK_PROJECT_VERSION`.
 
 ## Documentation
 

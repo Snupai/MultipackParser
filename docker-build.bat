@@ -16,6 +16,8 @@ set CONTAINER_NAME=multipack-builder
 set OUTPUT_DIR=%SCRIPT_DIR%\output
 set DOCKERFILE=%SCRIPT_DIR%\Dockerfile.arm64
 set PORTABLE=0
+set APP_VERSION=%MULTIPACK_APP_VERSION%
+set PROJECT_VERSION=%MULTIPACK_PROJECT_VERSION%
 
 REM Parse arguments
 :parse_args
@@ -39,10 +41,24 @@ goto :eof
 
 :after_parse
 
+if not defined APP_VERSION (
+    for /f "delims=" %%I in ('git describe --tags --exact-match 2^>nul') do (
+        set "APP_VERSION=%%I"
+        goto :app_version_found
+    )
+)
+:app_version_found
+if defined APP_VERSION if /i "!APP_VERSION:~0,1!"=="v" set "APP_VERSION=!APP_VERSION:~1!"
+if not defined PROJECT_VERSION if defined APP_VERSION (
+    for /f "tokens=1 delims=-+" %%I in ("!APP_VERSION!") do set "PROJECT_VERSION=%%I"
+)
+
 echo.
 echo ==========================================
 echo MultipackParser ARM64 Docker Build
 echo ==========================================
+if defined APP_VERSION echo App version: !APP_VERSION!
+if defined PROJECT_VERSION echo Project version: !PROJECT_VERSION!
 echo.
 
 REM Check if Docker is available
@@ -99,6 +115,8 @@ if "%USE_BUILDX%"=="1" (
     docker buildx build --platform linux/arm64 ^
         --file "%DOCKERFILE%" ^
         --tag %IMAGE_NAME%:latest ^
+        --build-arg MULTIPACK_APP_VERSION="!APP_VERSION!" ^
+        --build-arg MULTIPACK_PROJECT_VERSION="!PROJECT_VERSION!" ^
         --build-arg CMAKE_BUILD_JOBS=1 ^
         --load ^
         --progress=plain ^
@@ -106,6 +124,8 @@ if "%USE_BUILDX%"=="1" (
 ) else (
     docker build --file "%DOCKERFILE%" ^
         --tag %IMAGE_NAME%:latest ^
+        --build-arg MULTIPACK_APP_VERSION="!APP_VERSION!" ^
+        --build-arg MULTIPACK_PROJECT_VERSION="!PROJECT_VERSION!" ^
         --build-arg CMAKE_BUILD_JOBS=1 ^
         --progress=plain ^
         "%SCRIPT_DIR%"

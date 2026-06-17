@@ -58,6 +58,16 @@ target_link_libraries(test_logging_config
 )
 add_test(NAME test_logging_config COMMAND $<TARGET_FILE:test_logging_config>)
 
+add_executable(test_version_utils
+    test_version_utils.cpp
+)
+target_link_libraries(test_version_utils
+    PRIVATE
+        multipack-lib
+        Qt6::Test
+)
+add_test(NAME test_version_utils COMMAND $<TARGET_FILE:test_version_utils>)
+
 if(NOT WIN32)
     set(TEST_QT_ENV "QT_QPA_PLATFORM=offscreen")
     set_tests_properties(
@@ -67,6 +77,7 @@ if(NOT WIN32)
         test_mainwindow_integration
         test_application_startup
         test_logging_config
+        test_version_utils
         PROPERTIES
             ENVIRONMENT "${TEST_QT_ENV}"
     )

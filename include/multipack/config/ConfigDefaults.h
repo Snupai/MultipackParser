@@ -10,6 +10,10 @@
 
 #include <QString>
 
+#ifndef MULTIPACK_APP_VERSION
+#define MULTIPACK_APP_VERSION "2.0.0"
+#endif
+
 namespace multipack {
 namespace config {
 
@@ -21,7 +25,7 @@ namespace Defaults {
 
 // Application info
 constexpr const char* APP_NAME = "MultipackParser";
-constexpr const char* VERSION = "1.7.9";
+constexpr const char* VERSION = MULTIPACK_APP_VERSION;
 constexpr const char* ORGANIZATION = "Multipack";
 
 // Robot defaults

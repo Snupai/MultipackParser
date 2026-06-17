@@ -5,6 +5,7 @@
 
 #include "multipack/system/AutoUpdater.h"
 #include "multipack/config/ConfigDefaults.h"
+#include "multipack/utils/VersionUtils.h"
 
 #include <QApplication>
 #include <QCoreApplication>
@@ -848,17 +849,7 @@ QString AutoUpdater::trustedPublicKeyPem(QString& errorMessage) const
 
 QString AutoUpdater::normalizeVersion(const QString& version) const
 {
-    QString normalized = version.trimmed();
-    if (normalized.startsWith('v')) {
-        normalized = normalized.mid(1);
-    }
-
-    const int dashIndex = normalized.indexOf('-');
-    if (dashIndex > 0) {
-        normalized = normalized.left(dashIndex);
-    }
-
-    return normalized;
+    return utils::VersionUtils::normalize(version);
 }
 
 void AutoUpdater::clearAvailableUpdate()
@@ -868,31 +859,7 @@ void AutoUpdater::clearAvailableUpdate()
 
 int AutoUpdater::compareVersions(const QString& v1, const QString& v2)
 {
-    const QString ver1 = normalizeVersion(v1);
-    const QString ver2 = normalizeVersion(v2);
-
-    const QStringList parts1 = ver1.split('.');
-    const QStringList parts2 = ver2.split('.');
-
-    const int maxLen = qMax(parts1.size(), parts2.size());
-    for (int i = 0; i < maxLen; ++i) {
-        bool ok1 = false;
-        bool ok2 = false;
-        const int num1 = (i < parts1.size()) ? parts1[i].toInt(&ok1) : 0;
-        const int num2 = (i < parts2.size()) ? parts2[i].toInt(&ok2) : 0;
-
-        const int a = ok1 ? num1 : 0;
-        const int b = ok2 ? num2 : 0;
-
-        if (a < b) {
-            return -1;
-        }
-        if (a > b) {
-            return 1;
-        }
-    }
-
-    return 0;
+    return utils::VersionUtils::compare(v1, v2);
 }
 
 bool AutoUpdater::downloadUpdateFile(const QString& url, const QString& filePath)

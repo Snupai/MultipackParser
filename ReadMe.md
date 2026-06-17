@@ -121,7 +121,7 @@ Settings stored in `settings.json`:
 ```json
 {
   "info": {
-    "version": "1.7.9",
+    "version": "2.0.0-beta",
     "UR_Model": "UR10"
   },
   "robot": {

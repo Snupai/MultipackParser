@@ -47,7 +47,7 @@ def sign_manifest(manifest_path: pathlib.Path, private_key_path: pathlib.Path) -
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--package", required=True, help="Path to update package (tar.gz)")
-    parser.add_argument("--version", required=True, help="Version string (e.g. 1.7.9)")
+    parser.add_argument("--version", required=True, help="Version string (e.g. 2.0.0-beta)")
     parser.add_argument("--output-manifest", required=True, help="Output manifest JSON path")
     parser.add_argument(
         "--package-url",

@@ -35,7 +35,7 @@
         "last_restart": "Never",
         "number_of_plans": 0,
         "number_of_use_cycles": 0,
-        "version": "1.7.9"
+        "version": "2.0.0-beta"
     },
     "robot": {
         "dashboard_port": 29999,

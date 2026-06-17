@@ -1,5 +1,38 @@
 cmake_minimum_required(VERSION 3.20)
-project(MultipackParser VERSION 1.7.9 LANGUAGES CXX)
+
+set(MULTIPACK_DEFAULT_PROJECT_VERSION "2.0.0")
+set(MULTIPACK_PROJECT_VERSION "${MULTIPACK_DEFAULT_PROJECT_VERSION}" CACHE STRING "Numeric package version for CMake/CPack")
+if(NOT MULTIPACK_PROJECT_VERSION)
+    set(MULTIPACK_PROJECT_VERSION "${MULTIPACK_DEFAULT_PROJECT_VERSION}" CACHE STRING "Numeric package version for CMake/CPack" FORCE)
+endif()
+project(MultipackParser VERSION ${MULTIPACK_PROJECT_VERSION} LANGUAGES CXX)
+
+set(MULTIPACK_APP_VERSION "" CACHE STRING "Application version string embedded in the binary")
+if(NOT MULTIPACK_APP_VERSION AND DEFINED ENV{MULTIPACK_APP_VERSION})
+    set(MULTIPACK_APP_VERSION "$ENV{MULTIPACK_APP_VERSION}")
+endif()
+if(NOT MULTIPACK_APP_VERSION)
+    find_package(Git QUIET)
+    if(Git_FOUND)
+        execute_process(
+            COMMAND "${GIT_EXECUTABLE}" describe --tags --exact-match HEAD
+            WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+            RESULT_VARIABLE MULTIPACK_GIT_DESCRIBE_RESULT
+            OUTPUT_VARIABLE MULTIPACK_GIT_TAG
+            ERROR_QUIET
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+        if(MULTIPACK_GIT_DESCRIBE_RESULT EQUAL 0 AND MULTIPACK_GIT_TAG)
+            set(MULTIPACK_APP_VERSION "${MULTIPACK_GIT_TAG}")
+        endif()
+    endif()
+endif()
+if(NOT MULTIPACK_APP_VERSION)
+    set(MULTIPACK_APP_VERSION "${PROJECT_VERSION}")
+endif()
+string(REGEX REPLACE "^refs/tags/" "" MULTIPACK_APP_VERSION "${MULTIPACK_APP_VERSION}")
+string(REGEX REPLACE "^[vV]" "" MULTIPACK_APP_VERSION "${MULTIPACK_APP_VERSION}")
+set(MULTIPACK_APP_VERSION "${MULTIPACK_APP_VERSION}" CACHE STRING "Application version string embedded in the binary" FORCE)
 
 # C++ Standard
 set(CMAKE_CXX_STANDARD 17)
@@ -250,6 +283,7 @@ set(UTILS_SOURCES
     src/utils/StringUtils.cpp
     src/utils/SocketUtils.cpp
     src/utils/ValidationUtils.cpp
+    src/utils/VersionUtils.cpp
 )
 
 # Combine all sources
@@ -271,6 +305,10 @@ set(LIBRARY_SOURCES
 
 # Create reusable application library
 add_library(multipack-lib STATIC ${LIBRARY_SOURCES})
+target_compile_definitions(multipack-lib
+    PUBLIC
+        "MULTIPACK_APP_VERSION=\"${MULTIPACK_APP_VERSION}\""
+)
 
 target_link_libraries(multipack-lib
     PUBLIC
@@ -348,6 +386,7 @@ include(CPack)
 message(STATUS "")
 message(STATUS "MultipackParser Configuration Summary:")
 message(STATUS "  Version: ${PROJECT_VERSION}")
+message(STATUS "  App version: ${MULTIPACK_APP_VERSION}")
 message(STATUS "  Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "  C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "  Qt6 version: ${Qt6_VERSION}")

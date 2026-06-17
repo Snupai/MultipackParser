@@ -4,6 +4,7 @@ This project now expects signed update metadata for online/offline updates.
 
 ## Files produced per release
 - `multipack-parser-arm64.tar.gz`
+- `multipack-parser-arm64-portable.run`
 - `multipack-parser-arm64-manifest.json`
 - `multipack-parser-arm64-manifest.sig`
 
@@ -45,3 +46,11 @@ Put these files in the USB root directory (or `updates/` subdirectory):
 - `multipack-parser-arm64-manifest.sig`
 
 The manifest `package.file` must match the package filename.
+
+## 5) v2 prerelease tags
+
+GitHub Actions marks tags containing `-alpha`, `-beta`, or `-rc` as
+prereleases. For the beta release, tag the prepared commit as `v2.0.0-beta`.
+On tag builds, the workflow passes the tag name into CMake so the application
+version embedded in the binary includes the prerelease suffix (`2.0.0-beta`),
+while CMake's numeric project/package version is derived as `2.0.0`.

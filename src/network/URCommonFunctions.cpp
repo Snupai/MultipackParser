@@ -2,6 +2,7 @@
  * @file URCommonFunctions.cpp
  */
 #include "multipack/network/URCommonFunctions.h"
+#include "multipack/config/ConfigDefaults.h"
 #include "multipack/core/GlobalState.h"
 #include <QDebug>
 
@@ -32,7 +33,7 @@ RpcValue getData(const QVector<RpcValue>& params)
 RpcValue getVersion(const QVector<RpcValue>& params)
 {
     Q_UNUSED(params);
-    return RpcValue(QString("1.7.9"));
+    return RpcValue(QString(config::Defaults::VERSION));
 }
 
 }}} // namespace

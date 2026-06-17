@@ -208,7 +208,7 @@ Settings stored in JSON format:
 
 ```json
 {
-  "info": { "version": "1.7.9", "UR_Model": "UR10" },
+  "info": { "version": "2.0.0-beta", "UR_Model": "UR10" },
   "robot": { "ip": "192.168.0.1" },
   "server": { "port": 8080 },
   "audio": { "enabled": true, "volume": 0.8 }

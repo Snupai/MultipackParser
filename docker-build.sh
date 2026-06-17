@@ -10,6 +10,8 @@ IMAGE_NAME="multipack-parser-arm64-builder"
 CONTAINER_NAME="multipack-builder"
 OUTPUT_DIR="${SCRIPT_DIR}/output"
 DOCKERFILE="${SCRIPT_DIR}/Dockerfile.arm64"
+APP_VERSION="${MULTIPACK_APP_VERSION:-}"
+PROJECT_VERSION="${MULTIPACK_PROJECT_VERSION:-}"
 
 # Colors for output
 RED='\033[0;31m'
@@ -20,6 +22,20 @@ NC='\033[0m' # No Color
 echo -e "${GREEN}==========================================${NC}"
 echo -e "${GREEN}MultipackParser ARM64 Docker Build${NC}"
 echo -e "${GREEN}==========================================${NC}"
+
+if [[ -z "${APP_VERSION}" ]]; then
+    APP_VERSION="$(git -C "${SCRIPT_DIR}" describe --tags --exact-match 2>/dev/null | sed -E 's/^[vV]//' || true)"
+fi
+if [[ -z "${PROJECT_VERSION}" && -n "${APP_VERSION}" ]]; then
+    PROJECT_VERSION="${APP_VERSION%%-*}"
+    PROJECT_VERSION="${PROJECT_VERSION%%+*}"
+fi
+if [[ -n "${APP_VERSION}" ]]; then
+    echo "App version: ${APP_VERSION}"
+fi
+if [[ -n "${PROJECT_VERSION}" ]]; then
+    echo "Project version: ${PROJECT_VERSION}"
+fi
 
 # Check if Docker is available
 if ! command -v docker &> /dev/null; then
@@ -71,6 +87,8 @@ if [[ "${USE_BUILDX}" == "true" ]]; then
         --platform linux/arm64 \
         --file "${DOCKERFILE}" \
         --tag "${IMAGE_NAME}:latest" \
+        --build-arg "MULTIPACK_APP_VERSION=${APP_VERSION}" \
+        --build-arg "MULTIPACK_PROJECT_VERSION=${PROJECT_VERSION}" \
         --build-arg CMAKE_BUILD_JOBS=1 \
         --load \
         --progress=plain \
@@ -80,6 +98,8 @@ else
     docker build \
         --file "${DOCKERFILE}" \
         --tag "${IMAGE_NAME}:latest" \
+        --build-arg "MULTIPACK_APP_VERSION=${APP_VERSION}" \
+        --build-arg "MULTIPACK_PROJECT_VERSION=${PROJECT_VERSION}" \
         --build-arg CMAKE_BUILD_JOBS=1 \
         --progress=plain \
         .
