@@ -40,6 +40,10 @@ constexpr const char* kPackageAssetName = "multipack-parser-arm64.tar.gz";
 constexpr const char* kManifestAssetName = "multipack-parser-arm64-manifest.json";
 constexpr const char* kSignatureAssetName = "multipack-parser-arm64-manifest.sig";
 constexpr int kFetchTimeoutMs = 30000;
+constexpr const char* kEmbeddedUpdatePublicKeyPem =
+    "-----BEGIN PUBLIC KEY-----\n"
+    "MCowBQYDK2VwAyEADfoYxtNm/GAOuTbuRNLuI0o4WNLtNc9jG2VZrf7bHXg=\n"
+    "-----END PUBLIC KEY-----\n";
 
 QString sanitizeForFileName(const QString& value)
 {
@@ -806,6 +810,8 @@ bool AutoUpdater::fetchUrlSync(const QUrl& url, QByteArray& data, QString& error
 
 QString AutoUpdater::trustedPublicKeyPem(QString& errorMessage) const
 {
+    Q_UNUSED(errorMessage);
+
     const QString keyFromEnv = qEnvironmentVariable("MULTIPACK_UPDATE_PUBLIC_KEY_PEM");
     if (!keyFromEnv.trimmed().isEmpty()) {
         return keyFromEnv;
@@ -837,8 +843,7 @@ QString AutoUpdater::trustedPublicKeyPem(QString& errorMessage) const
         }
     }
 
-    errorMessage = tr("No trusted update public key configured. Place update-public-key.pem next to the binary or set MULTIPACK_UPDATE_PUBLIC_KEY_PEM.");
-    return QString();
+    return QString::fromLatin1(kEmbeddedUpdatePublicKeyPem);
 }
 
 QString AutoUpdater::normalizeVersion(const QString& version) const

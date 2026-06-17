@@ -24,13 +24,18 @@ Set repository secret:
 base64 < update-signing-private.pem
 ```
 
-## 3) Deploy trusted public key with the app
+## 3) Trusted public key
 
-Copy `update-public-key.pem` to the same directory as `multipack-parser` on the Raspberry Pi.
+The generated public key is embedded in the MultipackParser binary as the default
+trusted update key.
 
-Alternative runtime options:
+Runtime override options:
 - `MULTIPACK_UPDATE_PUBLIC_KEY_PEM` (inline PEM)
 - `MULTIPACK_UPDATE_PUBLIC_KEY_FILE` (path to PEM)
+- `update-public-key.pem` next to `multipack-parser`
+
+Use an override only for development, testing, or key rotation. The private key
+must never be committed or deployed.
 
 ## 4) USB/offline update layout
 
