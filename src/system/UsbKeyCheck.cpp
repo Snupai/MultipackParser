@@ -246,7 +246,7 @@ void resolveUsbConfig(const multipack::config::SettingsManager* settingsManager,
         }
     }
 
-    const QString jsonPath = QDir::current().filePath("settings.json");
+    const QString jsonPath = config::Defaults::defaultSettingsPath();
     if (loadUsbConfigFromJsonFile(jsonPath, usbKey, expectedValue)) {
         return;
     }
