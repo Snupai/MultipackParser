@@ -1141,8 +1141,6 @@ void MainWindow::showExperimental()
 
 void MainWindow::onLoadPaletteClicked()
 {
-    hidePalettePlanCompletionPopup();
-
     QString fileName = ui->EingabePallettenplan->text().trimmed();
     if (fileName.isEmpty()) {
         showMessage("Bitte Palletierplan eingeben");
@@ -1203,9 +1201,15 @@ void MainWindow::onLoadPaletteClicked()
             updateVisualizationFromPaletteData(*data);
             emit paletteLoadRequested(m_currentPaletteFile);
 
+            // Successful load commits the selection.
+            hidePalettePlanCompletionPopup();
             qDebug() << "Palette loaded successfully:" << m_currentPaletteFile;
         } else {
             showMessage("Palletierplan nicht gefunden: " + fileName);
+
+            // A failed load should keep matching suggestions available so the
+            // operator can immediately correct the entered prefix/value.
+            updatePalettePlanCompletionPopup(fileName);
         }
     }
 }
@@ -2923,6 +2927,11 @@ void MainWindow::setupPalettePlanCompleter()
                 if (value.isEmpty()) {
                     return;
                 }
+
+                // Selecting a suggestion changes the line edit text. Block the
+                // textChanged callback here so the same suggestion is not shown
+                // again immediately underneath the selected value.
+                const QSignalBlocker blocker(ui->EingabePallettenplan);
                 ui->EingabePallettenplan->setText(value);
                 hidePalettePlanCompletionPopup();
                 ui->EingabePallettenplan->setFocus(Qt::OtherFocusReason);
