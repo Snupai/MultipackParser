@@ -31,6 +31,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDateTime>
+#include <QHostInfo>
+#include <QNetworkInterface>
 #include <QCompleter>
 #include <QAbstractItemView>
 #include <QDebug>
@@ -83,6 +85,65 @@ QString palettePlanItemFileName(QListWidgetItem* item)
     }
     const QString storedName = item->data(Qt::UserRole).toString().trimmed();
     return storedName.isEmpty() ? item->text().trimmed() : storedName;
+}
+
+QString ipv4ForInterface(const QString& interfaceName)
+{
+    const QNetworkInterface iface = QNetworkInterface::interfaceFromName(interfaceName);
+    if (!iface.isValid() || !(iface.flags() & QNetworkInterface::IsUp)) {
+        return QStringLiteral("-");
+    }
+
+    for (const QNetworkAddressEntry& entry : iface.addressEntries()) {
+        const QHostAddress address = entry.ip();
+        if (address.protocol() == QAbstractSocket::IPv4Protocol && !address.isLoopback()) {
+            return address.toString();
+        }
+    }
+    return QStringLiteral("-");
+}
+
+QString commandOutput(const QString& program, const QStringList& arguments, int timeoutMs = 500)
+{
+    QProcess process;
+    process.start(program, arguments);
+    if (!process.waitForStarted(timeoutMs)) {
+        return QString();
+    }
+    if (!process.waitForFinished(timeoutMs)) {
+        process.kill();
+        process.waitForFinished(100);
+        return QString();
+    }
+    if (process.exitStatus() != QProcess::NormalExit || process.exitCode() != 0) {
+        return QString();
+    }
+    return QString::fromUtf8(process.readAllStandardOutput()).trimmed();
+}
+
+QString currentWifiSsid()
+{
+    QString ssid = commandOutput(QStringLiteral("iwgetid"),
+                                 {QStringLiteral("wlan0"), QStringLiteral("-r")});
+    if (!ssid.isEmpty()) {
+        return ssid;
+    }
+
+    const QString nmcli = commandOutput(
+        QStringLiteral("nmcli"),
+        {QStringLiteral("-t"), QStringLiteral("-f"), QStringLiteral("ACTIVE,SSID"),
+         QStringLiteral("dev"), QStringLiteral("wifi")},
+        800);
+    const QStringList lines = nmcli.split('\n', Qt::SkipEmptyParts);
+    for (const QString& line : lines) {
+        if (line.startsWith(QStringLiteral("yes:"))) {
+            QString value = line.mid(4);
+            value.replace(QStringLiteral("\\:"), QStringLiteral(":"));
+            return value.trimmed();
+        }
+    }
+
+    return QStringLiteral("-");
 }
 } // namespace
 
@@ -645,6 +706,12 @@ void MainWindow::setupStatusTab()
     form->setLabelAlignment(Qt::AlignRight);
     form->setFormAlignment(Qt::AlignTop);
 
+    m_statusHostname = new QLabel("-", statusWidget);
+    m_statusEth0Ip = new QLabel("-", statusWidget);
+    m_statusWlan0Ip = new QLabel("-", statusWidget);
+    m_statusWifiSsid = new QLabel("-", statusWidget);
+    m_statusTailscaleState = new QLabel("-", statusWidget);
+    m_statusTailscaleIp = new QLabel("-", statusWidget);
     m_statusRobotIp = new QLabel("-", statusWidget);
     m_statusConnection = new QLabel("-", statusWidget);
     m_statusRobotMode = new QLabel("-", statusWidget);
@@ -655,6 +722,23 @@ void MainWindow::setupStatusTab()
     m_statusSerialNumber = new QLabel("-", statusWidget);
     m_statusLoadedProgram = new QLabel("-", statusWidget);
 
+    auto* networkHeader = new QLabel(tr("Raspberry Pi / Netzwerk"), statusWidget);
+    QFont networkHeaderFont = networkHeader->font();
+    networkHeaderFont.setBold(true);
+    networkHeader->setFont(networkHeaderFont);
+    form->addRow(networkHeader);
+    form->addRow(tr("Hostname:"), m_statusHostname);
+    form->addRow(tr("eth0 IP:"), m_statusEth0Ip);
+    form->addRow(tr("wlan0 IP:"), m_statusWlan0Ip);
+    form->addRow(tr("WLAN SSID:"), m_statusWifiSsid);
+    form->addRow(tr("Tailscale:"), m_statusTailscaleState);
+    form->addRow(tr("Tailscale IP:"), m_statusTailscaleIp);
+
+    auto* robotHeader = new QLabel(tr("Roboter"), statusWidget);
+    QFont robotHeaderFont = robotHeader->font();
+    robotHeaderFont.setBold(true);
+    robotHeader->setFont(robotHeaderFont);
+    form->addRow(robotHeader);
     form->addRow(tr("Robot IP:"), m_statusRobotIp);
     form->addRow(tr("Connection:"), m_statusConnection);
     form->addRow(tr("Robot Mode:"), m_statusRobotMode);
@@ -668,6 +752,37 @@ void MainWindow::setupStatusTab()
     rootLayout->addLayout(form);
 
     ui->tabWidget->addTab(statusWidget, tr("Status"));
+
+    m_networkStatusTimer = new QTimer(this);
+    m_networkStatusTimer->setInterval(5000);
+    connect(m_networkStatusTimer, &QTimer::timeout,
+            this, &MainWindow::refreshNetworkStatus);
+    m_networkStatusTimer->start();
+    refreshNetworkStatus();
+}
+
+void MainWindow::refreshNetworkStatus()
+{
+    if (!m_statusHostname) {
+        return;
+    }
+
+    const QString eth0Ip = ipv4ForInterface(QStringLiteral("eth0"));
+    const QString wlan0Ip = ipv4ForInterface(QStringLiteral("wlan0"));
+    const QString tailscaleIp = ipv4ForInterface(QStringLiteral("tailscale0"));
+
+    m_statusHostname->setText(QHostInfo::localHostName().trimmed().isEmpty()
+                                  ? QStringLiteral("-")
+                                  : QHostInfo::localHostName());
+    m_statusEth0Ip->setText(eth0Ip);
+    m_statusWlan0Ip->setText(wlan0Ip);
+    m_statusWifiSsid->setText(wlan0Ip == QStringLiteral("-")
+                                  ? QStringLiteral("Not connected")
+                                  : currentWifiSsid());
+    m_statusTailscaleIp->setText(tailscaleIp);
+    m_statusTailscaleState->setText(tailscaleIp == QStringLiteral("-")
+                                        ? QStringLiteral("Not connected")
+                                        : QStringLiteral("Connected"));
 }
 
 void MainWindow::updateStatusTab(const robot::RobotStatus& status)
