@@ -137,6 +137,12 @@ bool SettingsManager::save(const QString& path)
 
     QJsonDocument doc(m_settings);
 
+    const QFileInfo targetInfo(filePath);
+    if (!QDir().mkpath(targetInfo.absolutePath())) {
+        qWarning() << "Cannot create settings directory:" << targetInfo.absolutePath();
+        return false;
+    }
+
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly)) {
         qWarning() << "Cannot open settings file for writing:" << filePath;
