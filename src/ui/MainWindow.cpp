@@ -1,3 +1,4 @@
+#include "multipack/system/WifiSsidProbe.h"
 /**
  * @file MainWindow.cpp
  * @brief Implementation of main window using Qt Designer UI
@@ -31,10 +32,13 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDateTime>
+#include <QHostInfo>
+#include <QNetworkInterface>
 #include <QCompleter>
 #include <QAbstractItemView>
 #include <QDebug>
 #include <QFileInfo>
+#include <QFont>
 #include <QIcon>
 #include <QPixmap>
 #include <QCloseEvent>
@@ -84,6 +88,23 @@ QString palettePlanItemFileName(QListWidgetItem* item)
     const QString storedName = item->data(Qt::UserRole).toString().trimmed();
     return storedName.isEmpty() ? item->text().trimmed() : storedName;
 }
+
+QString ipv4ForInterface(const QString& interfaceName)
+{
+    const QNetworkInterface iface = QNetworkInterface::interfaceFromName(interfaceName);
+    if (!iface.isValid() || !(iface.flags() & QNetworkInterface::IsUp)) {
+        return QStringLiteral("-");
+    }
+
+    for (const QNetworkAddressEntry& entry : iface.addressEntries()) {
+        const QHostAddress address = entry.ip();
+        if (address.protocol() == QAbstractSocket::IPv4Protocol && !address.isLoopback()) {
+            return address.toString();
+        }
+    }
+    return QStringLiteral("-");
+}
+
 } // namespace
 
 MainWindow::MainWindow(QWidget* parent)
@@ -645,6 +666,12 @@ void MainWindow::setupStatusTab()
     form->setLabelAlignment(Qt::AlignRight);
     form->setFormAlignment(Qt::AlignTop);
 
+    m_statusHostname = new QLabel("-", statusWidget);
+    m_statusEth0Ip = new QLabel("-", statusWidget);
+    m_statusWlan0Ip = new QLabel("-", statusWidget);
+    m_statusWifiSsid = new QLabel("-", statusWidget);
+    m_statusTailscaleState = new QLabel("-", statusWidget);
+    m_statusTailscaleIp = new QLabel("-", statusWidget);
     m_statusRobotIp = new QLabel("-", statusWidget);
     m_statusConnection = new QLabel("-", statusWidget);
     m_statusRobotMode = new QLabel("-", statusWidget);
@@ -655,6 +682,23 @@ void MainWindow::setupStatusTab()
     m_statusSerialNumber = new QLabel("-", statusWidget);
     m_statusLoadedProgram = new QLabel("-", statusWidget);
 
+    auto* networkHeader = new QLabel(tr("Raspberry Pi / Netzwerk"), statusWidget);
+    QFont networkHeaderFont = networkHeader->font();
+    networkHeaderFont.setBold(true);
+    networkHeader->setFont(networkHeaderFont);
+    form->addRow(networkHeader);
+    form->addRow(tr("Hostname:"), m_statusHostname);
+    form->addRow(tr("eth0 IP:"), m_statusEth0Ip);
+    form->addRow(tr("wlan0 IP:"), m_statusWlan0Ip);
+    form->addRow(tr("WLAN SSID:"), m_statusWifiSsid);
+    form->addRow(tr("Tailscale:"), m_statusTailscaleState);
+    form->addRow(tr("Tailscale IP:"), m_statusTailscaleIp);
+
+    auto* robotHeader = new QLabel(tr("Roboter"), statusWidget);
+    QFont robotHeaderFont = robotHeader->font();
+    robotHeaderFont.setBold(true);
+    robotHeader->setFont(robotHeaderFont);
+    form->addRow(robotHeader);
     form->addRow(tr("Robot IP:"), m_statusRobotIp);
     form->addRow(tr("Connection:"), m_statusConnection);
     form->addRow(tr("Robot Mode:"), m_statusRobotMode);
@@ -668,6 +712,40 @@ void MainWindow::setupStatusTab()
     rootLayout->addLayout(form);
 
     ui->tabWidget->addTab(statusWidget, tr("Status"));
+
+    m_wifiSsidProbe = new system::WifiSsidProbe(this);
+    connect(m_wifiSsidProbe, &system::WifiSsidProbe::result, this, [this](const QString& ssid) {
+        m_statusWifiSsid->setText(ipv4ForInterface("wlan0") == "-" ? tr("Not connected") : ssid);
+    });
+    m_networkStatusTimer = new QTimer(this);
+    m_networkStatusTimer->setInterval(5000);
+    connect(m_networkStatusTimer, &QTimer::timeout,
+            this, &MainWindow::refreshNetworkStatus);
+    m_networkStatusTimer->start();
+    refreshNetworkStatus();
+}
+
+void MainWindow::refreshNetworkStatus()
+{
+    if (!m_statusHostname) {
+        return;
+    }
+
+    const QString eth0Ip = ipv4ForInterface(QStringLiteral("eth0"));
+    const QString wlan0Ip = ipv4ForInterface(QStringLiteral("wlan0"));
+    const QString tailscaleIp = ipv4ForInterface(QStringLiteral("tailscale0"));
+
+    m_statusHostname->setText(QHostInfo::localHostName().trimmed().isEmpty()
+                                  ? QStringLiteral("-")
+                                  : QHostInfo::localHostName());
+    m_statusEth0Ip->setText(eth0Ip);
+    m_statusWlan0Ip->setText(wlan0Ip);
+    if (wlan0Ip == "-") m_statusWifiSsid->setText(tr("Not connected"));
+    else m_wifiSsidProbe->refresh();
+    m_statusTailscaleIp->setText(tailscaleIp);
+    m_statusTailscaleState->setText(tailscaleIp == QStringLiteral("-")
+                                        ? QStringLiteral("Not connected")
+                                        : QStringLiteral("Connected"));
 }
 
 void MainWindow::updateStatusTab(const robot::RobotStatus& status)
@@ -1059,6 +1137,11 @@ void MainWindow::updateEnabledStates()
     ui->EingabeStartlage->setEnabled(paletteLoaded);
     ui->EingabeKartonhoehe->setEnabled(paletteLoaded);
     ui->EingabeKartonGewicht->setEnabled(paletteLoaded);
+    ui->label_Startlage->setEnabled(paletteLoaded);
+    ui->label_Kartonhoehe->setEnabled(paletteLoaded);
+    ui->label_Kartonhoehe_mm->setEnabled(paletteLoaded);
+    ui->label_Gewicht->setEnabled(paletteLoaded);
+    ui->label_Gewicht_kg->setEnabled(paletteLoaded);
     ui->checkBoxEinzelpaket->setEnabled(paletteLoaded);
     ui->checkBoxLabelInvert->setEnabled(paletteLoaded);
     ui->ButtonOpenParameterRoboter->setEnabled(paletteLoaded);
@@ -1141,8 +1224,6 @@ void MainWindow::showExperimental()
 
 void MainWindow::onLoadPaletteClicked()
 {
-    hidePalettePlanCompletionPopup();
-
     QString fileName = ui->EingabePallettenplan->text().trimmed();
     if (fileName.isEmpty()) {
         showMessage("Bitte Palletierplan eingeben");
@@ -1203,9 +1284,15 @@ void MainWindow::onLoadPaletteClicked()
             updateVisualizationFromPaletteData(*data);
             emit paletteLoadRequested(m_currentPaletteFile);
 
+            // Successful load commits the selection.
+            hidePalettePlanCompletionPopup();
             qDebug() << "Palette loaded successfully:" << m_currentPaletteFile;
         } else {
             showMessage("Palletierplan nicht gefunden: " + fileName);
+
+            // A failed load should keep matching suggestions available so the
+            // operator can immediately correct the entered prefix/value.
+            updatePalettePlanCompletionPopup(fileName);
         }
     }
 }
@@ -1361,6 +1448,18 @@ void MainWindow::onStartlageChanged(int value)
 void MainWindow::onRobotStartClicked()
 {
     qDebug() << "Robot start clicked";
+
+    // Commit the currently visible start layer immediately before starting the
+    // robot. This guarantees that a subsequent UR_Startlage RPC request sees
+    // the operator's latest selection even if another state update occurred
+    // after the spin box valueChanged signal.
+    if (m_state) {
+        const int startLayer = ui->EingabeStartlage->value();
+        m_state->setStartLayer(startLayer);
+        m_state->setCurrentLayer(startLayer);
+        qDebug() << "Robot start - committed Startlage:" << startLayer;
+    }
+
     if (ensureRobotConnected()) {
         m_robot->play();
     }
@@ -1595,6 +1694,10 @@ void MainWindow::onUpdateCheckCompleted(bool success, const QString& message)
         return;
     }
 
+    if (qEnvironmentVariable("MULTIPACK_IMMUTABLE", "0") == "1") {
+        m_autoUpdater->showUpdateDialog();
+        return;
+    }
     auto updateInfo = m_autoUpdater->availableUpdate();
     if (updateInfo.version.isEmpty()) {
         showMessage("Keine Updates verfuegbar. Aktuelle Version: " + m_autoUpdater->currentVersion());
@@ -1620,6 +1723,10 @@ void MainWindow::onUpdateCheckCompleted(bool success, const QString& message)
 
 void MainWindow::onUpdateDownloadProgress(const system::UpdateProgress& progress)
 {
+    if (qEnvironmentVariable("MULTIPACK_IMMUTABLE", "0") == "1") {
+        showMessage(progress.statusText);
+        return;
+    }
     if (progress.bytesTotal > 0) {
         qint64 percent = (progress.bytesReceived * 100) / progress.bytesTotal;
         showMessage(QString("Download: %1%").arg(percent));
@@ -2923,6 +3030,11 @@ void MainWindow::setupPalettePlanCompleter()
                 if (value.isEmpty()) {
                     return;
                 }
+
+                // Selecting a suggestion changes the line edit text. Block the
+                // textChanged callback here so the same suggestion is not shown
+                // again immediately underneath the selected value.
+                const QSignalBlocker blocker(ui->EingabePallettenplan);
                 ui->EingabePallettenplan->setText(value);
                 hidePalettePlanCompletionPopup();
                 ui->EingabePallettenplan->setFocus(Qt::OtherFocusReason);

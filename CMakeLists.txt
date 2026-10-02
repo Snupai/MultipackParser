@@ -190,6 +190,8 @@ set(MOC_HEADERS
     include/multipack/config/SettingsManager.h
     include/multipack/system/UsbKeyCheck.h
     include/multipack/system/UpdateChecker.h
+    include/multipack/system/SystemUpdaterClient.h
+    include/multipack/system/WifiSsidProbe.h
     include/multipack/system/AutoUpdater.h
     include/multipack/system/UsbMonitor.h
 )
@@ -266,6 +268,8 @@ set(SYSTEM_SOURCES
     src/system/UpdateChecker.cpp
     src/system/FileOperations.cpp
     src/system/RobFileParser.cpp
+    src/system/SystemUpdaterClient.cpp
+    src/system/WifiSsidProbe.cpp
     src/system/AutoUpdater.cpp
     src/system/UsbMonitor.cpp
 )
@@ -274,7 +278,9 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64" AND MULTIPACK_SAFE_ARM64_EMULA
     # GCC 11 under Docker/QEMU can ICE/segfault on these translation units at -O2.
     # Keep the workaround tightly scoped so the ARM64 release build stays fast.
     set_source_files_properties(
-        src/system/AutoUpdater.cpp
+        src/system/SystemUpdaterClient.cpp
+    src/system/WifiSsidProbe.cpp
+    src/system/AutoUpdater.cpp
         src/ui/UIHelpers.cpp
         PROPERTIES COMPILE_OPTIONS "-O1")
 endif()

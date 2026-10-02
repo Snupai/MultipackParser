@@ -2,6 +2,7 @@
 #define MULTIPACK_SYSTEM_AUTOUPDATER_H
 
 #include <QObject>
+#include "multipack/system/SystemUpdaterClient.h"
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QFile>
@@ -236,6 +237,10 @@ private slots:
     void onSslErrors(const QList<QSslError>& errors);
 
 private:
+    bool m_immutable = false;
+    SystemUpdaterClient* m_systemUpdater = nullptr;
+    QTimer* m_systemPoll = nullptr;
+    bool m_systemChecking = false;
     // Core components
     QNetworkAccessManager* m_networkManager;
     QNetworkReply* m_checkReply = nullptr;

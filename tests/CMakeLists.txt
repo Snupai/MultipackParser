@@ -82,3 +82,7 @@ if(NOT WIN32)
             ENVIRONMENT "${TEST_QT_ENV}"
     )
 endif()
+
+add_executable(test_system_clients test_system_clients.cpp)
+target_link_libraries(test_system_clients PRIVATE multipack-lib Qt6::Test)
+add_test(NAME test_system_clients COMMAND $<TARGET_FILE:test_system_clients>)
