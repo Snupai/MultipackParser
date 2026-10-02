@@ -61,7 +61,7 @@ AutoUpdater::AutoUpdater(QObject* parent)
     , m_downloadReply(nullptr)
     , m_checkTimer(new QTimer(this))
     , m_status(UpdateStatus::Idle)
-    , m_updateCacheDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/multipack-updates")
+    , m_updateCacheDir(QDir(config::Defaults::dataDirectory()).filePath("updates"))
     , m_usbUpdateDir(config::Defaults::defaultUsbPath())
 {
     qDebug() << "AutoUpdater - initialized";
@@ -143,6 +143,13 @@ bool AutoUpdater::checkForUsbUpdates(const QString& usbDirectory)
 
 bool AutoUpdater::downloadAndInstallUpdate()
 {
+    if (qEnvironmentVariable("MULTIPACK_IMMUTABLE", "0") == "1") {
+        const QString message = tr("Application updates are managed by the system A/B updater");
+        qWarning() << "AutoUpdater:" << message;
+        emit updateFailed(message);
+        return false;
+    }
+
     if (m_availableUpdate.version.isEmpty()) {
         qWarning() << "AutoUpdater: No update available to download";
         return false;
@@ -987,6 +994,13 @@ void AutoUpdater::onDownloadNetworkReply(QNetworkReply* reply)
 
 bool AutoUpdater::installUpdate(const QString& filePath)
 {
+    if (qEnvironmentVariable("MULTIPACK_IMMUTABLE", "0") == "1") {
+        const QString message = tr("Refusing in-place update on immutable system");
+        qWarning() << "AutoUpdater:" << message;
+        emit updateFailed(message);
+        return false;
+    }
+
     emit installationStarted();
 
     const QString appDir = QCoreApplication::applicationDirPath();
