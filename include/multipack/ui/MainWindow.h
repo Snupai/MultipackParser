@@ -198,6 +198,7 @@ private:
     void maybeStartRobotStatusMonitor();
     void stopRobotStatusMonitor();
     void setupStatusTab();
+    void refreshNetworkStatus();
     void updateStatusTab(const robot::RobotStatus& status);
     void onStatusDetailsUpdated(const QString& polyscopeVersion,
                                 const QString& serialNumber,
@@ -264,10 +265,17 @@ private:
     QWidget* m_centralWidget = nullptr;
     QTimer* m_zwischenlageTimer = nullptr;
     QTimer* m_paletteClearTimer = nullptr;
+    QTimer* m_networkStatusTimer = nullptr;
     NotificationPopup* m_zwischenlagePopup = nullptr;
     QPushButton* m_palette1ClearIndicator = nullptr;
     QPushButton* m_palette2ClearIndicator = nullptr;
     VisualizationWidget* m_visualizationWidget = nullptr;
+    QLabel* m_statusHostname = nullptr;
+    QLabel* m_statusEth0Ip = nullptr;
+    QLabel* m_statusWlan0Ip = nullptr;
+    QLabel* m_statusWifiSsid = nullptr;
+    QLabel* m_statusTailscaleState = nullptr;
+    QLabel* m_statusTailscaleIp = nullptr;
     QLabel* m_statusRobotIp = nullptr;
     QLabel* m_statusConnection = nullptr;
     QLabel* m_statusRobotMode = nullptr;
