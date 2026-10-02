@@ -1,3 +1,4 @@
+#include "multipack/system/WifiSsidProbe.h"
 /**
  * @file MainWindow.cpp
  * @brief Implementation of main window using Qt Designer UI
@@ -104,48 +105,6 @@ QString ipv4ForInterface(const QString& interfaceName)
     return QStringLiteral("-");
 }
 
-QString commandOutput(const QString& program, const QStringList& arguments, int timeoutMs = 500)
-{
-    QProcess process;
-    process.start(program, arguments);
-    if (!process.waitForStarted(timeoutMs)) {
-        return QString();
-    }
-    if (!process.waitForFinished(timeoutMs)) {
-        process.kill();
-        process.waitForFinished(100);
-        return QString();
-    }
-    if (process.exitStatus() != QProcess::NormalExit || process.exitCode() != 0) {
-        return QString();
-    }
-    return QString::fromUtf8(process.readAllStandardOutput()).trimmed();
-}
-
-QString currentWifiSsid()
-{
-    QString ssid = commandOutput(QStringLiteral("iwgetid"),
-                                 {QStringLiteral("wlan0"), QStringLiteral("-r")});
-    if (!ssid.isEmpty()) {
-        return ssid;
-    }
-
-    const QString nmcli = commandOutput(
-        QStringLiteral("nmcli"),
-        {QStringLiteral("-t"), QStringLiteral("-f"), QStringLiteral("ACTIVE,SSID"),
-         QStringLiteral("dev"), QStringLiteral("wifi")},
-        800);
-    const QStringList lines = nmcli.split('\n', Qt::SkipEmptyParts);
-    for (const QString& line : lines) {
-        if (line.startsWith(QStringLiteral("yes:"))) {
-            QString value = line.mid(4);
-            value.replace(QStringLiteral("\\:"), QStringLiteral(":"));
-            return value.trimmed();
-        }
-    }
-
-    return QStringLiteral("-");
-}
 } // namespace
 
 MainWindow::MainWindow(QWidget* parent)
@@ -754,6 +713,10 @@ void MainWindow::setupStatusTab()
 
     ui->tabWidget->addTab(statusWidget, tr("Status"));
 
+    m_wifiSsidProbe = new system::WifiSsidProbe(this);
+    connect(m_wifiSsidProbe, &system::WifiSsidProbe::result, this, [this](const QString& ssid) {
+        m_statusWifiSsid->setText(ipv4ForInterface("wlan0") == "-" ? tr("Not connected") : ssid);
+    });
     m_networkStatusTimer = new QTimer(this);
     m_networkStatusTimer->setInterval(5000);
     connect(m_networkStatusTimer, &QTimer::timeout,
@@ -777,9 +740,8 @@ void MainWindow::refreshNetworkStatus()
                                   : QHostInfo::localHostName());
     m_statusEth0Ip->setText(eth0Ip);
     m_statusWlan0Ip->setText(wlan0Ip);
-    m_statusWifiSsid->setText(wlan0Ip == QStringLiteral("-")
-                                  ? QStringLiteral("Not connected")
-                                  : currentWifiSsid());
+    if (wlan0Ip == "-") m_statusWifiSsid->setText(tr("Not connected"));
+    else m_wifiSsidProbe->refresh();
     m_statusTailscaleIp->setText(tailscaleIp);
     m_statusTailscaleState->setText(tailscaleIp == QStringLiteral("-")
                                         ? QStringLiteral("Not connected")
@@ -1732,6 +1694,10 @@ void MainWindow::onUpdateCheckCompleted(bool success, const QString& message)
         return;
     }
 
+    if (qEnvironmentVariable("MULTIPACK_IMMUTABLE", "0") == "1") {
+        m_autoUpdater->showUpdateDialog();
+        return;
+    }
     auto updateInfo = m_autoUpdater->availableUpdate();
     if (updateInfo.version.isEmpty()) {
         showMessage("Keine Updates verfuegbar. Aktuelle Version: " + m_autoUpdater->currentVersion());
@@ -1757,6 +1723,10 @@ void MainWindow::onUpdateCheckCompleted(bool success, const QString& message)
 
 void MainWindow::onUpdateDownloadProgress(const system::UpdateProgress& progress)
 {
+    if (qEnvironmentVariable("MULTIPACK_IMMUTABLE", "0") == "1") {
+        showMessage(progress.statusText);
+        return;
+    }
     if (progress.bytesTotal > 0) {
         qint64 percent = (progress.bytesReceived * 100) / progress.bytesTotal;
         showMessage(QString("Download: %1%").arg(percent));

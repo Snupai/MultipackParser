@@ -198,3 +198,21 @@ available before readiness.
 ## License
 
 Proprietary - Szaidel Cosmetic GmbH
+
+### Immutable system updates and network status
+
+With `MULTIPACK_IMMUTABLE=1`, the existing update button reads system status and
+asks for a published system release VERSION (for example `rpi-hmi-v0.1.0`).
+The asynchronous client sends only `status` or `install` plus that validated
+identifier to `/run/hmi-updater/control.sock`. The image grants `hmi-update` group
+access. The daemon verifies signatures, writes the inactive slot, and reboots;
+once accepted, installation cannot be cancelled by closing the UI. Status includes
+the active version, boot phase and download/install progress. Network errors can
+be retried. No legacy application/USB installation runs in immutable mode.
+Without the environment flag the signed legacy updater is retained.
+
+SSID probing uses asynchronous `nmcli` with a deadline and no Wi-Fi rescan.
+HMI provisioning installs `network-manager`. Portable bundles require a host
+NetworkManager installation for SSID display; when it is absent, the UI explicitly
+shows SSID unavailable. Interface IP status remains usable. Probe processes belong
+to the window and are terminated when it closes.

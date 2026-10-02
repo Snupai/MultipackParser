@@ -1,3 +1,4 @@
+#include "multipack/system/WifiSsidProbe.h"
 /**
  * @file MainWindow.h
  * @brief Main application window using Qt Designer UI
@@ -265,6 +266,7 @@ private:
     QWidget* m_centralWidget = nullptr;
     QTimer* m_zwischenlageTimer = nullptr;
     QTimer* m_paletteClearTimer = nullptr;
+    system::WifiSsidProbe* m_wifiSsidProbe = nullptr;
     QTimer* m_networkStatusTimer = nullptr;
     NotificationPopup* m_zwischenlagePopup = nullptr;
     QPushButton* m_palette1ClearIndicator = nullptr;

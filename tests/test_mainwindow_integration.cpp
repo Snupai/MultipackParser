@@ -11,6 +11,8 @@
 #include <QDir>
 #include <QLibraryInfo>
 #include <QLineEdit>
+#include <QLabel>
+#include <QSpinBox>
 #include <QListView>
 #include <QPushButton>
 #include <QSignalBlocker>
@@ -33,6 +35,7 @@ private slots:
     void startAndStopServerFromUi();
     void failedPaletteLoadKeepsSuggestionsVisible();
     void successfulPaletteLoadClosesSuggestions();
+    void selectedStartLayerReachesRpcAfterRobotStart();
 };
 
 void MainWindowIntegrationTest::startAndStopServerFromUi()
@@ -163,6 +166,59 @@ void MainWindowIntegrationTest::successfulPaletteLoadClosesSuggestions()
 
     QTest::mouseClick(loadButton, Qt::LeftButton);
     QTRY_VERIFY(!popup->isVisible());
+}
+
+void MainWindowIntegrationTest::selectedStartLayerReachesRpcAfterRobotStart()
+{
+    QTemporaryDir tempDir;
+    qputenv("MULTIPACK_DISABLE_ROBOT_STATUS_MONITOR", "1");
+    auto& state = GlobalState::instance();
+    state.clear();
+    DatabaseManager database;
+    QVERIFY(database.open(tempDir.filePath("palettes.db")));
+    auto palette = testhelpers::makeSamplePaletteData();
+    palette.metadata.anzLagen = 2;
+    palette.layerAssignments = {1, 1};
+    palette.intermediaryLayers = {0, 0};
+    QCOMPARE(database.savePaletteData(palette), SaveResult::Inserted);
+    MainWindow window;
+    window.setDatabaseManager(&database);
+    window.setGlobalState(&state);
+    auto* input = window.findChild<QLineEdit*>("EingabePallettenplan");
+    auto* load = window.findChild<QPushButton*>("LadePallettenplan");
+    auto* startLayer = window.findChild<QSpinBox*>("EingabeStartlage");
+    QVERIFY(input && load && startLayer);
+    const QStringList labels = {"label_Startlage", "label_Kartonhoehe", "label_Kartonhoehe_mm",
+                                "label_Gewicht", "label_Gewicht_kg"};
+    for (const auto& name : labels) {
+        auto* label = window.findChild<QLabel*>(name);
+        QVERIFY(label);
+        QVERIFY(!label->isEnabled());
+    }
+    input->setText("sample");
+    load->click();
+    for (const auto& name : labels) QVERIFY(window.findChild<QLabel*>(name)->isEnabled());
+    startLayer->setValue(2);
+    QCOMPARE(state.startLayer(), 2);
+    // Reproduce a stale state write after valueChanged. The robot-start slot must
+    // commit the visible value again even without an available physical robot.
+    state.setStartLayer(1);
+    QVERIFY(QMetaObject::invokeMethod(&window, "onRobotStartClicked", Qt::DirectConnection));
+    QCOMPARE(state.startLayer(), 2);
+    XmlRpcServer server;
+    server.setGlobalState(&state);
+    server.registerStandardMethods();
+    QVERIFY(server.start(0));
+    QTcpSocket socket;
+    socket.connectToHost(QHostAddress::LocalHost, server.port());
+    QVERIFY(socket.waitForConnected(1000));
+    const QByteArray body = "<methodCall><methodName>UR_Startlage</methodName></methodCall>";
+    socket.write("POST /RPC2 HTTP/1.1\r\nHost: localhost\r\nContent-Length: "
+                 + QByteArray::number(body.size()) + "\r\n\r\n" + body);
+    QTRY_VERIFY_WITH_TIMEOUT(socket.bytesAvailable() > 0, 3000);
+    const auto reply = socket.readAll();
+    QVERIFY2(reply.contains("<int>2</int>"), reply.constData());
+    QVERIFY(!reply.contains("<fault>"));
 }
 
 int main(int argc, char** argv)
