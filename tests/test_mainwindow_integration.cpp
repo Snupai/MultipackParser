@@ -13,6 +13,7 @@
 #include <QLineEdit>
 #include <QListView>
 #include <QPushButton>
+#include <QSignalBlocker>
 #include <QTcpSocket>
 #include <QTemporaryDir>
 #include <QtTest/QtTest>
@@ -118,6 +119,14 @@ void MainWindowIntegrationTest::failedPaletteLoadKeepsSuggestionsVisible()
 
     paletteInput->setText("sam");
     QTRY_VERIFY(popup->isVisible());
+
+    // Simulate the plan disappearing/failing to load after suggestions were
+    // already presented. Block the database change signal so the popup model
+    // remains unchanged and we specifically exercise the failed-load UI path.
+    {
+        const QSignalBlocker blocker(&database);
+        QVERIFY(database.deletePalette("sample.rob"));
+    }
 
     QTest::mouseClick(loadButton, Qt::LeftButton);
     QTRY_VERIFY(popup->isVisible());
