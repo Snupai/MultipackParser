@@ -37,6 +37,7 @@
 #include <QAbstractItemView>
 #include <QDebug>
 #include <QFileInfo>
+#include <QFont>
 #include <QIcon>
 #include <QPixmap>
 #include <QCloseEvent>
