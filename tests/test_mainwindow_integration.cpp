@@ -11,6 +11,7 @@
 #include <QDir>
 #include <QLibraryInfo>
 #include <QLineEdit>
+#include <QListView>
 #include <QPushButton>
 #include <QTcpSocket>
 #include <QTemporaryDir>
@@ -29,6 +30,8 @@ class MainWindowIntegrationTest : public QObject
 
 private slots:
     void startAndStopServerFromUi();
+    void failedPaletteLoadKeepsSuggestionsVisible();
+    void successfulPaletteLoadClosesSuggestions();
 };
 
 void MainWindowIntegrationTest::startAndStopServerFromUi()
@@ -87,6 +90,70 @@ void MainWindowIntegrationTest::startAndStopServerFromUi()
 
     window.close();
     QTRY_VERIFY(!window.isVisible());
+}
+
+
+void MainWindowIntegrationTest::failedPaletteLoadKeepsSuggestionsVisible()
+{
+    QTemporaryDir tempDir;
+    QVERIFY(tempDir.isValid());
+
+    qputenv("MULTIPACK_DISABLE_ROBOT_STATUS_MONITOR", "1");
+
+    DatabaseManager database;
+    QVERIFY(database.open(tempDir.filePath("palettes.db")));
+    QCOMPARE(database.savePaletteData(testhelpers::makeSamplePaletteData()), SaveResult::Inserted);
+
+    MainWindow window;
+    window.setDatabaseManager(&database);
+    window.show();
+
+    auto* paletteInput = window.findChild<QLineEdit*>("EingabePallettenplan");
+    auto* loadButton = window.findChild<QPushButton*>("LadePallettenplan");
+    auto* popup = window.findChild<QListView*>("PalettePlanCompletionPopup");
+
+    QVERIFY(paletteInput != nullptr);
+    QVERIFY(loadButton != nullptr);
+    QVERIFY(popup != nullptr);
+
+    paletteInput->setText("sam");
+    QTRY_VERIFY(popup->isVisible());
+
+    QTest::mouseClick(loadButton, Qt::LeftButton);
+    QTRY_VERIFY(popup->isVisible());
+}
+
+void MainWindowIntegrationTest::successfulPaletteLoadClosesSuggestions()
+{
+    QTemporaryDir tempDir;
+    QVERIFY(tempDir.isValid());
+
+    qputenv("MULTIPACK_DISABLE_ROBOT_STATUS_MONITOR", "1");
+
+    GlobalState::instance().clear();
+
+    DatabaseManager database;
+    QVERIFY(database.open(tempDir.filePath("palettes.db")));
+    QCOMPARE(database.savePaletteData(testhelpers::makeSamplePaletteData()), SaveResult::Inserted);
+
+    MainWindow window;
+    window.setDatabaseManager(&database);
+    window.setGlobalState(&GlobalState::instance());
+    window.show();
+
+    auto* paletteInput = window.findChild<QLineEdit*>("EingabePallettenplan");
+    auto* loadButton = window.findChild<QPushButton*>("LadePallettenplan");
+    auto* popup = window.findChild<QListView*>("PalettePlanCompletionPopup");
+
+    QVERIFY(paletteInput != nullptr);
+    QVERIFY(loadButton != nullptr);
+    QVERIFY(popup != nullptr);
+
+    paletteInput->setText("sample");
+    QTRY_VERIFY(popup->isVisible());
+
+    QTest::mouseClick(loadButton, Qt::LeftButton);
+    QTRY_VERIFY(!popup->isVisible());
 }
 
 int main(int argc, char** argv)
