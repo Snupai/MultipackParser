@@ -1175,6 +1175,11 @@ void MainWindow::updateEnabledStates()
     ui->EingabeStartlage->setEnabled(paletteLoaded);
     ui->EingabeKartonhoehe->setEnabled(paletteLoaded);
     ui->EingabeKartonGewicht->setEnabled(paletteLoaded);
+    ui->label_Startlage->setEnabled(paletteLoaded);
+    ui->label_Kartonhoehe->setEnabled(paletteLoaded);
+    ui->label_Kartonhoehe_mm->setEnabled(paletteLoaded);
+    ui->label_Gewicht->setEnabled(paletteLoaded);
+    ui->label_Gewicht_kg->setEnabled(paletteLoaded);
     ui->checkBoxEinzelpaket->setEnabled(paletteLoaded);
     ui->checkBoxLabelInvert->setEnabled(paletteLoaded);
     ui->ButtonOpenParameterRoboter->setEnabled(paletteLoaded);
@@ -1481,6 +1486,18 @@ void MainWindow::onStartlageChanged(int value)
 void MainWindow::onRobotStartClicked()
 {
     qDebug() << "Robot start clicked";
+
+    // Commit the currently visible start layer immediately before starting the
+    // robot. This guarantees that a subsequent UR_Startlage RPC request sees
+    // the operator's latest selection even if another state update occurred
+    // after the spin box valueChanged signal.
+    if (m_state) {
+        const int startLayer = ui->EingabeStartlage->value();
+        m_state->setStartLayer(startLayer);
+        m_state->setCurrentLayer(startLayer);
+        qDebug() << "Robot start - committed Startlage:" << startLayer;
+    }
+
     if (ensureRobotConnected()) {
         m_robot->play();
     }
