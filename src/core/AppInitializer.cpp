@@ -30,7 +30,7 @@ QString resolveConfiguredPath(const QString& configuredPath, const QString& fall
 {
     const QString path = configuredPath.trimmed().isEmpty() ? fallback : configuredPath.trimmed();
     QFileInfo info(path);
-    return info.isAbsolute() ? info.absoluteFilePath() : QDir::current().absoluteFilePath(path);
+    return info.isAbsolute() ? info.absoluteFilePath() : QDir(config::Defaults::dataDirectory()).absoluteFilePath(path);
 }
 
 }
@@ -209,7 +209,7 @@ bool AppInitializer::initializeLogging()
 {
     qDebug() << "AppInitializer - initializing logging";
 
-    const QString logPath = QDir::currentPath() + "/logs";
+    const QString logPath = config::Defaults::defaultLogDir();
     const bool verboseEnabled = qEnvironmentVariable("MULTIPACK_VERBOSE", "0") == "1";
     const config::LogLevel level = verboseEnabled ? config::LogLevel::Debug : config::LogLevel::Info;
 
@@ -232,7 +232,7 @@ bool AppInitializer::initializeSettings()
     m_settingsManager = std::make_unique<config::SettingsManager>();
 
     // Try to load settings
-    QString settingsPath = QDir::currentPath() + "/settings.json";
+    const QString settingsPath = config::Defaults::defaultSettingsPath();
     if (QFile::exists(settingsPath)) {
         if (!m_settingsManager->load(settingsPath)) {
             qWarning() << "Failed to load settings from" << settingsPath;

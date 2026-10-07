@@ -1,3 +1,5 @@
+#include <QInputDialog>
+#include <QLineEdit>
 /**
  * @file AutoUpdater.cpp
  * @brief Implementation of comprehensive automatic updater
@@ -54,14 +56,14 @@ QString sanitizeForFileName(const QString& value)
 }
 } // namespace
 
-AutoUpdater::AutoUpdater(QObject* parent)
+AutoUpdater::AutoUpdater(QObject* parent, const QString& systemSocketPath)
     : QObject(parent)
     , m_networkManager(new QNetworkAccessManager(this))
     , m_checkReply(nullptr)
     , m_downloadReply(nullptr)
     , m_checkTimer(new QTimer(this))
     , m_status(UpdateStatus::Idle)
-    , m_updateCacheDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/multipack-updates")
+    , m_updateCacheDir(QDir(config::Defaults::dataDirectory()).filePath("updates"))
     , m_usbUpdateDir(config::Defaults::defaultUsbPath())
 {
     qDebug() << "AutoUpdater - initialized";
@@ -78,6 +80,61 @@ AutoUpdater::AutoUpdater(QObject* parent)
     }
 
     m_currentVersion = config::Defaults::VERSION;
+    m_immutable = qEnvironmentVariable("MULTIPACK_IMMUTABLE", "0") == "1";
+    if (m_immutable) {
+        m_systemUpdater = new SystemUpdaterClient(this, systemSocketPath);
+        m_systemPoll = new QTimer(this);
+        m_systemPoll->setInterval(2000);
+        connect(m_systemPoll, &QTimer::timeout, this, [this] { m_systemUpdater->status(); });
+        connect(m_systemUpdater, &SystemUpdaterClient::error, this, [this](const QString& error) {
+            const bool reportError = m_systemChecking || m_systemInstalling
+                || m_status == UpdateStatus::Downloading || m_status == UpdateStatus::Installing;
+            m_systemInstalling = false;
+            m_progress.statusText = error;
+            setStatus(UpdateStatus::Idle); // Allow retry after transport/daemon errors.
+            if (reportError) emit updateFailed(error);
+            if (m_systemChecking) {
+                m_systemChecking = false;
+                emit checkCompleted(false, error);
+            }
+        });
+        connect(m_systemUpdater, &SystemUpdaterClient::response, this, [this](const QJsonObject& value) {
+            const bool wasUpdating = m_status == UpdateStatus::Downloading
+                || m_status == UpdateStatus::Installing;
+            m_systemInstalling = false;
+            if (value.value("accepted").toBool()) {
+                setStatus(UpdateStatus::Downloading);
+                m_progress.statusText = tr("System update accepted; preparing inactive slot");
+                emit downloadStarted(m_availableUpdate.version);
+            } else {
+                const QString phase = value.value("phase").toString();
+                const auto boot = value.value("boot").toObject();
+                const QString active = boot.value("active").toString();
+                const QString version = boot.value("version").toObject().value(active).toString();
+                if (!version.isEmpty()) m_currentVersion = version;
+                m_progress.bytesReceived = static_cast<qint64>(value.value("bytes").toDouble());
+                m_progress.bytesTotal = static_cast<qint64>(value.value("total").toDouble());
+                m_progress.statusText = tr("System: %1; active %2 (%3); boot: %4")
+                    .arg(phase, active, m_currentVersion, boot.value("phase").toString());
+                if (phase == "error") {
+                    const QString error = value.value("error").toString();
+                    m_progress.statusText += tr("; previous update failed: %1").arg(error);
+                    if (wasUpdating) emit updateFailed(error);
+                }
+                setStatus(phase == "downloading" ? UpdateStatus::Downloading
+                    : phase == "installing" || phase == "rebooting" ? UpdateStatus::Installing
+                    : UpdateStatus::Idle);
+                if (m_systemChecking) {
+                    m_systemChecking = false;
+                    emit checkCompleted(true, m_progress.statusText);
+                }
+            }
+            if (m_status == UpdateStatus::Downloading || m_status == UpdateStatus::Installing)
+                emit downloadProgress(m_progress);
+        });
+        m_systemPoll->start();
+        QTimer::singleShot(0, this, [this] { m_systemUpdater->status(); });
+    }
 }
 
 AutoUpdater::~AutoUpdater()
@@ -100,6 +157,12 @@ AutoUpdater::~AutoUpdater()
 
 bool AutoUpdater::checkForUpdates()
 {
+    if (m_immutable) {
+        if (!m_systemUpdater->status()) return false;
+        m_systemChecking = true;
+        emit checkStarted();
+        return true;
+    }
     if (m_status != UpdateStatus::Idle) {
         qWarning() << "AutoUpdater: Cannot check for updates, operation in progress";
         return false;
@@ -111,6 +174,10 @@ bool AutoUpdater::checkForUpdates()
 
 bool AutoUpdater::checkForUsbUpdates(const QString& usbDirectory)
 {
+    if (m_immutable) {
+        emit checkFailed(tr("System releases must be installed by VERSION through the A/B updater"));
+        return false;
+    }
     if (m_status != UpdateStatus::Idle) {
         qWarning() << "AutoUpdater: Cannot check USB updates, operation in progress";
         return false;
@@ -143,6 +210,21 @@ bool AutoUpdater::checkForUsbUpdates(const QString& usbDirectory)
 
 bool AutoUpdater::downloadAndInstallUpdate()
 {
+    if (m_immutable) {
+        if (m_status != UpdateStatus::Idle) {
+            emit updateFailed(tr("A system update is already running; no new update was submitted."));
+            return false;
+        }
+        if (m_systemUpdater->busy()) {
+            emit updateFailed(tr("System updater status request is still pending. Please retry the update."));
+            return false;
+        }
+        m_systemInstalling = true;
+        const bool sent = m_systemUpdater->install(m_availableUpdate.version);
+        if (!sent) m_systemInstalling = false;
+        return sent;
+    }
+
     if (m_availableUpdate.version.isEmpty()) {
         qWarning() << "AutoUpdater: No update available to download";
         return false;
@@ -244,6 +326,10 @@ bool AutoUpdater::downloadAndInstallUpdate()
 
 void AutoUpdater::cancelUpdate()
 {
+    if (m_immutable) {
+        emit updateFailed(tr("An accepted system update cannot be cancelled from the HMI"));
+        return;
+    }
     if (m_checkReply) {
         m_checkReply->abort();
         m_checkReply->deleteLater();
@@ -311,6 +397,17 @@ QString AutoUpdater::usbUpdatePath() const
 
 void AutoUpdater::showUpdateDialog()
 {
+    if (m_immutable) {
+        bool ok = false;
+        const QString version = QInputDialog::getText(nullptr, tr("System A/B Update"),
+            tr("%1\nEnter published system release VERSION. Installation reboots the HMI.")
+                .arg(m_progress.statusText), QLineEdit::Normal, QString(), &ok);
+        if (ok) {
+            m_availableUpdate.version = version;
+            downloadAndInstallUpdate();
+        }
+        return;
+    }
     if (m_availableUpdate.version.isEmpty()) {
         QMessageBox::information(nullptr,
                                  tr("No Updates Available"),
@@ -345,6 +442,7 @@ void AutoUpdater::initializeNetwork()
 
 void AutoUpdater::startGitHubCheck()
 {
+    if (m_immutable) { checkForUpdates(); return; }
     setStatus(UpdateStatus::Checking);
     emit checkStarted();
 
@@ -987,6 +1085,13 @@ void AutoUpdater::onDownloadNetworkReply(QNetworkReply* reply)
 
 bool AutoUpdater::installUpdate(const QString& filePath)
 {
+    if (qEnvironmentVariable("MULTIPACK_IMMUTABLE", "0") == "1") {
+        const QString message = tr("Refusing in-place update on immutable system");
+        qWarning() << "AutoUpdater:" << message;
+        emit updateFailed(message);
+        return false;
+    }
+
     emit installationStarted();
 
     const QString appDir = QCoreApplication::applicationDirPath();

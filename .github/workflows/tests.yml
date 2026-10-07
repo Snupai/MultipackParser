@@ -1,0 +1,39 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Build and test (Ubuntu)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+
+    env:
+      QT_QPA_PLATFORM: offscreen
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install build and Qt dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y             build-essential             cmake             ninja-build             pkg-config             qt6-base-dev             qt6-base-dev-tools             qt6-tools-dev             qt6-tools-dev-tools             qt6-multimedia-dev             libqt6sql6-sqlite             libgl1-mesa-dev             libegl1-mesa-dev             libgles2-mesa-dev             libsqlite3-dev             libssl-dev
+
+      - name: Configure tests
+        run: |
+          cmake -S . -B build-tests             -G Ninja             -DCMAKE_BUILD_TYPE=Debug             -DBUILD_TESTS=ON             -DENABLE_VTK=OFF
+
+      - name: Build tests
+        run: cmake --build build-tests --parallel 2
+
+      - name: Run tests
+        run: ctest --test-dir build-tests --output-on-failure --timeout 60

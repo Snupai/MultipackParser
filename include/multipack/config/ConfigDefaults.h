@@ -9,6 +9,8 @@
 #define MULTIPACK_CONFIG_CONFIGDEFAULTS_H
 
 #include <QString>
+#include <QDir>
+#include <QtGlobal>
 
 #ifndef MULTIPACK_APP_VERSION
 #define MULTIPACK_APP_VERSION "2.0.0"
@@ -93,9 +95,15 @@ inline QString defaultDatabasePath()
  * @brief Get default settings file path
  * @return Settings file path
  */
+inline QString dataDirectory()
+{
+    const QString configured = qEnvironmentVariable("MULTIPACK_DATA_DIR").trimmed();
+    return configured.isEmpty() ? QDir::currentPath() : QDir(configured).absolutePath();
+}
+
 inline QString defaultSettingsPath()
 {
-    return "settings.json";
+    return QDir(dataDirectory()).filePath("settings.json");
 }
 
 /**
@@ -104,7 +112,7 @@ inline QString defaultSettingsPath()
  */
 inline QString defaultLogDir()
 {
-    return LOG_DIR;
+    return QDir(dataDirectory()).filePath(LOG_DIR);
 }
 
 } // namespace Defaults

@@ -2,6 +2,7 @@
 #define MULTIPACK_SYSTEM_AUTOUPDATER_H
 
 #include <QObject>
+#include "multipack/system/SystemUpdaterClient.h"
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QFile>
@@ -77,7 +78,8 @@ public:
      * @brief Constructor
      * @param parent Parent QObject
      */
-    explicit AutoUpdater(QObject* parent = nullptr);
+    explicit AutoUpdater(QObject* parent = nullptr,
+        const QString& systemSocketPath = QStringLiteral("/run/hmi-updater/control.sock"));
     
     /**
      * @brief Destructor
@@ -236,6 +238,11 @@ private slots:
     void onSslErrors(const QList<QSslError>& errors);
 
 private:
+    bool m_immutable = false;
+    SystemUpdaterClient* m_systemUpdater = nullptr;
+    QTimer* m_systemPoll = nullptr;
+    bool m_systemChecking = false;
+    bool m_systemInstalling = false;
     // Core components
     QNetworkAccessManager* m_networkManager;
     QNetworkReply* m_checkReply = nullptr;
