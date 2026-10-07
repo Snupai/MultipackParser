@@ -1,4 +1,5 @@
 #include "multipack/system/WifiSsidProbe.h"
+#include <QProcessEnvironment>
 namespace multipack::system {
 WifiSsidProbe::WifiSsidProbe(QObject* parent, const QString& program, int timeoutMs)
     : QObject(parent), m_process(new QProcess(this)), m_program(program), m_timeoutMs(timeoutMs)
@@ -25,6 +26,9 @@ void WifiSsidProbe::refresh()
 {
     if (m_process->state() != QProcess::NotRunning) return;
     m_expired = false;
+    auto environment = QProcessEnvironment::systemEnvironment();
+    environment.insert("LC_ALL", "C");
+    m_process->setProcessEnvironment(environment);
     m_process->start(m_program, {"--terse", "--escape", "no", "--fields", "ACTIVE,SSID",
         "device", "wifi", "list", "ifname", "wlan0", "--rescan", "no"});
     m_timer.start(m_timeoutMs);

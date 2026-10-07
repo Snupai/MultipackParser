@@ -6,6 +6,8 @@
 #include "multipack/database/DatabaseManager.h"
 #include "multipack/network/XmlRpcServer.h"
 #include "multipack/ui/MainWindow.h"
+#include "multipack/system/AutoUpdater.h"
+#include "multipack/message/StatusManager.h"
 
 #include <QApplication>
 #include <QDir>
@@ -18,6 +20,9 @@
 #include <QSignalBlocker>
 #include <QTcpSocket>
 #include <QTemporaryDir>
+#include <QLocalServer>
+#include <QLocalSocket>
+#include <QInputDialog>
 #include <QtTest/QtTest>
 
 using multipack::config::SettingsManager;
@@ -36,7 +41,73 @@ private slots:
     void failedPaletteLoadKeepsSuggestionsVisible();
     void successfulPaletteLoadClosesSuggestions();
     void selectedStartLayerReachesRpcAfterRobotStart();
+    void immutableUpdateRetryAndOperatorMessages();
 };
+
+void MainWindowIntegrationTest::immutableUpdateRetryAndOperatorMessages()
+{
+    using namespace multipack::system;
+    QTemporaryDir dir;
+    QLocalServer server;
+    QVERIFY(server.listen(dir.filePath("control.sock")));
+    qputenv("MULTIPACK_IMMUTABLE", "1");
+    AutoUpdater updater(nullptr, server.fullServerName());
+    MainWindow window;
+    window.setAutoUpdater(&updater);
+    auto* client = updater.findChild<SystemUpdaterClient*>();
+    QSignalSpy failures(&updater, &AutoUpdater::updateFailed);
+    QSignalSpy progress(&updater, &AutoUpdater::downloadProgress);
+    QTRY_VERIFY(server.hasPendingConnections());
+    auto* heldStatus = server.nextPendingConnection();
+    QTRY_VERIFY(heldStatus->canReadLine()); heldStatus->readLine();
+    QTimer acceptDialog;
+    acceptDialog.setInterval(10);
+    connect(&acceptDialog, &QTimer::timeout, &window, [] {
+        for (auto* widget : QApplication::topLevelWidgets()) {
+            if (auto* dialog = qobject_cast<QInputDialog*>(widget)) {
+                dialog->setTextValue("rpi-hmi-v2");
+                dialog->accept();
+            }
+        }
+    });
+    acceptDialog.start();
+    updater.showUpdateDialog(); // User confirms while background status is pending.
+    QCOMPARE(failures.count(), 1);
+    QVERIFY(failures.first().first().toString().contains("retry", Qt::CaseInsensitive));
+    heldStatus->write("{\"phase\":\"idle\",\"boot\":{}}\n"); heldStatus->flush();
+    QTRY_VERIFY(!client->busy());
+    auto& messages = multipack::message::StatusManager::instance();
+    messages.showError("Operator warning", 10000);
+    client->response(QJsonObject{{"phase", "idle"}, {"boot", QJsonObject{}}});
+    QCOMPARE(messages.currentMessage(), QString("Operator warning"));
+    QCOMPARE(progress.count(), 0);
+    int installs = 0;
+    connect(&server, &QLocalServer::newConnection, &server, [&] {
+        auto* peer = server.nextPendingConnection();
+        connect(peer, &QLocalSocket::readyRead, peer, [&, peer] {
+            if (!peer->canReadLine()) return;
+            const auto request = QJsonDocument::fromJson(peer->readLine()).object();
+            if (request.value("op") == "install") {
+                QCOMPARE(request.value("version").toString(), QString("rpi-hmi-v2"));
+                ++installs;
+                peer->write("{\"accepted\":true}\n");
+            } else {
+                peer->write("{\"phase\":\"error\",\"error\":\"download failed\",\"boot\":{}}\n");
+            }
+            peer->flush();
+        });
+    });
+    QVERIFY(updater.checkForUpdates()); // Saved failure must still open the VERSION dialog.
+    QTRY_COMPARE(installs, 1);
+    QTRY_COMPARE(updater.currentStatus(), UpdateStatus::Downloading);
+    QVERIFY(progress.count() > 0); // Real update progress is still visible.
+    acceptDialog.stop();
+    client->response(QJsonObject{{"phase", "error"}, {"error", "new download failed"}});
+    QCOMPARE(failures.count(), 2);
+    client->response(QJsonObject{{"phase", "error"}, {"error", "new download failed"}});
+    QCOMPARE(failures.count(), 2); // Repeated background failure status stays quiet.
+    qunsetenv("MULTIPACK_IMMUTABLE");
+}
 
 void MainWindowIntegrationTest::startAndStopServerFromUi()
 {

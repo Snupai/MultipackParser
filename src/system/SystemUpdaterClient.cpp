@@ -26,8 +26,11 @@ SystemUpdaterClient::SystemUpdaterClient(QObject* parent, const QString& path, i
             fail(tr("Invalid system updater reply")); return;
         }
         const auto value = doc.object();
+        const bool statusReply = m_statusRequest && value.value("phase").isString();
         cancel();
-        if (value.contains("error") && !value.value("error").isNull())
+        if (statusReply)
+            emit response(value); // An earlier installation failure is readable status.
+        else if (value.contains("error") && !value.value("error").isNull())
             emit error(tr("System updater: %1").arg(value.value("error").toString()));
         else if (value.value("accepted") != true && !value.value("phase").isString())
             emit error(tr("Invalid system updater status"));
@@ -50,6 +53,7 @@ bool SystemUpdaterClient::request(const QJsonObject& value)
     if (m_busy) return false;
     m_buffer.clear();
     m_request = QJsonDocument(value).toJson(QJsonDocument::Compact) + '\n';
+    m_statusRequest = value.value("op") == "status";
     m_busy = true;
     m_timeout.start(m_timeoutMs);
     m_socket->connectToServer(m_path);

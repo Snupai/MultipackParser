@@ -14,6 +14,7 @@ public:
         int timeoutMs = 4000);
     bool status();
     bool install(const QString& version);
+    bool busy() const { return m_busy; }
     void cancel(); // Cancels observation only; never cancels a privileged installation.
     static bool validVersion(const QString& version);
 signals:
@@ -28,6 +29,7 @@ private:
     QByteArray m_request, m_buffer;
     int m_timeoutMs;
     bool m_busy = false;
+    bool m_statusRequest = false;
 };
 }
 #endif

@@ -214,5 +214,12 @@ Without the environment flag the signed legacy updater is retained.
 SSID probing uses asynchronous `nmcli` with a deadline and no Wi-Fi rescan.
 HMI provisioning installs `network-manager`. Portable bundles require a host
 NetworkManager installation for SSID display; when it is absent, the UI explicitly
-shows SSID unavailable. Interface IP status remains usable. Probe processes belong
+shows SSID unavailable. The probe uses the C locale so translated nmcli output
+does not affect SSID detection. Interface IP status remains usable. Probe processes belong
 to the window and are terminated when it closes.
+
+A saved installation failure remains readable system status and allows another
+VERSION to be submitted. If a status request is still pending when an update is
+confirmed, the UI reports that no request was sent and asks the operator to retry.
+Background idle/error observations do not replace operator messages; active
+update progress and new installation failures remain visible.

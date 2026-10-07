@@ -11,6 +11,59 @@ using namespace multipack::system;
 class SystemClientsTest : public QObject {
     Q_OBJECT
 private slots:
+    void failedInstallationStatusAllowsAnotherCheckAndInstall() {
+        QTemporaryDir dir;
+        QLocalServer server;
+        QVERIFY(server.listen(dir.filePath("control.sock")));
+        SystemUpdaterClient client(nullptr, server.fullServerName());
+        QSignalSpy replies(&client, &SystemUpdaterClient::response);
+        QSignalSpy errors(&client, &SystemUpdaterClient::error);
+        QVERIFY(client.status());
+        QTRY_VERIFY(server.hasPendingConnections());
+        auto* peer = server.nextPendingConnection();
+        QTRY_VERIFY(peer->canReadLine()); peer->readLine();
+        peer->write("{\"phase\":\"error\",\"error\":\"download failed\"}\n"); peer->flush();
+        QTRY_COMPARE(replies.count(), 1);
+        QCOMPARE(errors.count(), 0);
+        QCOMPARE(replies.first().first().toJsonObject().value("error").toString(), QString("download failed"));
+        QVERIFY(client.install("rpi-hmi-v2"));
+        QTRY_VERIFY(server.hasPendingConnections());
+        auto* installPeer = server.nextPendingConnection();
+        QTRY_VERIFY(installPeer->canReadLine());
+        QCOMPARE(QJsonDocument::fromJson(installPeer->readLine()).object().value("op").toString(), QString("install"));
+        // An error rejecting this new install remains an error, even with a phase.
+        installPeer->write("{\"phase\":\"error\",\"error\":\"update already running\"}\n"); installPeer->flush();
+        QTRY_COMPARE(errors.count(), 1);
+    }
+    void immutableChecksCanRecoverFromSavedFailure() {
+        QTemporaryDir dir;
+        QLocalServer server;
+        QVERIFY(server.listen(dir.filePath("control.sock")));
+        connect(&server, &QLocalServer::newConnection, &server, [&] {
+            auto* peer = server.nextPendingConnection();
+            connect(peer, &QLocalSocket::readyRead, peer, [peer] {
+                if (!peer->canReadLine()) return;
+                peer->readLine();
+                peer->write("{\"phase\":\"error\",\"error\":\"download failed\",\"boot\":{}}\n");
+                peer->flush();
+            });
+        });
+        qputenv("MULTIPACK_IMMUTABLE", "1");
+        AutoUpdater updater(nullptr, server.fullServerName());
+        qunsetenv("MULTIPACK_IMMUTABLE");
+        auto* client = updater.findChild<SystemUpdaterClient*>();
+        QSignalSpy replies(client, &SystemUpdaterClient::response);
+        QSignalSpy completed(&updater, &AutoUpdater::checkCompleted);
+        QSignalSpy progress(&updater, &AutoUpdater::downloadProgress);
+        QTRY_COMPARE(replies.count(), 1);
+        for (int i = 1; i <= 2; ++i) {
+            QVERIFY(updater.checkForUpdates());
+            QTRY_COMPARE(completed.count(), i);
+            QVERIFY(completed.last().first().toBool());
+            QVERIFY(completed.last().at(1).toString().contains("download failed"));
+        }
+        QCOMPARE(progress.count(), 0); // Idle/error observations never overwrite operator messages.
+    }
     void versionBoundary() {
         QVERIFY(SystemUpdaterClient::validVersion("v2.0.0-rc_1"));
         QVERIFY(SystemUpdaterClient::validVersion(QString(80, 'a')));
@@ -92,6 +145,24 @@ private slots:
         QVERIFY(result.first().first().toString().contains("unavailable"));
     }
 #ifndef Q_OS_WIN
+    void wifiProbeUsesStableLocaleWithoutChangingParentEnvironment() {
+        QTemporaryDir dir;
+        QFile script(dir.filePath("localized-nmcli"));
+        QVERIFY(script.open(QIODevice::WriteOnly));
+        script.write("#!/bin/sh\nif [ \"$LC_ALL\" = C ]; then printf 'yes:Factory\\n'; else printf 'ja:Factory\\n'; fi\n");
+        script.close();
+        QVERIFY(script.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner));
+        const auto previous = qgetenv("LC_ALL");
+        const bool wasSet = qEnvironmentVariableIsSet("LC_ALL");
+        qputenv("LC_ALL", "de_DE.UTF-8");
+        WifiSsidProbe probe(nullptr, script.fileName());
+        QSignalSpy results(&probe, &WifiSsidProbe::result);
+        probe.refresh();
+        QTRY_COMPARE(results.count(), 1);
+        QCOMPARE(results.first().first().toString(), QString("Factory"));
+        QCOMPARE(qgetenv("LC_ALL"), QByteArray("de_DE.UTF-8"));
+        if (wasSet) qputenv("LC_ALL", previous); else qunsetenv("LC_ALL");
+    }
     void slowToolDoesNotBlockEventLoop() {
         QTemporaryDir dir;
         QFile script(dir.filePath("slow-nmcli"));

@@ -78,7 +78,8 @@ public:
      * @brief Constructor
      * @param parent Parent QObject
      */
-    explicit AutoUpdater(QObject* parent = nullptr);
+    explicit AutoUpdater(QObject* parent = nullptr,
+        const QString& systemSocketPath = QStringLiteral("/run/hmi-updater/control.sock"));
     
     /**
      * @brief Destructor
@@ -241,6 +242,7 @@ private:
     SystemUpdaterClient* m_systemUpdater = nullptr;
     QTimer* m_systemPoll = nullptr;
     bool m_systemChecking = false;
+    bool m_systemInstalling = false;
     // Core components
     QNetworkAccessManager* m_networkManager;
     QNetworkReply* m_checkReply = nullptr;

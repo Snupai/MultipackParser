@@ -56,7 +56,7 @@ QString sanitizeForFileName(const QString& value)
 }
 } // namespace
 
-AutoUpdater::AutoUpdater(QObject* parent)
+AutoUpdater::AutoUpdater(QObject* parent, const QString& systemSocketPath)
     : QObject(parent)
     , m_networkManager(new QNetworkAccessManager(this))
     , m_checkReply(nullptr)
@@ -82,21 +82,26 @@ AutoUpdater::AutoUpdater(QObject* parent)
     m_currentVersion = config::Defaults::VERSION;
     m_immutable = qEnvironmentVariable("MULTIPACK_IMMUTABLE", "0") == "1";
     if (m_immutable) {
-        m_systemUpdater = new SystemUpdaterClient(this);
+        m_systemUpdater = new SystemUpdaterClient(this, systemSocketPath);
         m_systemPoll = new QTimer(this);
         m_systemPoll->setInterval(2000);
         connect(m_systemPoll, &QTimer::timeout, this, [this] { m_systemUpdater->status(); });
         connect(m_systemUpdater, &SystemUpdaterClient::error, this, [this](const QString& error) {
+            const bool reportError = m_systemChecking || m_systemInstalling
+                || m_status == UpdateStatus::Downloading || m_status == UpdateStatus::Installing;
+            m_systemInstalling = false;
             m_progress.statusText = error;
             setStatus(UpdateStatus::Idle); // Allow retry after transport/daemon errors.
-            emit downloadProgress(m_progress);
-            emit updateFailed(error);
+            if (reportError) emit updateFailed(error);
             if (m_systemChecking) {
                 m_systemChecking = false;
                 emit checkCompleted(false, error);
             }
         });
         connect(m_systemUpdater, &SystemUpdaterClient::response, this, [this](const QJsonObject& value) {
+            const bool wasUpdating = m_status == UpdateStatus::Downloading
+                || m_status == UpdateStatus::Installing;
+            m_systemInstalling = false;
             if (value.value("accepted").toBool()) {
                 setStatus(UpdateStatus::Downloading);
                 m_progress.statusText = tr("System update accepted; preparing inactive slot");
@@ -111,6 +116,11 @@ AutoUpdater::AutoUpdater(QObject* parent)
                 m_progress.bytesTotal = static_cast<qint64>(value.value("total").toDouble());
                 m_progress.statusText = tr("System: %1; active %2 (%3); boot: %4")
                     .arg(phase, active, m_currentVersion, boot.value("phase").toString());
+                if (phase == "error") {
+                    const QString error = value.value("error").toString();
+                    m_progress.statusText += tr("; previous update failed: %1").arg(error);
+                    if (wasUpdating) emit updateFailed(error);
+                }
                 setStatus(phase == "downloading" ? UpdateStatus::Downloading
                     : phase == "installing" || phase == "rebooting" ? UpdateStatus::Installing
                     : UpdateStatus::Idle);
@@ -119,7 +129,8 @@ AutoUpdater::AutoUpdater(QObject* parent)
                     emit checkCompleted(true, m_progress.statusText);
                 }
             }
-            emit downloadProgress(m_progress);
+            if (m_status == UpdateStatus::Downloading || m_status == UpdateStatus::Installing)
+                emit downloadProgress(m_progress);
         });
         m_systemPoll->start();
         QTimer::singleShot(0, this, [this] { m_systemUpdater->status(); });
@@ -200,8 +211,18 @@ bool AutoUpdater::checkForUsbUpdates(const QString& usbDirectory)
 bool AutoUpdater::downloadAndInstallUpdate()
 {
     if (m_immutable) {
-        if (m_status != UpdateStatus::Idle) return false;
-        return m_systemUpdater->install(m_availableUpdate.version);
+        if (m_status != UpdateStatus::Idle) {
+            emit updateFailed(tr("A system update is already running; no new update was submitted."));
+            return false;
+        }
+        if (m_systemUpdater->busy()) {
+            emit updateFailed(tr("System updater status request is still pending. Please retry the update."));
+            return false;
+        }
+        m_systemInstalling = true;
+        const bool sent = m_systemUpdater->install(m_availableUpdate.version);
+        if (!sent) m_systemInstalling = false;
+        return sent;
     }
 
     if (m_availableUpdate.version.isEmpty()) {
