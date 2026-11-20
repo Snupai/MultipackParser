@@ -192,6 +192,9 @@ set(MOC_HEADERS
     include/multipack/system/UpdateChecker.h
     include/multipack/system/AutoUpdater.h
     include/multipack/system/UsbMonitor.h
+    include/multipack/planner/PlannerSyncService.h
+    include/multipack/ui/QrCodeWidget.h
+    include/multipack/ui/PlanProposalDialog.h
 )
 
 # Source files organization
@@ -208,6 +211,7 @@ set(MAIN_SOURCE
 
 set(UI_SOURCES
     src/ui/MainWindow.cpp
+    src/ui/MainWindowPlanner.cpp
     src/ui/OnScreenKeyboard.cpp
     src/ui/PasswordDialog.cpp
     src/ui/VisualizationWidget.cpp
@@ -218,6 +222,8 @@ set(UI_SOURCES
     src/ui/MessageDialog.cpp
     src/ui/UIHelpers.cpp
     src/ui/SplashScreen.cpp
+    src/ui/QrCodeWidget.cpp
+    src/ui/PlanProposalDialog.cpp
 )
 
 set(DATABASE_SOURCES
@@ -268,6 +274,21 @@ set(SYSTEM_SOURCES
     src/system/RobFileParser.cpp
     src/system/AutoUpdater.cpp
     src/system/UsbMonitor.cpp
+    src/system/RobPaletteConversion.cpp
+)
+
+set(PLANNER_SOURCES
+    src/planner/PlannerConfig.cpp
+    src/planner/PlannerProtocol.cpp
+    src/planner/SyncBackoff.cpp
+    src/planner/PlannerStore.cpp
+    src/planner/PlannerPlanList.cpp
+    src/planner/PlannerSyncService.cpp
+)
+
+# Vendored QR code generator (Nayuki, MIT) - no extra system package needed.
+set(THIRD_PARTY_SOURCES
+    src/third_party/qrcodegen/qrcodegen.cpp
 )
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64" AND MULTIPACK_SAFE_ARM64_EMULATION)
@@ -298,6 +319,8 @@ set(LIBRARY_SOURCES
     ${MESSAGE_SOURCES}
     ${CONFIG_SOURCES}
     ${SYSTEM_SOURCES}
+    ${PLANNER_SOURCES}
+    ${THIRD_PARTY_SOURCES}
     ${UTILS_SOURCES}
     ${RESOURCES}
     ${UI_FILES}
@@ -305,6 +328,7 @@ set(LIBRARY_SOURCES
 
 # Create reusable application library
 add_library(multipack-lib STATIC ${LIBRARY_SOURCES})
+target_include_directories(multipack-lib PUBLIC ${CMAKE_SOURCE_DIR}/src/third_party)
 target_compile_definitions(multipack-lib
     PUBLIC
         "MULTIPACK_APP_VERSION=\"${MULTIPACK_APP_VERSION}\""

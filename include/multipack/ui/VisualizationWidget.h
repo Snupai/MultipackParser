@@ -21,6 +21,9 @@ namespace multipack {
 namespace system {
 struct RobFileData;
 }
+namespace database {
+struct PaletteData;
+}
 }
 
 namespace multipack {
@@ -55,6 +58,14 @@ struct VisualPalette {
     int conveyorDirection = 0; ///< 0 = Längs, 1 = Quer
     QVector<VisualPackage> packages;
 };
+
+/**
+ * @brief Build the 3D preview model from stored palette data
+ * @param data Palette data from the database
+ * @param displayName Name shown in the preview (default: file name without .rob)
+ */
+VisualPalette visualPaletteFromPaletteData(const database::PaletteData& data,
+                                           const QString& displayName = QString());
 
 /**
  * @class VisualizationWidget

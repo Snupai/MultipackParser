@@ -1,6 +1,7 @@
 #ifndef MULTIPACK_SYSTEM_ROBFILEPARSER_H
 #define MULTIPACK_SYSTEM_ROBFILEPARSER_H
 
+#include <QByteArray>
 #include <QString>
 #include <QStringList>
 #include <QVector>
@@ -126,6 +127,19 @@ public:
      * @return RobFileData structure containing parsed data
      */
     RobFileData parseFileFullPath(const QString& fullPath);
+
+    /**
+     * @brief Parse .rob content that is already in memory
+     *
+     * Runs the same encoding fallback and structural validation as
+     * parseFile(), without touching the file system. Used to validate
+     * downloads before they are stored.
+     *
+     * @param bytes Raw .rob bytes (any line endings)
+     * @param sourceName Name used in error messages and RobFileData::filePath
+     * @return Parsed data; fileTimestamp is invalid (no file on disk)
+     */
+    RobFileData parseBytes(const QByteArray& bytes, const QString& sourceName);
     
     /**
      * @brief Validate if a file is a valid .rob file
@@ -161,6 +175,13 @@ private:
      * @return List of parsed integer lines, or empty if failed
      */
     QVector<QVector<int>> readFileWithEncodings(const QString& filePath);
+
+    /**
+     * @brief Decode raw bytes with the same encoding fallback as files
+     * @param bytes Raw content
+     * @return List of parsed integer lines, or empty if failed
+     */
+    QVector<QVector<int>> readBytesWithEncodings(const QByteArray& bytes);
     
     /**
      * @brief Parse the data array into structured data
