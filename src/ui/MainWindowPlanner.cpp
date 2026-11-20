@@ -334,6 +334,13 @@ void MainWindow::onPlannerLoadClicked()
         showMessage(QStringLiteral("Bitte Fertigstand auswählen"));
         return;
     }
+    // Never switch while a program runs. An unknown robot state does not block
+    // a manual load (robot off, operator at the machine), unlike a Planvorschlag.
+    const planner::SwitchPermission permission = currentSwitchPermission();
+    if (permission == planner::SwitchPermission::ProgramRunning) {
+        showMessage(switchPermissionText(permission));
+        return;
+    }
     const QString finalId = items.first()->data(ROLE_FINAL_ID).toString();
     const auto data = m_database->loadPaletteData(planner::plannerPaletteFileName(finalId));
     if (!data.has_value()) {

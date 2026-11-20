@@ -12,9 +12,10 @@ HMI. Contract: `docs/hmi-api-v1.md` in the `palette_3d_viewer` repository
   connects to the HMI; no inbound port is opened.
 - **No automatic takeover.** Syncing only changes the plan list. The running
   plan changes only when the operator loads a Fertigstand or confirms a
-  Planvorschlag, and a Planvorschlag is never taken over while the robot
-  executes a program (dashboard program state `PLAYING` or `PAUSED`) or while
-  the robot state is unknown.
+  Planvorschlag. Neither happens while the robot executes a program
+  (dashboard program state `PLAYING` or `PAUSED`). A Planvorschlag is also
+  not taken over while the robot state is unknown; a manual load from the
+  list is (robot off, operator at the machine).
 - **Offline first.** Every downloaded Fertigstand stays in the local database;
   the HMI keeps working from those copies when the planner is unreachable.
 

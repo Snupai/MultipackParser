@@ -18,6 +18,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QListWidget>
 #include <QMessageBox>
 #include <QProcess>
 #include <QPushButton>
@@ -119,6 +120,7 @@ private slots:
     void proposalAcceptSwitchesOnlyAfterConfirmation();
     void proposalClosedDoesNotSwitch();
     void proposalConfirmedWhileRunningDoesNotSwitch();
+    void manualLoadBlockedWhileProgramRuns();
 
 private:
     QTemporaryDir* m_dir = nullptr;
@@ -800,6 +802,43 @@ void PlannerSyncTest::proposalConfirmedWhileRunningDoesNotSwitch()
              PlannerSyncService::AnswerOutcome::Confirmed);
     QVERIFY(f.activeFile().isEmpty());
     QTRY_VERIFY(f.window->findChild<QMessageBox*>(QStringLiteral("proposalNotSwitchedNotice")));
+    f.window.reset();
+}
+
+void PlannerSyncTest::manualLoadBlockedWhileProgramRuns()
+{
+    qputenv("MULTIPACK_DISABLE_ROBOT_STATUS_MONITOR", "1");
+    int answerStatus = 204;
+    auto handler = proposalHandler(&answerStatus);
+    m_server->setHandler([handler](const FakePlannerServer::Request& r) {
+        if (r.method == "GET" && r.path == "/api/hmi/v1/proposal") {
+            return FakePlannerServer::Reply::empty(204);  // no proposal, only the list
+        }
+        return handler(r);
+    });
+
+    WindowFixture f;
+    QVERIFY(f.start(m_server->serverPort()));
+    auto* list = f.window->findChild<QListWidget*>(QStringLiteral("plannerFinalsList"));
+    auto* load = f.window->findChild<QPushButton*>(QStringLiteral("plannerLoadButton"));
+    QVERIFY(list && load);
+    QCOMPARE(list->count(), 1);
+    list->setCurrentRow(0);
+    QVERIFY(load->isEnabled());
+
+    // Program running (or paused): neither the button nor a double-click switches.
+    f.robot(multipack::robot::ProgramState::Playing);
+    QTest::mouseClick(load, Qt::LeftButton);
+    emit list->itemDoubleClicked(list->item(0));
+    QVERIFY(f.activeFile().isEmpty());
+    f.robot(multipack::robot::ProgramState::Paused);
+    QTest::mouseClick(load, Qt::LeftButton);
+    QVERIFY(f.activeFile().isEmpty());
+
+    // Stopped: the operator's load switches.
+    f.robot(multipack::robot::ProgramState::Stopped);
+    QTest::mouseClick(load, Qt::LeftButton);
+    QCOMPARE(f.activeFile(), multipack::planner::plannerPaletteFileName(kFinalA));
     f.window.reset();
 }
 
