@@ -62,6 +62,7 @@ namespace multipack {
     namespace message { }   // Messaging system
     namespace config { }    // Configuration
     namespace system { }    // System utilities
+    namespace planner { }   // Palettenplaner sync (HMI-Abgleich)
     namespace utils { }     // Helper utilities
 }
 ```
@@ -113,6 +114,13 @@ RobotController
 AudioManager
     ├── AudioQueue
     └── SafetyMonitor
+
+PlannerSyncService            (see docs/PLANNER_SYNC.md)
+    ├── PlannerConfig         settings + USB import
+    ├── PlannerProtocol       HMI API v1 wire format
+    ├── SyncBackoff           poll/backoff schedule
+    ├── PlannerStore          planner_finals table + palette rows
+    └── PlannerPlanList       visible list, switch guard
 ```
 
 ## Threading Model
@@ -124,6 +132,7 @@ AudioManager
 | RobotStatusMonitor | Background | Poll robot status |
 | AudioManager | Background | Audio playback |
 | SafetyMonitor | Background | Monitor safety state |
+| PlannerSyncService | Main (async QNetworkAccessManager) | Pull Fertigstände/Planvorschläge |
 
 ### Thread Safety
 
@@ -147,6 +156,17 @@ USB Stick → FileOperations::parseRobFile()
          → DatabaseManager::save()
          → GlobalState::update()
          → MainWindow::refresh()
+```
+
+### Planner Fertigstände (HMI-Abgleich)
+
+```
+Timer (10 s) → PlannerSyncService: GET /api/hmi/v1/finals (ETag)
+            → GET .../finals/{id}/rob → SHA-256 → RobFileParser::parseBytes()
+            → PlannerStore (planner_finals + "planner:<id>.rob" palette rows)
+            → Signal: finalsChanged() → MainWindow planner list
+Operator confirms → MainWindow::applyLoadedPalette() → GlobalState
+                  → PlannerSyncService::setActivePlan() → POST /api/hmi/v1/status
 ```
 
 ### Robot Communication
