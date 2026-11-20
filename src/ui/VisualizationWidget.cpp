@@ -4,9 +4,11 @@
  */
 
 #include "multipack/ui/VisualizationWidget.h"
+#include "multipack/database/DatabaseManager.h"
 #include "multipack/core/GlobalState.h"
 #include "multipack/system/FileOperations.h"
 
+#include <QFileInfo>
 #include <QPainter>
 #include <QPainterPath>
 #include <QPolygonF>
@@ -662,6 +664,197 @@ void VisualizationWidget::sortPackagesByDepth()
                   double depthB = b.x * m_sinAzim + b.y * m_cosAzim + b.layer * 1000;
                   return depthA < depthB;
               });
+}
+
+VisualPalette visualPaletteFromPaletteData(const database::PaletteData& data, const QString& displayName)
+{
+    auto calculatePackageCenters = [](double centerX, double centerY, int rotation, int count, int spacing) {
+        QVector<QPair<double, double>> centers;
+        if (count <= 1) {
+            centers.append({centerX, centerY});
+            return centers;
+        }
+
+        for (int i = 0; i < count; ++i) {
+            double offset = (i - (count - 1) / 2.0) * spacing;
+            double x = centerX;
+            double y = centerY;
+            switch (rotation) {
+                case 0:
+                    x = centerX + offset;
+                    break;
+                case 90:
+                    y = centerY + offset;
+                    break;
+                case 180:
+                    x = centerX - offset;
+                    break;
+                case 270:
+                    y = centerY - offset;
+                    break;
+                default:
+                    x = centerX + offset;
+                    break;
+            }
+            centers.append({x, y});
+        }
+        return centers;
+    };
+
+    VisualPalette palette;
+    if (!displayName.isEmpty()) {
+        palette.name = displayName;
+    } else {
+        palette.name = QFileInfo(data.metadata.fileName).fileName().trimmed();
+        if (palette.name.endsWith(QStringLiteral(".rob"), Qt::CaseInsensitive)) {
+            palette.name.chop(4);
+        }
+    }
+
+    const auto& lines = data.rawData;
+    bool hasRawData = lines.size() >= 4 && lines[0].size() >= 2 && lines[1].size() >= 4
+                      && !lines[2].isEmpty() && !lines[3].isEmpty();
+
+    if (hasRawData) {
+        int palletLength = lines[0][0];
+        int palletWidth = lines[0][1];
+        int packageWidth = lines[1][0];
+        int packageLength = lines[1][1];
+        int packageHeight = lines[1][2];
+        int direction = lines[1][3];
+        if (direction == 1) {
+            std::swap(packageWidth, packageLength);
+        }
+
+        int numUniqueLayers = lines[2][0];
+        int numLayers = lines[3][0];
+
+        palette.length = palletLength;
+        palette.width = palletWidth;
+        palette.height = data.paletteDimensions.height;
+        palette.packageWidth = packageWidth;
+        palette.packageLength = packageLength;
+        palette.packageHeight = packageHeight;
+        palette.totalLayers = numLayers;
+        palette.conveyorDirection = direction;
+
+        int currentLine = 5;
+        QVector<int> layerOrder;
+        for (int i = 0; i < numLayers && currentLine < lines.size(); ++i, ++currentLine) {
+            if (!lines[currentLine].isEmpty()) {
+                layerOrder.append(lines[currentLine][0]);
+            }
+        }
+
+        QVector<QVector<VisualPackage>> uniqueLayers;
+        uniqueLayers.resize(numUniqueLayers);
+
+        for (int layerId = 0; layerId < numUniqueLayers && currentLine < lines.size(); ++layerId) {
+            if (lines[currentLine].isEmpty()) {
+                break;
+            }
+
+            int numCoordinates = lines[currentLine][0];
+            ++currentLine;
+
+            QVector<VisualPackage> layerPackages;
+            for (int coord = 0; coord < numCoordinates && currentLine < lines.size(); ++coord, ++currentLine) {
+                if (lines[currentLine].size() < 9) {
+                    continue;
+                }
+
+                int x = lines[currentLine][3];
+                int y = lines[currentLine][4];
+                int rotation = lines[currentLine][5];
+                int numPackages = lines[currentLine][6];
+
+                auto centers = calculatePackageCenters(x, y, rotation, numPackages, packageWidth);
+                for (const auto& center : centers) {
+                    VisualPackage pkg;
+                    pkg.x = center.first;
+                    pkg.y = center.second;
+                    pkg.width = packageWidth;
+                    pkg.length = packageLength;
+                    pkg.height = packageHeight;
+                    pkg.rotation = rotation;
+                    layerPackages.append(pkg);
+                }
+            }
+
+            uniqueLayers[layerId] = layerPackages;
+        }
+
+        for (int layerIndex = 0; layerIndex < layerOrder.size(); ++layerIndex) {
+            int layerId = layerOrder[layerIndex] - 1;
+            if (layerId < 0 || layerId >= uniqueLayers.size()) {
+                continue;
+            }
+            for (auto pkg : uniqueLayers[layerId]) {
+                pkg.layer = layerIndex;
+                palette.packages.append(pkg);
+                palette.totalPackages++;
+            }
+        }
+    } else {
+        palette.length = data.paletteDimensions.length;
+        palette.width = data.paletteDimensions.width;
+        palette.height = data.paletteDimensions.height;
+        palette.packageWidth = data.packageDimensions.width;
+        palette.packageLength = data.packageDimensions.length;
+        palette.packageHeight = data.packageDimensions.height;
+        palette.totalLayers = data.metadata.anzLagen;
+        palette.conveyorDirection = data.metadata.paketQuer;
+
+        for (int layerNum = 0; layerNum < data.metadata.anzLagen; ++layerNum) {
+            int layerType = 0;
+            if (layerNum < data.layerAssignments.size()) {
+                layerType = data.layerAssignments[layerNum];
+            }
+
+            int layerTypeIndex = layerType;
+            if (layerTypeIndex > 0 && layerTypeIndex <= data.packagesPerLayerType.size()) {
+                layerTypeIndex -= 1;
+            }
+
+            int typeStartIndex = 0;
+            for (int t = 0; t < layerTypeIndex; ++t) {
+                if (t < data.packagesPerLayerType.size()) {
+                    typeStartIndex += data.packagesPerLayerType[t];
+                }
+            }
+
+            int packagesInType = 1;
+            if (layerTypeIndex >= 0 && layerTypeIndex < data.packagesPerLayerType.size()) {
+                packagesInType = data.packagesPerLayerType[layerTypeIndex];
+            }
+
+            for (int pkgIdx = 0; pkgIdx < packagesInType; ++pkgIdx) {
+                int posIdx = typeStartIndex + pkgIdx;
+                if (posIdx >= data.packagePositions.size()) {
+                    continue;
+                }
+
+                const auto& pos = data.packagePositions[posIdx];
+                int rotation = pos.ad;
+                int count = pos.nop > 0 ? pos.nop : 1;
+                auto centers = calculatePackageCenters(pos.xd, pos.yd, rotation, count, palette.packageWidth);
+                for (const auto& center : centers) {
+                    VisualPackage pkg;
+                    pkg.x = center.first;
+                    pkg.y = center.second;
+                    pkg.width = palette.packageWidth;
+                    pkg.length = palette.packageLength;
+                    pkg.height = palette.packageHeight;
+                    pkg.rotation = rotation;
+                    pkg.layer = layerNum;
+                    palette.packages.append(pkg);
+                    palette.totalPackages++;
+                }
+            }
+        }
+    }
+
+    return palette;
 }
 
 } // namespace ui

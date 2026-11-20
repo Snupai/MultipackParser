@@ -35,6 +35,9 @@ class RobotController;
 namespace audio {
 class AudioManager;
 }
+namespace planner {
+class PlannerSyncService;
+}
 namespace system {
 class UsbMonitor;
 class AutoUpdater;
@@ -92,6 +95,7 @@ public:
     audio::AudioManager* audioManager() const;
     system::AutoUpdater* autoUpdater() const;
     system::UsbMonitor* usbMonitor() const;
+    planner::PlannerSyncService* plannerSync() const;
 
 signals:
     /**
@@ -163,6 +167,12 @@ private:
     bool initializeUsbMonitor();
 
     /**
+     * @brief Start the Palettenplaner sync (HMI-Abgleich) if configured
+     * @return true if the service was created (configured or not)
+     */
+    bool initializePlannerSync();
+
+    /**
      * @brief Report progress
      * @param percentage Progress percentage
      * @param message Status message
@@ -178,6 +188,7 @@ private:
     std::unique_ptr<audio::AudioManager> m_audioManager;
     std::unique_ptr<system::AutoUpdater> m_autoUpdater;
     std::unique_ptr<system::UsbMonitor> m_usbMonitor;
+    std::unique_ptr<planner::PlannerSyncService> m_plannerSync;
     QString m_databasePath;
 
     bool m_initialized = false;

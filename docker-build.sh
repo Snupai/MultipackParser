@@ -125,6 +125,7 @@ mkdir -p "${BUNDLE_DIR}/plugins/platforms"
 mkdir -p "${BUNDLE_DIR}/plugins/sqldrivers"
 mkdir -p "${BUNDLE_DIR}/plugins/multimedia"
 mkdir -p "${BUNDLE_DIR}/plugins/platforminputcontexts"
+mkdir -p "${BUNDLE_DIR}/plugins/tls"
 mkdir -p "${BUNDLE_DIR}/data"
 
 # Copy the binary (Dockerfile WORKDIR is /app)
@@ -179,6 +180,8 @@ docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/li
 docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqeglfs.so" "${BUNDLE_DIR}/plugins/platforms/" 2>/dev/null || true
 docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqoffscreen.so" "${BUNDLE_DIR}/plugins/platforms/" 2>/dev/null || true
 docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/qt6/plugins/sqldrivers/libqsqlite.so" "${BUNDLE_DIR}/plugins/sqldrivers/" 2>/dev/null || true
+# TLS backend: HTTPS (planner sync) needs it; uses the Pi's libssl3.
+docker cp "${CONTAINER_NAME}:/usr/lib/aarch64-linux-gnu/qt6/plugins/tls/libqopensslbackend.so" "${BUNDLE_DIR}/plugins/tls/" 2>/dev/null || true
 
 # Copy additional required libraries
 echo "Copying additional libraries..."

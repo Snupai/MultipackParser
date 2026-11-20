@@ -14,6 +14,8 @@
 #include "multipack/system/UsbMonitor.h"
 #include "multipack/system/AutoUpdater.h"
 #include "multipack/core/GlobalState.h"
+#include "multipack/planner/PlannerConfig.h"
+#include "multipack/planner/PlannerSyncService.h"
 
 #include <QDebug>
 #include <QDir>
@@ -82,6 +84,12 @@ bool AppInitializer::initialize(ProgressCallback progressCallback)
         qWarning() << "USB monitoring initialization failed - continuing without USB updates";
     }
 
+    // Step 4b: Palettenplaner sync (45%) - pull only, works offline from local copies
+    reportProgress(45, "Starting planner sync...");
+    if (!initializePlannerSync()) {
+        qWarning() << "Planner sync unavailable - continuing without it";
+    }
+
     // Step 5: Start XML-RPC server (50%)
     reportProgress(50, "Starting XML-RPC server...");
     if (!initializeXmlRpcServer()) {
@@ -145,6 +153,11 @@ void AppInitializer::shutdown()
         m_xmlRpcServer.reset();
     }
 
+    if (m_plannerSync) {
+        qDebug() << "Stopping planner sync...";
+        m_plannerSync.reset();
+    }
+
     if (m_usbMonitor) {
         qDebug() << "Stopping USB monitor...";
         m_usbMonitor.reset();
@@ -203,6 +216,11 @@ system::AutoUpdater* AppInitializer::autoUpdater() const
 system::UsbMonitor* AppInitializer::usbMonitor() const
 {
     return m_usbMonitor.get();
+}
+
+planner::PlannerSyncService* AppInitializer::plannerSync() const
+{
+    return m_plannerSync.get();
 }
 
 bool AppInitializer::initializeLogging()
@@ -371,6 +389,24 @@ bool AppInitializer::initializeUsbMonitor()
     }
 
     qDebug() << "USB monitoring started and initial database update triggered";
+    return true;
+}
+
+bool AppInitializer::initializePlannerSync()
+{
+    if (!m_settingsManager || m_databasePath.isEmpty()) {
+        return false;
+    }
+
+    m_plannerSync = std::make_unique<planner::PlannerSyncService>();
+    if (!m_plannerSync->openStore(m_databasePath)) {
+        qWarning() << "Planner sync: local store could not be opened";
+        m_plannerSync.reset();
+        return false;
+    }
+    m_plannerSync->setAppVersion(QStringLiteral("MultipackParser %1").arg(config::Defaults::VERSION));
+    // Starts polling only with a complete, valid configuration (HTTPS or loopback HTTP).
+    m_plannerSync->setConfig(planner::loadFromSettings(*m_settingsManager), QDir::currentPath());
     return true;
 }
 

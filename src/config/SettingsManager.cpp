@@ -143,6 +143,13 @@ bool SettingsManager::save(const QString& path)
         return false;
     }
 
+    // settings.json holds the planner device token: owner-only access,
+    // restricted before the content is written.
+    if (!value(QStringLiteral("planner.token")).toString().isEmpty()
+        && !file.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner)) {
+        qWarning() << "Could not restrict permissions of settings file:" << filePath;
+    }
+
     QByteArray data = doc.toJson(QJsonDocument::Indented);
     qint64 bytesWritten = file.write(data);
     file.close();

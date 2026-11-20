@@ -68,6 +68,7 @@ multipack::
 ├── audio::          # Audio playback, safety monitor
 ├── message::        # Status/message management
 ├── system::         # USB monitoring, file operations
+├── planner::        # Palettenplaner sync (HMI-Abgleich), see docs/PLANNER_SYNC.md
 └── utils::          # String, socket, validation utilities
 ```
 
@@ -126,6 +127,12 @@ namespace DataIndices {
 - Status monitoring in background thread
 - Enumerations: `RobotMode`, `SafetyStatus`, `ProgramState`
 
+**Planner Sync (`planner/`)** - see [docs/PLANNER_SYNC.md](docs/PLANNER_SYNC.md)
+- Pulls Fertigstände and Planvorschläge from the Palettenplaner over HTTPS (HMI API v1)
+- Never switches the running plan by itself; MainWindow (`MainWindowPlanner.cpp`) does it after operator confirmation, never while a robot program runs
+- Fertigstände are stored as `planner:<finalId>.rob` palette rows; USB name lookups never see them
+- The device token lives in `settings.json` (`planner.*`), is never logged, never sent over plain HTTP to a remote host
+
 **Audio System (`audio/`)**
 - `AudioManager.h` - Qt Multimedia playback
 - `AudioQueue.h` - Queued playback with counting
@@ -167,9 +174,11 @@ MultipackParser/
 │   ├── audio/                  # AudioManager, AudioQueue, SafetyMonitor
 │   ├── message/                # MessageManager, StatusManager
 │   ├── system/                 # UsbMonitor, UpdateChecker, FileOperations
+│   ├── planner/                # PlannerSyncService, PlannerStore, PlannerConfig
 │   └── utils/                  # StringUtils, SocketUtils, ValidationUtils
 ├── src/                        # Source files (.cpp)
-│   └── (mirrors include structure)
+│   ├── (mirrors include structure)
+│   └── third_party/qrcodegen/  # Vendored QR code generator (Nayuki, MIT)
 ├── ui/                         # Qt Designer files
 │   ├── MainWindow.ui
 │   ├── PasswordEntry.ui

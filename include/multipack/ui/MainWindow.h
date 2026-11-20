@@ -7,9 +7,16 @@
 
 #include <QMainWindow>
 #include <QListWidgetItem>
+#include <QDateTime>
+#include <QPointer>
 #include <QStringList>
 #include <memory>
+#include <optional>
 #include <QTimer>
+
+#include "multipack/planner/PlannerPlanList.h"
+#include "multipack/planner/PlannerSyncService.h"
+#include "multipack/robot/RobotEnums.h"
 
 QT_BEGIN_NAMESPACE
 class QPushButton;
@@ -26,6 +33,7 @@ class QListWidget;
 class QSpinBox;
 class QTableWidget;
 class QTabWidget;
+class QGroupBox;
 QT_END_NAMESPACE
 
 // Forward declaration of generated UI class
@@ -68,6 +76,8 @@ class NotificationPopup;
 class DimensionInputHandler;
 class VisualizationWidget;
 class OnScreenKeyboard;
+class QrCodeWidget;
+class PlanProposalDialog;
 
 /**
  * @class MainWindow
@@ -89,6 +99,7 @@ public:
     void setAutoUpdater(system::AutoUpdater* updater);
     void setUsbMonitor(system::UsbMonitor* monitor);
     void setXmlRpcServer(network::XmlRpcServer* server);
+    void setPlannerSync(planner::PlannerSyncService* sync);
 
 signals:
     void serverStartRequested();
@@ -100,6 +111,8 @@ protected:
 
 public slots:
     void updateRobotStatus();
+    /// Dashboard status from RobotStatusMonitor (also feeds the plan switch guard).
+    void updateStatusTab(const robot::RobotStatus& status);
     void updatePaletteInfo();
     void showMessage(const QString& message);
     void appendConsoleLog(const QString& text);
@@ -198,7 +211,6 @@ private:
     void maybeStartRobotStatusMonitor();
     void stopRobotStatusMonitor();
     void setupStatusTab();
-    void updateStatusTab(const robot::RobotStatus& status);
     void onStatusDetailsUpdated(const QString& polyscopeVersion,
                                 const QString& serialNumber,
                                 const QString& loadedProgram);
@@ -222,6 +234,32 @@ private:
     void incrementUseCycleCount();
     bool ensureRobotConnected();
 
+    // Loading a plan into GlobalState (shared by USB plans and planner Fertigstände)
+    void applyLoadedPalette(const database::PaletteData& data, const QString& displayName);
+    [[nodiscard]] QString paletteDisplayName(const QString& fileName) const;
+
+    // Planner (HMI-Abgleich) - implemented in MainWindowPlanner.cpp
+    void setupPlannerPanel();
+    void setupPlannerSettingsTab();
+    void refreshPlannerList();
+    void updatePlannerConnectionState();
+    void updatePlannerSettingsTab();
+    void onPlannerLoadClicked();
+    void onPlannerImportClicked();
+    void onPlannerRemoveClicked();
+    void onActivePlanFileChanged();
+    void reportActivePlan(bool force);
+    [[nodiscard]] QString currentActiveFinalId() const;
+    [[nodiscard]] planner::SwitchPermission currentSwitchPermission() const;
+    [[nodiscard]] static QString switchPermissionText(planner::SwitchPermission permission);
+    void onProposalAvailable(const planner::Proposal& proposal);
+    void onProposalCleared(const QString& proposalId);
+    void onProposalAnswered(const QString& proposalId, bool accepted,
+                            planner::PlannerSyncService::AnswerOutcome outcome);
+    void openProposalDialog();
+    void closeProposalDialog();
+    void updateProposalUi();
+
     // Generated UI
     Ui::Form* ui = nullptr;
 
@@ -240,6 +278,7 @@ private:
     system::AutoUpdater* m_autoUpdater = nullptr;
     network::XmlRpcServer* m_xmlRpcServer = nullptr;
     QProcess* m_consoleProcess = nullptr;
+    planner::PlannerSyncService* m_plannerSync = nullptr;
 
     // Page indices (matching stackedWidget pages)
     enum PageIndex {
@@ -278,6 +317,35 @@ private:
     QLabel* m_statusSerialNumber = nullptr;
     QLabel* m_statusLoadedProgram = nullptr;
     OnScreenKeyboard* m_onScreenKeyboard = nullptr;
+
+    // Planner panel (main menu) and settings tab
+    QGroupBox* m_plannerPanel = nullptr;
+    QListWidget* m_plannerList = nullptr;
+    QPushButton* m_plannerLoadButton = nullptr;
+    QPushButton* m_plannerProposalButton = nullptr;
+    QLabel* m_plannerStateLabel = nullptr;
+    QLabel* m_plannerHintLabel = nullptr;
+    QWidget* m_plannerQrBox = nullptr;
+    QrCodeWidget* m_plannerQr = nullptr;
+    QLabel* m_plannerQrStateLabel = nullptr;
+    QLabel* m_plannerSettingsServer = nullptr;
+    QLabel* m_plannerSettingsHmi = nullptr;
+    QLabel* m_plannerSettingsToken = nullptr;
+    QLabel* m_plannerSettingsCa = nullptr;
+    QLabel* m_plannerSettingsState = nullptr;
+    QTimer* m_activePlanDebounce = nullptr;
+    QString m_reportedActiveFinalId;
+    bool m_activePlanReported = false;
+
+    // Planvorschlag
+    std::optional<planner::Proposal> m_pendingProposal;
+    QString m_deferredProposalId;
+    QPointer<PlanProposalDialog> m_proposalDialog;
+
+    // Last robot status from the dashboard monitor (for the switch guard)
+    bool m_robotStatusConnected = false;
+    robot::ProgramState m_robotProgramState = robot::ProgramState::Unknown;
+    QDateTime m_robotStatusTime;
     QListView* m_palettePlanCompletionView = nullptr;
     QStringListModel* m_palettePlanCompleterModel = nullptr;
     QStringList m_palettePlanCompletionWords;
