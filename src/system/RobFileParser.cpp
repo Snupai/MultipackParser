@@ -91,18 +91,30 @@ QString RobFileParser::getUsbPath() const
 
 QVector<QVector<int>> RobFileParser::readFileWithEncodings(const QString& filePath)
 {
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Failed to open file:" << filePath;
+        return QVector<QVector<int>>();
+    }
+    const QByteArray bytes = file.readAll();
+    file.close();
+
+    const QVector<QVector<int>> data = readBytesWithEncodings(bytes);
+    if (data.isEmpty()) {
+        qWarning() << "Failed to parse file with any encoding:" << filePath;
+    }
+    return data;
+}
+
+QVector<QVector<int>> RobFileParser::readBytesWithEncodings(const QByteArray& bytes)
+{
     QVector<QVector<int>> data;
-    
+
     // Try different encodings in order of likelihood
-    QStringList encodings = {"UTF-8", "Latin-1", "Windows-1252", "System"};
-    
+    const QStringList encodings = {"UTF-8", "Latin-1", "Windows-1252", "System"};
+
     for (const QString& encoding : encodings) {
-        QFile file(filePath);
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            continue;
-        }
-        
-        QTextStream stream(&file);
+        QTextStream stream(bytes, QIODevice::ReadOnly);
         if (encoding == "System") {
             stream.setEncoding(QStringConverter::System);
         } else {
@@ -111,35 +123,57 @@ QVector<QVector<int>> RobFileParser::readFileWithEncodings(const QString& filePa
                 stream.setEncoding(*encodingOpt);
             }
         }
-        
+
         data.clear();
         bool parseSuccess = true;
-        
+
+        // readLine() strips "\n" and "\r\n"; trimmed() drops any stray "\r".
         while (!stream.atEnd()) {
             QString line = stream.readLine().trimmed();
             if (line.isEmpty()) {
                 continue;
             }
-            
+
             QVector<int> lineData = lineToIntVector(line);
             if (lineData.isEmpty()) {
                 parseSuccess = false;
                 break;
             }
-            
+
             data.append(lineData);
         }
-        
-        file.close();
-        
+
         if (parseSuccess && !data.isEmpty()) {
-            qDebug() << "Successfully parsed file with encoding:" << encoding;
+            qDebug() << "Successfully parsed .rob data with encoding:" << encoding;
             return data;
         }
     }
-    
-    qWarning() << "Failed to parse file with any encoding:" << filePath;
+
     return QVector<QVector<int>>();
+}
+
+RobFileData RobFileParser::parseBytes(const QByteArray& bytes, const QString& sourceName)
+{
+    RobFileData data;
+    data.filePath = sourceName;
+
+    if (bytes.isEmpty()) {
+        data.isValid = false;
+        data.errorMessage = QString("Empty .rob data: %1").arg(sourceName);
+        return data;
+    }
+
+    const QVector<QVector<int>> rawData = readBytesWithEncodings(bytes);
+    if (rawData.isEmpty()) {
+        data.isValid = false;
+        data.errorMessage = QString("Failed to parse .rob data: %1").arg(sourceName);
+        return data;
+    }
+
+    RobFileData result = parseDataArray(rawData, sourceName);
+    // In-memory data has no file on disk; the caller supplies the timestamp.
+    result.fileTimestamp = QDateTime();
+    return result;
 }
 
 RobFileData RobFileParser::parseDataArray(const QVector<QVector<int>>& data, const QString& filePath)
@@ -385,8 +419,10 @@ QVector<int> RobFileParser::lineToIntVector(const QString& line)
 {
     QVector<int> result;
     
-    // Split by tab characters
-    QStringList parts = line.split('\t', Qt::SkipEmptyParts);
+    // Multipack writes tabs; the Palettenplaner accepts any whitespace (its
+    // .rob export and imported plans may use spaces). Accept both.
+    static const QRegularExpression whitespace(QStringLiteral("\\s+"));
+    const QStringList parts = line.split(whitespace, Qt::SkipEmptyParts);
     
     for (const QString& part : parts) {
         bool ok;

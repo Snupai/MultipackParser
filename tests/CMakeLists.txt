@@ -68,6 +68,27 @@ target_link_libraries(test_version_utils
 )
 add_test(NAME test_version_utils COMMAND $<TARGET_FILE:test_version_utils>)
 
+add_executable(test_planner_logic
+    test_planner_logic.cpp
+)
+target_link_libraries(test_planner_logic
+    PRIVATE
+        multipack-lib
+        Qt6::Test
+)
+add_test(NAME test_planner_logic COMMAND $<TARGET_FILE:test_planner_logic>)
+
+add_executable(test_planner_sync
+    test_planner_sync.cpp
+    FakePlannerServer.h
+)
+target_link_libraries(test_planner_sync
+    PRIVATE
+        multipack-lib
+        Qt6::Test
+)
+add_test(NAME test_planner_sync COMMAND $<TARGET_FILE:test_planner_sync>)
+
 if(NOT WIN32)
     set(TEST_QT_ENV "QT_QPA_PLATFORM=offscreen")
     set_tests_properties(
@@ -78,6 +99,8 @@ if(NOT WIN32)
         test_application_startup
         test_logging_config
         test_version_utils
+        test_planner_logic
+        test_planner_sync
         PROPERTIES
             ENVIRONMENT "${TEST_QT_ENV}"
     )

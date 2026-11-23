@@ -104,6 +104,10 @@ bool Application::initialize()
         m_mainWindow->setDatabaseManager(m_initializer->databaseManager());
     }
 
+    if (m_initializer->plannerSync()) {
+        m_mainWindow->setPlannerSync(m_initializer->plannerSync());
+    }
+
     if (m_initializer->robotController()) {
         m_mainWindow->setRobotController(m_initializer->robotController());
 

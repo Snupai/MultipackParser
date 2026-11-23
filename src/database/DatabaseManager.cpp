@@ -15,6 +15,12 @@ namespace database {
 
 namespace {
 
+// Planner Fertigstände are stored under "planner:<finalId>.rob". Name-based
+// lookups for USB plans use substring matching, which must never pick one of
+// those rows (an operator typing "12" could otherwise hit a UUID fragment).
+// Exact matches still find them.
+constexpr const char* NOT_PLANNER_ROW = "file_name NOT LIKE 'planner:%'";
+
 QString formatTimestamp(qint64 timestampMs)
 {
     return QDateTime::fromMSecsSinceEpoch(timestampMs).toString("yyyy-MM-dd hh:mm:ss");
@@ -440,7 +446,7 @@ std::optional<PaletteData> DatabaseManager::loadPaletteData(const QString& fileN
             FROM paletten_metadata
             WHERE file_name = ?
                OR file_name = ?
-               OR file_name LIKE ?
+               OR (file_name LIKE ? AND file_name NOT LIKE 'planner:%')
             ORDER BY
                 CASE
                     WHEN file_name = ? THEN 0
@@ -595,6 +601,7 @@ QVector<FileInfo> DatabaseManager::listAvailableFiles()
     query.prepare(R"(
         SELECT id, file_name, file_timestamp FROM paletten_metadata
         WHERE file_name IS NOT NULL AND file_name LIKE '%.rob'
+          AND file_name NOT LIKE 'planner:%'
         ORDER BY file_timestamp DESC
     )");
 
@@ -619,7 +626,8 @@ std::optional<FileInfo> DatabaseManager::findFile(const QString& fileName)
     }
 
     QSqlQuery query(m_db);
-    query.prepare("SELECT id, file_name, file_timestamp FROM paletten_metadata WHERE file_name LIKE ?");
+    query.prepare(QString("SELECT id, file_name, file_timestamp FROM paletten_metadata "
+                          "WHERE file_name LIKE ? AND %1").arg(NOT_PLANNER_ROW));
     query.addBindValue("%" + fileName + "%");
 
     if (query.exec() && query.next()) {
@@ -669,7 +677,8 @@ QStringList DatabaseManager::findByPackageDimensions(int length, int width, int 
             int metadataId = query.value(0).toInt();
 
             QSqlQuery nameQuery(m_db);
-            nameQuery.prepare("SELECT file_name FROM paletten_metadata WHERE id = ?");
+            nameQuery.prepare(QString("SELECT file_name FROM paletten_metadata WHERE id = ? AND %1")
+                                  .arg(NOT_PLANNER_ROW));
             nameQuery.addBindValue(metadataId);
             if (nameQuery.exec() && nameQuery.next()) {
                 QString name = nameQuery.value(0).toString();
@@ -748,10 +757,13 @@ std::optional<double> DatabaseManager::getBoxWeight(const QString& fileName)
     query.prepare(R"(
         SELECT pd.weight FROM paket_dim pd
         JOIN paletten_metadata pm ON pd.metadata_id = pm.id
-        WHERE pm.file_name = ? OR pm.file_name LIKE ?
+        WHERE pm.file_name = ? OR (pm.file_name LIKE ? AND pm.file_name NOT LIKE 'planner:%')
+        ORDER BY CASE WHEN pm.file_name = ? THEN 0 ELSE 1 END
+        LIMIT 1
     )");
     query.addBindValue(name);
     query.addBindValue("%" + name + "%");
+    query.addBindValue(name);
 
     if (query.exec() && query.next()) {
         QVariant val = query.value(0);
@@ -778,10 +790,13 @@ std::optional<int> DatabaseManager::getBoxHeight(const QString& fileName)
     query.prepare(R"(
         SELECT pd.height FROM paket_dim pd
         JOIN paletten_metadata pm ON pd.metadata_id = pm.id
-        WHERE pm.file_name = ? OR pm.file_name LIKE ?
+        WHERE pm.file_name = ? OR (pm.file_name LIKE ? AND pm.file_name NOT LIKE 'planner:%')
+        ORDER BY CASE WHEN pm.file_name = ? THEN 0 ELSE 1 END
+        LIMIT 1
     )");
     query.addBindValue(name);
     query.addBindValue("%" + name + "%");
+    query.addBindValue(name);
 
     if (query.exec() && query.next()) {
         QVariant val = query.value(0);
@@ -808,10 +823,13 @@ std::optional<bool> DatabaseManager::getEinzelpaketLaengs(const QString& fileNam
     query.prepare(R"(
         SELECT pd.einzelpaket_laengs FROM paket_dim pd
         JOIN paletten_metadata pm ON pd.metadata_id = pm.id
-        WHERE pm.file_name = ? OR pm.file_name LIKE ?
+        WHERE pm.file_name = ? OR (pm.file_name LIKE ? AND pm.file_name NOT LIKE 'planner:%')
+        ORDER BY CASE WHEN pm.file_name = ? THEN 0 ELSE 1 END
+        LIMIT 1
     )");
     query.addBindValue(name);
     query.addBindValue("%" + name + "%");
+    query.addBindValue(name);
 
     if (query.exec() && query.next()) {
         QVariant val = query.value(0);
@@ -848,9 +866,13 @@ bool DatabaseManager::deletePalette(const QString& fileName)
 int DatabaseManager::getMetadataId(const QString& fileName)
 {
     QSqlQuery query(m_db);
-    query.prepare("SELECT id FROM paletten_metadata WHERE file_name = ? OR file_name LIKE ?");
+    query.prepare(QString("SELECT id FROM paletten_metadata "
+                          "WHERE file_name = ? OR (file_name LIKE ? AND %1) "
+                          "ORDER BY CASE WHEN file_name = ? THEN 0 ELSE 1 END LIMIT 1")
+                      .arg(NOT_PLANNER_ROW));
     query.addBindValue(fileName);
     query.addBindValue("%" + fileName + "%");
+    query.addBindValue(fileName);
 
     if (query.exec() && query.next()) {
         return query.value(0).toInt();

@@ -392,7 +392,10 @@ QString RobotController::waitForResponse(int timeoutMs)
     timer.setSingleShot(true);
 
     QObject::connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-    QObject::connect(m_socket, &QTcpSocket::readyRead, [this, &loop]() {
+    // &loop as context: the handler is disconnected when this call returns.
+    // Without it every call left a handler bound to a dead QEventLoop, and the
+    // next dashboard answer crashed the app.
+    QObject::connect(m_socket, &QTcpSocket::readyRead, &loop, [this, &loop]() {
         m_pendingResponse += QString::fromUtf8(m_socket->readAll());
         // Check if we have a complete response (ends with newline)
         if (m_pendingResponse.contains('\n')) {

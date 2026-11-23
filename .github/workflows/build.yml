@@ -60,6 +60,7 @@ jobs:
             output/multipack-parser-arm64/plugins/sqldrivers \
             output/multipack-parser-arm64/plugins/multimedia \
             output/multipack-parser-arm64/plugins/platforminputcontexts \
+            output/multipack-parser-arm64/plugins/tls \
             output/multipack-parser-arm64/data
 
           cat > output/copy-runtime.sh <<'EOF'
@@ -115,6 +116,8 @@ jobs:
             /usr/lib/aarch64-linux-gnu/qt6/plugins/platforms/libqoffscreen.so \
             /output/multipack-parser-arm64/plugins/platforms/
           cp /usr/lib/aarch64-linux-gnu/qt6/plugins/sqldrivers/libqsqlite.so /output/multipack-parser-arm64/plugins/sqldrivers/
+          # TLS backend: HTTPS (planner sync) needs it; uses the Pi's libssl3.
+          cp /usr/lib/aarch64-linux-gnu/qt6/plugins/tls/libqopensslbackend.so /output/multipack-parser-arm64/plugins/tls/
           EOF
 
           docker run --rm \

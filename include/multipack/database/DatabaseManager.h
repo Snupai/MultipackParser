@@ -132,6 +132,12 @@ public:
     [[nodiscard]] bool isOpen() const;
 
     /**
+     * @brief Underlying connection (for modules that keep their own tables
+     *        in the same database file, e.g. the planner sync store)
+     */
+    [[nodiscard]] QSqlDatabase connection() const { return m_db; }
+
+    /**
      * @brief Create database tables if they don't exist
      * @return true on success
      */
