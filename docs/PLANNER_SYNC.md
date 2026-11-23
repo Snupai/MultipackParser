@@ -93,9 +93,10 @@ loads a plan via XML-RPC, and every 60 s.
   übermittelt" quickly and can retry.
 - **Unloadable plan:** when the proposed Fertigstand cannot be loaded on this
   HMI (the `.rob` parser rejects it, or its checksum mismatches twice in a
-  row), the HMI answers `rejected` by itself (the contract has no other
-  result) so the proposal does not stay pending for 24 h, and shows the
-  operator a notice naming the plan. Nothing is switched.
+  row, counted across list and proposal downloads), the HMI answers
+  `rejected` by itself (the contract has no other result) so the proposal
+  does not stay pending for 24 h, and shows the operator a notice naming the
+  plan. Nothing is switched.
 
 ## Storage
 

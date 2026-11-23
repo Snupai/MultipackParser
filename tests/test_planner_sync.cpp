@@ -130,6 +130,7 @@ private slots:
     void unloadableFinalShowsErrorAndProposalIsRejected();
     void proposalForUnknownUnloadableFinalIsRejected();
     void unloadableNoticeBeforeWindowIsShown();
+    void proposalForPersistentChecksumMismatchIsRejected();
     void answerAgainstHangingServerGivesUpQuickly();
     void refusalMessageIsNotClipped();
     void proposalDialogShowsRealPackageCount();
@@ -1007,6 +1008,44 @@ void PlannerSyncTest::unloadableNoticeBeforeWindowIsShown()
     window->setPlannerSync(nullptr);
     window->setPlannerSync(m_service.get());
     QCOMPARE(window->findChildren<QMessageBox*>(QStringLiteral("proposalUnloadableNotice")).size(), 1);
+}
+
+void PlannerSyncTest::proposalForPersistentChecksumMismatchIsRejected()
+{
+    // Listed and proposed; the planner serves bytes that never match the
+    // checksum. The list download runs first in every cycle and keeps the
+    // retry cooldown going, so the proposal path must count its mismatches.
+    const QByteArray declared = robA();
+    m_server->setHandler([declared](const FakePlannerServer::Request& r) {
+        if (r.path == "/api/hmi/v1/finals") {
+            return FakePlannerServer::Reply::json(200, finalsBody({finalJson(kFinalA, "p", "Alpha", declared)}));
+        }
+        if (r.path.endsWith("/rob")) {
+            FakePlannerServer::Reply reply;
+            reply.body = declared + "corrupt";
+            return reply;
+        }
+        if (r.method == "GET" && r.path == "/api/hmi/v1/proposal") {
+            return FakePlannerServer::Reply::json(200, proposalBody(kFinalA, declared));
+        }
+        return FakePlannerServer::Reply::empty(204);
+    });
+    startService(configFor(m_server->serverPort()));
+    QSignalSpy unloadable(m_service.get(), &PlannerSyncService::proposalUnloadable);
+
+    // One mismatch: retried later (contract), not answered yet.
+    QVERIFY(runCycle(*m_service));
+    QTest::qWait(100);
+    QVERIFY(answersSent(*m_server).isEmpty());
+    QCOMPARE(m_service->store().find(kFinalA)->loadError,
+             QString::fromLatin1(multipack::planner::LOAD_ERROR_CHECKSUM));
+
+    // After the cooldown the second mismatch answers the proposal.
+    QTest::qWait(static_cast<int>(multipack::planner::SyncBackoff::POLL_INTERVAL_MS) + 200);
+    QVERIFY(runCycle(*m_service));
+    QTRY_COMPARE(answersSent(*m_server), QStringList{QStringLiteral("rejected")});
+    QCOMPARE(unloadable.count(), 1);
+    QCOMPARE(unloadable.first().at(1).toString(), QString::fromLatin1(multipack::planner::LOAD_ERROR_CHECKSUM));
 }
 
 void PlannerSyncTest::answerAgainstHangingServerGivesUpQuickly()

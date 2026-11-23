@@ -117,6 +117,7 @@ void PlannerSyncService::setConfig(const PlannerConfig& config, const QString& w
         m_store.setFinalsEtag(QString());
         m_answeredProposals.clear();
         m_retryAfter.clear();
+        m_checksumMismatches.clear();
         clearProposal();
     }
 
@@ -305,6 +306,24 @@ void PlannerSyncService::onFinalsResponse(const Response& response)
     downloadNext();
 }
 
+void PlannerSyncService::countChecksumMismatch(const FinalEntry& entry)
+{
+    auto& counter = m_checksumMismatches[entry.id];
+    if (counter.first.compare(entry.sha256, Qt::CaseInsensitive) != 0) {
+        counter = qMakePair(entry.sha256.toLower(), 0);
+    }
+    ++counter.second;
+}
+
+int PlannerSyncService::checksumMismatches(const QString& finalId, const QString& sha256) const
+{
+    const auto it = m_checksumMismatches.constFind(finalId);
+    if (it == m_checksumMismatches.constEnd() || it->first.compare(sha256, Qt::CaseInsensitive) != 0) {
+        return 0;
+    }
+    return it->second;
+}
+
 bool PlannerSyncService::retryAllowed(const QString& finalId) const
 {
     const auto it = m_retryAfter.constFind(finalId);
@@ -350,11 +369,13 @@ void PlannerSyncService::downloadNext()
                     switch (m_store.storeRob(entry, response.body, &error)) {
                         case StoreOutcome::Stored:
                             m_retryAfter.remove(entry.id);
+                            m_checksumMismatches.remove(entry.id);
                             qCInfo(plannerLog) << "Planner final stored:" << entry.id << entry.name;
                             emit finalsChanged();
                             break;
                         case StoreOutcome::ShaMismatch:
                             qCWarning(plannerLog) << "Planner final checksum mismatch, discarded:" << entry.id;
+                            countChecksumMismatch(entry);
                             m_retryAfter.insert(entry.id, now.addMSecs(SyncBackoff::POLL_INTERVAL_MS));
                             emit finalsChanged();  // list shows the error state
                             break;
@@ -436,6 +457,14 @@ void PlannerSyncService::onProposalResponse(const Response& response)
         finishCycle(true);
         return;
     }
+    // Same for bytes that failed the checksum twice in a row (in either
+    // download path); checked before the retry cooldown, which the list
+    // download keeps resetting.
+    if (checksumMismatches(proposal->finalId, proposal->sha256) >= 2) {
+        rejectUnloadable(*proposal, QString::fromLatin1(LOAD_ERROR_CHECKSUM));
+        finishCycle(true);
+        return;
+    }
 
     // The proposed Fertigstand is not here yet: fetch and verify it first.
     FinalEntry entry;
@@ -470,9 +499,9 @@ void PlannerSyncService::onProposalResponse(const Response& response)
                         return;
                     }
                     QString error;
-                    const QString previousError = m_store.find(entry.id).value_or(StoredFinal()).loadError;
                     const StoreOutcome outcome = m_store.storeRob(entry, robResponse.body, &error);
                     if (outcome == StoreOutcome::Stored) {
+                        m_checksumMismatches.remove(entry.id);
                         emit finalsChanged();
                         publish(p);
                     } else {
@@ -482,10 +511,12 @@ void PlannerSyncService::onProposalResponse(const Response& response)
                         emit finalsChanged();
                         // Invalid .rob: final. Checksum: retried once (transfer error),
                         // a second mismatch in a row means these bytes never match.
+                        if (outcome == StoreOutcome::ShaMismatch) {
+                            countChecksumMismatch(entry);
+                        }
                         if (outcome == StoreOutcome::InvalidRob) {
                             rejectUnloadable(p, QString::fromLatin1(LOAD_ERROR_INVALID_ROB));
-                        } else if (outcome == StoreOutcome::ShaMismatch
-                                   && previousError == QLatin1String(LOAD_ERROR_CHECKSUM)) {
+                        } else if (checksumMismatches(entry.id, entry.sha256) >= 2) {
                             rejectUnloadable(p, QString::fromLatin1(LOAD_ERROR_CHECKSUM));
                         }
                     }

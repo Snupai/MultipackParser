@@ -119,8 +119,13 @@ bool PlannerStore::createTables()
         qCritical() << "Failed to create planner_finals:" << query.lastError().text();
         return false;
     }
-    // Tables created before load_error existed: add it (fails harmlessly if present).
+    // Tables created before load_error existed: add it (fails harmlessly if
+    // present), then make sure it is really there.
     query.exec("ALTER TABLE planner_finals ADD COLUMN load_error TEXT");
+    if (!query.exec("SELECT load_error FROM planner_finals LIMIT 0")) {
+        qCritical() << "planner_finals.load_error missing:" << query.lastError().text();
+        return false;
+    }
     if (!query.exec(R"(
         CREATE TABLE IF NOT EXISTS planner_state (
             key TEXT PRIMARY KEY,

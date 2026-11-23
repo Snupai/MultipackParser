@@ -457,7 +457,8 @@ void MainWindow::showUnloadableProposalNotices()
         auto* box = new QMessageBox(
             QMessageBox::Warning, QStringLiteral("Planvorschlag"),
             QStringLiteral("Vorgeschlagener Plan \"%1\" kann auf diesem HMI nicht geladen werden (%2).\n"
-                           "Der Vorschlag wurde abgelehnt. Bitte den Plan im Palettenplaner prüfen.")
+                           "Der Vorschlag wird dem Planer als abgelehnt gemeldet. "
+                           "Bitte den Plan im Palettenplaner prüfen.")
                 .arg(proposal.name, loadErrorText(loadError)),
             QMessageBox::Ok, this);
         box->setObjectName(QStringLiteral("proposalUnloadableNotice"));

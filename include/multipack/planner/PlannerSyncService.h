@@ -26,6 +26,7 @@
 
 #include <QDateTime>
 #include <QHash>
+#include <QPair>
 #include <QObject>
 #include <QPointer>
 #include <QSet>
@@ -189,6 +190,9 @@ private:
     void rejectUnloadable(const Proposal& proposal, const QString& loadError);
     void abortAll();
     [[nodiscard]] bool retryAllowed(const QString& finalId) const;
+    void countChecksumMismatch(const FinalEntry& entry);
+    /// Consecutive checksum mismatches for these bytes (id + expected sha256).
+    [[nodiscard]] int checksumMismatches(const QString& finalId, const QString& sha256) const;
 
     QNetworkAccessManager* m_network = nullptr;
     QTimer* m_timer = nullptr;
@@ -205,6 +209,7 @@ private:
 
     QDateTime m_lastSuccess;
     QHash<QString, QDateTime> m_retryAfter;  ///< finalId -> earliest next download
+    QHash<QString, QPair<QString, int>> m_checksumMismatches;  ///< finalId -> (sha256, count)
 
     std::optional<Proposal> m_proposal;
     QSet<QString> m_answeredProposals;
