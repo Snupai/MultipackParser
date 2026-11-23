@@ -53,6 +53,13 @@ pyside6-designer ui/MainWindow.ui
 
 Qt's AUTOUIC handles `.ui` file compilation automatically via CMake.
 
+**Layout and look (1280x720 touch panel)**
+- `ui/MainWindow.ui` is layout-based: a header bar with the top navigation (`navBetrieb`, `navPlaene`, `navRoboter`, `navQrCode`, settings gear), a notice bar (UR20 palette release) and the page stack. No absolute geometry, no per-page back buttons.
+- Pages: Betrieb (plan input, planner Fertigstände), Pläne (plan library with preview), Roboter (tabs Roboter/Aufnahme/Status, locked until a plan is loaded), QR-Code (only with a configured planner), Einstellungen (password or USB key).
+- One stylesheet for the window and its dialogs: `resources/styles/hmi.qss`, applied by `ui::Theme` (`include/multipack/ui/Theme.h`). Pick variants with dynamic properties (`role`, `scale`, `card`, `density`), not with inline styles. Heights come from the stylesheet: a `min-height` rule replaces a widget's own minimum height.
+- The on-screen keyboard covers the lower 320 px: keep text inputs in the upper half of a page.
+- Yes/no questions go through `Theme::confirm()` (German, touch-sized buttons).
+
 ## Architecture Overview
 
 ### Namespace Structure

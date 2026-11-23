@@ -8,6 +8,7 @@
 #include "multipack/core/GlobalState.h"
 #include "multipack/ui/MainWindow.h"
 #include "multipack/ui/SplashScreen.h"
+#include "multipack/ui/Theme.h"
 #include "multipack/config/ConfigDefaults.h"
 #include "multipack/config/SettingsManager.h"
 #include "multipack/database/DatabaseManager.h"
@@ -32,6 +33,8 @@ Application::Application(int& argc, char** argv)
     setApplicationVersion(config::Defaults::VERSION);
     setOrganizationName("Szaidel Cosmetic GmbH");
     setOrganizationDomain("szaidel.com");
+
+    ui::Theme::applyApplicationLook(*this);
 }
 
 Application::~Application()

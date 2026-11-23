@@ -5,6 +5,7 @@
 #include "multipack/ui/PasswordDialog.h"
 #include "multipack/config/SettingsManager.h"
 #include "multipack/config/ConfigDefaults.h"
+#include "multipack/ui/Theme.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -13,6 +14,8 @@
 #include <QApplication>
 #include <QScreen>
 #include <QDebug>
+#include <QIcon>
+#include <QPushButton>
 
 namespace multipack {
 namespace ui {
@@ -46,7 +49,8 @@ PasswordDialog::PasswordDialog(QWidget* parent, config::SettingsManager* setting
 void PasswordDialog::setupUi()
 {
     setWindowTitle("Passwort");
-    setFixedSize(385, 136);
+    // Touch-sized, at the top of the screen so the on-screen keyboard stays clear.
+    setFixedSize(640, 150);
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(20, 20, 20, 20);
@@ -54,7 +58,8 @@ void PasswordDialog::setupUi()
 
     // Error label (hidden by default)
     m_errorLabel = new QLabel(this);
-    m_errorLabel->setStyleSheet("color: red; font-weight: bold;");
+    m_errorLabel->setStyleSheet(
+        QStringLiteral("color: %1; font-weight: bold;").arg(QString::fromLatin1(Theme::DANGER)));
     m_errorLabel->hide();
     mainLayout->addWidget(m_errorLabel);
 
@@ -71,6 +76,7 @@ void PasswordDialog::setupUi()
                                      Qt::ImhDigitsOnly |
                                      Qt::ImhSensitiveData);
     m_lineEdit->setFocusPolicy(Qt::StrongFocus);
+    Theme::setScale(m_lineEdit, "medium");
 
     // Connect return key to accept
     connect(m_lineEdit, &QLineEdit::returnPressed, this, &PasswordDialog::accept);
@@ -82,42 +88,26 @@ void PasswordDialog::setupUi()
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
         Qt::Horizontal,
         this);
+    if (QPushButton* ok = m_buttonBox->button(QDialogButtonBox::Ok)) {
+        ok->setText(QStringLiteral("OK"));
+        ok->setIcon(QIcon());
+        Theme::setRole(ok, "primary");
+    }
+    if (QPushButton* cancel = m_buttonBox->button(QDialogButtonBox::Cancel)) {
+        cancel->setText(QStringLiteral("Abbrechen"));
+        cancel->setIcon(QIcon());
+    }
     inputLayout->addWidget(m_buttonBox);
 
     connect(m_buttonBox, &QDialogButtonBox::accepted, this, &PasswordDialog::accept);
     connect(m_buttonBox, &QDialogButtonBox::rejected, this, &PasswordDialog::reject);
 
     mainLayout->addLayout(inputLayout);
-    // Styling
-    setStyleSheet(R"(
-        QDialog {
-            background-color: #f5f5f5;
-            border: 1px solid #c0c0c0;
-            border-radius: 4px;
-        }
-        QLineEdit {
-            padding: 8px;
-            border: 1px solid #c0c0c0;
-            border-radius: 4px;
-            background-color: white;
-            font-size: 14px;
-        }
-        QLineEdit:focus {
-            border-color: #0078d4;
-        }
-        QPushButton {
-            padding: 6px 16px;
-            border: 1px solid #c0c0c0;
-            border-radius: 4px;
-            background-color: #e0e0e0;
-        }
-        QPushButton:hover {
-            background-color: #d0d0d0;
-        }
-        QPushButton:pressed {
-            background-color: #c0c0c0;
-        }
-    )");
+    // Controls follow the HMI theme inherited from the main window; the frame
+    // marks the frameless dialog against the page behind it.
+    setObjectName(QStringLiteral("PasswordDialog"));
+    setStyleSheet(QStringLiteral(
+        "QDialog#PasswordDialog { background-color: #ffffff; border: 2px solid #1d2f5e; }"));
 }
 
 QString PasswordDialog::password() const

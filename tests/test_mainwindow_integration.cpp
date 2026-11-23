@@ -6,15 +6,24 @@
 #include "multipack/database/DatabaseManager.h"
 #include "multipack/network/XmlRpcServer.h"
 #include "multipack/ui/MainWindow.h"
+#include "multipack/ui/Theme.h"
 
+#include <QAbstractButton>
 #include <QApplication>
+#include <QDateTime>
 #include <QDir>
 #include <QLibraryInfo>
 #include <QLineEdit>
+#include <QListWidget>
+#include <QMessageBox>
 #include <QPushButton>
+#include <QStackedWidget>
 #include <QTcpSocket>
 #include <QTemporaryDir>
+#include <QTimer>
 #include <QtTest/QtTest>
+
+#include <memory>
 
 using multipack::config::SettingsManager;
 using multipack::core::GlobalState;
@@ -29,7 +38,83 @@ class MainWindowIntegrationTest : public QObject
 
 private slots:
     void startAndStopServerFromUi();
+    void themeIsAppliedToTheWindow();
+    void experimentalButtonIsReplacedByPlansTab();
+    void navigationSwitchesPagesAndLocksRobotUntilPlanLoaded();
+    void qrCodeTabIsHiddenWithoutPlanner();
+    void ur20NoticeBarOffersPaletteRelease();
 };
+
+namespace {
+
+/// A main window on a temporary database with one plan ("sample").
+struct UiFixture {
+    QTemporaryDir dir;
+    DatabaseManager database;
+    SettingsManager settings;
+    std::unique_ptr<MainWindow> window;
+
+    bool start(const QString& urModel = QStringLiteral("UR10"))
+    {
+        qputenv("MULTIPACK_DISABLE_ROBOT_STATUS_MONITOR", "1");
+        GlobalState::instance().clear();
+        if (!dir.isValid() || !database.open(dir.filePath("palettes.db"))
+            || database.savePaletteData(testhelpers::makeSamplePaletteData()) != SaveResult::Inserted) {
+            return false;
+        }
+        settings.resetToDefaults();
+        settings.setValue(multipack::config::Keys::INFO_UR_MODEL, urModel);
+        window = std::make_unique<MainWindow>();
+        window->setSettingsManager(&settings);
+        window->setDatabaseManager(&database);
+        window->setGlobalState(&GlobalState::instance());
+        window->show();
+        return true;
+    }
+
+    template <typename T>
+    T* find(const char* name) const { return window->findChild<T*>(QString::fromLatin1(name)); }
+
+    QString currentPage() const
+    {
+        auto* stack = find<QStackedWidget>("stackedWidget");
+        return stack && stack->currentWidget() ? stack->currentWidget()->objectName() : QString();
+    }
+
+    void loadSamplePlan() const
+    {
+        find<QLineEdit>("EingabePallettenplan")->setText("sample");
+        QTest::mouseClick(find<QPushButton>("LadePallettenplan"), Qt::LeftButton);
+    }
+};
+
+/// Press @p buttonText in the next modal dialog. The dialog runs a nested
+/// event loop (exec()), so the answer has to be armed before it opens.
+std::shared_ptr<bool> answerNextModalDialog(const QString& buttonText)
+{
+    auto answered = std::make_shared<bool>(false);
+    auto* timer = new QTimer(qApp);
+    timer->setInterval(20);
+    QObject::connect(timer, &QTimer::timeout, timer, [timer, buttonText, answered]() {
+        QWidget* modal = QApplication::activeModalWidget();
+        if (!modal) {
+            return;
+        }
+        for (QAbstractButton* button : modal->findChildren<QAbstractButton*>()) {
+            if (button->text() == buttonText) {
+                timer->stop();
+                timer->deleteLater();
+                *answered = true;
+                button->click();
+                return;
+            }
+        }
+    });
+    timer->start();
+    return answered;
+}
+
+} // namespace
 
 void MainWindowIntegrationTest::startAndStopServerFromUi()
 {
@@ -87,6 +172,178 @@ void MainWindowIntegrationTest::startAndStopServerFromUi()
 
     window.close();
     QTRY_VERIFY(!window.isVisible());
+}
+
+void MainWindowIntegrationTest::themeIsAppliedToTheWindow()
+{
+    UiFixture f;
+    QVERIFY(f.start());
+
+    // One shared stylesheet for the window (and the dialogs parented to it).
+    const QString sheet = multipack::ui::Theme::styleSheet();
+    QVERIFY(!sheet.isEmpty());
+    QCOMPARE(f.window->styleSheet(), sheet);
+
+    // Touch targets: the operator controls of the main page are finger-sized.
+    for (const char* name : {"LadePallettenplan", "ButtonDatenSenden", "ButtonOpenParameterRoboter",
+                             "navBetrieb", "navPlaene", "navRoboter", "ButtonSettings",
+                             "pushButtonVolumeOnOff"}) {
+        auto* button = f.find<QPushButton>(name);
+        QVERIFY2(button, name);
+        QVERIFY2(button->height() >= 48, name);
+    }
+    QVERIFY(f.find<QLineEdit>("EingabePallettenplan")->height() >= 48);
+}
+
+void MainWindowIntegrationTest::experimentalButtonIsReplacedByPlansTab()
+{
+    UiFixture f;
+    QVERIFY(f.start());
+
+    // No "Experimental" button anywhere, and no page-local back buttons.
+    QVERIFY(!f.window->findChild<QWidget*>(QStringLiteral("openExperimentalTab")));
+    for (QAbstractButton* button : f.window->findChildren<QAbstractButton*>()) {
+        QVERIFY2(!button->text().contains(QStringLiteral("experimental"), Qt::CaseInsensitive),
+                 qPrintable(button->objectName()));
+        QVERIFY2(!button->objectName().startsWith(QStringLiteral("ButtonZurueck")),
+                 qPrintable(button->objectName()));
+    }
+
+    // What the button opened is the "Pläne" tab: list, filters, preview, load.
+    auto* plans = f.find<QPushButton>("navPlaene");
+    auto* list = f.find<QListWidget>("robFilesListWidget");
+    QVERIFY(plans && list);
+    QVERIFY(plans->isVisible());
+    QVERIFY(!list->isVisible());
+    QTest::mouseClick(plans, Qt::LeftButton);
+    QCOMPARE(f.currentPage(), QStringLiteral("PlanLibrary"));
+    QVERIFY(plans->isChecked());
+    QVERIFY(list->isVisible());
+    QCOMPARE(list->count(), 1);
+    QVERIFY(f.find<QLineEdit>("lineEditFilterLength")->isVisible());
+    QVERIFY(f.find<QWidget>("planPreviewFrame")->isVisible());
+
+    // Loading the selected plan still returns to the operating page with it loaded.
+    list->setCurrentRow(0);
+    QTest::mouseClick(f.find<QPushButton>("LadePallettenplan_2"), Qt::LeftButton);
+    QCOMPARE(f.currentPage(), QStringLiteral("MainMenu"));
+    QCOMPARE(GlobalState::instance().currentFileName(), QStringLiteral("sample.rob"));
+}
+
+void MainWindowIntegrationTest::navigationSwitchesPagesAndLocksRobotUntilPlanLoaded()
+{
+    UiFixture f;
+    QVERIFY(f.start());
+
+    auto* betrieb = f.find<QPushButton>("navBetrieb");
+    auto* plaene = f.find<QPushButton>("navPlaene");
+    auto* roboter = f.find<QPushButton>("navRoboter");
+    auto* parameterButton = f.find<QPushButton>("ButtonOpenParameterRoboter");
+    QVERIFY(betrieb && plaene && roboter && parameterButton);
+
+    QCOMPARE(f.currentPage(), QStringLiteral("MainMenu"));
+    QVERIFY(betrieb->isChecked());
+
+    // Robot parameters stay locked without a plan, tab and button alike.
+    QVERIFY(!roboter->isEnabled());
+    QVERIFY(!parameterButton->isEnabled());
+    roboter->click();
+    QCOMPARE(f.currentPage(), QStringLiteral("MainMenu"));
+
+    f.loadSamplePlan();
+    QTRY_VERIFY(roboter->isEnabled());
+    QVERIFY(parameterButton->isEnabled());
+
+    QTest::mouseClick(roboter, Qt::LeftButton);
+    QCOMPARE(f.currentPage(), QStringLiteral("RoboParameter"));
+    QVERIFY(roboter->isChecked());
+    QVERIFY(!betrieb->isChecked());
+
+    // Tapping the active tab again keeps it active.
+    QTest::mouseClick(roboter, Qt::LeftButton);
+    QVERIFY(roboter->isChecked());
+    QCOMPARE(f.currentPage(), QStringLiteral("RoboParameter"));
+
+    QTest::mouseClick(plaene, Qt::LeftButton);
+    QCOMPARE(f.currentPage(), QStringLiteral("PlanLibrary"));
+    QVERIFY(plaene->isChecked());
+    QVERIFY(!roboter->isChecked());
+
+    QTest::mouseClick(betrieb, Qt::LeftButton);
+    QCOMPARE(f.currentPage(), QStringLiteral("MainMenu"));
+    QTest::mouseClick(parameterButton, Qt::LeftButton);
+    QCOMPARE(f.currentPage(), QStringLiteral("RoboParameter"));
+    QVERIFY(roboter->isChecked());
+}
+
+void MainWindowIntegrationTest::qrCodeTabIsHiddenWithoutPlanner()
+{
+    UiFixture f;
+    QVERIFY(f.start());
+
+    // No planner configured: no QR tab, no planner panel, nothing to scan.
+    auto* qrTab = f.find<QPushButton>("navQrCode");
+    auto* qrCode = f.find<QWidget>("plannerQrCode");
+    QVERIFY(qrTab && qrCode);
+    QVERIFY(!qrTab->isVisible());
+    QVERIFY(!qrCode->isVisible());
+    QVERIFY(!f.find<QWidget>("plannerPanel")->isVisible());
+
+    // The QR code is not part of the operating page.
+    QVERIFY(!f.find<QWidget>("MainMenu")->isAncestorOf(qrCode));
+    QVERIFY(f.find<QWidget>("QrCodePage")->isAncestorOf(qrCode));
+}
+
+void MainWindowIntegrationTest::ur20NoticeBarOffersPaletteRelease()
+{
+    GlobalState& state = GlobalState::instance();
+    state.setUr20Palette1Empty(true);
+    state.setUr20Palette2Empty(true);
+    state.setPalette1NonEmptyTimestamp(0);
+    state.setPalette2NonEmptyTimestamp(0);
+
+    UiFixture f;
+    QVERIFY(f.start(QStringLiteral("UR20")));
+
+    // A UR20 asks for the palette state at startup; confirm the defaults.
+    const auto startupConfirmed = answerNextModalDialog(QStringLiteral("Bestätigen"));
+    QTRY_VERIFY(*startupConfirmed);
+    QTRY_VERIFY(QApplication::activeModalWidget() == nullptr);
+
+    auto* bar = f.find<QWidget>("noticeBar");
+    auto* release1 = f.find<QPushButton>("palette1ClearButton");
+    auto* release2 = f.find<QPushButton>("palette2ClearButton");
+    QVERIFY(bar && release1 && release2);
+    QVERIFY(!bar->isVisible());
+
+    // Palette 1 has been full for longer than the waiting time.
+    state.setPalette1NonEmptyTimestamp(QDateTime::currentMSecsSinceEpoch() - 11000);
+    state.setUr20Palette1Empty(false);
+    QTRY_VERIFY(bar->isVisible());
+    QVERIFY(release1->isVisible());
+    QVERIFY(!release2->isVisible());
+
+    // The bar stays on every page.
+    QTest::mouseClick(f.find<QPushButton>("navPlaene"), Qt::LeftButton);
+    QVERIFY(bar->isVisible());
+
+    // Releasing needs a confirmation: "Nein" keeps the palette blocked.
+    const auto declined = answerNextModalDialog(QStringLiteral("Nein"));
+    QTest::mouseClick(release1, Qt::LeftButton);
+    QVERIFY(*declined);
+    QVERIFY(!state.ur20Palette1Empty());
+    QVERIFY(bar->isVisible());
+
+    const auto confirmed = answerNextModalDialog(QStringLiteral("Ja"));
+    QTest::mouseClick(release1, Qt::LeftButton);
+    QVERIFY(*confirmed);
+    QVERIFY(state.ur20Palette1Empty());
+    QCOMPARE(state.palette1NonEmptyTimestamp(), qint64(0));
+    QTRY_VERIFY(!bar->isVisible());
+
+    f.window.reset();
+    state.setUr20Palette1Empty(true);
+    state.setUr20Palette2Empty(true);
 }
 
 int main(int argc, char** argv)

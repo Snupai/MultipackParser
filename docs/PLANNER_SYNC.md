@@ -2,8 +2,8 @@
 
 The HMI pulls plans marked as finished ("Fertigstände") from the
 Palettenplaner server and shows them next to the USB plans. A phone can
-propose a plan via the QR code on the HMI; the operator confirms it on the
-HMI. Contract: `docs/hmi-api-v1.md` in the `palette_3d_viewer` repository
+propose a plan via the QR code on the HMI ("QR-Code" tab, shown only while a
+planner is configured); the operator confirms it on the HMI. Contract: `docs/hmi-api-v1.md` in the `palette_3d_viewer` repository
 (HMI API v1).
 
 ## Principles
@@ -82,13 +82,13 @@ loads a plan via XML-RPC, and every 60 s.
 
 - The dialog "Neuer Plan vorgeschlagen: {name} – Übernehmen?" with a preview
   opens automatically only while the robot program is stopped. While a
-  program runs, the main menu shows "Planvorschlag wartet (Roboter läuft)".
+  program runs, the "Betrieb" page shows "Planvorschlag wartet (Roboter läuft)".
 - **Übernehmen**: the HMI sends `accepted`; only after the planner answers
   `204`, and only if the robot is still stopped, it loads the plan and reports
   the new status. On `409`/`404` (taken back, superseded, expired) nothing
   changes. On a network error the dialog stays and the operator can retry.
 - **Ablehnen** sends `rejected`. **Später** closes the dialog without an
-  answer; the proposal can be reopened from the main menu.
+  answer; the proposal can be reopened from the "Betrieb" page.
 - The answer request gives up after 8 s, so the operator sees "nicht
   übermittelt" quickly and can retry.
 - **Unloadable plan:** when the proposed Fertigstand cannot be loaded on this

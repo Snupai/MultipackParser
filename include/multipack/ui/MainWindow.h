@@ -33,7 +33,6 @@ class QListWidget;
 class QSpinBox;
 class QTableWidget;
 class QTabWidget;
-class QGroupBox;
 QT_END_NAMESPACE
 
 // Forward declaration of generated UI class
@@ -119,11 +118,12 @@ public slots:
     void setServerRunning(bool running, const QString& error = QString());
 
 private slots:
-    // Navigation
+    // Navigation (top bar)
     void showMainMenu();
+    void showPlans();
     void showRobotParameters();
+    void showQrCode();
     void showSettings();
-    void showExperimental();
     void showPasswordDialog();
 
     // Main menu actions
@@ -132,7 +132,6 @@ private slots:
     void onParameterRobotClicked();
     void onSettingsClicked();
     void onVolumeToggleClicked();
-    void onExperimentalClicked();
     void onEinzelpaketChanged(int state);
     void onLabelInvertChanged(int state);
     void onKartonhoeheChanged();
@@ -175,7 +174,7 @@ private slots:
     void onScanner2OverwriteChanged(int state);
     void onScanner3OverwriteChanged(int state);
 
-    // Experimental actions
+    // Plan library ("Pläne") actions
     void onRobFileSelected(QListWidgetItem* item);
     void onDeselectRobFile();
     void onFilterChanged();
@@ -197,6 +196,7 @@ private slots:
 
 private:
     void setupConnections();
+    void setupNavigation();
     void applyResourceIcons();
     void loadSettings();
     void loadRobFileList();
@@ -286,8 +286,12 @@ private:
         PAGE_MAIN_MENU = 0,
         PAGE_ROBOT_PARAMS = 1,
         PAGE_SETTINGS = 2,
-        PAGE_EXPERIMENTAL = 3
+        PAGE_PLANS = 3,
+        PAGE_QR_CODE = 4
     };
+
+    void setCurrentPage(PageIndex page);
+    void syncNavigation();
 
     // State
     bool m_serverRunning = false;
@@ -305,8 +309,6 @@ private:
     QTimer* m_zwischenlageTimer = nullptr;
     QTimer* m_paletteClearTimer = nullptr;
     NotificationPopup* m_zwischenlagePopup = nullptr;
-    QPushButton* m_palette1ClearIndicator = nullptr;
-    QPushButton* m_palette2ClearIndicator = nullptr;
     VisualizationWidget* m_visualizationWidget = nullptr;
     QLabel* m_statusRobotIp = nullptr;
     QLabel* m_statusConnection = nullptr;
@@ -319,16 +321,17 @@ private:
     QLabel* m_statusLoadedProgram = nullptr;
     OnScreenKeyboard* m_onScreenKeyboard = nullptr;
 
-    // Planner panel (main menu) and settings tab
-    QGroupBox* m_plannerPanel = nullptr;
+    // Planner: Fertigstände panel ("Betrieb"), QR code page and settings tab.
+    // The panel and the QR page live in MainWindow.ui; these point into it.
+    QWidget* m_plannerPanel = nullptr;
     QListWidget* m_plannerList = nullptr;
     QPushButton* m_plannerLoadButton = nullptr;
     QPushButton* m_plannerProposalButton = nullptr;
     QLabel* m_plannerStateLabel = nullptr;
     QLabel* m_plannerHintLabel = nullptr;
-    QWidget* m_plannerQrBox = nullptr;
     QrCodeWidget* m_plannerQr = nullptr;
     QLabel* m_plannerQrStateLabel = nullptr;
+    QLabel* m_plannerQrUrlLabel = nullptr;
     QLabel* m_plannerSettingsServer = nullptr;
     QLabel* m_plannerSettingsHmi = nullptr;
     QLabel* m_plannerSettingsToken = nullptr;

@@ -5,6 +5,7 @@
 #include "multipack/ui/PlanProposalDialog.h"
 
 #include "multipack/database/DatabaseManager.h"
+#include "multipack/ui/Theme.h"
 #include "multipack/ui/VisualizationWidget.h"
 
 #include <QFormLayout>
@@ -27,9 +28,7 @@ PlanProposalDialog::PlanProposalDialog(const planner::Proposal& proposal,
     setModal(true);
     setFixedSize(1000, 600);
     // Touch panel: readable from a step away, buttons large enough for gloves.
-    setStyleSheet(QStringLiteral(
-        "QLabel { font-size: 16px; }"
-        "QPushButton { font-size: 18px; }"));
+    // Fonts and button sizes come from the HMI theme of the main window.
 
     auto* root = new QVBoxLayout(this);
     root->setContentsMargins(20, 16, 20, 16);
@@ -40,7 +39,8 @@ PlanProposalDialog::PlanProposalDialog(const planner::Proposal& proposal,
     title->setTextFormat(Qt::PlainText);
     title->setObjectName(QStringLiteral("proposalTitle"));
     title->setWordWrap(true);
-    title->setStyleSheet(QStringLiteral("font-size: 22px; font-weight: bold;"));
+    title->setStyleSheet(QStringLiteral("font-size: 24px; font-weight: bold; color: %1;")
+                             .arg(QString::fromLatin1(Theme::PRIMARY)));
     root->addWidget(title);
 
     auto* body = new QHBoxLayout();
@@ -75,11 +75,11 @@ PlanProposalDialog::PlanProposalDialog(const planner::Proposal& proposal,
 
     auto* detailsBox = new QWidget(this);
     detailsBox->setLayout(details);
-    detailsBox->setFixedWidth(360);
+    detailsBox->setFixedWidth(420);
     body->addWidget(detailsBox, 0, Qt::AlignTop);
 
     m_preview = new VisualizationWidget(this);
-    m_preview->setMinimumSize(560, 380);
+    m_preview->setMinimumSize(500, 380);
     m_preview->setVisualizationData(visual);
     body->addWidget(m_preview, 1);
     root->addLayout(body, 1);
@@ -87,28 +87,33 @@ PlanProposalDialog::PlanProposalDialog(const planner::Proposal& proposal,
     m_robotLabel = new QLabel(this);
     m_robotLabel->setObjectName(QStringLiteral("proposalRobotState"));
     m_robotLabel->setWordWrap(true);
-    m_robotLabel->setStyleSheet(QStringLiteral("color: #b00020; font-size: 16px;"));
+    m_robotLabel->setStyleSheet(QStringLiteral("color: %1; font-weight: bold;")
+                                    .arg(QString::fromLatin1(Theme::DANGER)));
     root->addWidget(m_robotLabel);
 
     m_statusLabel = new QLabel(this);
     m_statusLabel->setObjectName(QStringLiteral("proposalStatus"));
     m_statusLabel->setWordWrap(true);
-    m_statusLabel->setStyleSheet(QStringLiteral("font-size: 16px;"));
     root->addWidget(m_statusLabel);
 
     auto* buttons = new QHBoxLayout();
     m_laterButton = new QPushButton(QStringLiteral("Später"), this);
     m_laterButton->setObjectName(QStringLiteral("proposalLater"));
-    m_laterButton->setMinimumSize(160, 60);
+    m_laterButton->setMinimumWidth(160);
+    Theme::setScale(m_laterButton, "medium");
     m_laterButton->setAutoDefault(false);
     buttons->addWidget(m_laterButton);
     buttons->addStretch();
     m_rejectButton = new QPushButton(QStringLiteral("Ablehnen"), this);
     m_rejectButton->setObjectName(QStringLiteral("proposalReject"));
-    m_rejectButton->setMinimumSize(200, 60);
+    m_rejectButton->setMinimumWidth(200);
+    Theme::setScale(m_rejectButton, "medium");
+    Theme::setRole(m_rejectButton, "danger");
     m_acceptButton = new QPushButton(QStringLiteral("Übernehmen"), this);
     m_acceptButton->setObjectName(QStringLiteral("proposalAccept"));
-    m_acceptButton->setMinimumSize(200, 60);
+    m_acceptButton->setMinimumWidth(240);
+    Theme::setScale(m_acceptButton, "medium");
+    Theme::setRole(m_acceptButton, "success");
     m_acceptButton->setAutoDefault(false);
     m_rejectButton->setAutoDefault(false);
     buttons->addWidget(m_rejectButton);

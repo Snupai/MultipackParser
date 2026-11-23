@@ -2,8 +2,8 @@
  * @file MainWindowPlanner.cpp
  * @brief MainWindow: Palettenplaner integration (HMI-Abgleich)
  *
- * - Planner Fertigstände on the main menu, separate from USB plans
- * - QR code with the planner page of this HMI and an online/offline hint
+ * - Planner Fertigstände on the "Betrieb" page, separate from USB plans
+ * - "QR-Code" tab with the planner page of this HMI and an online/offline hint
  * - Planvorschlag confirmation (never switches without the operator, never
  *   while the robot executes a program)
  * - "Planer" settings tab with the USB import of the configuration file
@@ -22,12 +22,13 @@
 #include "multipack/system/UsbMonitor.h"
 #include "multipack/ui/PlanProposalDialog.h"
 #include "multipack/ui/QrCodeWidget.h"
+#include "multipack/ui/Theme.h"
 
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
-#include <QFormLayout>
-#include <QGroupBox>
+#include <QFrame>
+#include <QGridLayout>
 #include <QHBoxLayout>
 #include <QInputDialog>
 #include <QLabel>
@@ -136,56 +137,24 @@ void MainWindow::setupPlannerPanel()
     m_activePlanDebounce->setInterval(500);
     connect(m_activePlanDebounce, &QTimer::timeout, this, &MainWindow::onActivePlanFileChanged);
 
-    QWidget* page = ui->MainMenu;
-    if (!page) {
-        return;
-    }
+    // Panel and QR page are laid out in MainWindow.ui; both stay hidden until
+    // a planner is configured (updatePlannerConnectionState).
+    m_plannerPanel = ui->plannerPanel;
+    m_plannerList = ui->plannerFinalsList;
+    m_plannerLoadButton = ui->plannerLoadButton;
+    m_plannerProposalButton = ui->plannerProposalButton;
+    m_plannerStateLabel = ui->plannerStateLabel;
+    m_plannerHintLabel = ui->plannerHintLabel;
+    m_plannerQr = ui->plannerQrCode;
+    m_plannerQrStateLabel = ui->plannerQrStateLabel;
+    m_plannerQrUrlLabel = ui->plannerQrUrlLabel;
 
-    m_plannerPanel = new QGroupBox(QStringLiteral("Fertigstände vom Palettenplaner"), page);
-    m_plannerPanel->setObjectName(QStringLiteral("plannerPanel"));
-    m_plannerPanel->setGeometry(70, 452, 840, 250);
-    m_plannerPanel->setStyleSheet(QStringLiteral(
-        "QGroupBox#plannerPanel { font-size: 16px; font-weight: bold; }"
-        "QGroupBox#plannerPanel QPushButton { font-size: 16px; font-weight: normal; }"));
-
-    auto* root = new QVBoxLayout(m_plannerPanel);
-    root->setContentsMargins(10, 8, 10, 8);
-    root->setSpacing(6);
-
-    auto* header = new QHBoxLayout();
-    m_plannerStateLabel = new QLabel(m_plannerPanel);
-    m_plannerStateLabel->setObjectName(QStringLiteral("plannerStateLabel"));
-    header->addWidget(m_plannerStateLabel, 1);
-    m_plannerHintLabel = new QLabel(m_plannerPanel);
-    m_plannerHintLabel->setObjectName(QStringLiteral("plannerHintLabel"));
-    m_plannerHintLabel->setStyleSheet(QStringLiteral("color: #c25e00; font-weight: bold; font-size: 15px;"));
-    header->addWidget(m_plannerHintLabel);
-    root->addLayout(header);
-
-    auto* body = new QHBoxLayout();
-    m_plannerList = new QListWidget(m_plannerPanel);
-    m_plannerList->setObjectName(QStringLiteral("plannerFinalsList"));
-    m_plannerList->setStyleSheet(QStringLiteral(
-        "QListWidget { font-size: 16px; font-weight: normal; }"
-        "QListWidget::item { min-height: 30px; }"));
     m_plannerList->setSelectionMode(QAbstractItemView::SingleSelection);
-    body->addWidget(m_plannerList, 1);
-
-    auto* buttons = new QVBoxLayout();
-    m_plannerLoadButton = new QPushButton(QStringLiteral("Plan laden"), m_plannerPanel);
-    m_plannerLoadButton->setObjectName(QStringLiteral("plannerLoadButton"));
-    m_plannerLoadButton->setMinimumSize(200, 56);
+    m_plannerHintLabel->setStyleSheet(
+        QStringLiteral("color: %1; font-weight: bold;").arg(Theme::toneColor(Theme::Tone::Warning)));
     m_plannerLoadButton->setEnabled(false);
-    buttons->addWidget(m_plannerLoadButton);
-
-    m_plannerProposalButton = new QPushButton(m_plannerPanel);
-    m_plannerProposalButton->setObjectName(QStringLiteral("plannerProposalButton"));
-    m_plannerProposalButton->setMinimumSize(200, 56);
     m_plannerProposalButton->hide();
-    buttons->addWidget(m_plannerProposalButton);
-    buttons->addStretch();
-    body->addLayout(buttons);
-    root->addLayout(body, 1);
+    m_plannerPanel->hide();
 
     connect(m_plannerList, &QListWidget::itemSelectionChanged, this, [this]() {
         const auto items = m_plannerList->selectedItems();
@@ -197,29 +166,6 @@ void MainWindow::setupPlannerPanel()
         m_deferredProposalId.clear();
         openProposalDialog();
     });
-
-    // QR code: only the planner page URL of this HMI, never a token.
-    m_plannerQrBox = new QWidget(page);
-    m_plannerQrBox->setObjectName(QStringLiteral("plannerQrBox"));
-    m_plannerQrBox->setGeometry(930, 372, 300, 285);
-    auto* qrLayout = new QVBoxLayout(m_plannerQrBox);
-    qrLayout->setContentsMargins(0, 0, 0, 0);
-    qrLayout->setSpacing(2);
-    auto* qrCaption = new QLabel(QStringLiteral("Plan per Handy vorschlagen"), m_plannerQrBox);
-    qrCaption->setAlignment(Qt::AlignCenter);
-    qrCaption->setStyleSheet(QStringLiteral("font-size: 14px;"));
-    qrLayout->addWidget(qrCaption);
-    m_plannerQr = new QrCodeWidget(m_plannerQrBox);
-    m_plannerQr->setObjectName(QStringLiteral("plannerQrCode"));
-    m_plannerQr->setFixedSize(220, 220);
-    qrLayout->addWidget(m_plannerQr, 0, Qt::AlignHCenter);
-    m_plannerQrStateLabel = new QLabel(m_plannerQrBox);
-    m_plannerQrStateLabel->setObjectName(QStringLiteral("plannerQrStateLabel"));
-    m_plannerQrStateLabel->setAlignment(Qt::AlignCenter);
-    qrLayout->addWidget(m_plannerQrStateLabel);
-
-    m_plannerPanel->hide();
-    m_plannerQrBox->hide();
 }
 
 void MainWindow::refreshPlannerList()
@@ -273,14 +219,14 @@ void MainWindow::refreshPlannerList()
             item->setFont(font);
         }
         if (row.isNewVersionOfActive) {
-            item->setBackground(QColor(QStringLiteral("#ffe9c7")));
+            item->setBackground(QColor(QString::fromLatin1(Theme::HIGHLIGHT_ROW)));
         }
         if (failed) {
-            item->setForeground(QColor(QStringLiteral("#b00020")));
+            item->setForeground(QColor(QString::fromLatin1(Theme::DANGER)));
             item->setToolTip(QStringLiteral("Dieser Fertigstand kann auf dem HMI nicht geladen werden. "
                                             "Bitte im Palettenplaner prüfen."));
         } else if (!row.final.downloaded) {
-            item->setForeground(QColor(QStringLiteral("#888888")));
+            item->setForeground(QColor(QString::fromLatin1(Theme::TEXT_DISABLED)));
         }
         if (row.final.entry.id == selectedId) {
             m_plannerList->setCurrentItem(item);
@@ -301,29 +247,34 @@ void MainWindow::updatePlannerConnectionState()
     if (m_plannerPanel) {
         m_plannerPanel->setVisible(configured);
     }
-    if (m_plannerQrBox) {
-        m_plannerQrBox->setVisible(configured);
+    // The QR code has its own tab; without a planner there is nothing to scan.
+    ui->navQrCode->setVisible(configured);
+    if (!configured && ui->stackedWidget->currentIndex() == PAGE_QR_CODE) {
+        showMainMenu();
     }
     updatePlannerSettingsTab();
     if (!configured) {
+        if (m_plannerQr) {
+            m_plannerQr->setText(QString());
+        }
         return;
     }
 
     using State = planner::PlannerSyncService::ConnectionState;
     const State state = m_plannerSync->state();
-    QString color = QStringLiteral("#666666");
+    Theme::Tone tone = Theme::Tone::Neutral;
     QString qrText;
     switch (state) {
         case State::Online:
-            color = QStringLiteral("#1b7f2a");
+            tone = Theme::Tone::Success;
             qrText = QStringLiteral("Online");
             break;
         case State::Offline:
-            color = QStringLiteral("#c25e00");
+            tone = Theme::Tone::Warning;
             qrText = QStringLiteral("Offline");
             break;
         case State::NotAuthorized:
-            color = QStringLiteral("#b00020");
+            tone = Theme::Tone::Danger;
             qrText = QStringLiteral("Offline - HMI nicht freigeschaltet");
             break;
         case State::Connecting:
@@ -331,6 +282,8 @@ void MainWindow::updatePlannerConnectionState()
             qrText = QStringLiteral("Verbinde ...");
             break;
     }
+    const QString color = tone == Theme::Tone::Neutral ? QString::fromLatin1(Theme::TEXT_MUTED)
+                                                       : Theme::toneColor(tone);
 
     QString stateText = QStringLiteral("Planer: ") + m_plannerSync->stateText();
     const QDateTime lastSuccess = m_plannerSync->lastSuccess();
@@ -339,11 +292,14 @@ void MainWindow::updatePlannerConnectionState()
                          .arg(lastSuccess.toLocalTime().toString(QStringLiteral("dd.MM. HH:mm")));
     }
     m_plannerStateLabel->setText(stateText);
-    m_plannerStateLabel->setStyleSheet(QStringLiteral("color: %1; font-size: 15px;").arg(color));
+    m_plannerStateLabel->setStyleSheet(QStringLiteral("color: %1; font-weight: bold;").arg(color));
 
-    m_plannerQr->setText(m_plannerSync->config().hmiPageUrl());
-    m_plannerQrStateLabel->setText(qrText);
-    m_plannerQrStateLabel->setStyleSheet(QStringLiteral("color: %1; font-size: 15px; font-weight: bold;").arg(color));
+    // Only the planner page URL of this HMI, never a token.
+    const QString pageUrl = m_plannerSync->config().hmiPageUrl();
+    m_plannerQr->setText(pageUrl);
+    m_plannerQrUrlLabel->setText(pageUrl);
+    m_plannerQrStateLabel->setText(QStringLiteral("Planer: %1").arg(qrText));
+    m_plannerQrStateLabel->setStyleSheet(QStringLiteral("color: %1;").arg(color));
 }
 
 void MainWindow::onPlannerLoadClicked()
@@ -636,54 +592,65 @@ void MainWindow::setupPlannerSettingsTab()
     auto* tab = new QWidget(ui->tabWidget_2);
     tab->setObjectName(QStringLiteral("plannerSettingsTab"));
     auto* root = new QVBoxLayout(tab);
-    root->setContentsMargins(20, 20, 20, 20);
+    root->setContentsMargins(16, 12, 16, 12);
     root->setSpacing(12);
 
-    auto* topBar = new QHBoxLayout();
-    auto* backButton = new QPushButton(QStringLiteral("Zurück"), tab);
-    backButton->setFlat(true);
-    connect(backButton, &QPushButton::clicked, this, &MainWindow::showMainMenu);
-    topBar->addWidget(backButton);
-    topBar->addStretch();
-    root->addLayout(topBar);
+    auto* card = new QFrame(tab);
+    Theme::setCard(card);
+    auto* grid = new QGridLayout(card);
+    grid->setContentsMargins(14, 10, 14, 14);
+    grid->setHorizontalSpacing(16);
+    grid->setVerticalSpacing(10);
+    grid->setColumnStretch(1, 1);
 
-    auto* form = new QFormLayout();
-    form->setLabelAlignment(Qt::AlignRight);
-    m_plannerSettingsServer = new QLabel(tab);
-    m_plannerSettingsHmi = new QLabel(tab);
-    m_plannerSettingsToken = new QLabel(tab);
-    m_plannerSettingsCa = new QLabel(tab);
-    m_plannerSettingsState = new QLabel(tab);
+    auto* title = new QLabel(QStringLiteral("Verbindung zum Palettenplaner"), card);
+    Theme::setRole(title, "heading");
+    grid->addWidget(title, 0, 0, 1, 2);
+
+    const auto addRow = [card, grid](int row, const QString& caption) {
+        auto* captionLabel = new QLabel(caption, card);
+        captionLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        Theme::setRole(captionLabel, "muted");
+        auto* valueLabel = new QLabel(card);
+        valueLabel->setWordWrap(true);
+        grid->addWidget(captionLabel, row, 0);
+        grid->addWidget(valueLabel, row, 1);
+        return valueLabel;
+    };
+    m_plannerSettingsServer = addRow(1, QStringLiteral("Planer-Server"));
+    m_plannerSettingsHmi = addRow(2, QStringLiteral("HMI-ID"));
+    m_plannerSettingsToken = addRow(3, QStringLiteral("Token"));
+    m_plannerSettingsCa = addRow(4, QStringLiteral("CA-Zertifikat"));
+    m_plannerSettingsState = addRow(5, QStringLiteral("Status"));
     for (QLabel* label : {m_plannerSettingsServer, m_plannerSettingsHmi, m_plannerSettingsCa}) {
         label->setTextInteractionFlags(Qt::TextSelectableByMouse);
     }
-    form->addRow(QStringLiteral("Planer-Server:"), m_plannerSettingsServer);
-    form->addRow(QStringLiteral("HMI-ID:"), m_plannerSettingsHmi);
-    form->addRow(QStringLiteral("Token:"), m_plannerSettingsToken);
-    form->addRow(QStringLiteral("CA-Zertifikat:"), m_plannerSettingsCa);
-    form->addRow(QStringLiteral("Status:"), m_plannerSettingsState);
-    root->addLayout(form);
+    root->addWidget(card);
 
     auto* help = new QLabel(QStringLiteral(
         "Konfigurationsdatei hmi-<Name>.json aus dem Palettenplaner (Admin > HMIs) auf den USB-Stick "
         "kopieren, optional mit dem Werks-CA-Zertifikat (.pem) daneben."), tab);
     help->setWordWrap(true);
+    Theme::setRole(help, "muted");
     root->addWidget(help);
 
     auto* buttons = new QHBoxLayout();
+    buttons->setSpacing(12);
     auto* importButton = new QPushButton(QStringLiteral("Von USB importieren"), tab);
     importButton->setObjectName(QStringLiteral("plannerImportButton"));
-    importButton->setMinimumHeight(50);
+    importButton->setMinimumWidth(260);
+    Theme::setRole(importButton, "primary");
     auto* syncButton = new QPushButton(QStringLiteral("Jetzt abgleichen"), tab);
     syncButton->setObjectName(QStringLiteral("plannerSyncNowButton"));
-    syncButton->setMinimumHeight(50);
+    syncButton->setMinimumWidth(220);
     auto* removeButton = new QPushButton(QStringLiteral("Konfiguration entfernen"), tab);
     removeButton->setObjectName(QStringLiteral("plannerRemoveButton"));
-    removeButton->setMinimumHeight(50);
+    removeButton->setMinimumWidth(280);
+    Theme::setRole(removeButton, "danger");
     buttons->addWidget(importButton);
     buttons->addWidget(syncButton);
-    buttons->addWidget(removeButton);
     buttons->addStretch();
+    buttons->addWidget(removeButton);
     root->addLayout(buttons);
     root->addStretch();
 
@@ -787,10 +754,9 @@ void MainWindow::onPlannerRemoveClicked()
     if (!m_settings || !m_plannerSync) {
         return;
     }
-    const auto answer = QMessageBox::question(
-        this, QStringLiteral("Planer-Konfiguration"),
-        QStringLiteral("Planer-Konfiguration entfernen? Bereits geladene Fertigstände bleiben erhalten."));
-    if (answer != QMessageBox::Yes) {
+    if (!Theme::confirm(this, QStringLiteral("Planer-Konfiguration"),
+                        QStringLiteral("Planer-Konfiguration entfernen? "
+                                       "Bereits geladene Fertigstände bleiben erhalten."))) {
         return;
     }
     planner::clearFromSettings(*m_settings);

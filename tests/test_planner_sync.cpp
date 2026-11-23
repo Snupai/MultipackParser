@@ -14,6 +14,7 @@
 #include "multipack/system/RobPaletteConversion.h"
 #include "multipack/ui/MainWindow.h"
 #include "multipack/ui/PlanProposalDialog.h"
+#include "multipack/ui/QrCodeWidget.h"
 
 #include <QApplication>
 #include <QFile>
@@ -29,6 +30,7 @@
 #include <QProcess>
 #include <QPushButton>
 #include <QSignalSpy>
+#include <QStackedWidget>
 #include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QtTest/QtTest>
@@ -127,6 +129,7 @@ private slots:
     void proposalClosedDoesNotSwitch();
     void proposalConfirmedWhileRunningDoesNotSwitch();
     void manualLoadBlockedWhileProgramRuns();
+    void qrCodeLivesInItsOwnTab();
 
     // e2e findings
     void plannerFixtureWithSpacesIsStored();
@@ -1085,6 +1088,9 @@ void PlannerSyncTest::refusalMessageIsNotClipped()
 
     WindowFixture f;
     QVERIFY(f.start(m_server->serverPort()));
+    // The status line gets its size from the page layout, which runs on show.
+    f.window->show();
+    QVERIFY(QTest::qWaitForWindowExposed(f.window.get()));
     auto* list = f.window->findChild<QListWidget*>(QStringLiteral("plannerFinalsList"));
     list->setCurrentRow(0);
     f.robot(multipack::robot::ProgramState::Playing);
@@ -1156,6 +1162,61 @@ void PlannerSyncTest::loadedHeaderShowsRealPackageCount()
     f.window->findChild<QLineEdit*>(QStringLiteral("EingabePallettenplan"))->setText(QStringLiteral("4711"));
     QTest::mouseClick(f.window->findChild<QPushButton*>(QStringLiteral("LadePallettenplan")), Qt::LeftButton);
     QCOMPARE(header->text(), QStringLiteral("Geladen: 4711 - 3 Lagen, 5 Pakete"));
+    f.window.reset();
+}
+
+void PlannerSyncTest::qrCodeLivesInItsOwnTab()
+{
+    qputenv("MULTIPACK_DISABLE_ROBOT_STATUS_MONITOR", "1");
+    int answerStatus = 204;
+    auto handler = proposalHandler(&answerStatus);
+    m_server->setHandler([handler](const FakePlannerServer::Request& r) {
+        if (r.method == "GET" && r.path == "/api/hmi/v1/proposal") {
+            return FakePlannerServer::Reply::empty(204);
+        }
+        return handler(r);
+    });
+
+    WindowFixture f;
+    QVERIFY(f.start(m_server->serverPort()));
+    f.window->show();
+
+    auto* stack = f.window->findChild<QStackedWidget*>(QStringLiteral("stackedWidget"));
+    auto* mainPage = f.window->findChild<QWidget*>(QStringLiteral("MainMenu"));
+    auto* qrPage = f.window->findChild<QWidget*>(QStringLiteral("QrCodePage"));
+    auto* qrTab = f.window->findChild<QPushButton*>(QStringLiteral("navQrCode"));
+    auto* qrCode = f.window->findChild<multipack::ui::QrCodeWidget*>(QStringLiteral("plannerQrCode"));
+    auto* qrUrl = f.window->findChild<QLabel*>(QStringLiteral("plannerQrUrlLabel"));
+    auto* qrState = f.window->findChild<QLabel*>(QStringLiteral("plannerQrStateLabel"));
+    QVERIFY(stack && mainPage && qrPage && qrTab && qrCode && qrUrl && qrState);
+
+    // Default view: the operating page with the Fertigstände, but without the QR code.
+    QCOMPARE(stack->currentWidget(), mainPage);
+    QVERIFY(f.window->findChild<QWidget*>(QStringLiteral("plannerPanel"))->isVisible());
+    QVERIFY(!mainPage->isAncestorOf(qrCode));
+    QVERIFY(qrPage->isAncestorOf(qrCode));
+    QVERIFY(!qrCode->isVisible());
+
+    // A configured planner offers the QR code in its own tab.
+    QVERIFY(qrTab->isVisible());
+    QTest::mouseClick(qrTab, Qt::LeftButton);
+    QCOMPARE(stack->currentWidget(), qrPage);
+    QVERIFY(qrTab->isChecked());
+    QVERIFY(qrCode->isVisible());
+
+    // It encodes the planner page of this HMI and never the token.
+    const QString pageUrl = f.service.config().hmiPageUrl();
+    QVERIFY(!pageUrl.isEmpty());
+    QCOMPARE(qrCode->text(), pageUrl);
+    QCOMPARE(qrUrl->text(), pageUrl);
+    QVERIFY(!qrUrl->text().contains(kToken));
+    QVERIFY(qrState->text().contains(QStringLiteral("Online")));
+
+    // Removing the configuration removes the tab and leaves the page.
+    f.service.setConfig(PlannerConfig(), f.dir.path());
+    QTRY_VERIFY(!qrTab->isVisible());
+    QCOMPARE(stack->currentWidget(), mainPage);
+    QVERIFY(qrCode->text().isEmpty());
     f.window.reset();
 }
 

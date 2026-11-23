@@ -19,6 +19,7 @@
 #include "multipack/ui/PaletteConfigDialog.h"
 #include "multipack/ui/NotificationPopup.h"
 #include "multipack/ui/OnScreenKeyboard.h"
+#include "multipack/ui/Theme.h"
 #include "multipack/message/StatusManager.h"
 #include "multipack/network/XmlRpcServer.h"
 #include "multipack/robot/RobotStatusMonitor.h"
@@ -35,14 +36,14 @@
 #include <QAbstractItemView>
 #include <QDebug>
 #include <QFileInfo>
-#include <QFontMetrics>
 #include <QIcon>
 #include <QPixmap>
 #include <QCloseEvent>
+#include <QFontMetrics>
+#include <QFrame>
 #include <QShortcut>
 #include <QPushButton>
 #include <QTimer>
-#include <QFormLayout>
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -50,7 +51,6 @@
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QDoubleSpinBox>
-#include <QGroupBox>
 #include <QHeaderView>
 #include <QInputDialog>
 #include <QListView>
@@ -98,16 +98,8 @@ MainWindow::MainWindow(QWidget* parent)
     m_centralWidget = new QWidget(this);
     setCentralWidget(m_centralWidget);
     ui->setupUi(m_centralWidget);
+    Theme::applyTo(this);
     applyResourceIcons();
-
-    // Absolute-positioned UI pages stack widgets in creation order; raise every
-    // "Zurück" control so flat icon buttons stay above overlapping frames (e.g.
-    // experimental 3D canvas vs. ButtonZurueck_8).
-    for (QPushButton* btn : m_centralWidget->findChildren<QPushButton*>()) {
-        if (btn->objectName().startsWith(QStringLiteral("ButtonZurueck"))) {
-            btn->raise();
-        }
-    }
 
     auto* closeShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::ALT | Qt::Key_C), this);
     closeShortcut->setContext(Qt::ApplicationShortcut);
@@ -118,18 +110,18 @@ MainWindow::MainWindow(QWidget* parent)
     
     // Setup connections
     setupConnections();
+    setupNavigation();
     setupStatusTab();
     setupDatabaseManagerTab();
     setupDimensionHandlers();
     setupPlannerPanel();
     setupPlannerSettingsTab();
 
-    if (ui->MatplotLibCanvasFrame) {
-        auto* layout = new QVBoxLayout(ui->MatplotLibCanvasFrame);
-        layout->setContentsMargins(0, 0, 0, 0);
-        m_visualizationWidget = new VisualizationWidget(ui->MatplotLibCanvasFrame);
+    if (ui->planPreviewFrame) {
+        auto* layout = new QVBoxLayout(ui->planPreviewFrame);
+        layout->setContentsMargins(6, 6, 6, 6);
+        m_visualizationWidget = new VisualizationWidget(ui->planPreviewFrame);
         layout->addWidget(m_visualizationWidget);
-        m_visualizationWidget->lower();
     }
 
     auto& statusManager = message::StatusManager::instance();
@@ -138,8 +130,8 @@ MainWindow::MainWindow(QWidget* parent)
     connect(&statusManager, &message::StatusManager::statusCleared,
             this, [this]() { ui->label_GewichtInfo->clear(); });
 
-    // Start on main menu
-    ui->stackedWidget->setCurrentIndex(PAGE_MAIN_MENU);
+    // Start on the operating page
+    setCurrentPage(PAGE_MAIN_MENU);
     if (ui->EingabePallettenplan) {
         ui->EingabePallettenplan->setInputMethodHints(
             Qt::ImhFormattedNumbersOnly | Qt::ImhNoPredictiveText);
@@ -345,24 +337,8 @@ void MainWindow::applyResourceIcons()
         return icon;
     };
 
-    const QIcon backIcon = iconFromResource(":/icons/back.png");
-    const QIcon loadButtonIcon = iconFromResource(":/icons/load.png");
-
-    for (QPushButton* btn : m_centralWidget->findChildren<QPushButton*>()) {
-        if (btn->objectName().startsWith(QStringLiteral("ButtonZurueck"))) {
-            btn->setIcon(backIcon);
-        }
-    }
-
     if (ui->ButtonSettings) {
-        ui->ButtonSettings->setIcon(QIcon());
-        ui->ButtonSettings->setIconSize(QSize());
-    }
-    if (ui->LadePallettenplan) {
-        ui->LadePallettenplan->setIcon(loadButtonIcon);
-    }
-    if (ui->LadePallettenplan_2) {
-        ui->LadePallettenplan_2->setIcon(loadButtonIcon);
+        ui->ButtonSettings->setIcon(iconFromResource(":/icons/ui/gear.png"));
     }
 
     updateVolumeIcon();
@@ -370,10 +346,8 @@ void MainWindow::applyResourceIcons()
 
 void MainWindow::setupConnections()
 {
-    // Main menu navigation
-    connect(ui->ButtonSettings, &QPushButton::clicked, this, &MainWindow::onSettingsClicked);
+    // Header and main page
     connect(ui->pushButtonVolumeOnOff, &QPushButton::clicked, this, &MainWindow::onVolumeToggleClicked);
-    connect(ui->openExperimentalTab, &QPushButton::clicked, this, &MainWindow::onExperimentalClicked);
     connect(ui->ButtonOpenParameterRoboter, &QPushButton::clicked, this, &MainWindow::onParameterRobotClicked);
 
     // Main menu actions
@@ -383,10 +357,6 @@ void MainWindow::setupConnections()
     connect(ui->checkBoxEinzelpaket, QOverload<int>::of(&QCheckBox::stateChanged), this, &MainWindow::onEinzelpaketChanged);
     connect(ui->checkBoxLabelInvert, QOverload<int>::of(&QCheckBox::stateChanged), this, &MainWindow::onLabelInvertChanged);
     connect(ui->EingabeStartlage, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onStartlageChanged);
-
-    // Robot parameters - back buttons
-    connect(ui->ButtonZurueck, &QPushButton::clicked, this, &MainWindow::showMainMenu);
-    connect(ui->ButtonZurueck_2, &QPushButton::clicked, this, &MainWindow::showMainMenu);
 
     // Robot control buttons
     connect(ui->ButtonRoboterStart, &QPushButton::clicked, this, &MainWindow::onRobotStartClicked);
@@ -399,13 +369,6 @@ void MainWindow::setupConnections()
     connect(ui->EingabeVerschiebungY, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onVerschiebungYChanged);
     connect(ui->checkBoxKlemmung, QOverload<int>::of(&QCheckBox::stateChanged), this, &MainWindow::onKlemmungChanged);
     connect(ui->ButtonDatenSenden_2, &QPushButton::clicked, this, &MainWindow::onAufnahmeServerStart);
-
-    // Settings - back buttons
-    connect(ui->ButtonZurueck_3, &QPushButton::clicked, this, &MainWindow::showMainMenu);
-    connect(ui->ButtonZurueck_4, &QPushButton::clicked, this, &MainWindow::showMainMenu);
-    connect(ui->ButtonZurueck_5, &QPushButton::clicked, this, &MainWindow::showMainMenu);
-    connect(ui->ButtonZurueck_6, &QPushButton::clicked, this, &MainWindow::showMainMenu);
-    connect(ui->ButtonZurueck_7, &QPushButton::clicked, this, &MainWindow::showMainMenu);
 
     // Settings actions
     connect(ui->pushButtonSpeichern, &QPushButton::clicked, this, &MainWindow::onSaveSettingsClicked);
@@ -430,8 +393,13 @@ void MainWindow::setupConnections()
     connect(ui->checkBoxScanner2Overwrite, QOverload<int>::of(&QCheckBox::stateChanged), this, &MainWindow::onScanner2OverwriteChanged);
     connect(ui->checkBoxScanner3Overwrite, QOverload<int>::of(&QCheckBox::stateChanged), this, &MainWindow::onScanner3OverwriteChanged);
 
-    // Experimental - back button and actions
-    connect(ui->ButtonZurueck_8, &QPushButton::clicked, this, &MainWindow::showMainMenu);
+    // UR20: release a cleared palette (notice bar, visible on every page)
+    ui->palette1ClearButton->setToolTip(QStringLiteral("Palette 1 zum Palettieren freigeben"));
+    ui->palette2ClearButton->setToolTip(QStringLiteral("Palette 2 zum Palettieren freigeben"));
+    connect(ui->palette1ClearButton, &QPushButton::clicked, this, [this]() { onPaletteClearClicked(1); });
+    connect(ui->palette2ClearButton, &QPushButton::clicked, this, [this]() { onPaletteClearClicked(2); });
+
+    // Plan library ("Pläne")
     connect(ui->robFilesListWidget, &QListWidget::itemClicked, this, &MainWindow::onRobFileSelected);
     connect(ui->deselectRobFile, &QPushButton::clicked, this, &MainWindow::onDeselectRobFile);
     connect(ui->pushButtonClearFilters, &QPushButton::clicked, this, &MainWindow::onClearFiltersClicked);
@@ -440,6 +408,41 @@ void MainWindow::setupConnections()
     connect(ui->lineEditFilterWidth, &QLineEdit::textChanged, this, &MainWindow::onFilterChanged);
     connect(ui->lineEditFilterHeight, &QLineEdit::textChanged, this, &MainWindow::onFilterChanged);
 }
+
+void MainWindow::setupNavigation()
+{
+    // Not every site uses these: the QR tab needs a configured planner, the
+    // notice bar a UR20 with a palette waiting for release.
+    ui->navQrCode->hide();
+    ui->noticeBar->hide();
+    ui->palette1ClearButton->hide();
+    ui->palette2ClearButton->hide();
+
+    connect(ui->navBetrieb, &QPushButton::clicked, this, &MainWindow::showMainMenu);
+    connect(ui->navPlaene, &QPushButton::clicked, this, &MainWindow::showPlans);
+    connect(ui->navRoboter, &QPushButton::clicked, this, &MainWindow::showRobotParameters);
+    connect(ui->navQrCode, &QPushButton::clicked, this, &MainWindow::showQrCode);
+    connect(ui->ButtonSettings, &QPushButton::clicked, this, &MainWindow::onSettingsClicked);
+}
+
+void MainWindow::setCurrentPage(PageIndex page)
+{
+    hidePalettePlanCompletionPopup();
+    ui->stackedWidget->setCurrentIndex(page);
+    syncNavigation();
+}
+
+void MainWindow::syncNavigation()
+{
+    // A click toggles a checkable button before the slot runs; the page decides.
+    const int page = ui->stackedWidget->currentIndex();
+    ui->navBetrieb->setChecked(page == PAGE_MAIN_MENU);
+    ui->navPlaene->setChecked(page == PAGE_PLANS);
+    ui->navRoboter->setChecked(page == PAGE_ROBOT_PARAMS);
+    ui->navQrCode->setChecked(page == PAGE_QR_CODE);
+    ui->ButtonSettings->setChecked(page == PAGE_SETTINGS);
+}
+
 
 void MainWindow::loadSettings()
 {
@@ -509,7 +512,7 @@ void MainWindow::loadSettings()
 bool MainWindow::ensureRobotConnected()
 {
     if (!m_robot || !m_settings) {
-        showMessage("Roboter nicht verfuegbar");
+        showMessage("Roboter nicht verfügbar");
         return false;
     }
 
@@ -586,7 +589,10 @@ void MainWindow::maybeStartRobotStatusMonitor()
     connect(m_statusMonitor, &robot::RobotStatusMonitor::connectionChanged,
             this, [this](bool connected) {
                 if (m_statusConnection) {
-                    m_statusConnection->setText(connected ? "Connected" : "Disconnected");
+                    m_statusConnection->setText(connected ? QStringLiteral("Verbunden")
+                                                          : QStringLiteral("Getrennt"));
+                    Theme::setTone(m_statusConnection,
+                                   connected ? Theme::Tone::Success : Theme::Tone::Danger);
                 }
                 if (!connected) {
                     m_robotStatusConnected = false;
@@ -645,44 +651,44 @@ void MainWindow::setupStatusTab()
     }
 
     auto* statusWidget = new QWidget(ui->tabWidget);
+    statusWidget->setObjectName(QStringLiteral("robotStatusTab"));
     auto* rootLayout = new QVBoxLayout(statusWidget);
-    rootLayout->setContentsMargins(20, 20, 20, 20);
-    rootLayout->setSpacing(12);
+    rootLayout->setContentsMargins(24, 24, 24, 24);
 
-    auto* topBar = new QHBoxLayout();
-    auto* backButton = new QPushButton(tr("Zurueck"), statusWidget);
-    backButton->setCursor(Qt::PointingHandCursor);
-    backButton->setFlat(true);
-    connect(backButton, &QPushButton::clicked, this, &MainWindow::showMainMenu);
-    topBar->addWidget(backButton);
-    topBar->addStretch();
-    rootLayout->addLayout(topBar);
+    auto* card = new QFrame(statusWidget);
+    Theme::setCard(card);
+    auto* grid = new QGridLayout(card);
+    grid->setContentsMargins(24, 18, 24, 18);
+    grid->setHorizontalSpacing(24);
+    grid->setVerticalSpacing(14);
+    grid->setColumnStretch(1, 1);
+    grid->setColumnStretch(3, 1);
 
-    auto* form = new QFormLayout();
-    form->setLabelAlignment(Qt::AlignRight);
-    form->setFormAlignment(Qt::AlignTop);
+    // Live state on the left, robot identity on the right.
+    auto addRow = [card, grid](int row, int column, const QString& caption) {
+        auto* captionLabel = new QLabel(caption, card);
+        captionLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        Theme::setRole(captionLabel, "muted");
+        auto* valueLabel = new QLabel(QStringLiteral("-"), card);
+        Theme::setRole(valueLabel, "value");
+        grid->addWidget(captionLabel, row, column);
+        grid->addWidget(valueLabel, row, column + 1);
+        return valueLabel;
+    };
 
-    m_statusRobotIp = new QLabel("-", statusWidget);
-    m_statusConnection = new QLabel("-", statusWidget);
-    m_statusRobotMode = new QLabel("-", statusWidget);
-    m_statusSafetyStatus = new QLabel("-", statusWidget);
-    m_statusProgramState = new QLabel("-", statusWidget);
-    m_statusLastUpdate = new QLabel("-", statusWidget);
-    m_statusPolyscopeVersion = new QLabel("-", statusWidget);
-    m_statusSerialNumber = new QLabel("-", statusWidget);
-    m_statusLoadedProgram = new QLabel("-", statusWidget);
+    m_statusConnection = addRow(0, 0, QStringLiteral("Verbindung"));
+    m_statusRobotMode = addRow(1, 0, QStringLiteral("Robotermodus"));
+    m_statusSafetyStatus = addRow(2, 0, QStringLiteral("Sicherheitsstatus"));
+    m_statusProgramState = addRow(3, 0, QStringLiteral("Programmstatus"));
+    m_statusLastUpdate = addRow(4, 0, QStringLiteral("Letzte Aktualisierung"));
+    m_statusRobotIp = addRow(0, 2, QStringLiteral("Roboter-IP"));
+    m_statusSerialNumber = addRow(1, 2, QStringLiteral("Seriennummer"));
+    m_statusPolyscopeVersion = addRow(2, 2, QStringLiteral("Polyscope-Version"));
+    m_statusLoadedProgram = addRow(3, 2, QStringLiteral("Geladenes Programm"));
+    m_statusLoadedProgram->setWordWrap(true);
 
-    form->addRow(tr("Robot IP:"), m_statusRobotIp);
-    form->addRow(tr("Connection:"), m_statusConnection);
-    form->addRow(tr("Robot Mode:"), m_statusRobotMode);
-    form->addRow(tr("Safety Status:"), m_statusSafetyStatus);
-    form->addRow(tr("Program State:"), m_statusProgramState);
-    form->addRow(tr("Last Update:"), m_statusLastUpdate);
-    form->addRow(tr("Polyscope Version:"), m_statusPolyscopeVersion);
-    form->addRow(tr("Serial Number:"), m_statusSerialNumber);
-    form->addRow(tr("Loaded Program:"), m_statusLoadedProgram);
-
-    rootLayout->addLayout(form);
+    rootLayout->addWidget(card);
+    rootLayout->addStretch(1);
 
     ui->tabWidget->addTab(statusWidget, tr("Status"));
 }
@@ -701,52 +707,62 @@ void MainWindow::updateStatusTab(const robot::RobotStatus& status)
 
     auto modeText = [](robot::RobotMode mode) {
         switch (mode) {
-            case robot::RobotMode::Running: return QString("Running");
-            case robot::RobotMode::Idle: return QString("Idle");
-            case robot::RobotMode::PowerOff: return QString("Power Off");
-            case robot::RobotMode::BackDrive: return QString("Backdrive");
-            case robot::RobotMode::ConfirmSafety: return QString("Confirm Safety");
-            case robot::RobotMode::Booting: return QString("Booting");
-            case robot::RobotMode::NoController: return QString("No Controller");
-            case robot::RobotMode::Disconnected: return QString("Disconnected");
-            default: return QString("Unknown");
+            case robot::RobotMode::Running: return QStringLiteral("Läuft");
+            case robot::RobotMode::Idle: return QStringLiteral("Bereit");
+            case robot::RobotMode::PowerOff: return QStringLiteral("Ausgeschaltet");
+            case robot::RobotMode::BackDrive: return QStringLiteral("Backdrive");
+            case robot::RobotMode::ConfirmSafety: return QStringLiteral("Sicherheit bestätigen");
+            case robot::RobotMode::Booting: return QStringLiteral("Startet");
+            case robot::RobotMode::NoController: return QStringLiteral("Kein Controller");
+            case robot::RobotMode::Disconnected: return QStringLiteral("Getrennt");
+            default: return QStringLiteral("Unbekannt");
         }
     };
 
     auto safetyText = [](robot::SafetyStatus safety) {
         switch (safety) {
-            case robot::SafetyStatus::Normal: return QString("Normal");
-            case robot::SafetyStatus::ReducedMode: return QString("Reduced Mode");
-            case robot::SafetyStatus::ProtectiveStop: return QString("Protective Stop");
-            case robot::SafetyStatus::Recovery: return QString("Recovery");
-            case robot::SafetyStatus::SafeguardStop: return QString("Safeguard Stop");
-            case robot::SafetyStatus::SystemEmergencyStop: return QString("System E-Stop");
-            case robot::SafetyStatus::RobotEmergencyStop: return QString("Robot E-Stop");
-            case robot::SafetyStatus::Violation: return QString("Violation");
-            case robot::SafetyStatus::Fault: return QString("Fault");
-            default: return QString("Unknown");
+            case robot::SafetyStatus::Normal: return QStringLiteral("Normal");
+            case robot::SafetyStatus::ReducedMode: return QStringLiteral("Reduzierter Modus");
+            case robot::SafetyStatus::ProtectiveStop: return QStringLiteral("Schutzstopp");
+            case robot::SafetyStatus::Recovery: return QStringLiteral("Wiederherstellung");
+            case robot::SafetyStatus::SafeguardStop: return QStringLiteral("Sicherheitsstopp");
+            case robot::SafetyStatus::SystemEmergencyStop: return QStringLiteral("Not-Halt (Anlage)");
+            case robot::SafetyStatus::RobotEmergencyStop: return QStringLiteral("Not-Halt (Roboter)");
+            case robot::SafetyStatus::Violation: return QStringLiteral("Sicherheitsverletzung");
+            case robot::SafetyStatus::Fault: return QStringLiteral("Fehler");
+            default: return QStringLiteral("Unbekannt");
         }
     };
 
     auto programText = [](robot::ProgramState state) {
         switch (state) {
-            case robot::ProgramState::Stopped: return QString("Stopped");
-            case robot::ProgramState::Playing: return QString("Playing");
-            case robot::ProgramState::Paused: return QString("Paused");
-            default: return QString("Unknown");
+            case robot::ProgramState::Stopped: return QStringLiteral("Gestoppt");
+            case robot::ProgramState::Playing: return QStringLiteral("Läuft");
+            case robot::ProgramState::Paused: return QStringLiteral("Pausiert");
+            default: return QStringLiteral("Unbekannt");
         }
     };
 
     if (m_settings) {
         m_statusRobotIp->setText(m_settings->robotIp());
     }
-    m_statusConnection->setText(status.isConnected ? "Connected" : "Disconnected");
+    m_statusConnection->setText(status.isConnected ? QStringLiteral("Verbunden")
+                                                   : QStringLiteral("Getrennt"));
+    Theme::setTone(m_statusConnection,
+                   status.isConnected ? Theme::Tone::Success : Theme::Tone::Danger);
     m_statusRobotMode->setText(modeText(status.robotMode));
     m_statusSafetyStatus->setText(safetyText(status.safetyStatus));
+    const bool safetyNormal = status.safetyStatus == robot::SafetyStatus::Normal;
+    const bool safetyReduced = status.safetyStatus == robot::SafetyStatus::ReducedMode;
+    Theme::setTone(m_statusSafetyStatus,
+                   !status.isConnected ? Theme::Tone::Neutral
+                   : safetyNormal ? Theme::Tone::Success
+                   : safetyReduced ? Theme::Tone::Warning
+                   : Theme::Tone::Danger);
     m_statusProgramState->setText(programText(status.programState));
 
     if (status.lastUpdate.isValid()) {
-        m_statusLastUpdate->setText(status.lastUpdate.toString("yyyy-MM-dd HH:mm:ss"));
+        m_statusLastUpdate->setText(status.lastUpdate.toString(QStringLiteral("dd.MM.yyyy HH:mm:ss")));
     }
 }
 
@@ -778,14 +794,7 @@ void MainWindow::setupDimensionHandlers()
             m_dimensionHandler.get(), &DimensionInputHandler::onWeightChanged);
     connect(m_dimensionHandler.get(), &DimensionInputHandler::confirmationNeeded,
             this, [this](const QString& message) {
-                QMessageBox::StandardButton response = QMessageBox::question(
-                    this,
-                    tr("Bestaetigung"),
-                    message,
-                    QMessageBox::Yes | QMessageBox::No,
-                    QMessageBox::No
-                );
-                if (response == QMessageBox::Yes) {
+                if (Theme::confirm(this, QStringLiteral("Bestätigung"), message)) {
                     m_dimensionHandler->confirmChanges();
                 } else {
                     m_dimensionHandler->cancelChanges();
@@ -879,9 +888,9 @@ void MainWindow::showPaletteConfigDialog()
 
     if ((activePalette == 1 && !palette1Empty) || (activePalette == 2 && !palette2Empty)) {
         QMessageBox::warning(this,
-                             "Invalid Configuration",
-                             "Cannot set a non-empty palette as active. Active palette has been reset to none (0)."
-        );
+                             QStringLiteral("Ungültige Konfiguration"),
+                             QStringLiteral("Eine belegte Palette kann nicht aktiv sein. "
+                                            "Die aktive Palette wurde auf \"keine\" (0) zurückgesetzt."));
         activePalette = 0;
     }
 
@@ -938,7 +947,7 @@ void MainWindow::updateZwischenlagePopup()
         }
         if (!m_zwischenlagePopup->isVisible()) {
             m_zwischenlagePopup->showMessage(
-                "Zwischenlage legen und mit Reset bestatigen.",
+                "Zwischenlage legen und mit Reset bestätigen.",
                 NotificationPopup::Type::Warning,
                 0
             );
@@ -959,50 +968,16 @@ void MainWindow::updatePaletteClearIndicators()
     constexpr qint64 minWaitMs = 10000;
     qint64 now = QDateTime::currentMSecsSinceEpoch();
 
-    auto updateIndicator = [this, now](QPushButton*& indicator,
-                                       int paletteNumber,
-                                       bool isEmpty,
-                                       qint64 nonEmptyTimestamp) {
-        if (isEmpty || nonEmptyTimestamp == 0 || (now - nonEmptyTimestamp) < minWaitMs) {
-            if (indicator) {
-                indicator->hide();
-            }
-            return;
-        }
-
-        if (!indicator) {
-            indicator = new QPushButton(m_centralWidget ? m_centralWidget : this);
-            int top = paletteNumber == 1 ? 380 : 440;
-            indicator->setGeometry(950, top, 200, 50);
-            indicator->setStyleSheet(
-                "background-color: rgba(255, 200, 0, 200);"
-                "color: black;"
-                "border-radius: 5px;"
-                "padding: 5px;"
-                "font-weight: bold;"
-            );
-            indicator->setFlat(true);
-            indicator->setCursor(Qt::PointingHandCursor);
-            indicator->setText(QString("Palette %1 freigeben").arg(paletteNumber));
-            indicator->setToolTip(QString("Klicken Sie hier, um Palette %1 zum palettieren freizugeben")
-                                   .arg(paletteNumber));
-            connect(indicator, &QPushButton::clicked, this, [this, paletteNumber]() {
-                onPaletteClearClicked(paletteNumber);
-            });
-        }
-
-        indicator->show();
-        indicator->raise();
+    // A palette that has been full for a while may be released by the operator.
+    const auto isDue = [now](bool isEmpty, qint64 nonEmptyTimestamp) {
+        return !isEmpty && nonEmptyTimestamp != 0 && (now - nonEmptyTimestamp) >= minWaitMs;
     };
+    const bool palette1Due = isDue(m_state->ur20Palette1Empty(), m_state->palette1NonEmptyTimestamp());
+    const bool palette2Due = isDue(m_state->ur20Palette2Empty(), m_state->palette2NonEmptyTimestamp());
 
-    updateIndicator(m_palette1ClearIndicator,
-                    1,
-                    m_state->ur20Palette1Empty(),
-                    m_state->palette1NonEmptyTimestamp());
-    updateIndicator(m_palette2ClearIndicator,
-                    2,
-                    m_state->ur20Palette2Empty(),
-                    m_state->palette2NonEmptyTimestamp());
+    ui->palette1ClearButton->setVisible(palette1Due);
+    ui->palette2ClearButton->setVisible(palette2Due);
+    ui->noticeBar->setVisible(palette1Due || palette2Due);
 }
 
 void MainWindow::onPaletteClearClicked(int paletteNumber)
@@ -1011,15 +986,9 @@ void MainWindow::onPaletteClearClicked(int paletteNumber)
         return;
     }
 
-    QMessageBox::StandardButton response = QMessageBox::question(
-        this,
-        "Palette freigeben",
-        QString("Mochten Sie Palette %1 zum palettieren freigeben?").arg(paletteNumber),
-        QMessageBox::Yes | QMessageBox::No,
-        QMessageBox::No
-    );
-
-    if (response != QMessageBox::Yes) {
+    if (!Theme::confirm(this, QStringLiteral("Palette freigeben"),
+                        QStringLiteral("Möchten Sie Palette %1 zum Palettieren freigeben?")
+                            .arg(paletteNumber))) {
         return;
     }
 
@@ -1076,7 +1045,8 @@ void MainWindow::updateEnabledStates()
 {
     bool paletteLoaded = m_paletteLoaded;
     bool canStartServer = !m_serverRunning && m_xmlRpcServer != nullptr;
-    QString startServerText = m_serverRunning ? "Server laeuft..." : "Server starten";
+    const QString startServerText = m_serverRunning ? QStringLiteral("Server läuft ...")
+                                                    : QStringLiteral("Server starten");
 
     // Enable/disable controls based on palette loaded state
     ui->EingabeStartlage->setEnabled(paletteLoaded);
@@ -1084,7 +1054,9 @@ void MainWindow::updateEnabledStates()
     ui->EingabeKartonGewicht->setEnabled(paletteLoaded);
     ui->checkBoxEinzelpaket->setEnabled(paletteLoaded);
     ui->checkBoxLabelInvert->setEnabled(paletteLoaded);
+    // Robot parameters stay locked until a plan is loaded (button and tab alike).
     ui->ButtonOpenParameterRoboter->setEnabled(paletteLoaded);
+    ui->navRoboter->setEnabled(paletteLoaded);
     ui->ButtonDatenSenden->setEnabled(canStartServer);
     ui->ButtonDatenSenden_2->setEnabled(canStartServer);
     ui->ButtonDatenSenden->setText(startServerText);
@@ -1114,20 +1086,32 @@ void MainWindow::updateVolumeIcon()
 
 void MainWindow::showMainMenu()
 {
-    ui->stackedWidget->setCurrentIndex(PAGE_MAIN_MENU);
+    setCurrentPage(PAGE_MAIN_MENU);
+}
+
+void MainWindow::showPlans()
+{
+    setCurrentPage(PAGE_PLANS);
 }
 
 void MainWindow::showRobotParameters()
 {
-    ui->stackedWidget->setCurrentIndex(PAGE_ROBOT_PARAMS);
+    // Same lock as the button: no robot parameters without a loaded plan.
+    if (!m_paletteLoaded) {
+        syncNavigation();
+        return;
+    }
+    setCurrentPage(PAGE_ROBOT_PARAMS);
+}
+
+void MainWindow::showQrCode()
+{
+    setCurrentPage(PAGE_QR_CODE);
 }
 
 void MainWindow::showSettings()
 {
-    if (ui->tabWidget_2 && ui->stackedWidget) {
-        ui->tabWidget_2->setGeometry(0, 0, ui->stackedWidget->width(), ui->stackedWidget->height());
-    }
-    ui->stackedWidget->setCurrentIndex(PAGE_SETTINGS);
+    setCurrentPage(PAGE_SETTINGS);
 }
 
 void MainWindow::showPasswordDialog()
@@ -1152,12 +1136,8 @@ void MainWindow::showPasswordDialog()
         showSettings();
     } else {
         qDebug() << "Password authentication cancelled or failed";
+        syncNavigation();
     }
-}
-
-void MainWindow::showExperimental()
-{
-    ui->stackedWidget->setCurrentIndex(PAGE_EXPERIMENTAL);
 }
 
 // === Main Menu Slots ===
@@ -1228,7 +1208,7 @@ void MainWindow::applyLoadedPalette(const database::PaletteData& data, const QSt
 
     // Package count as in the 3D preview and the Planvorschlag dialog; the .rob
     // header field (anzahlPakete) is only the pick count of the first layer type.
-    ui->LabelPalletenplanInfo->setText(QString("Geladen: %1 - %2 Lagen, %3 Pakete")
+    ui->LabelPalletenplanInfo->setText(QStringLiteral("Geladen: %1 - %2 Lagen, %3 Pakete")
         .arg(displayName)
         .arg(data.metadata.anzLagen)
         .arg(visualPaletteFromPaletteData(data, displayName).totalPackages));
@@ -1246,7 +1226,7 @@ void MainWindow::applyLoadedPalette(const database::PaletteData& data, const QSt
 void MainWindow::onStartServerClicked()
 {
     if (!m_xmlRpcServer) {
-        showMessage("XML-RPC-Server nicht verfuegbar");
+        showMessage("XML-RPC-Server nicht verfügbar");
         return;
     }
 
@@ -1267,6 +1247,11 @@ void MainWindow::onParameterRobotClicked()
 
 void MainWindow::onSettingsClicked()
 {
+    if (ui->stackedWidget->currentIndex() == PAGE_SETTINGS) {
+        syncNavigation();
+        return;
+    }
+
     qDebug() << "Settings button clicked - checking for USB key or password";
 
     // First check for valid USB key
@@ -1326,11 +1311,6 @@ void MainWindow::onScannerStatusChanged(const QString& status, const QString& im
     m_audio->playNotification(audio::AudioType::ScannerWarning);
 
     m_state->setLastScannerWarningTime(now);
-}
-
-void MainWindow::onExperimentalClicked()
-{
-    showExperimental();
 }
 
 void MainWindow::onEinzelpaketChanged(int state)
@@ -1418,7 +1398,7 @@ void MainWindow::onRobotPauseClicked()
 void MainWindow::onStopRpcServerClicked()
 {
     if (!m_xmlRpcServer) {
-        showMessage("XML-RPC-Server nicht verfuegbar");
+        showMessage("XML-RPC-Server nicht verfügbar");
         return;
     }
 
@@ -1511,7 +1491,7 @@ void MainWindow::onSaveSettingsClicked()
     qDebug() << "Save settings clicked";
 
     if (!m_settings) {
-        showMessage("Fehler: Einstellungen nicht verfuegbar");
+        showMessage("Fehler: Einstellungen nicht verfügbar");
         return;
     }
 
@@ -1572,7 +1552,7 @@ void MainWindow::onSaveSettingsClicked()
             qInfo() << "MainWindow - palette plan folder monitoring restarted for" << requestedUsbPath;
         } else {
             qWarning() << "MainWindow - failed to restart palette plan folder monitoring for" << requestedUsbPath;
-            showMessage("Palettierplan-Ordner konnte nicht ueberwacht werden");
+            showMessage("Palettierplan-Ordner konnte nicht überwacht werden");
         }
     }
 
@@ -1593,8 +1573,8 @@ void MainWindow::onUrModelChanged(int index)
 
 void MainWindow::onExitAppClicked()
 {
-    if (QMessageBox::question(this, "Bestaetigung",
-            "Anwendung wirklich neustarten?") == QMessageBox::Yes) {
+    if (Theme::confirm(this, QStringLiteral("Bestätigung"),
+                       QStringLiteral("Anwendung wirklich neu starten?"))) {
         QApplication::quit();
     }
 }
@@ -1604,23 +1584,23 @@ void MainWindow::onSearchUpdateClicked()
     qDebug() << "Search update clicked";
 
     if (!m_autoUpdater) {
-        showMessage("Update-System nicht verfuegbar");
+        showMessage("Update-System nicht verfügbar");
         return;
     }
 
     if (m_autoUpdater->currentStatus() == system::UpdateStatus::Checking) {
-        showMessage("Update-Pruefung laeuft bereits...");
+        showMessage("Update-Prüfung läuft bereits...");
         return;
     }
 
-    showMessage("Pruefe auf Updates...");
+    showMessage("Prüfe auf Updates...");
     m_autoUpdater->checkForUpdates();
 }
 
 void MainWindow::onUpdateCheckCompleted(bool success, const QString& message)
 {
     if (!success) {
-        showMessage("Update-Pruefung fehlgeschlagen: " + message);
+        showMessage("Update-Prüfung fehlgeschlagen: " + message);
         return;
     }
 
@@ -1630,21 +1610,14 @@ void MainWindow::onUpdateCheckCompleted(bool success, const QString& message)
 
     auto updateInfo = m_autoUpdater->availableUpdate();
     if (updateInfo.version.isEmpty()) {
-        showMessage("Keine Updates verfuegbar. Aktuelle Version: " + m_autoUpdater->currentVersion());
+        showMessage("Keine Updates verfügbar. Aktuelle Version: " + m_autoUpdater->currentVersion());
     } else {
-        QString msg = QString("Neue Version verfuegbar: %1\n\nAktuelle Version: %2\n\nRelease Notes:\n%3")
+        QString msg = QString("Neue Version verfügbar: %1\n\nAktuelle Version: %2\n\nRelease Notes:\n%3")
                           .arg(updateInfo.version)
                           .arg(m_autoUpdater->currentVersion())
                           .arg(updateInfo.releaseNotes);
 
-        QMessageBox::StandardButton reply = QMessageBox::question(
-            this,
-            "Update Verfuegbar",
-            msg,
-            QMessageBox::Yes | QMessageBox::No
-        );
-
-        if (reply == QMessageBox::Yes) {
+        if (Theme::confirm(this, QStringLiteral("Update verfügbar"), msg)) {
             showMessage("Lade Update herunter...");
             m_autoUpdater->downloadAndInstallUpdate();
         }
@@ -1696,7 +1669,7 @@ void MainWindow::onSendCommandClicked()
 
 void MainWindow::onSelectRobPathClicked()
 {
-    QString dir = QFileDialog::getExistingDirectory(this, "Pfad Palettenplaene waehlen");
+    QString dir = QFileDialog::getExistingDirectory(this, "Pfad Palettenpläne wählen");
     if (!dir.isEmpty()) {
         ui->pathEdit->setText(dir);
     }
@@ -1704,7 +1677,7 @@ void MainWindow::onSelectRobPathClicked()
 
 void MainWindow::onSelectAudioPathClicked()
 {
-    QString file = QFileDialog::getOpenFileName(this, "Audio-Datei waehlen",
+    QString file = QFileDialog::getOpenFileName(this, "Audio-Datei wählen",
         QString(), "Audio Files (*.wav *.mp3 *.ogg)");
     if (!file.isEmpty()) {
         ui->audioPathEdit->setText(file);
@@ -1716,7 +1689,7 @@ void MainWindow::onSelectAudioPathClicked()
 
 void MainWindow::onSelectScannerSoundPathClicked()
 {
-    QString file = QFileDialog::getOpenFileName(this, "Scanner Warning Sound waehlen",
+    QString file = QFileDialog::getOpenFileName(this, "Scanner Warning Sound wählen",
         QString(), "Audio Files (*.wav *.mp3 *.ogg)");
     if (!file.isEmpty()) {
         ui->scannerWarningSoundPathEdit->setText(file);
@@ -1729,7 +1702,7 @@ void MainWindow::onSelectScannerSoundPathClicked()
 void MainWindow::onTestAlarmAudioClicked()
 {
     if (!m_audio) {
-        showMessage("Audio nicht verfuegbar");
+        showMessage("Audio nicht verfügbar");
         return;
     }
 
@@ -1739,7 +1712,7 @@ void MainWindow::onTestAlarmAudioClicked()
 void MainWindow::onTestScannerAudioClicked()
 {
     if (!m_audio) {
-        showMessage("Audio nicht verfuegbar");
+        showMessage("Audio nicht verfügbar");
         return;
     }
 
@@ -1749,13 +1722,13 @@ void MainWindow::onTestScannerAudioClicked()
 void MainWindow::onImportRobFileClicked()
 {
     if (!m_database) {
-        showMessage("Datenbank nicht verfuegbar");
+        showMessage("Datenbank nicht verfügbar");
         return;
     }
 
     QString filePath = QFileDialog::getOpenFileName(
         this,
-        tr("Palettierplan auswaehlen"),
+        tr("Palettierplan auswählen"),
         QString(),
         tr("Palettierplan-Dateien (*)")
     );
@@ -1843,7 +1816,7 @@ void MainWindow::onOpenFileClicked()
 {
     QString path = ui->lineEditFilePath->text();
     if (path.isEmpty()) {
-        path = QFileDialog::getOpenFileName(this, "Datei oeffnen");
+        path = QFileDialog::getOpenFileName(this, "Datei öffnen");
         if (path.isEmpty()) return;
         ui->lineEditFilePath->setText(path);
     }
@@ -1853,7 +1826,7 @@ void MainWindow::onOpenFileClicked()
         ui->textEditFile->setText(QString::fromUtf8(file.readAll()));
         file.close();
     } else {
-        showMessage("Datei konnte nicht geoeffnet werden");
+        showMessage("Datei konnte nicht geöffnet werden");
     }
 }
 
@@ -1861,18 +1834,13 @@ void MainWindow::onSaveOpenFileClicked()
 {
     QString path = ui->lineEditFilePath->text().trimmed();
     if (path.isEmpty()) {
-        showMessage("Bitte Datei auswaehlen");
+        showMessage("Bitte Datei auswählen");
         return;
     }
 
     if (QFile::exists(path)) {
-        const auto overwrite = QMessageBox::question(
-            this,
-            tr("Datei ueberschreiben?"),
-            tr("Die Datei %1 existiert bereits. Soll sie ueberschrieben werden?").arg(path),
-            QMessageBox::Yes | QMessageBox::No
-        );
-        if (overwrite != QMessageBox::Yes) {
+        if (!Theme::confirm(this, tr("Datei überschreiben?"),
+                            tr("Die Datei %1 existiert bereits. Soll sie überschrieben werden?").arg(path))) {
             return;
         }
     }
@@ -1885,7 +1853,7 @@ void MainWindow::onSaveOpenFileClicked()
 
     const QByteArray data = ui->textEditFile->toPlainText().toUtf8();
     if (file.write(data) != data.size()) {
-        showMessage("Datei konnte nicht vollstaendig gespeichert werden");
+        showMessage("Datei konnte nicht vollständig gespeichert werden");
         return;
     }
 
@@ -1966,7 +1934,7 @@ void MainWindow::onConsoleCommandEntered()
     }
 }
 
-// === Experimental Slots ===
+// === Plan library ("Pläne") Slots ===
 
 void MainWindow::onRobFileSelected(QListWidgetItem* item)
 {
@@ -2024,7 +1992,7 @@ void MainWindow::onLoadSelectedRobFile()
 {
     auto items = ui->robFilesListWidget->selectedItems();
     if (items.isEmpty()) {
-        showMessage("Bitte Datei auswaehlen");
+        showMessage("Bitte Datei auswählen");
         return;
     }
 
@@ -2041,18 +2009,8 @@ void MainWindow::setupDatabaseManagerTab()
         return;
     }
 
-    if (ui->tabWidget_2) {
-        if (ui->stackedWidget) {
-            ui->tabWidget_2->setGeometry(0, 0, ui->stackedWidget->width(), ui->stackedWidget->height());
-        }
-        ui->tabWidget_2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-        const int index = ui->tabWidget_2->indexOf(ui->consoleSettingsTab);
-        if (index >= 0) {
-            ui->tabWidget_2->setTabText(index, tr("Datenbank"));
-        }
-    }
-
+    // The former console tab hosts the plan database editor; the console
+    // widgets stay (appendConsoleLog still writes to them) but are not shown.
     if (ui->textEditConsole) {
         ui->textEditConsole->hide();
     }
@@ -2060,23 +2018,21 @@ void MainWindow::setupDatabaseManagerTab()
         ui->lineEditCommand->hide();
     }
 
+    // Admin tool with many fields: dense controls, all inputs above the keyboard.
+    Theme::setCompact(ui->consoleSettingsTab);
+
     auto* rootLayout = new QHBoxLayout(ui->consoleSettingsTab);
-    rootLayout->setContentsMargins(8, 8, 8, 8);
-    rootLayout->setSpacing(10);
+    rootLayout->setContentsMargins(16, 10, 16, 10);
+    rootLayout->setSpacing(12);
 
     auto* sidePanel = new QWidget(ui->consoleSettingsTab);
-    sidePanel->setFixedWidth(270);
+    sidePanel->setFixedWidth(260);
     auto* sideLayout = new QVBoxLayout(sidePanel);
     sideLayout->setContentsMargins(0, 0, 0, 0);
     sideLayout->setSpacing(6);
 
-    if (ui->ButtonZurueck_7) {
-        ui->ButtonZurueck_7->setFixedSize(64, 64);
-        sideLayout->addWidget(ui->ButtonZurueck_7, 0, Qt::AlignLeft);
-    }
-
-    auto* listLabel = new QLabel(tr("Palettierplaene"), sidePanel);
-    listLabel->setStyleSheet(QStringLiteral("font-weight: bold; font-size: 16px;"));
+    auto* listLabel = new QLabel(tr("Palettierpläne"), sidePanel);
+    Theme::setRole(listLabel, "heading");
     sideLayout->addWidget(listLabel);
 
     m_databasePlanList = new QListWidget(sidePanel);
@@ -2091,13 +2047,14 @@ void MainWindow::setupDatabaseManagerTab()
     auto* importButton = new QPushButton(tr("Import"), sidePanel);
     auto* newButton = new QPushButton(tr("Neu"), sidePanel);
     auto* duplicateButton = new QPushButton(tr("Duplizieren"), sidePanel);
-    auto* deleteButton = new QPushButton(tr("Loeschen"), sidePanel);
+    auto* deleteButton = new QPushButton(tr("Löschen"), sidePanel);
+    Theme::setRole(deleteButton, "danger");
 
     actionGrid->addWidget(refreshButton, 0, 0, 1, 2);
     actionGrid->addWidget(importButton, 1, 0);
     actionGrid->addWidget(newButton, 1, 1);
-    actionGrid->addWidget(duplicateButton, 2, 0, 1, 2);
-    actionGrid->addWidget(deleteButton, 3, 0, 1, 2);
+    actionGrid->addWidget(duplicateButton, 2, 0);
+    actionGrid->addWidget(deleteButton, 2, 1);
     sideLayout->addLayout(actionGrid);
 
     auto* editorPanel = new QWidget(ui->consoleSettingsTab);
@@ -2105,22 +2062,22 @@ void MainWindow::setupDatabaseManagerTab()
     editorLayout->setContentsMargins(0, 0, 0, 0);
     editorLayout->setSpacing(8);
 
-    auto* formGroup = new QGroupBox(tr("Stammdaten"), editorPanel);
+    auto* formGroup = new QFrame(editorPanel);
+    Theme::setCard(formGroup);
     auto* form = new QGridLayout(formGroup);
+    form->setContentsMargins(12, 10, 12, 10);
     form->setHorizontalSpacing(8);
     form->setVerticalSpacing(6);
 
     auto makeIntSpin = [](int min, int max) {
         auto* spin = new QSpinBox();
         spin->setRange(min, max);
-        spin->setButtonSymbols(QAbstractSpinBox::PlusMinus);
         return spin;
     };
     auto makeDoubleSpin = [](double min, double max, int decimals) {
         auto* spin = new QDoubleSpinBox();
         spin->setRange(min, max);
         spin->setDecimals(decimals);
-        spin->setButtonSymbols(QAbstractSpinBox::PlusMinus);
         return spin;
     };
 
@@ -2140,34 +2097,47 @@ void MainWindow::setupDatabaseManagerTab()
     m_databasePackageHeightSpin = makeIntSpin(0, 999999);
     m_databasePackageGapSpin = makeIntSpin(0, 999999);
     m_databasePackageWeightSpin = makeDoubleSpin(0.0, 999999.0, 3);
-    m_databaseEinzelpaketCheck = new QCheckBox(tr("Einzelpaket laengs"), formGroup);
+    m_databaseEinzelpaketCheck = new QCheckBox(tr("Einzelpaket längs"), formGroup);
 
-    form->addWidget(new QLabel(tr("Name"), formGroup), 0, 0);
+    // Six rows of three fields; every input stays above the on-screen keyboard.
+    const auto caption = [formGroup](const QString& text) {
+        auto* label = new QLabel(text, formGroup);
+        label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        return label;
+    };
+    form->addWidget(caption(tr("Name")), 0, 0);
     form->addWidget(m_databasePlanNameEdit, 0, 1, 1, 3);
-    form->addWidget(new QLabel(tr("Paket quer"), formGroup), 1, 0);
-    form->addWidget(m_databasePaketQuerSpin, 1, 1);
-    form->addWidget(new QLabel(tr("Lagearten"), formGroup), 1, 2);
-    form->addWidget(m_databaseLayerTypesSpin, 1, 3);
-    form->addWidget(new QLabel(tr("Lagen"), formGroup), 2, 0);
-    form->addWidget(m_databaseLayerCountSpin, 2, 1);
-    form->addWidget(new QLabel(tr("Pakete"), formGroup), 2, 2);
-    form->addWidget(m_databasePackageCountSpin, 2, 3);
-    form->addWidget(new QLabel(tr("Schwerpunkt X/Y/Z"), formGroup), 3, 0);
+    form->addWidget(m_databaseEinzelpaketCheck, 0, 5);
+    form->addWidget(caption(tr("Palette L/B/H")), 1, 0);
+    form->addWidget(m_databasePalletLengthSpin, 1, 1);
+    form->addWidget(m_databasePalletWidthSpin, 1, 3);
+    form->addWidget(m_databasePalletHeightSpin, 1, 5);
+    form->addWidget(caption(tr("Karton L/B/H")), 2, 0);
+    form->addWidget(m_databasePackageLengthSpin, 2, 1);
+    form->addWidget(m_databasePackageWidthSpin, 2, 3);
+    form->addWidget(m_databasePackageHeightSpin, 2, 5);
+    form->addWidget(caption(tr("Schwerpunkt X/Y/Z")), 3, 0);
     form->addWidget(m_databaseCogXSpin, 3, 1);
-    form->addWidget(m_databaseCogYSpin, 3, 2);
-    form->addWidget(m_databaseCogZSpin, 3, 3);
-    form->addWidget(new QLabel(tr("Palette L/B/H"), formGroup), 4, 0);
-    form->addWidget(m_databasePalletLengthSpin, 4, 1);
-    form->addWidget(m_databasePalletWidthSpin, 4, 2);
-    form->addWidget(m_databasePalletHeightSpin, 4, 3);
-    form->addWidget(new QLabel(tr("Karton L/B/H"), formGroup), 5, 0);
-    form->addWidget(m_databasePackageLengthSpin, 5, 1);
-    form->addWidget(m_databasePackageWidthSpin, 5, 2);
-    form->addWidget(m_databasePackageHeightSpin, 5, 3);
-    form->addWidget(new QLabel(tr("Spalt / Gewicht"), formGroup), 6, 0);
-    form->addWidget(m_databasePackageGapSpin, 6, 1);
-    form->addWidget(m_databasePackageWeightSpin, 6, 2);
-    form->addWidget(m_databaseEinzelpaketCheck, 6, 3);
+    form->addWidget(m_databaseCogYSpin, 3, 3);
+    form->addWidget(m_databaseCogZSpin, 3, 5);
+    form->addWidget(caption(tr("Paket quer")), 4, 0);
+    form->addWidget(m_databasePaketQuerSpin, 4, 1);
+    form->addWidget(caption(tr("Lagearten")), 4, 2);
+    form->addWidget(m_databaseLayerTypesSpin, 4, 3);
+    form->addWidget(caption(tr("Lagen")), 4, 4);
+    form->addWidget(m_databaseLayerCountSpin, 4, 5);
+    form->addWidget(caption(tr("Pakete")), 5, 0);
+    form->addWidget(m_databasePackageCountSpin, 5, 1);
+    form->addWidget(caption(tr("Spalt")), 5, 2);
+    form->addWidget(m_databasePackageGapSpin, 5, 3);
+    form->addWidget(caption(tr("Gewicht")), 5, 4);
+    form->addWidget(m_databasePackageWeightSpin, 5, 5);
+    for (int column : {1, 3, 5}) {
+        form->setColumnStretch(column, 1);
+    }
+    for (int column : {2, 4}) {
+        form->setColumnMinimumWidth(column, 84);
+    }
 
     editorLayout->addWidget(formGroup, 0);
 
@@ -2232,7 +2202,8 @@ void MainWindow::setupDatabaseManagerTab()
     auto* saveRow = new QHBoxLayout();
     saveRow->addStretch(1);
     auto* saveButton = new QPushButton(tr("Speichern / Umbenennen"), editorPanel);
-    saveButton->setMinimumHeight(36);
+    Theme::setRole(saveButton, "primary");
+    saveButton->setMinimumWidth(280);
     saveRow->addWidget(saveButton);
     editorLayout->addLayout(saveRow);
 
@@ -2448,7 +2419,7 @@ bool MainWindow::collectDatabaseEditorData(database::PaletteData& data) const
 void MainWindow::onDatabaseSaveClicked()
 {
     if (!m_database || !m_databaseEditorData) {
-        showMessage("Kein Palettierplan ausgewaehlt");
+        showMessage("Kein Palettierplan ausgewählt");
         return;
     }
 
@@ -2508,7 +2479,7 @@ void MainWindow::onDatabaseNewClicked()
 void MainWindow::onDatabaseDuplicateClicked()
 {
     if (!m_database || !m_databaseEditorData) {
-        showMessage("Bitte Palettierplan auswaehlen");
+        showMessage("Bitte Palettierplan auswählen");
         return;
     }
 
@@ -2545,28 +2516,25 @@ void MainWindow::onDatabaseDuplicateClicked()
 void MainWindow::onDatabaseDeleteClicked()
 {
     if (!m_database || !m_databaseEditorData) {
-        showMessage("Bitte Palettierplan auswaehlen");
+        showMessage("Bitte Palettierplan auswählen");
         return;
     }
 
     const QString displayName = palettePlanDisplayName(m_databaseEditorOriginalFileName);
-    const QMessageBox::StandardButton response = QMessageBox::question(
-        this,
-        tr("Palettierplan loeschen"),
-        tr("Palettierplan \"%1\" wirklich loeschen?").arg(displayName));
-    if (response != QMessageBox::Yes) {
+    if (!Theme::confirm(this, tr("Palettierplan löschen"),
+                        tr("Palettierplan \"%1\" wirklich löschen?").arg(displayName))) {
         return;
     }
 
     if (!m_database->deletePalette(m_databaseEditorOriginalFileName)) {
-        showMessage("Loeschen fehlgeschlagen");
+        showMessage("Löschen fehlgeschlagen");
         return;
     }
 
     m_databaseEditorData.reset();
     m_databaseEditorOriginalFileName.clear();
     loadRobFileList();
-    showMessage("Palettierplan geloescht");
+    showMessage("Palettierplan gelöscht");
 }
 
 void MainWindow::onDatabaseAddPositionClicked()
@@ -2721,41 +2689,41 @@ void MainWindow::setServerRunning(bool running, const QString& error)
 
 void MainWindow::onStatusChanged(const QString& message, message::StatusType type)
 {
-    QString color;
+    Theme::Tone tone = Theme::Tone::Neutral;
     switch (type) {
         case message::StatusType::Busy:
-            color = "#1f5fbf";
+            tone = Theme::Tone::Info;
             break;
         case message::StatusType::Success:
-            color = "#2f8f3f";
+            tone = Theme::Tone::Success;
             break;
         case message::StatusType::Warning:
-            color = "#d9822b";
+            tone = Theme::Tone::Warning;
             break;
         case message::StatusType::Error:
-            color = "#c23030";
+            tone = Theme::Tone::Danger;
             break;
         default:
-            color = "#222222";
             break;
     }
 
     // Long messages wrap and, if still too long, get a smaller font instead of
-    // being clipped (the label has a fixed size in the .ui layout).
+    // being clipped (the status line is two lines high).
     QLabel* label = ui->label_GewichtInfo;
     label->setWordWrap(true);
     label->setText(message);
     QFont font = label->font();
-    int pointSize = 16;
-    for (; pointSize > 9; --pointSize) {
-        font.setPointSize(pointSize);
+    int pixelSize = 19;
+    for (; pixelSize > 12; --pixelSize) {
+        font.setPixelSize(pixelSize);
         const QRect needed = QFontMetrics(font).boundingRect(
             QRect(0, 0, label->width(), 10'000), Qt::TextWordWrap, message);
         if (needed.height() <= label->height()) {
             break;
         }
     }
-    label->setStyleSheet(QString("color: %1; font-size: %2pt;").arg(color).arg(pointSize));
+    label->setStyleSheet(QStringLiteral("color: %1; font-size: %2px;")
+                             .arg(Theme::toneColor(tone)).arg(pixelSize));
 }
 
 void MainWindow::setupPalettePlanCompleter()
@@ -2777,14 +2745,16 @@ void MainWindow::setupPalettePlanCompleter()
     m_palettePlanCompletionView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     m_palettePlanCompletionView->setStyleSheet(QStringLiteral(
         "QListView#PalettePlanCompletionPopup {"
-        "background: white; border: 1px solid #707070; font-size: 20px; }"
-        "QListView#PalettePlanCompletionPopup::item { min-height: 34px; padding: 4px 8px; }"
-        "QListView#PalettePlanCompletionPopup::item:selected { background: #5555ff; color: white; }"));
+        "background: white; border: 2px solid #2f6fed; border-radius: 6px; font-size: 22px; }"
+        "QListView#PalettePlanCompletionPopup::item { min-height: 48px; padding: 0 10px; }"));
     m_palettePlanCompletionView->hide();
 
     ui->EingabePallettenplan->setCompleter(nullptr);
     connect(ui->EingabePallettenplan, &QLineEdit::textChanged,
             this, &MainWindow::updatePalettePlanCompletionPopup);
+    // The popup has no focus of its own: leaving the field closes it.
+    connect(ui->EingabePallettenplan, &QLineEdit::editingFinished,
+            this, &MainWindow::hidePalettePlanCompletionPopup);
     connect(m_palettePlanCompletionView, &QListView::clicked, this,
             [this](const QModelIndex& index) {
                 const QString value = index.data(Qt::DisplayRole).toString();
@@ -2838,8 +2808,11 @@ void MainWindow::updatePalettePlanCompletionPopup(const QString& text)
         return;
     }
 
+    // Suggestions belong to the field being edited. Without this a database
+    // refresh re-opened the popup over whatever page was showing.
     const QString prefix = text.trimmed();
-    if (prefix.isEmpty()) {
+    if (prefix.isEmpty() || !ui->EingabePallettenplan->hasFocus()
+        || ui->stackedWidget->currentIndex() != PAGE_MAIN_MENU) {
         hidePalettePlanCompletionPopup();
         return;
     }
@@ -2859,13 +2832,13 @@ void MainWindow::updatePalettePlanCompletionPopup(const QString& text)
     m_palettePlanCompleterModel->setStringList(matches);
 
     const QPoint popupPos = ui->EingabePallettenplan->mapTo(m_centralWidget, QPoint(0, ui->EingabePallettenplan->height()));
-    const int rowHeight = 44;
-    const int visibleRows = qMin(matches.size(), 5);
+    const int rowHeight = 50;
+    const int visibleRows = qMin(matches.size(), 4);
     m_palettePlanCompletionView->setGeometry(
         popupPos.x(),
         popupPos.y(),
         ui->EingabePallettenplan->width(),
-        qMax(rowHeight, visibleRows * rowHeight));
+        visibleRows * rowHeight + 6);
     m_palettePlanCompletionView->raise();
     m_palettePlanCompletionView->show();
 }

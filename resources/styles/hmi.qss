@@ -1,0 +1,640 @@
+/*
+ * MultipackParser HMI theme (1280x720 touch panel, operated with gloves).
+ *
+ * One sheet for the whole main window and its dialogs. Rules of thumb:
+ *   - every touch target is at least 44 px high, primary actions 56 px and up
+ *   - text is at least 16 px, operator values 20 px and up
+ *   - colour carries state only: navy = brand/primary, green = go,
+ *     amber = attention, red = stop/error
+ *
+ * Heights come from this sheet: a min-height rule replaces a widget's own
+ * minimum height, so sizes are chosen with [scale=...], not setMinimumHeight().
+ *
+ * Variants are picked with dynamic properties, set in ui/MainWindow.ui or in code:
+ *   QPushButton[role="primary|success|warning|danger|nav|icon"]
+ *   [scale="medium|large"] on buttons, [scale="medium"] on line edits and spin boxes
+ *   QLabel[role="title|heading|muted|value|unit|field"]
+ *   QFrame[card="true"]
+ *   [density="compact"] for the dense admin editors (40 px controls)
+ *
+ * Keep the colours in sync with include/multipack/ui/Theme.h.
+ */
+
+/* === Chrome === */
+
+#headerBar {
+    background: #ffffff;
+    border-bottom: 1px solid #d3d9e2;
+}
+
+#noticeBar {
+    background: #fff1cc;
+    border-bottom: 1px solid #e0b252;
+}
+
+#noticeBar QLabel {
+    font-size: 19px;
+    font-weight: bold;
+    color: #5c3b00;
+}
+
+QFrame[card="true"] {
+    background: #ffffff;
+    border: 1px solid #d3d9e2;
+    border-radius: 10px;
+}
+
+/* === Text === */
+
+QLabel {
+    color: #18212f;
+    font-size: 18px;
+}
+
+QLabel:disabled {
+    color: #9aa3af;
+}
+
+QLabel[role="heading"] {
+    font-size: 20px;
+    font-weight: bold;
+    color: #1d2f5e;
+}
+
+QLabel[role="title"] {
+    font-size: 28px;
+    font-weight: bold;
+    color: #1d2f5e;
+}
+
+QLabel[role="field"] {
+    font-size: 20px;
+}
+
+QLabel[role="unit"] {
+    font-size: 20px;
+    color: #5b6676;
+}
+
+QLabel[role="muted"] {
+    font-size: 16px;
+    color: #5b6676;
+}
+
+QLabel[role="value"] {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+QLabel#LabelPalletenplanInfo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #18212f;
+}
+
+QLabel#label_GewichtInfo {
+    font-size: 19px;
+    font-weight: bold;
+}
+
+/* === Buttons === */
+
+QPushButton {
+    min-height: 50px;
+    padding: 0 20px;
+    font-size: 19px;
+    color: #18212f;
+    background: #ffffff;
+    border: 1px solid #b9c2ce;
+    border-radius: 8px;
+    outline: none;
+}
+
+QPushButton:pressed {
+    background: #dde3eb;
+}
+
+QPushButton:disabled {
+    color: #9aa3af;
+    background: #e9edf2;
+    border-color: #d3d9e2;
+}
+
+QPushButton[role="primary"] {
+    color: #ffffff;
+    background: #1d2f5e;
+    border-color: #1d2f5e;
+    font-weight: bold;
+}
+
+QPushButton[role="primary"]:pressed {
+    background: #14224a;
+}
+
+QPushButton[role="success"] {
+    color: #ffffff;
+    background: #1e7d32;
+    border-color: #1e7d32;
+    font-weight: bold;
+}
+
+QPushButton[role="success"]:pressed {
+    background: #17632a;
+}
+
+QPushButton[role="warning"] {
+    color: #18212f;
+    background: #f2b33d;
+    border-color: #d99a22;
+    font-weight: bold;
+}
+
+QPushButton[role="warning"]:pressed {
+    background: #d99a22;
+}
+
+QPushButton[role="danger"] {
+    color: #ffffff;
+    background: #b3261e;
+    border-color: #b3261e;
+    font-weight: bold;
+}
+
+QPushButton[role="danger"]:pressed {
+    background: #8e1e18;
+}
+
+QPushButton[role="primary"]:disabled,
+QPushButton[role="success"]:disabled,
+QPushButton[role="warning"]:disabled,
+QPushButton[role="danger"]:disabled {
+    color: #9aa3af;
+    background: #e9edf2;
+    border-color: #d3d9e2;
+}
+
+/* Machine actions on the robot pages: readable from a step away. */
+QPushButton[scale="large"] {
+    min-height: 100px;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+QPushButton[scale="medium"] {
+    min-height: 66px;
+    font-size: 21px;
+}
+
+/* Top navigation: full header height, the active page carries the brand bar. */
+QPushButton[role="nav"] {
+    min-height: 60px;
+    min-width: 104px;
+    padding: 0 18px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #3a4657;
+    background: transparent;
+    border: none;
+    border-bottom: 4px solid transparent;
+    border-radius: 0;
+}
+
+QPushButton[role="nav"]:pressed {
+    background: #dde3eb;
+}
+
+QPushButton[role="nav"]:checked {
+    color: #1d2f5e;
+    background: #eef2fa;
+    border-bottom: 4px solid #1d2f5e;
+}
+
+QPushButton[role="nav"]:disabled {
+    color: #b0b8c3;
+    background: transparent;
+}
+
+QPushButton[role="icon"] {
+    min-height: 60px;
+    min-width: 60px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-bottom: 4px solid transparent;
+    border-radius: 0;
+}
+
+QPushButton[role="icon"]:pressed {
+    background: #dde3eb;
+}
+
+QPushButton[role="icon"]:checked {
+    background: #eef2fa;
+    border-bottom: 4px solid #1d2f5e;
+}
+
+QToolButton {
+    min-height: 44px;
+    min-width: 52px;
+    font-size: 20px;
+    color: #18212f;
+    background: #ffffff;
+    border: 1px solid #b9c2ce;
+    border-radius: 6px;
+}
+
+QToolButton:pressed {
+    background: #dde3eb;
+}
+
+QTabBar QToolButton {
+    min-height: 0;
+    min-width: 32px;
+}
+
+/* === Inputs === */
+
+/* Text colours come from the application palette (Theme.cpp): a "color" here
+   would also recolour the placeholder text and make hints look like values. */
+QLineEdit,
+QAbstractSpinBox,
+QComboBox,
+QTextEdit,
+QPlainTextEdit {
+    background: #ffffff;
+    border: 1px solid #b9c2ce;
+    border-radius: 6px;
+    font-size: 20px;
+    selection-background-color: #1d2f5e;
+    selection-color: #ffffff;
+}
+
+QLineEdit,
+QAbstractSpinBox,
+QComboBox {
+    min-height: 44px;
+    padding: 0 10px;
+}
+
+QLineEdit:focus,
+QAbstractSpinBox:focus,
+QComboBox:focus,
+QTextEdit:focus,
+QPlainTextEdit:focus {
+    border: 2px solid #2f6fed;
+}
+
+QLineEdit:disabled,
+QAbstractSpinBox:disabled,
+QComboBox:disabled,
+QTextEdit:disabled,
+QPlainTextEdit:disabled {
+    background: #e9edf2;
+    border-color: #d3d9e2;
+}
+
+/* The operator's own values (plan, start layer, carton, pick offsets). */
+QLineEdit[scale="medium"],
+QAbstractSpinBox[scale="medium"] {
+    min-height: 50px;
+    font-size: 22px;
+}
+
+/* Spin boxes: minus and plus side by side, each a full touch target. */
+QAbstractSpinBox {
+    padding-right: 108px;
+}
+
+QAbstractSpinBox::up-button,
+QAbstractSpinBox::down-button {
+    subcontrol-origin: border;
+    subcontrol-position: center right;
+    width: 46px;
+    height: 36px;
+    background: #eef1f5;
+    border: 1px solid #c5ccd6;
+    border-radius: 6px;
+}
+
+QAbstractSpinBox::up-button {
+    right: 5px;
+    image: url(:/icons/ui/plus.png);
+}
+
+QAbstractSpinBox::down-button {
+    right: 56px;
+    image: url(:/icons/ui/minus.png);
+}
+
+QAbstractSpinBox::up-button:pressed,
+QAbstractSpinBox::down-button:pressed {
+    background: #c5ccd6;
+}
+
+QAbstractSpinBox::up-button:disabled,
+QAbstractSpinBox::up-button:off {
+    image: url(:/icons/ui/plus-disabled.png);
+}
+
+QAbstractSpinBox::down-button:disabled,
+QAbstractSpinBox::down-button:off {
+    image: url(:/icons/ui/minus-disabled.png);
+}
+
+QComboBox {
+    combobox-popup: 0;
+    padding-right: 48px;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: border;
+    subcontrol-position: center right;
+    width: 46px;
+    border: none;
+}
+
+QComboBox::down-arrow {
+    width: 24px;
+    height: 24px;
+    image: url(:/icons/ui/chevron-down.png);
+}
+
+QComboBox::down-arrow:disabled {
+    image: url(:/icons/ui/chevron-down-disabled.png);
+}
+
+QComboBox QAbstractItemView {
+    font-size: 20px;
+    color: #18212f;
+    background: #ffffff;
+    border: 1px solid #b9c2ce;
+    selection-background-color: #1d2f5e;
+    selection-color: #ffffff;
+    outline: none;
+}
+
+QComboBox QAbstractItemView::item {
+    min-height: 46px;
+    padding: 0 10px;
+}
+
+QCheckBox,
+QRadioButton {
+    min-height: 44px;
+    spacing: 12px;
+    font-size: 19px;
+    color: #18212f;
+}
+
+QCheckBox:disabled,
+QRadioButton:disabled {
+    color: #9aa3af;
+}
+
+QCheckBox::indicator {
+    width: 28px;
+    height: 28px;
+    background: #ffffff;
+    border: 2px solid #7c8796;
+    border-radius: 6px;
+}
+
+QCheckBox::indicator:checked {
+    background: #1d2f5e;
+    border-color: #1d2f5e;
+    image: url(:/icons/ui/check.png);
+}
+
+QCheckBox::indicator:disabled {
+    background: #e9edf2;
+    border-color: #c5ccd6;
+}
+
+QCheckBox::indicator:checked:disabled {
+    background: #c5ccd6;
+    border-color: #c5ccd6;
+    image: url(:/icons/ui/check.png);
+}
+
+QRadioButton::indicator {
+    width: 26px;
+    height: 26px;
+    background: #ffffff;
+    border: 2px solid #7c8796;
+    border-radius: 15px;
+}
+
+QRadioButton::indicator:checked {
+    width: 12px;
+    height: 12px;
+    border: 9px solid #1d2f5e;
+}
+
+QRadioButton::indicator:disabled {
+    background: #e9edf2;
+    border-color: #c5ccd6;
+}
+
+/* === Lists, tables, trees === */
+
+QListView,
+QTreeView,
+QTableView {
+    color: #18212f;
+    background: #ffffff;
+    border: 1px solid #b9c2ce;
+    border-radius: 6px;
+    font-size: 19px;
+    outline: none;
+}
+
+/* The inset lives on the view: an item rule with padding, background or border
+   would move the text on selection and drop per-item colours set in code. */
+QListView {
+    padding: 2px 8px;
+}
+
+QListView::item {
+    min-height: 46px;
+}
+
+QListView::item:selected,
+QTreeView::item:selected {
+    color: #ffffff;
+    background: #1d2f5e;
+}
+
+QTableView {
+    font-size: 17px;
+    gridline-color: #d3d9e2;
+    selection-background-color: #1d2f5e;
+    selection-color: #ffffff;
+}
+
+QHeaderView::section {
+    min-height: 34px;
+    padding: 0 6px;
+    font-size: 16px;
+    color: #3a4657;
+    background: #eef1f5;
+    border: none;
+    border-right: 1px solid #d3d9e2;
+    border-bottom: 1px solid #d3d9e2;
+}
+
+QScrollBar:vertical {
+    width: 30px;
+    margin: 0;
+    background: #eef1f5;
+    border: none;
+}
+
+QScrollBar:horizontal {
+    height: 30px;
+    margin: 0;
+    background: #eef1f5;
+    border: none;
+}
+
+QScrollBar::handle:vertical {
+    min-height: 60px;
+    margin: 4px;
+    background: #9aa6b5;
+    border-radius: 6px;
+}
+
+QScrollBar::handle:horizontal {
+    min-width: 60px;
+    margin: 4px;
+    background: #9aa6b5;
+    border-radius: 6px;
+}
+
+QScrollBar::handle:pressed {
+    background: #1d2f5e;
+}
+
+QScrollBar::add-line,
+QScrollBar::sub-line {
+    width: 0;
+    height: 0;
+}
+
+QScrollBar::add-page,
+QScrollBar::sub-page {
+    background: none;
+}
+
+/* === Tabs (second level, below the top navigation) === */
+
+QTabWidget::pane {
+    border: none;
+    border-top: 1px solid #d3d9e2;
+}
+
+QTabBar::tab {
+    min-height: 48px;
+    min-width: 96px;
+    padding: 0 22px;
+    font-size: 19px;
+    color: #3a4657;
+    background: transparent;
+    border: none;
+    border-bottom: 4px solid transparent;
+}
+
+QTabBar::tab:selected {
+    color: #1d2f5e;
+    background: #ffffff;
+    border-bottom: 4px solid #1d2f5e;
+}
+
+QTabBar::tab:disabled {
+    color: #b0b8c3;
+}
+
+QGroupBox {
+    margin-top: 14px;
+    padding: 18px 10px 10px 10px;
+    font-size: 18px;
+    background: #ffffff;
+    border: 1px solid #d3d9e2;
+    border-radius: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 12px;
+    padding: 0 6px;
+    color: #1d2f5e;
+}
+
+/* === Dialogs === */
+
+QMessageBox QLabel,
+QInputDialog QLabel {
+    font-size: 19px;
+}
+
+QMessageBox QPushButton,
+QInputDialog QPushButton,
+QDialogButtonBox QPushButton {
+    min-width: 110px;
+}
+
+/* === Dense admin editors (settings > Datenbank) === */
+
+QWidget[density="compact"] QLineEdit,
+QWidget[density="compact"] QAbstractSpinBox,
+QWidget[density="compact"] QComboBox {
+    min-height: 36px;
+    font-size: 17px;
+    padding: 0 6px;
+}
+
+QWidget[density="compact"] QAbstractSpinBox {
+    padding-right: 80px;
+}
+
+QWidget[density="compact"] QAbstractSpinBox::up-button,
+QWidget[density="compact"] QAbstractSpinBox::down-button {
+    width: 34px;
+    height: 30px;
+}
+
+QWidget[density="compact"] QAbstractSpinBox::up-button {
+    right: 3px;
+}
+
+QWidget[density="compact"] QAbstractSpinBox::down-button {
+    right: 39px;
+}
+
+QWidget[density="compact"] QLabel {
+    font-size: 16px;
+}
+
+QWidget[density="compact"] QPushButton {
+    min-height: 44px;
+    padding: 0 12px;
+    font-size: 17px;
+}
+
+QWidget[density="compact"] QCheckBox {
+    font-size: 17px;
+}
+
+QWidget[density="compact"] QTabBar::tab {
+    min-height: 40px;
+    font-size: 17px;
+    padding: 0 16px;
+}
+
+QWidget[density="compact"] QListView {
+    font-size: 17px;
+}
+
+QWidget[density="compact"] QListView::item {
+    min-height: 40px;
+}
