@@ -1016,7 +1016,9 @@ void MainWindow::loadRobFileList()
     }
 
     // The plan list on "Pläne" (MainWindowPlanner.cpp), the completion of the
-    // plan input and the database editor all show the stored plans.
+    // plan input and the database editor all show the stored plans. A stored
+    // plan may have new content: the selected one is previewed again.
+    m_selectedPlanKey.clear();
     refreshPlannerList();
     refreshPalettePlanCompleter();
     refreshDatabaseManagerPlans();
@@ -1932,15 +1934,10 @@ void MainWindow::onFilterChanged()
     const int height = ui->lineEditFilterHeight->text().toInt();
 
     // The filter narrows the whole plan list, planner plans included.
-    m_planFilterActive = m_database && (length != 0 || width != 0 || height != 0);
+    m_planFilterActive = length != 0 || width != 0 || height != 0;
     m_planFilterLength = length;
     m_planFilterWidth = width;
     m_planFilterHeight = height;
-    m_planFilterNames.clear();
-    if (m_planFilterActive) {
-        const QStringList matching = m_database->findByPackageDimensions(length, width, height);
-        m_planFilterNames = QSet<QString>(matching.begin(), matching.end());
-    }
     refreshPlannerList();
 }
 

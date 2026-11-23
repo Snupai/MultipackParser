@@ -7,12 +7,14 @@
 #include "multipack/network/XmlRpcServer.h"
 #include "multipack/ui/MainWindow.h"
 #include "multipack/ui/Theme.h"
+#include "multipack/ui/VisualizationWidget.h"
 
 #include <QAbstractButton>
 #include <QApplication>
 #include <QDateTime>
 #include <QDir>
 #include <QLibraryInfo>
+#include <QImage>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
@@ -41,6 +43,7 @@ private slots:
     void startAndStopServerFromUi();
     void themeIsAppliedToTheWindow();
     void experimentalButtonIsReplacedByPlansTab();
+    void planListFollowsDatabaseChanges();
     void navigationSwitchesPagesAndLocksRobotUntilPlanLoaded();
     void qrCodeTabIsHiddenWithoutPlanner();
     void operatorTextsAvoidPlannerJargon();
@@ -240,6 +243,40 @@ void MainWindowIntegrationTest::experimentalButtonIsReplacedByPlansTab()
     QTest::mouseClick(load, Qt::LeftButton);
     QCOMPARE(f.currentPage(), QStringLiteral("MainMenu"));
     QCOMPARE(GlobalState::instance().currentFileName(), QStringLiteral("sample.rob"));
+}
+
+void MainWindowIntegrationTest::planListFollowsDatabaseChanges()
+{
+    UiFixture f;
+    QVERIFY(f.start());
+    QTest::mouseClick(f.find<QPushButton>("navPlaene"), Qt::LeftButton);
+    auto* list = f.find<QListWidget>("plannerFinalsList");
+    auto* preview = f.window->findChild<multipack::ui::VisualizationWidget*>();
+    auto* filterLength = f.find<QLineEdit>("lineEditFilterLength");
+    QVERIFY(list && preview && filterLength);
+
+    // A selected plan that gets new content is previewed again.
+    list->setCurrentRow(0);
+    const QImage before = preview->grab().toImage();
+    auto changed = testhelpers::makeSamplePaletteData(QStringLiteral("sample.rob"), 1735689700000);
+    changed.packageDimensions.length = 400;
+    changed.packageDimensions.width = 300;
+    changed.rawData[1] = {400, 300, 50, 0};
+    QCOMPARE(f.database.savePaletteData(changed), SaveResult::Updated);
+    QCOMPARE(list->count(), 1);
+    QVERIFY(list->currentItem());
+    QVERIFY(preview->grab().toImage() != before);
+
+    // An active package size filter is answered again when the stored plans change.
+    filterLength->setText(QStringLiteral("200"));
+    QVERIFY(list->item(0)->isHidden());
+    QCOMPARE(f.database.savePaletteData(testhelpers::makeSamplePaletteData(QStringLiteral("other.rob"))),
+             SaveResult::Inserted);
+    QCOMPARE(list->count(), 2);
+    for (int i = 0; i < list->count(); ++i) {
+        const bool isOther = list->item(i)->text().startsWith(QStringLiteral("other"));
+        QCOMPARE(list->item(i)->isHidden(), !isOther);
+    }
 }
 
 void MainWindowIntegrationTest::navigationSwitchesPagesAndLocksRobotUntilPlanLoaded()

@@ -9,7 +9,6 @@
 #include <QListWidgetItem>
 #include <QDateTime>
 #include <QPointer>
-#include <QSet>
 #include <QStringList>
 #include <memory>
 #include <optional>
@@ -331,12 +330,11 @@ private:
     QLabel* m_plannerHintLabel = nullptr;
     QLabel* m_plannerBadge = nullptr;       ///< Count on the "Pläne" tab
     bool m_plannerRowsShown = false;        ///< The list currently includes planner plans
-    QString m_selectedPlanKey;              ///< Last previewed selection of the plan list
+    QString m_selectedPlanKey;              ///< Last previewed selection of the plan list (file name and availability)
     bool m_planFilterActive = false;        ///< Package size filter of the plan list
     int m_planFilterLength = 0;             ///< 0 = any
     int m_planFilterWidth = 0;
     int m_planFilterHeight = 0;
-    QSet<QString> m_planFilterNames;        ///< Local plans matching the filter (names without ".rob")
     QString m_newVersionFinalId;            ///< Newer Fertigstand of the running plan, if any
     QrCodeWidget* m_plannerQr = nullptr;
     QLabel* m_plannerQrStateLabel = nullptr;

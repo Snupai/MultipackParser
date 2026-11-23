@@ -40,6 +40,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QScroller>
+#include <QSet>
 #include <QSignalBlocker>
 #include <QStyle>
 #include <QTabWidget>
@@ -250,7 +251,10 @@ void MainWindow::updatePlannerSelection()
         QStringLiteral("color: %1;").arg(item ? Theme::toneColor(tone) : QString::fromLatin1(Theme::TEXT_MUTED)));
 
     // 3D preview of a newly selected plan; one that is not stored has none.
-    const QString key = item ? item->data(FinalsRole::FileName).toString() : QString();
+    // The key holds the availability: a plan gets its preview once it is stored.
+    const QString fileName = item ? item->data(FinalsRole::FileName).toString() : QString();
+    const QString key = item ? fileName + (loadable ? QStringLiteral("|stored") : QStringLiteral("|missing"))
+                             : QString();
     if (key == m_selectedPlanKey) {
         return;
     }
@@ -258,7 +262,7 @@ void MainWindow::updatePlannerSelection()
     if (!item) {
         return;
     }
-    const auto data = loadable && m_database ? m_database->loadPaletteData(key) : std::nullopt;
+    const auto data = loadable && m_database ? m_database->loadPaletteData(fileName) : std::nullopt;
     if (data.has_value()) {
         updateVisualizationFromPaletteData(*data);
     } else if (m_visualizationWidget) {
@@ -290,19 +294,26 @@ void MainWindow::refreshPlannerList()
 
     const QString activeFile = m_state ? m_state->currentFileName() : m_currentPaletteFile;
     const bool plannerConfigured = m_plannerSync && m_plannerSync->isConfigured();
-    // Package size filter. The database answers it for the local plans; a
-    // planner plan is compared by its stored size and has none until it is stored.
-    const auto passesFilter = [this](const Entry& entry) {
-        if (!m_planFilterActive) {
+    // Package size filter. The database answers it for the local plans (names
+    // without ".rob"), asked on every rebuild because the plans change; a planner
+    // plan is compared by its stored size and has none until it is stored.
+    const bool filterActive = m_planFilterActive && m_database;
+    QSet<QString> localMatches;
+    if (filterActive) {
+        const QStringList matching = m_database->findByPackageDimensions(
+            m_planFilterLength, m_planFilterWidth, m_planFilterHeight);
+        localMatches = QSet<QString>(matching.begin(), matching.end());
+    }
+    const auto passesFilter = [this, filterActive, &localMatches](const Entry& entry) {
+        if (!filterActive) {
             return true;
         }
         if (entry.finalId.isEmpty()) {
             QString name = entry.fileName;
             name.replace(QStringLiteral(".rob"), QString());
-            return m_planFilterNames.contains(name);
+            return localMatches.contains(name);
         }
-        const auto data = entry.downloaded && m_database ? m_database->loadPaletteData(entry.fileName)
-                                                        : std::nullopt;
+        const auto data = entry.downloaded ? m_database->loadPaletteData(entry.fileName) : std::nullopt;
         if (!data.has_value()) {
             return false;
         }
@@ -434,7 +445,7 @@ void MainWindow::refreshPlannerList()
 
     m_plannerList->setVisible(anyShown);
     ui->planListEmptyLabel->setVisible(!anyShown);
-    ui->planListEmptyLabel->setText(m_planFilterActive
+    ui->planListEmptyLabel->setText(filterActive
         ? QStringLiteral("Kein Palettierplan passt zum Filter.")
         : QStringLiteral("Keine Palettierpläne vorhanden."));
     m_plannerHintLabel->setText(hint);
