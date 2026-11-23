@@ -63,8 +63,8 @@ Every 10 s, in one cycle:
    parser accepts any whitespace between values (tabs from Multipack, spaces
    from the planner) and LF or CRLF. A checksum mismatch is retried in the
    next cycle, a parser rejection after 5 minutes. Either way the list shows
-   the entry in red ("Fehler: Plan ungültig, nicht ladbar" / "Prüfsumme
-   falsch") instead of "wird geladen".
+   the entry with a red "Fehler" chip and the reason ("Plan ungültig, nicht
+   ladbar" / "Prüfsumme falsch") instead of "wird geladen".
 3. `GET /api/hmi/v1/proposal`. A proposed Fertigstand that is not stored yet
    is downloaded and verified first.
 
@@ -77,6 +77,15 @@ random factor in [0.5, 1.5] (never above 5 minutes). `429` waits for
 `POST /api/hmi/v1/status` reports the running Fertigstand (or `null` for a
 USB plan) and the app version after every plan change, also when the robot
 loads a plan via XML-RPC, and every 60 s.
+
+## Fertigstände on the HMI
+
+The "Betrieb" page lists the Fertigstände as cards: name, date ("Stand"), and
+state chips ("läuft", "Neue Version", "Neu" for one day after it was marked,
+"Fehler", "wird geladen", "nicht mehr fertig"). Fertigstände of one plan
+(same `recordId`) sit together, newest first, the older ones indented and
+labelled "ältere Version". The bar below the list names the selected
+Fertigstand and holds "Plan laden"; it refuses while a robot program runs.
 
 ## Planvorschlag on the HMI
 

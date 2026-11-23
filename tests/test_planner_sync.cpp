@@ -13,6 +13,7 @@
 #include "multipack/system/RobFileParser.h"
 #include "multipack/system/RobPaletteConversion.h"
 #include "multipack/ui/MainWindow.h"
+#include "multipack/ui/FinalsListDelegate.h"
 #include "multipack/ui/PlanProposalDialog.h"
 #include "multipack/ui/QrCodeWidget.h"
 
@@ -130,6 +131,7 @@ private slots:
     void proposalConfirmedWhileRunningDoesNotSwitch();
     void manualLoadBlockedWhileProgramRuns();
     void qrCodeLivesInItsOwnTab();
+    void finalsListShowsVersionsStatesAndSelection();
 
     // e2e findings
     void plannerFixtureWithSpacesIsStored();
@@ -1162,6 +1164,102 @@ void PlannerSyncTest::loadedHeaderShowsRealPackageCount()
     f.window->findChild<QLineEdit*>(QStringLiteral("EingabePallettenplan"))->setText(QStringLiteral("4711"));
     QTest::mouseClick(f.window->findChild<QPushButton*>(QStringLiteral("LadePallettenplan")), Qt::LeftButton);
     QCOMPARE(header->text(), QStringLiteral("Geladen: 4711 - 3 Lagen, 5 Pakete"));
+    f.window.reset();
+}
+
+void PlannerSyncTest::finalsListShowsVersionsStatesAndSelection()
+{
+    using multipack::ui::FinalsListDelegate;
+    namespace Role = multipack::ui::FinalsRole;
+
+    qputenv("MULTIPACK_DISABLE_ROBOT_STATUS_MONITOR", "1");
+    const QString kBroken = QStringLiteral("af2c8d3c-8f96-4d2c-a5d8-9fd1a0406055");
+    const QByteArray garbage = "<html>not a plan</html>";
+    // Two Fertigstände of one plan ("Alpha"), the newer one listed second, and one unloadable plan.
+    QJsonObject newer = finalJson(kFinalB, "p", "Alpha", robB());
+    newer["markedAt"] = "2026-11-21T10:00:00.000Z";
+    const QJsonArray finals{finalJson(kFinalA, "p", "Alpha", robA()), newer,
+                            finalJson(kBroken, "q", "Gamma", garbage)};
+    m_server->setHandler([=](const FakePlannerServer::Request& r) {
+        if (r.path == "/api/hmi/v1/finals") {
+            return FakePlannerServer::Reply::json(200, finalsBody(finals));
+        }
+        if (r.path.endsWith("/rob")) {
+            FakePlannerServer::Reply reply;
+            reply.body = r.path.contains(kFinalA.toLatin1()) ? robA()
+                         : r.path.contains(kFinalB.toLatin1()) ? robB() : garbage;
+            return reply;
+        }
+        return FakePlannerServer::Reply::empty(204);
+    });
+
+    WindowFixture f;
+    QVERIFY(f.start(m_server->serverPort()));
+    f.window->show();
+    QVERIFY(QTest::qWaitForWindowExposed(f.window.get()));
+    f.robot(multipack::robot::ProgramState::Stopped);
+
+    auto* list = f.window->findChild<QListWidget*>(QStringLiteral("plannerFinalsList"));
+    auto* load = f.window->findChild<QPushButton*>(QStringLiteral("plannerLoadButton"));
+    auto* selection = f.window->findChild<QLabel*>(QStringLiteral("plannerSelectionLabel"));
+    auto* hint = f.window->findChild<QLabel*>(QStringLiteral("plannerHintLabel"));
+    QVERIFY(list && load && selection && hint);
+    QTRY_COMPARE(list->count(), 3);
+
+    const auto chips = [list](int row) {
+        QStringList texts;
+        for (const QString& chip : list->item(row)->data(Role::Chips).toStringList()) {
+            texts.append(multipack::ui::FinalsChip::text(chip));
+        }
+        return texts;
+    };
+
+    // Versions of a plan sit together, newest first; the older one is marked as such.
+    QCOMPARE(list->item(0)->data(Role::FinalId).toString(), kFinalB);
+    QVERIFY(!list->item(0)->data(Role::OlderVersion).toBool());
+    QVERIFY(list->item(0)->data(Role::Detail).toString().contains(QStringLiteral("neueste Version")));
+    QCOMPARE(list->item(1)->data(Role::FinalId).toString(), kFinalA);
+    QVERIFY(list->item(1)->data(Role::OlderVersion).toBool());
+    QVERIFY(list->item(1)->data(Role::Detail).toString().contains(QStringLiteral("ältere Version")));
+
+    // The unloadable plan: error chip, reason on the detail line, not loadable.
+    QCOMPARE(list->item(2)->data(Role::Name).toString(), QStringLiteral("Gamma"));
+    QCOMPARE(chips(2), QStringList{QStringLiteral("Fehler")});
+    QVERIFY(list->item(2)->data(Role::DetailIsError).toBool());
+    QVERIFY(list->item(2)->data(Role::Detail).toString().contains(QStringLiteral("Plan ungültig")));
+
+    // Touch targets and room: full-size rows, at least five of them visible, the
+    // load button in the bar below the list.
+    QCOMPARE(list->visualItemRect(list->item(0)).height(), FinalsListDelegate::ROW_HEIGHT);
+    QVERIFY2(list->viewport()->height() >= 5 * FinalsListDelegate::ROW_HEIGHT,
+             qPrintable(QString::number(list->viewport()->height())));
+    QCOMPARE(load->parentWidget()->objectName(), QStringLiteral("plannerSelectionBar"));
+    QVERIFY(load->height() >= 48);
+
+    // Nothing selected: nothing to load.
+    QVERIFY(!load->isEnabled());
+    QVERIFY(!hint->isVisible());
+
+    // The error row can be selected, but not loaded; the bar says why.
+    list->setCurrentRow(2);
+    QVERIFY(!load->isEnabled());
+    QVERIFY2(selection->text().contains(QStringLiteral("kann nicht geladen werden")),
+             qPrintable(selection->text()));
+
+    // Selecting the older version names it with its date; loading it marks it as
+    // running and the newer one as "Neue Version".
+    list->setCurrentRow(1);
+    QVERIFY(load->isEnabled());
+    QVERIFY2(selection->text().contains(QStringLiteral("Alpha, Stand ")), qPrintable(selection->text()));
+    QTest::mouseClick(load, Qt::LeftButton);
+    QCOMPARE(f.activeFile(), multipack::planner::plannerPaletteFileName(kFinalA));
+    QCOMPARE(list->count(), 3);
+    QCOMPARE(chips(1), QStringList{QStringLiteral("läuft")});
+    QCOMPARE(chips(0), QStringList{QStringLiteral("Neue Version")});
+    QVERIFY(hint->isVisible());
+    QVERIFY(hint->text().contains(QStringLiteral("Neue Version verfügbar")));
+    // The selection survives the refresh.
+    QCOMPARE(list->currentRow(), 1);
     f.window.reset();
 }
 

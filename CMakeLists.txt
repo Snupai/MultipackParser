@@ -195,6 +195,8 @@ set(MOC_HEADERS
     include/multipack/planner/PlannerSyncService.h
     include/multipack/ui/QrCodeWidget.h
     include/multipack/ui/ElidedLabel.h
+    include/multipack/ui/FinalsListDelegate.h
+    include/multipack/ui/ScaledImageLabel.h
     include/multipack/ui/PlanProposalDialog.h
 )
 
@@ -225,6 +227,8 @@ set(UI_SOURCES
     src/ui/SplashScreen.cpp
     src/ui/QrCodeWidget.cpp
     src/ui/ElidedLabel.cpp
+    src/ui/FinalsListDelegate.cpp
+    src/ui/ScaledImageLabel.cpp
     src/ui/Theme.cpp
     src/ui/PlanProposalDialog.cpp
 )

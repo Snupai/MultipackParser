@@ -240,6 +240,8 @@ private:
 
     // Planner (HMI-Abgleich) - implemented in MainWindowPlanner.cpp
     void setupPlannerPanel();
+    void arrangeOperatingPage(bool plannerConfigured);
+    void updatePlannerSelection();
     void setupPlannerSettingsTab();
     void refreshPlannerList();
     void updatePlannerConnectionState();

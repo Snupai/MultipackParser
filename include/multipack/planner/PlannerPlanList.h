@@ -7,6 +7,8 @@
  *   until the operator switches.
  * - When the planner has a newer Fertigstand of the running plan (same
  *   recordId, different id), the HMI shows "Neue Version verfuegbar".
+ * - Fertigstände of the same plan (recordId) are listed together, newest
+ *   first, and numbered so two versions with the same name can be told apart.
  * - A Planvorschlag may only be taken over while the robot is not executing
  *   a program.
  */
@@ -30,7 +32,13 @@ struct PlanListRow {
     bool isActive = false;          ///< This Fertigstand is the running plan
     bool isWithdrawn = false;       ///< No longer in the planner's list (only shown when active)
     bool isNewVersionOfActive = false; ///< Newer Fertigstand of the running plan
+    int versionNumber = 1;          ///< 1 = oldest shown Fertigstand of this plan (recordId)
+    int versionCount = 1;           ///< Shown Fertigstände of this plan
+    bool isRecent = false;          ///< Marked as finished within RECENT_WINDOW_MS before `now`
 };
+
+/// A Fertigstand counts as new ("Neu") for one day after it was marked as finished.
+constexpr qint64 RECENT_WINDOW_MS = 24LL * 60 * 60 * 1000;
 
 struct PlanListView {
     QVector<PlanListRow> rows;
@@ -42,8 +50,10 @@ struct PlanListView {
  * @brief Build the visible list
  * @param finals All locally known Fertigstände (PlannerStore::finals())
  * @param activeFinalId Running Fertigstand, empty when the running plan is not from the planner
+ * @param now Current time for PlanListRow::isRecent; invalid = nothing is flagged as recent
  */
-[[nodiscard]] PlanListView buildPlanList(const QVector<StoredFinal>& finals, const QString& activeFinalId);
+[[nodiscard]] PlanListView buildPlanList(const QVector<StoredFinal>& finals, const QString& activeFinalId,
+                                         const QDateTime& now = QDateTime());
 
 /**
  * @enum SwitchPermission

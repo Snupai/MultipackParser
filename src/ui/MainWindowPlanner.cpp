@@ -20,6 +20,7 @@
 #include "multipack/planner/PlannerStore.h"
 #include "multipack/planner/PlannerSyncService.h"
 #include "multipack/system/UsbMonitor.h"
+#include "multipack/ui/FinalsListDelegate.h"
 #include "multipack/ui/PlanProposalDialog.h"
 #include "multipack/ui/QrCodeWidget.h"
 #include "multipack/ui/Theme.h"
@@ -35,6 +36,8 @@
 #include <QListWidget>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QScroller>
+#include <QSignalBlocker>
 #include <QTabWidget>
 #include <QTimer>
 #include <QVBoxLayout>
@@ -44,8 +47,8 @@ namespace ui {
 
 namespace {
 
-constexpr int ROLE_FINAL_ID = Qt::UserRole;
-constexpr int ROLE_DOWNLOADED = Qt::UserRole + 1;
+constexpr int ROLE_FINAL_ID = FinalsRole::FinalId;
+constexpr int ROLE_DOWNLOADED = FinalsRole::Downloaded;
 
 QString loadErrorText(const QString& loadError)
 {
@@ -149,29 +152,74 @@ void MainWindow::setupPlannerPanel()
     m_plannerQrStateLabel = ui->plannerQrStateLabel;
     m_plannerQrUrlLabel = ui->plannerQrUrlLabel;
 
+    // One card per Fertigstand (FinalsListDelegate), dragged like a phone list.
     m_plannerList->setSelectionMode(QAbstractItemView::SingleSelection);
-    // Rows with a state or an error text are long: wrap them instead of
-    // scrolling sideways.
-    m_plannerList->setWordWrap(true);
+    m_plannerList->setItemDelegate(new FinalsListDelegate(m_plannerList));
     m_plannerList->setResizeMode(QListView::Adjust);
     m_plannerList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_plannerList->setSpacing(2);
-    m_plannerHintLabel->setStyleSheet(
-        QStringLiteral("color: %1; font-weight: bold;").arg(Theme::toneColor(Theme::Tone::Warning)));
+    m_plannerList->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    m_plannerList->setFocusPolicy(Qt::NoFocus);
+    QScroller::grabGesture(m_plannerList->viewport(), QScroller::LeftMouseButtonGesture);
+
+    m_plannerHintLabel->hide();
     m_plannerLoadButton->setEnabled(false);
     m_plannerProposalButton->hide();
     m_plannerPanel->hide();
 
-    connect(m_plannerList, &QListWidget::itemSelectionChanged, this, [this]() {
-        const auto items = m_plannerList->selectedItems();
-        m_plannerLoadButton->setEnabled(!items.isEmpty() && items.first()->data(ROLE_DOWNLOADED).toBool());
-    });
+    connect(m_plannerList, &QListWidget::itemSelectionChanged, this, &MainWindow::updatePlannerSelection);
     connect(m_plannerList, &QListWidget::itemDoubleClicked, this, [this]() { onPlannerLoadClicked(); });
     connect(m_plannerLoadButton, &QPushButton::clicked, this, &MainWindow::onPlannerLoadClicked);
     connect(m_plannerProposalButton, &QPushButton::clicked, this, [this]() {
         m_deferredProposalId.clear();
         openProposalDialog();
     });
+
+    arrangeOperatingPage(false);
+    updatePlannerSelection();
+}
+
+void MainWindow::arrangeOperatingPage(bool plannerConfigured)
+{
+    // With a planner the Fertigstände fill the right half and the machine
+    // block sits below the plan card; without one it takes the right half.
+    ui->mainMenuLayout->removeWidget(ui->machineBlock);
+    if (plannerConfigured) {
+        ui->mainMenuLayout->addWidget(ui->machineBlock, 1, 0);
+    } else {
+        ui->mainMenuLayout->addWidget(ui->machineBlock, 0, 1, Qt::AlignTop);
+    }
+    m_plannerPanel->setVisible(plannerConfigured);
+}
+
+void MainWindow::updatePlannerSelection()
+{
+    const auto items = m_plannerList->selectedItems();
+    const QListWidgetItem* item = items.isEmpty() ? nullptr : items.first();
+    const bool loadable = item && item->data(ROLE_DOWNLOADED).toBool();
+    m_plannerLoadButton->setEnabled(loadable);
+
+    // The bar below the list says what "Plan laden" will load, or why it cannot.
+    QString text;
+    Theme::Tone tone = Theme::Tone::Neutral;
+    if (!item) {
+        text = QStringLiteral("Fertigstand antippen, dann \"Plan laden\".");
+    } else if (loadable) {
+        // Name and date: two versions of a plan share the name.
+        const QString markedAt = item->data(FinalsRole::MarkedAt).toString();
+        text = QStringLiteral("Ausgewählt: %1").arg(item->data(FinalsRole::Name).toString());
+        if (!markedAt.isEmpty()) {
+            text += QStringLiteral(", Stand %1").arg(markedAt);
+        }
+    } else if (item->data(FinalsRole::DetailIsError).toBool()) {
+        text = QStringLiteral("%1 kann nicht geladen werden. Bitte im Palettenplaner prüfen.")
+                   .arg(item->data(FinalsRole::Name).toString());
+        tone = Theme::Tone::Danger;
+    } else {
+        text = QStringLiteral("%1 wird noch vom Planer geladen.").arg(item->data(FinalsRole::Name).toString());
+    }
+    ui->plannerSelectionLabel->setText(text);
+    ui->plannerSelectionLabel->setStyleSheet(
+        QStringLiteral("color: %1;").arg(item ? Theme::toneColor(tone) : QString::fromLatin1(Theme::TEXT_MUTED)));
 }
 
 void MainWindow::refreshPlannerList()
@@ -184,74 +232,92 @@ void MainWindow::refreshPlannerList()
         ? m_plannerList->currentItem()->data(ROLE_FINAL_ID).toString()
         : QString();
 
-    m_plannerList->clear();
-    m_plannerHintLabel->clear();
-    if (!m_plannerSync) {
-        return;
+    {
+        // One selection update at the end instead of one per removed item.
+        const QSignalBlocker blocker(m_plannerList);
+        m_plannerList->clear();
+        m_plannerHintLabel->clear();
+
+        const planner::PlanListView view = m_plannerSync
+            ? planner::buildPlanList(m_plannerSync->store().finals(), currentActiveFinalId(),
+                                     QDateTime::currentDateTimeUtc())
+            : planner::PlanListView();
+
+        for (const planner::PlanListRow& row : view.rows) {
+            const QString markedAt = formatMarkedAt(row.final.entry.markedAt);
+            const bool failed = !row.final.downloaded && !row.final.loadError.isEmpty();
+            const bool olderVersion = row.versionCount > 1 && row.versionNumber < row.versionCount;
+
+            // Plain summary (item text), state chips and the detail line of the card.
+            QString summary = row.final.entry.name;
+            QStringList chips;
+            QStringList detail;
+            if (!markedAt.isEmpty()) {
+                summary += QStringLiteral("   ") + markedAt;
+                detail.append(QStringLiteral("Stand %1").arg(markedAt));
+            }
+            if (row.versionCount > 1) {
+                detail.append(olderVersion ? QStringLiteral("ältere Version") : QStringLiteral("neueste Version"));
+            }
+            if (row.isActive) {
+                summary += QStringLiteral("   [läuft]");
+                chips.append(FinalsChip::encode(FinalsChip::Success, QStringLiteral("läuft")));
+            }
+            if (row.isWithdrawn) {
+                summary += QStringLiteral("   [nicht mehr fertig]");
+                chips.append(FinalsChip::encode(FinalsChip::Neutral, QStringLiteral("nicht mehr fertig")));
+            }
+            if (row.isNewVersionOfActive) {
+                summary += QStringLiteral("   [Neue Version]");
+                chips.append(FinalsChip::encode(FinalsChip::Warning, QStringLiteral("Neue Version")));
+            }
+            if (failed) {
+                summary += QStringLiteral("   [Fehler: %1]").arg(loadErrorText(row.final.loadError));
+                chips.append(FinalsChip::encode(FinalsChip::Danger, QStringLiteral("Fehler")));
+                // The reason first: it is what must stay readable in a narrow row.
+                detail.prepend(loadErrorText(row.final.loadError));
+            } else if (!row.final.downloaded) {
+                summary += QStringLiteral("   (wird geladen ...)");
+                chips.append(FinalsChip::encode(FinalsChip::Neutral, QStringLiteral("wird geladen")));
+            } else if (row.isRecent && !row.isActive && !row.isNewVersionOfActive) {
+                chips.append(FinalsChip::encode(FinalsChip::Info, QStringLiteral("Neu")));
+            }
+
+            auto* item = new QListWidgetItem(summary, m_plannerList);
+            item->setData(ROLE_FINAL_ID, row.final.entry.id);
+            item->setData(ROLE_DOWNLOADED, row.final.downloaded);
+            item->setData(FinalsRole::Name, row.final.entry.name);
+            item->setData(FinalsRole::Detail, detail.join(QStringLiteral("  ·  ")));
+            item->setData(FinalsRole::DetailIsError, failed);
+            item->setData(FinalsRole::Chips, chips);
+            item->setData(FinalsRole::OlderVersion, olderVersion);
+            item->setData(FinalsRole::MarkedAt, markedAt);
+            item->setToolTip(failed
+                ? QStringLiteral("Dieser Fertigstand kann auf dem HMI nicht geladen werden. "
+                                 "Bitte im Palettenplaner prüfen.")
+                : row.final.entry.fileName);
+            if (row.final.entry.id == selectedId) {
+                m_plannerList->setCurrentItem(item);
+            }
+        }
+
+        if (view.newVersion) {
+            m_plannerHintLabel->setText(QStringLiteral("Neue Version verfügbar: %1").arg(view.newVersion->name));
+        }
     }
 
-    const planner::PlanListView view =
-        planner::buildPlanList(m_plannerSync->store().finals(), currentActiveFinalId());
-
-    for (const planner::PlanListRow& row : view.rows) {
-        QString text = row.final.entry.name;
-        const QString markedAt = formatMarkedAt(row.final.entry.markedAt);
-        if (!markedAt.isEmpty()) {
-            text += QStringLiteral("   ") + markedAt;
-        }
-        if (row.isActive) {
-            text += QStringLiteral("   [läuft]");
-        }
-        if (row.isWithdrawn) {
-            text += QStringLiteral("   [nicht mehr fertig]");
-        }
-        if (row.isNewVersionOfActive) {
-            text += QStringLiteral("   [Neue Version]");
-        }
-        const bool failed = !row.final.downloaded && !row.final.loadError.isEmpty();
-        if (failed) {
-            text += QStringLiteral("   [Fehler: %1]").arg(loadErrorText(row.final.loadError));
-        } else if (!row.final.downloaded) {
-            text += QStringLiteral("   (wird geladen ...)");
-        }
-
-        auto* item = new QListWidgetItem(text, m_plannerList);
-        item->setData(ROLE_FINAL_ID, row.final.entry.id);
-        item->setData(ROLE_DOWNLOADED, row.final.downloaded);
-        item->setToolTip(row.final.entry.fileName);
-        if (row.isActive) {
-            QFont font = item->font();
-            font.setBold(true);
-            item->setFont(font);
-        }
-        if (row.isNewVersionOfActive) {
-            item->setBackground(QColor(QString::fromLatin1(Theme::HIGHLIGHT_ROW)));
-        }
-        if (failed) {
-            item->setForeground(QColor(QString::fromLatin1(Theme::DANGER)));
-            item->setToolTip(QStringLiteral("Dieser Fertigstand kann auf dem HMI nicht geladen werden. "
-                                            "Bitte im Palettenplaner prüfen."));
-        } else if (!row.final.downloaded) {
-            item->setForeground(QColor(QString::fromLatin1(Theme::TEXT_DISABLED)));
-        }
-        if (row.final.entry.id == selectedId) {
-            m_plannerList->setCurrentItem(item);
-        }
-    }
-
-    if (view.newVersion) {
-        m_plannerHintLabel->setText(QStringLiteral("Neue Version verfügbar: %1").arg(view.newVersion->name));
-    }
-
-    const auto items = m_plannerList->selectedItems();
-    m_plannerLoadButton->setEnabled(!items.isEmpty() && items.first()->data(ROLE_DOWNLOADED).toBool());
+    const bool empty = m_plannerList->count() == 0;
+    m_plannerList->setVisible(!empty);
+    ui->plannerEmptyLabel->setVisible(empty);
+    m_plannerHintLabel->setVisible(!m_plannerHintLabel->text().isEmpty());
+    updatePlannerSelection();
 }
 
 void MainWindow::updatePlannerConnectionState()
 {
     const bool configured = m_plannerSync && m_plannerSync->isConfigured();
-    if (m_plannerPanel) {
-        m_plannerPanel->setVisible(configured);
+    if (m_plannerPanel && m_plannerPanel->isHidden() == configured) {
+        arrangeOperatingPage(configured);
     }
     // The QR code has its own tab; without a planner there is nothing to scan.
     ui->navQrCode->setVisible(configured);
@@ -444,8 +510,8 @@ void MainWindow::updateProposalUi()
         if (m_pendingProposal && !m_proposalDialog) {
             const bool running = permission == planner::SwitchPermission::ProgramRunning;
             m_plannerProposalButton->setText(running
-                ? QStringLiteral("Planvorschlag wartet\n(Roboter läuft)")
-                : QStringLiteral("Planvorschlag\nanzeigen"));
+                ? QStringLiteral("Planvorschlag wartet (Roboter läuft)")
+                : QStringLiteral("Planvorschlag anzeigen"));
             // Shown only while no program runs (contract); a deferred or
             // unknown-state proposal can still be opened and rejected.
             m_plannerProposalButton->setEnabled(!running);

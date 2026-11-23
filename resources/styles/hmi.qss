@@ -464,6 +464,49 @@ QTreeView::item:selected {
     background: #1d2f5e;
 }
 
+/* Fertigstände: cards drawn by FinalsListDelegate in a tinted well. */
+QListView#plannerFinalsList {
+    padding: 6px;
+    background: #f3f5f8;
+    border: 1px solid #d3d9e2;
+    border-radius: 8px;
+}
+
+QListView#plannerFinalsList QScrollBar:vertical {
+    width: 36px;
+    background: #f3f5f8;
+}
+
+QListView#plannerFinalsList QScrollBar::handle:vertical {
+    background: #7c8796;
+}
+
+QLabel#plannerHintLabel {
+    padding: 8px 12px;
+    font-size: 17px;
+    font-weight: bold;
+    color: #8a4500;
+    background: #ffe9c7;
+    border-radius: 6px;
+}
+
+QLabel#plannerStateLabel {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+QLabel#plannerSelectionLabel {
+    font-size: 17px;
+}
+
+QLabel#plannerEmptyLabel {
+    font-size: 18px;
+}
+
+QFrame#plannerSelectionBar {
+    border-top: 1px solid #d3d9e2;
+}
+
 QTableView {
     font-size: 17px;
     gridline-color: #d3d9e2;

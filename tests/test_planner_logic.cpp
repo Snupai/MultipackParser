@@ -106,6 +106,7 @@ private slots:
     // HMI list + guard
     void planListHidesWithdrawnExceptActive();
     void planListFlagsNewVersionOfActivePlan();
+    void planListGroupsVersionsOfAPlan();
     void switchGuardBlocksRunningOrUnknownRobot();
 
     // QR
@@ -720,6 +721,54 @@ void PlannerLogicTest::planListFlagsNewVersionOfActivePlan()
     QVERIFY(!buildPlanList(finals, idNew).newVersion.has_value());
     // Not a planner plan: no hint.
     QVERIFY(!buildPlanList(finals, QString()).newVersion.has_value());
+}
+
+void PlannerLogicTest::planListGroupsVersionsOfAPlan()
+{
+    auto stored = [](const QString& id, const QString& record, const QDateTime& markedAt) {
+        StoredFinal s;
+        s.entry.id = id;
+        s.entry.recordId = record;
+        s.entry.name = QStringLiteral("Plan ") + record;
+        s.entry.markedAt = markedAt;
+        s.inList = true;
+        s.downloaded = true;
+        return s;
+    };
+    const QDateTime now(QDate(2026, 11, 23), QTime(12, 0), QTimeZone::utc());
+    const QDateTime old = now.addDays(-4);
+    const QString idNewer = QStringLiteral("0c2c8a2a-6d74-4b0a-c3b6-7dbf8f2f4e33");
+    const QString idFresh = QStringLiteral("1d3d9b3b-7e85-4c1b-d4c7-8ec09f3f5f44");
+    // Store order (name, id): the newer version of r1 comes after an unrelated plan.
+    const QVector<StoredFinal> finals = {
+        stored(kFinalA, QStringLiteral("r1"), old),
+        stored(kFinalB, QStringLiteral("r2"), old),
+        stored(idNewer, QStringLiteral("r1"), old.addSecs(3600)),
+        stored(idFresh, QStringLiteral("r3"), now.addSecs(-3600)),
+    };
+
+    const PlanListView view = buildPlanList(finals, QString(), now);
+    QCOMPARE(view.rows.size(), 4);
+
+    // Versions of r1 sit together, newest first, and are numbered.
+    QCOMPARE(view.rows.at(0).final.entry.id, idNewer);
+    QCOMPARE(view.rows.at(0).versionNumber, 2);
+    QCOMPARE(view.rows.at(0).versionCount, 2);
+    QCOMPARE(view.rows.at(1).final.entry.id, kFinalA);
+    QCOMPARE(view.rows.at(1).versionNumber, 1);
+    QCOMPARE(view.rows.at(1).versionCount, 2);
+    QCOMPARE(view.rows.at(2).final.entry.id, kFinalB);
+    QCOMPARE(view.rows.at(2).versionCount, 1);
+    QCOMPARE(view.rows.at(3).final.entry.id, idFresh);
+
+    // "Neu": marked as finished within the last day.
+    QVERIFY(view.rows.at(3).isRecent);
+    QVERIFY(!view.rows.at(0).isRecent);
+    QVERIFY(!view.rows.at(2).isRecent);
+    // Without a clock nothing is flagged.
+    for (const PlanListRow& row : buildPlanList(finals, QString()).rows) {
+        QVERIFY(!row.isRecent);
+    }
 }
 
 void PlannerLogicTest::switchGuardBlocksRunningOrUnknownRobot()

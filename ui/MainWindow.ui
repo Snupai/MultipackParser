@@ -177,6 +177,9 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="detailSeparator">
+         <string> - </string>
+        </property>
        </widget>
       </item>
       <item>
@@ -326,9 +329,12 @@
       <number>0</number>
      </property>
      <widget class="QWidget" name="MainMenu">
-      <layout class="QHBoxLayout" name="mainMenuLayout" stretch="1,0">
-       <property name="spacing">
+      <layout class="QGridLayout" name="mainMenuLayout" columnstretch="1,1" rowstretch="0,0,1">
+       <property name="horizontalSpacing">
         <number>16</number>
+       </property>
+       <property name="verticalSpacing">
+        <number>12</number>
        </property>
        <property name="leftMargin">
         <number>16</number>
@@ -342,116 +348,194 @@
        <property name="bottomMargin">
         <number>16</number>
        </property>
-       <item>
-        <layout class="QVBoxLayout" name="mainLeftLayout" stretch="0,0,1,0">
-         <property name="spacing">
-          <number>10</number>
+       <item row="0" column="0">
+        <widget class="QFrame" name="planCard">
+         <property name="card" stdset="0">
+          <bool>true</bool>
          </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QFrame" name="planCard">
-           <property name="card" stdset="0">
-            <bool>true</bool>
-           </property>
-           <layout class="QGridLayout" name="planCardLayout" columnstretch="0,1,0,0" columnminimumwidth="140,0,36,240">
-            <property name="horizontalSpacing">
-             <number>12</number>
+         <layout class="QGridLayout" name="planCardLayout" columnstretch="0,1,0">
+          <property name="horizontalSpacing">
+           <number>12</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>10</number>
+          </property>
+          <property name="leftMargin">
+           <number>16</number>
+          </property>
+          <property name="topMargin">
+           <number>16</number>
+          </property>
+          <property name="rightMargin">
+           <number>16</number>
+          </property>
+          <property name="bottomMargin">
+           <number>16</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Palettierplan</string>
             </property>
-            <property name="verticalSpacing">
-             <number>10</number>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="role" stdset="0">
+             <string>field</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="EingabePallettenplan">
+            <property name="scale" stdset="0">
+             <string>medium</string>
+            </property>
+            <property name="inputMethodHints">
+             <set>Qt::ImhPreferNumbers</set>
+            </property>
+            <property name="placeholderText">
+             <string>z. B. 699-00120</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="LadePallettenplan">
+            <property name="text">
+             <string>Laden</string>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Palettierplan laden</string>
+            </property>
+            <property name="role" stdset="0">
+             <string>primary</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_Startlage">
+            <property name="text">
+             <string>Startlage</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="role" stdset="0">
+             <string>field</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="EingabeStartlage">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="scale" stdset="0">
+             <string>medium</string>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="value">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_Kartonhoehe">
+            <property name="text">
+             <string>Kartonhöhe</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="role" stdset="0">
+             <string>field</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="EingabeKartonhoehe">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="scale" stdset="0">
+             <string>medium</string>
+            </property>
+            <property name="inputMethodHints">
+             <set>Qt::ImhDigitsOnly</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLabel" name="label_Kartonhoehe_mm">
+            <property name="text">
+             <string>mm</string>
+            </property>
+            <property name="role" stdset="0">
+             <string>unit</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_Gewicht">
+            <property name="text">
+             <string>Gewicht</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="role" stdset="0">
+             <string>field</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="EingabeKartonGewicht">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="scale" stdset="0">
+             <string>medium</string>
+            </property>
+            <property name="inputMethodHints">
+             <set>Qt::ImhDigitsOnly|Qt::ImhFormattedNumbersOnly</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QLabel" name="label_Gewicht_kg">
+            <property name="text">
+             <string>kg</string>
+            </property>
+            <property name="role" stdset="0">
+             <string>unit</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" colspan="2">
+           <layout class="QHBoxLayout" name="planOptionsLayout">
+            <property name="spacing">
+             <number>28</number>
             </property>
             <property name="leftMargin">
-             <number>16</number>
+             <number>0</number>
             </property>
             <property name="topMargin">
-             <number>16</number>
+             <number>0</number>
             </property>
             <property name="rightMargin">
-             <number>16</number>
+             <number>0</number>
             </property>
             <property name="bottomMargin">
-             <number>16</number>
+             <number>0</number>
             </property>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>Palettierplan</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="role" stdset="0">
-               <string>field</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1" colspan="2">
-             <widget class="QLineEdit" name="EingabePallettenplan">
-              <property name="scale" stdset="0">
-               <string>medium</string>
-              </property>
-              <property name="inputMethodHints">
-               <set>Qt::ImhPreferNumbers</set>
-              </property>
-              <property name="placeholderText">
-               <string>z. B. 699-00120</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="3">
-             <widget class="QPushButton" name="LadePallettenplan">
-              <property name="text">
-               <string>Laden</string>
-              </property>
-              <property name="toolTip">
-               <string>Palettierplan laden</string>
-              </property>
-              <property name="role" stdset="0">
-               <string>primary</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_Startlage">
-              <property name="text">
-               <string>Startlage</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="role" stdset="0">
-               <string>field</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" colspan="2">
-             <widget class="QSpinBox" name="EingabeStartlage">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="scale" stdset="0">
-               <string>medium</string>
-              </property>
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="value">
-               <number>1</number>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
+            <item>
              <widget class="QCheckBox" name="checkBoxEinzelpaket">
               <property name="enabled">
                <bool>false</bool>
@@ -461,43 +545,7 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_Kartonhoehe">
-              <property name="text">
-               <string>Kartonhöhe</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="role" stdset="0">
-               <string>field</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="EingabeKartonhoehe">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="scale" stdset="0">
-               <string>medium</string>
-              </property>
-              <property name="inputMethodHints">
-               <set>Qt::ImhDigitsOnly</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2">
-             <widget class="QLabel" name="label_Kartonhoehe_mm">
-              <property name="text">
-               <string>mm</string>
-              </property>
-              <property name="role" stdset="0">
-               <string>unit</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="3">
+            <item>
              <widget class="QCheckBox" name="checkBoxLabelInvert">
               <property name="enabled">
                <bool>false</bool>
@@ -507,381 +555,392 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_Gewicht">
-              <property name="text">
-               <string>Gewicht</string>
+            <item>
+             <spacer name="planOptionsSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
               </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
               </property>
-              <property name="role" stdset="0">
-               <string>field</string>
-              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="multipack::ui::RigidFrame" name="machineBlock">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>280</height>
+          </size>
+         </property>
+         <layout class="QHBoxLayout" name="machineBlockLayout" stretch="0,1">
+          <property name="spacing">
+           <number>12</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QFrame" name="scannerCard">
+            <property name="card" stdset="0">
+             <bool>true</bool>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>280</width>
+              <height>160</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>280</width>
+              <height>280</height>
+             </size>
+            </property>
+            <layout class="QVBoxLayout" name="scannerCardLayout">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>5</number>
+             </property>
+             <property name="topMargin">
+              <number>5</number>
+             </property>
+             <property name="rightMargin">
+              <number>5</number>
+             </property>
+             <property name="bottomMargin">
+              <number>5</number>
+             </property>
+             <item>
+              <widget class="multipack::ui::ScaledImageLabel" name="label_7">
+               <property name="text">
+                <string />
+               </property>
+               <property name="pixmap">
+                <pixmap resource="MainWindowResources.qrc">:/Szaidel Logo/imgs/szaidel-transparent.png</pixmap>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>270</width>
+                 <height>270</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="machineActionLayout" stretch="1,0,0">
+            <property name="spacing">
+             <number>10</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="multipack::ui::RigidFrame" name="messageFrame">
+              <layout class="QVBoxLayout" name="messageFrameLayout">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_GewichtInfo">
+                 <property name="text">
+                  <string />
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
-            <item row="3" column="1">
-             <widget class="QLineEdit" name="EingabeKartonGewicht">
+            <item>
+             <widget class="QPushButton" name="ButtonOpenParameterRoboter">
+              <property name="text">
+               <string>Parameter Roboter</string>
+              </property>
               <property name="enabled">
                <bool>false</bool>
               </property>
               <property name="scale" stdset="0">
                <string>medium</string>
               </property>
-              <property name="inputMethodHints">
-               <set>Qt::ImhDigitsOnly|Qt::ImhFormattedNumbersOnly</set>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
-             <widget class="QLabel" name="label_Gewicht_kg">
-              <property name="text">
-               <string>kg</string>
-              </property>
-              <property name="role" stdset="0">
-               <string>unit</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_GewichtInfo">
-           <property name="text">
-            <string />
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>52</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>52</height>
-            </size>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QFrame" name="plannerPanel">
-           <property name="card" stdset="0">
-            <bool>true</bool>
-           </property>
-           <layout class="QVBoxLayout" name="plannerPanelLayout" stretch="0,1">
-            <property name="spacing">
-             <number>8</number>
-            </property>
-            <property name="leftMargin">
-             <number>14</number>
-            </property>
-            <property name="topMargin">
-             <number>10</number>
-            </property>
-            <property name="rightMargin">
-             <number>14</number>
-            </property>
-            <property name="bottomMargin">
-             <number>14</number>
-            </property>
-            <item>
-             <layout class="QHBoxLayout" name="plannerHeaderLayout" stretch="0,1,0">
-              <property name="spacing">
-               <number>12</number>
-              </property>
-              <property name="leftMargin">
-               <number>0</number>
-              </property>
-              <property name="topMargin">
-               <number>0</number>
-              </property>
-              <property name="rightMargin">
-               <number>0</number>
-              </property>
-              <property name="bottomMargin">
-               <number>0</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="plannerTitleLabel">
-                <property name="text">
-                 <string>Fertigstände vom Palettenplaner</string>
-                </property>
-                <property name="role" stdset="0">
-                 <string>heading</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="multipack::ui::ElidedLabel" name="plannerHintLabel">
-                <property name="text">
-                 <string />
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="plannerStateLabel">
-                <property name="text">
-                 <string />
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="plannerBodyLayout" stretch="1,0">
-              <property name="spacing">
-               <number>12</number>
-              </property>
-              <property name="leftMargin">
-               <number>0</number>
-              </property>
-              <property name="topMargin">
-               <number>0</number>
-              </property>
-              <property name="rightMargin">
-               <number>0</number>
-              </property>
-              <property name="bottomMargin">
-               <number>0</number>
-              </property>
-              <item>
-               <widget class="QListWidget" name="plannerFinalsList" />
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="plannerButtonLayout">
-                <property name="spacing">
-                 <number>10</number>
-                </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QPushButton" name="plannerLoadButton">
-                  <property name="text">
-                   <string>Plan laden</string>
-                  </property>
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>220</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="role" stdset="0">
-                   <string>primary</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="plannerProposalButton">
-                  <property name="text">
-                   <string>Planvorschlag
-anzeigen</string>
-                  </property>
-                  <property name="scale" stdset="0">
-                   <string>medium</string>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>220</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="role" stdset="0">
-                   <string>warning</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="plannerButtonSpacer">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <spacer name="mainLeftSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="mainRightLayout">
-         <property name="spacing">
-          <number>12</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QFrame" name="scannerCard">
-           <property name="card" stdset="0">
-            <bool>true</bool>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>282</width>
-             <height>282</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>282</width>
-             <height>282</height>
-            </size>
-           </property>
-           <layout class="QVBoxLayout" name="scannerCardLayout">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="leftMargin">
-             <number>5</number>
-            </property>
-            <property name="topMargin">
-             <number>5</number>
-            </property>
-            <property name="rightMargin">
-             <number>5</number>
-            </property>
-            <property name="bottomMargin">
-             <number>5</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="label_7">
-              <property name="minimumSize">
+              <property name="maximumSize">
                <size>
-                <width>270</width>
-                <height>270</height>
+                <width>420</width>
+                <height>16777215</height>
                </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="ButtonDatenSenden">
+              <property name="text">
+               <string>Server starten</string>
+              </property>
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="scale" stdset="0">
+               <string>medium</string>
               </property>
               <property name="maximumSize">
                <size>
-                <width>270</width>
-                <height>270</height>
+                <width>420</width>
+                <height>16777215</height>
                </size>
               </property>
-              <property name="text">
-               <string />
-              </property>
-              <property name="pixmap">
-               <pixmap resource="MainWindowResources.qrc">:/Szaidel Logo/imgs/szaidel-transparent.png</pixmap>
-              </property>
-              <property name="scaledContents">
-               <bool>true</bool>
+              <property name="role" stdset="0">
+               <string>primary</string>
               </property>
              </widget>
             </item>
            </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="ButtonOpenParameterRoboter">
-           <property name="text">
-            <string>Parameter Roboter</string>
-           </property>
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="scale" stdset="0">
-            <string>medium</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="ButtonDatenSenden">
-           <property name="text">
-            <string>Server starten</string>
-           </property>
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="scale" stdset="0">
-            <string>medium</string>
-           </property>
-           <property name="role" stdset="0">
-            <string>primary</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="mainRightSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="1" rowspan="2">
+        <widget class="multipack::ui::RigidFrame" name="plannerPanel">
+         <property name="card" stdset="0">
+          <bool>true</bool>
+         </property>
+         <layout class="QVBoxLayout" name="plannerPanelLayout" stretch="0,0,0,1,1,0">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="leftMargin">
+           <number>14</number>
+          </property>
+          <property name="topMargin">
+           <number>12</number>
+          </property>
+          <property name="rightMargin">
+           <number>14</number>
+          </property>
+          <property name="bottomMargin">
+           <number>14</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="plannerHeaderLayout">
+            <property name="spacing">
+             <number>12</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="plannerTitleLabel">
+              <property name="text">
+               <string>Fertigstände vom Palettenplaner</string>
+              </property>
+              <property name="role" stdset="0">
+               <string>heading</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="plannerHeaderSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="plannerStateLabel">
+              <property name="text">
+               <string />
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="plannerHintLabel">
+            <property name="text">
+             <string />
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="plannerProposalButton">
+            <property name="text">
+             <string>Planvorschlag anzeigen</string>
+            </property>
+            <property name="scale" stdset="0">
+             <string>medium</string>
+            </property>
+            <property name="role" stdset="0">
+             <string>warning</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QListWidget" name="plannerFinalsList" />
+          </item>
+          <item>
+           <widget class="QLabel" name="plannerEmptyLabel">
+            <property name="text">
+             <string>Noch keine Fertigstände vom Palettenplaner.</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="role" stdset="0">
+             <string>muted</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="plannerSelectionBar">
+            <layout class="QHBoxLayout" name="plannerSelectionLayout" stretch="1,0">
+             <property name="spacing">
+              <number>12</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>10</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="plannerSelectionLabel">
+               <property name="text">
+                <string />
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="plannerLoadButton">
+               <property name="text">
+                <string>Plan laden</string>
+               </property>
+               <property name="scale" stdset="0">
+                <string>medium</string>
+               </property>
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="role" stdset="0">
+                <string>primary</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <spacer name="mainMenuSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -3147,6 +3206,17 @@ anzeigen</string>
    <class>multipack::ui::ElidedLabel</class>
    <extends>QLabel</extends>
    <header>multipack/ui/ElidedLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>multipack::ui::RigidFrame</class>
+   <extends>QFrame</extends>
+   <header>multipack/ui/RigidFrame.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>multipack::ui::ScaledImageLabel</class>
+   <extends>QLabel</extends>
+   <header>multipack/ui/ScaledImageLabel.h</header>
   </customwidget>
   <customwidget>
    <class>multipack::ui::QrCodeWidget</class>
