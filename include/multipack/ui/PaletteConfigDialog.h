@@ -103,6 +103,9 @@ private:
      * @brief Create preview pixmap for "no palette" state
      */
     QPixmap createNoPalettePixmap() const;
+    QPixmap previewPixmap(const QPixmap& source) const;
+
+    static constexpr int PREVIEW_IMAGE_SIZE = 120;  ///< Side of a palette image, without the frame
 };
 
 } // namespace ui

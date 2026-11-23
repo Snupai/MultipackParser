@@ -5,6 +5,7 @@
 #include "multipack/core/GlobalState.h"
 #include "multipack/database/DatabaseManager.h"
 #include "multipack/network/XmlRpcServer.h"
+#include "multipack/ui/DisplayScale.h"
 #include "multipack/ui/MainWindow.h"
 #include "multipack/ui/Theme.h"
 #include "multipack/ui/VisualizationWidget.h"
@@ -42,6 +43,7 @@ class MainWindowIntegrationTest : public QObject
 private slots:
     void startAndStopServerFromUi();
     void themeIsAppliedToTheWindow();
+    void displayScaleFitsTheDesignToThePanel();
     void experimentalButtonIsReplacedByPlansTab();
     void planListFollowsDatabaseChanges();
     void navigationSwitchesPagesAndLocksRobotUntilPlanLoaded();
@@ -198,6 +200,41 @@ void MainWindowIntegrationTest::themeIsAppliedToTheWindow()
         QVERIFY2(button->height() >= 48, name);
     }
     QVERIFY(f.find<QLineEdit>("EingabePallettenplan")->height() >= 48);
+}
+
+void MainWindowIntegrationTest::displayScaleFitsTheDesignToThePanel()
+{
+    namespace Scale = multipack::ui::DisplayScale;
+
+    // 1280x720 is the design; a 16:9 panel with more pixels shows it larger.
+    QCOMPARE(Scale::factorFor(QSize(1280, 720)), 1.0);
+    QCOMPARE(Scale::factorFor(QSize(1920, 1080)), 1.5);
+    QCOMPARE(Scale::factorFor(QSize(3840, 2160)), 3.0);
+    // Any other panel: the design fits in both directions, in steps of 0.05.
+    QCOMPARE(Scale::factorFor(QSize(1280, 800)), 1.0);
+    QCOMPARE(Scale::factorFor(QSize(1366, 768)), 1.05);
+    QCOMPARE(Scale::factorFor(QSize(2560, 1080)), 1.5);
+    // Never scaled down, and an unknown screen keeps the design size.
+    QCOMPARE(Scale::factorFor(QSize(1024, 600)), 1.0);
+    QCOMPARE(Scale::factorFor(QSize()), 1.0);
+
+    // The kiosk window covers the (scaled) screen and is never smaller than the design.
+    QCOMPARE(Scale::windowSizeFor(QSize(1280, 720)), QSize(1280, 720));
+    QCOMPARE(Scale::windowSizeFor(QSize(1280, 800)), QSize(1280, 800));
+    QCOMPARE(Scale::windowSizeFor(QSize(800, 600)), QSize(1280, 720));
+
+    // The pages take up the room of a window that is larger than the design.
+    UiFixture f;
+    QVERIFY(f.start());
+    auto* stack = f.find<QStackedWidget>("stackedWidget");
+    auto* start = f.find<QPushButton>("ButtonDatenSenden");
+    QVERIFY(stack && start);
+    QTRY_COMPARE(f.window->size(), QSize(1280, 720));
+    const int designHeight = stack->height();
+    f.window->setFixedSize(Scale::windowSizeFor(QSize(1280, 800)));
+    QTRY_COMPARE(stack->height(), designHeight + 80);
+    QVERIFY(start->mapTo(f.window.get(), start->rect().bottomLeft()).y() < 800);
+    QVERIFY(start->mapTo(f.window.get(), start->rect().bottomLeft()).y() > 720);
 }
 
 void MainWindowIntegrationTest::experimentalButtonIsReplacedByPlansTab()

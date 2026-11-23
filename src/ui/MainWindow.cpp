@@ -488,8 +488,10 @@ void MainWindow::loadSettings()
     // Display info
     QScreen* screen = QApplication::primaryScreen();
     if (screen) {
-        ui->lineEditDisplayWidth->setText(QString::number(screen->size().width()));
-        ui->lineEditDisplayHeight->setText(QString::number(screen->size().height()));
+        // The panel's own pixels; the UI may be scaled to them (DisplayScale).
+        const QSize pixels = (QSizeF(screen->size()) * screen->devicePixelRatio()).toSize();
+        ui->lineEditDisplayWidth->setText(QString::number(pixels.width()));
+        ui->lineEditDisplayHeight->setText(QString::number(pixels.height()));
         ui->lineEditDisplayRefreshRate->setText(QString::number(screen->refreshRate()) + " Hz");
     }
 

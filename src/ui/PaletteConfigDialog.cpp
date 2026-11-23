@@ -63,8 +63,7 @@ void PaletteConfigDialog::updateActivePalettePreview()
     }
     
     if (!pixmap.isNull()) {
-        QPixmap scaledPixmap = pixmap.scaled(120, 120, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        m_activePaletteImage->setPixmap(scaledPixmap);
+        m_activePaletteImage->setPixmap(previewPixmap(pixmap));
         m_activePaletteImage->setText("");
     } else {
         m_activePaletteImage->clear();
@@ -157,7 +156,7 @@ void PaletteConfigDialog::setupPaletteGroup(QHBoxLayout* layout, const QString& 
 
     image = makePreviewImage();
     if (!pixmap.isNull()) {
-        image->setPixmap(pixmap.scaled(120, 120, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        image->setPixmap(previewPixmap(pixmap));
     }
     groupLayout->addWidget(image, 0, Qt::AlignHCenter);
 
@@ -209,17 +208,30 @@ void PaletteConfigDialog::loadImages()
 
 QPixmap PaletteConfigDialog::createNoPalettePixmap() const
 {
-    // Create a simple "No Palette" pixmap
-    QPixmap pixmap(120, 120);
+    // A simple "No Palette" image, drawn in the screen's own pixels.
+    const qreal ratio = devicePixelRatioF();
+    QPixmap pixmap(QSize(PREVIEW_IMAGE_SIZE, PREVIEW_IMAGE_SIZE) * ratio);
+    pixmap.setDevicePixelRatio(ratio);
     pixmap.fill(Qt::white);
-    
+
     QPainter painter(&pixmap);
     painter.setPen(Qt::gray);
     painter.setFont(QFont("Arial", 12));
-    painter.drawText(pixmap.rect(), Qt::AlignCenter, QStringLiteral("Keine\nPalette"));
+    painter.drawText(QRect(0, 0, PREVIEW_IMAGE_SIZE, PREVIEW_IMAGE_SIZE), Qt::AlignCenter,
+                     QStringLiteral("Keine\nPalette"));
     painter.end();
-    
+
     return pixmap;
+}
+
+QPixmap PaletteConfigDialog::previewPixmap(const QPixmap& source) const
+{
+    // Scaled to the screen's own pixels, so a scaled panel shows it sharp.
+    const qreal ratio = devicePixelRatioF();
+    QPixmap scaled = source.scaled(QSize(PREVIEW_IMAGE_SIZE, PREVIEW_IMAGE_SIZE) * ratio,
+                                   Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    scaled.setDevicePixelRatio(ratio);
+    return scaled;
 }
 
 } // namespace ui

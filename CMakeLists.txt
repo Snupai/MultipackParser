@@ -228,6 +228,7 @@ set(UI_SOURCES
     src/ui/QrCodeWidget.cpp
     src/ui/ElidedLabel.cpp
     src/ui/FinalsListDelegate.cpp
+    src/ui/DisplayScale.cpp
     src/ui/ScaledImageLabel.cpp
     src/ui/Theme.cpp
     src/ui/PlanProposalDialog.cpp

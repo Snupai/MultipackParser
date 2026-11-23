@@ -9,6 +9,7 @@
 #include <QPainter>
 
 #include <algorithm>
+#include <cmath>
 #include <exception>
 
 namespace multipack {
@@ -72,11 +73,14 @@ void QrCodeWidget::paintEvent(QPaintEvent* event)
         return;
     }
 
-    // Integer scale keeps every module sharp; centre in the widget.
-    const int side = std::min(width(), height());
+    // A whole number of screen pixels per module keeps every module sharp,
+    // also on a scaled panel; centre in the widget on a screen pixel.
+    const qreal ratio = devicePixelRatioF();
+    const int side = static_cast<int>(std::min(width(), height()) * ratio);
     const int scale = std::max(1, side / m_image.width());
-    const int drawn = scale * m_image.width();
-    const QRect target((width() - drawn) / 2, (height() - drawn) / 2, drawn, drawn);
+    const qreal drawn = scale * m_image.width() / ratio;
+    const QRectF target(std::floor((width() - drawn) / 2 * ratio) / ratio,
+                        std::floor((height() - drawn) / 2 * ratio) / ratio, drawn, drawn);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, false);
     painter.drawImage(target, m_image);
 }

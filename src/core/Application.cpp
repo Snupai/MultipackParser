@@ -6,6 +6,7 @@
 #include "multipack/core/Application.h"
 #include "multipack/core/AppInitializer.h"
 #include "multipack/core/GlobalState.h"
+#include "multipack/ui/DisplayScale.h"
 #include "multipack/ui/MainWindow.h"
 #include "multipack/ui/SplashScreen.h"
 #include "multipack/ui/Theme.h"
@@ -16,6 +17,7 @@
 #include "multipack/robot/RobotController.h"
 
 #include <QDebug>
+#include <QScreen>
 #include <QCoreApplication>
 #include <QSessionManager>
 #include <QCloseEvent>
@@ -173,6 +175,13 @@ bool Application::initialize()
     return true;
 }
 
+bool Application::kioskMode()
+{
+    // MULTIPACK_FULLSCREEN=1 (default) -> frameless maximized (kiosk without WM title bar)
+    // MULTIPACK_FULLSCREEN=0 -> regular windowed mode
+    return qEnvironmentVariable("MULTIPACK_FULLSCREEN", "1") != "0";
+}
+
 int Application::run()
 {
     qDebug() << "Application - starting";
@@ -182,11 +191,15 @@ int Application::run()
         return -1;
     }
 
-    // Kiosk mode can be controlled via environment:
-    // MULTIPACK_FULLSCREEN=1 (default) -> frameless maximized (kiosk without WM title bar)
-    // MULTIPACK_FULLSCREEN=0 -> regular windowed mode
-    const bool fullscreenEnabled = qEnvironmentVariable("MULTIPACK_FULLSCREEN", "1") != "0";
-    if (fullscreenEnabled) {
+    if (kioskMode()) {
+#if defined(Q_OS_LINUX)
+        // The window covers the panel. On a 16:9 panel that is the design size
+        // (main() scales it, see DisplayScale); on any other the layouts take
+        // up the rest.
+        if (const QScreen* screen = primaryScreen()) {
+            m_mainWindow->setFixedSize(ui::DisplayScale::windowSizeFor(screen->geometry().size()));
+        }
+#endif
         m_mainWindow->setWindowFlag(Qt::FramelessWindowHint, true);
         m_mainWindow->showMaximized();
     } else {

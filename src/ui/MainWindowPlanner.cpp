@@ -165,7 +165,13 @@ void MainWindow::setupPlannerPanel()
     m_plannerList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_plannerList->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     m_plannerList->setFocusPolicy(Qt::NoFocus);
-    QScroller::grabGesture(m_plannerList->viewport(), QScroller::LeftMouseButtonGesture);
+    // Drag scrolling. Qt 6.2 replays the tap of a scroller gesture at unscaled
+    // coordinates: on a scaled panel (DisplayScale) it would select the wrong
+    // row. The list keeps its wide scroll bar there. Works in Qt 6.8.
+    const bool scaledPanel = !qFuzzyCompare(m_plannerList->devicePixelRatioF(), qreal(1));
+    if (!scaledPanel || QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)) {
+        QScroller::grabGesture(m_plannerList->viewport(), QScroller::LeftMouseButtonGesture);
+    }
 
     m_plannerStateLabel->hide();
     m_plannerHintLabel->hide();
