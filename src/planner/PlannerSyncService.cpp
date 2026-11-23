@@ -366,10 +366,14 @@ void PlannerSyncService::downloadNext()
                     }
 
                     QString error;
-                    switch (m_store.storeRob(entry, response.body, &error)) {
+                    const StoreOutcome outcome = m_store.storeRob(entry, response.body, &error);
+                    if (outcome != StoreOutcome::ShaMismatch) {
+                        // The bytes matched: mismatches are no longer consecutive.
+                        m_checksumMismatches.remove(entry.id);
+                    }
+                    switch (outcome) {
                         case StoreOutcome::Stored:
                             m_retryAfter.remove(entry.id);
-                            m_checksumMismatches.remove(entry.id);
                             qCInfo(plannerLog) << "Planner final stored:" << entry.id << entry.name;
                             emit finalsChanged();
                             break;
@@ -500,8 +504,10 @@ void PlannerSyncService::onProposalResponse(const Response& response)
                     }
                     QString error;
                     const StoreOutcome outcome = m_store.storeRob(entry, robResponse.body, &error);
-                    if (outcome == StoreOutcome::Stored) {
+                    if (outcome != StoreOutcome::ShaMismatch) {
                         m_checksumMismatches.remove(entry.id);
+                    }
+                    if (outcome == StoreOutcome::Stored) {
                         emit finalsChanged();
                         publish(p);
                     } else {
@@ -516,7 +522,8 @@ void PlannerSyncService::onProposalResponse(const Response& response)
                         }
                         if (outcome == StoreOutcome::InvalidRob) {
                             rejectUnloadable(p, QString::fromLatin1(LOAD_ERROR_INVALID_ROB));
-                        } else if (checksumMismatches(entry.id, entry.sha256) >= 2) {
+                        } else if (outcome == StoreOutcome::ShaMismatch
+                                   && checksumMismatches(entry.id, entry.sha256) >= 2) {
                             rejectUnloadable(p, QString::fromLatin1(LOAD_ERROR_CHECKSUM));
                         }
                     }
