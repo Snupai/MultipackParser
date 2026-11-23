@@ -36,6 +36,8 @@
 #include <QTemporaryDir>
 #include <QtTest/QtTest>
 
+#include <memory>
+
 using multipack::planner::FinalEntry;
 using multipack::planner::PlannerConfig;
 using multipack::planner::PlannerSyncService;
@@ -131,7 +133,7 @@ private slots:
     void proposalConfirmedWhileRunningDoesNotSwitch();
     void manualLoadBlockedWhileProgramRuns();
     void qrCodeLivesInItsOwnTab();
-    void finalsListShowsVersionsStatesAndSelection();
+    void plannerPlansAreRowsOfThePlanLibrary();
 
     // e2e findings
     void plannerFixtureWithSpacesIsStored();
@@ -1167,7 +1169,7 @@ void PlannerSyncTest::loadedHeaderShowsRealPackageCount()
     f.window.reset();
 }
 
-void PlannerSyncTest::finalsListShowsVersionsStatesAndSelection()
+void PlannerSyncTest::plannerPlansAreRowsOfThePlanLibrary()
 {
     using multipack::ui::FinalsListDelegate;
     namespace Role = multipack::ui::FinalsRole;
@@ -1175,13 +1177,17 @@ void PlannerSyncTest::finalsListShowsVersionsStatesAndSelection()
     qputenv("MULTIPACK_DISABLE_ROBOT_STATUS_MONITOR", "1");
     const QString kBroken = QStringLiteral("af2c8d3c-8f96-4d2c-a5d8-9fd1a0406055");
     const QByteArray garbage = "<html>not a plan</html>";
-    // Two Fertigstände of one plan ("Alpha"), the newer one listed second, and one unloadable plan.
+    // One plan ("Alpha") and one that cannot be loaded ("Gamma"); a newer version
+    // of Alpha is released later.
     QJsonObject newer = finalJson(kFinalB, "p", "Alpha", robB());
     newer["markedAt"] = "2026-11-21T10:00:00.000Z";
-    const QJsonArray finals{finalJson(kFinalA, "p", "Alpha", robA()), newer,
-                            finalJson(kBroken, "q", "Gamma", garbage)};
+    auto newerReleased = std::make_shared<bool>(false);
     m_server->setHandler([=](const FakePlannerServer::Request& r) {
         if (r.path == "/api/hmi/v1/finals") {
+            QJsonArray finals{finalJson(kFinalA, "p", "Alpha", robA()), finalJson(kBroken, "q", "Gamma", garbage)};
+            if (*newerReleased) {
+                finals.append(newer);
+            }
             return FakePlannerServer::Reply::json(200, finalsBody(finals));
         }
         if (r.path.endsWith("/rob")) {
@@ -1198,14 +1204,30 @@ void PlannerSyncTest::finalsListShowsVersionsStatesAndSelection()
     f.window->show();
     QVERIFY(QTest::qWaitForWindowExposed(f.window.get()));
     f.robot(multipack::robot::ProgramState::Stopped);
+    // A local plan, older than the planner's.
+    QCOMPARE(f.database.savePaletteData(testhelpers::makeSamplePaletteData(QStringLiteral("4711.rob"))),
+             multipack::database::SaveResult::Inserted);
 
+    auto* stack = f.window->findChild<QStackedWidget*>(QStringLiteral("stackedWidget"));
+    auto* mainPage = f.window->findChild<QWidget*>(QStringLiteral("MainMenu"));
+    auto* plansPage = f.window->findChild<QWidget*>(QStringLiteral("PlanLibrary"));
+    auto* plansTab = f.window->findChild<QPushButton*>(QStringLiteral("navPlaene"));
+    auto* badge = f.window->findChild<QLabel*>(QStringLiteral("navPlaeneBadge"));
+    auto* notice = f.window->findChild<QPushButton*>(QStringLiteral("plannerNewVersionNotice"));
     auto* list = f.window->findChild<QListWidget*>(QStringLiteral("plannerFinalsList"));
     auto* load = f.window->findChild<QPushButton*>(QStringLiteral("plannerLoadButton"));
     auto* selection = f.window->findChild<QLabel*>(QStringLiteral("plannerSelectionLabel"));
     auto* hint = f.window->findChild<QLabel*>(QStringLiteral("plannerHintLabel"));
-    QVERIFY(list && load && selection && hint);
+    QVERIFY(stack && mainPage && plansPage && plansTab && badge && notice && list && load && selection && hint);
     QTRY_COMPARE(list->count(), 3);
 
+    const auto names = [list]() {
+        QStringList result;
+        for (int row = 0; row < list->count(); ++row) {
+            result.append(list->item(row)->data(Role::Name).toString());
+        }
+        return result;
+    };
     const auto chips = [list](int row) {
         QStringList texts;
         for (const QString& chip : list->item(row)->data(Role::Chips).toStringList()) {
@@ -1213,53 +1235,118 @@ void PlannerSyncTest::finalsListShowsVersionsStatesAndSelection()
         }
         return texts;
     };
+    const auto rowOf = [list](const QString& finalId) {
+        for (int row = 0; row < list->count(); ++row) {
+            if (list->item(row)->data(Role::FinalId).toString() == finalId) {
+                return row;
+            }
+        }
+        return -1;
+    };
 
-    // Versions of a plan sit together, newest first; the older one is marked as such.
-    QCOMPARE(list->item(0)->data(Role::FinalId).toString(), kFinalB);
-    QVERIFY(!list->item(0)->data(Role::OlderVersion).toBool());
-    QVERIFY(list->item(0)->data(Role::Detail).toString().contains(QStringLiteral("neueste Version")));
-    QCOMPARE(list->item(1)->data(Role::FinalId).toString(), kFinalA);
-    QVERIFY(list->item(1)->data(Role::OlderVersion).toBool());
-    QVERIFY(list->item(1)->data(Role::Detail).toString().contains(QStringLiteral("ältere Version")));
+    // The planner plans are in the plan library, not on "Betrieb": one list,
+    // newest first, the same rows for planner and local plans.
+    QCOMPARE(stack->currentWidget(), mainPage);
+    QVERIFY(!mainPage->isAncestorOf(list));
+    QVERIFY(plansPage->isAncestorOf(list));
+    QCOMPARE(names(), (QStringList{QStringLiteral("Alpha"), QStringLiteral("Gamma"), QStringLiteral("4711")}));
+    QCOMPARE(list->item(0)->data(Role::SourceTag).toString(), QStringLiteral("Planer"));
+    QCOMPARE(list->item(1)->data(Role::SourceTag).toString(), QStringLiteral("Planer"));
+    QVERIFY(list->item(2)->data(Role::SourceTag).toString().isEmpty());
 
-    // The unloadable plan: error chip, reason on the detail line, not loadable.
-    QCOMPARE(list->item(2)->data(Role::Name).toString(), QStringLiteral("Gamma"));
-    QCOMPARE(chips(2), QStringList{QStringLiteral("Fehler")});
-    QVERIFY(list->item(2)->data(Role::DetailIsError).toBool());
-    QVERIFY(list->item(2)->data(Role::Detail).toString().contains(QStringLiteral("Plan ungültig")));
+    // The tab counts what needs a look: here the one plan that cannot be loaded.
+    QVERIFY(badge->isVisible());
+    QCOMPARE(badge->text(), QStringLiteral("1"));
+    QCOMPARE(badge->property("tone").toString(), QStringLiteral("danger"));
+    QVERIFY(!notice->isVisible());
 
-    // Touch targets and room: full-size rows, at least five of them visible, the
-    // load button in the bar below the list.
-    QCOMPARE(list->visualItemRect(list->item(0)).height(), FinalsListDelegate::ROW_HEIGHT);
-    QVERIFY2(list->viewport()->height() >= 5 * FinalsListDelegate::ROW_HEIGHT,
+    QTest::mouseClick(plansTab, Qt::LeftButton);
+    QCOMPARE(stack->currentWidget(), plansPage);
+    QVERIFY(list->isVisible());
+    for (int row = 0; row < list->count(); ++row) {
+        QCOMPARE(list->visualItemRect(list->item(row)).height(), FinalsListDelegate::ROW_HEIGHT);
+    }
+    QVERIFY2(list->viewport()->height() >= 6 * FinalsListDelegate::ROW_HEIGHT,
              qPrintable(QString::number(list->viewport()->height())));
-    QCOMPARE(load->parentWidget()->objectName(), QStringLiteral("plannerSelectionBar"));
-    QVERIFY(load->height() >= 48);
-
-    // Nothing selected: nothing to load.
-    QVERIFY(!load->isEnabled());
     QVERIFY(!hint->isVisible());
 
-    // The error row can be selected, but not loaded; the bar says why.
-    list->setCurrentRow(2);
+    // The plan that cannot be loaded: error chip, and the bar says why.
+    QCOMPARE(chips(1), QStringList{QStringLiteral("Fehler")});
+    list->setCurrentRow(1);
     QVERIFY(!load->isEnabled());
-    QVERIFY2(selection->text().contains(QStringLiteral("kann nicht geladen werden")),
+    QVERIFY2(selection->text().contains(QStringLiteral("Nicht ladbar"))
+                 && selection->text().contains(QStringLiteral("Plan ungültig")),
              qPrintable(selection->text()));
 
-    // Selecting the older version names it with its date; loading it marks it as
-    // running and the newer one as "Neue Version".
-    list->setCurrentRow(1);
+    // The package size filter narrows planner and local plans alike.
+    auto* filterLength = f.window->findChild<QLineEdit*>(QStringLiteral("lineEditFilterLength"));
+    filterLength->setText(QStringLiteral("200"));
+    QVERIFY(!list->item(0)->isHidden());
+    QVERIFY(list->item(1)->isHidden());
+    QVERIFY(!list->item(2)->isHidden());
+    filterLength->setText(QStringLiteral("999"));
+    QVERIFY(list->item(0)->isHidden() && list->item(2)->isHidden());
+    QVERIFY(f.window->findChild<QWidget*>(QStringLiteral("planListEmptyLabel"))->isVisible());
+    QTest::mouseClick(f.window->findChild<QPushButton*>(QStringLiteral("pushButtonClearFilters")), Qt::LeftButton);
+    QVERIFY(!list->item(1)->isHidden());
+
+    // While a program runs a planner plan is not loaded, and the bar next to the button says so.
+    list->setCurrentRow(0);
     QVERIFY(load->isEnabled());
     QVERIFY2(selection->text().contains(QStringLiteral("Alpha, Stand ")), qPrintable(selection->text()));
+    f.robot(multipack::robot::ProgramState::Playing);
+    QTest::mouseClick(load, Qt::LeftButton);
+    QVERIFY(f.activeFile().isEmpty());
+    QCOMPARE(stack->currentWidget(), plansPage);
+    QVERIFY2(selection->text().contains(QStringLiteral("Roboterprogramm läuft")), qPrintable(selection->text()));
+    f.robot(multipack::robot::ProgramState::Stopped);
+
+    // Loading it returns to "Betrieb" with the plan loaded and marked as running.
     QTest::mouseClick(load, Qt::LeftButton);
     QCOMPARE(f.activeFile(), multipack::planner::plannerPaletteFileName(kFinalA));
-    QCOMPARE(list->count(), 3);
-    QCOMPARE(chips(1), QStringList{QStringLiteral("läuft")});
+    QCOMPARE(stack->currentWidget(), mainPage);
+    QCOMPARE(chips(rowOf(kFinalA)), QStringList{QStringLiteral("läuft")});
+    QVERIFY(!notice->isVisible());
+
+    // The planner releases a newer version: the running one stays in the list,
+    // "Betrieb" shows one tappable line and the tab counts it.
+    *newerReleased = true;
+    QVERIFY(runCycle(f.service));
+    QTRY_COMPARE(list->count(), 4);
+    QCOMPARE(rowOf(kFinalB), 0);
+    QCOMPARE(rowOf(kFinalA), 1);
     QCOMPARE(chips(0), QStringList{QStringLiteral("Neue Version")});
+    QCOMPARE(chips(1), QStringList{QStringLiteral("läuft")});
+    QVERIFY(notice->isVisible());
+    QVERIFY(notice->text().contains(QStringLiteral("Neue Version verfügbar")));
+    QVERIFY(notice->height() >= 48);
+    QCOMPARE(badge->text(), QStringLiteral("2"));
+
+    // Tapping the line opens "Pläne" with the new version selected, ready to load.
+    QTest::mouseClick(notice, Qt::LeftButton);
+    QCOMPARE(stack->currentWidget(), plansPage);
+    QCOMPARE(list->currentRow(), 0);
+    QVERIFY(load->isEnabled());
     QVERIFY(hint->isVisible());
     QVERIFY(hint->text().contains(QStringLiteral("Neue Version verfügbar")));
-    // The selection survives the refresh.
-    QCOMPARE(list->currentRow(), 1);
+
+    // Loading it: the plan is shown once again, as its newest version.
+    QTest::mouseClick(load, Qt::LeftButton);
+    QCOMPARE(f.activeFile(), multipack::planner::plannerPaletteFileName(kFinalB));
+    QCOMPARE(stack->currentWidget(), mainPage);
+    QCOMPARE(list->count(), 3);
+    QCOMPARE(rowOf(kFinalA), -1);
+    QCOMPARE(chips(rowOf(kFinalB)), QStringList{QStringLiteral("läuft")});
+    QVERIFY(!notice->isVisible());
+    QCOMPARE(badge->text(), QStringLiteral("1"));
+
+    // A local plan loads from the same list with the same button.
+    QTest::mouseClick(plansTab, Qt::LeftButton);
+    list->setCurrentRow(2);
+    QVERIFY(load->isEnabled());
+    QTest::mouseClick(load, Qt::LeftButton);
+    QCOMPARE(f.activeFile(), QStringLiteral("4711.rob"));
+    QCOMPARE(stack->currentWidget(), mainPage);
     f.window.reset();
 }
 
@@ -1288,9 +1375,9 @@ void PlannerSyncTest::qrCodeLivesInItsOwnTab()
     auto* qrState = f.window->findChild<QLabel*>(QStringLiteral("plannerQrStateLabel"));
     QVERIFY(stack && mainPage && qrPage && qrTab && qrCode && qrUrl && qrState);
 
-    // Default view: the operating page with the Fertigstände, but without the QR code.
+    // Default view: the operating page, without the QR code and without the planner plans.
     QCOMPARE(stack->currentWidget(), mainPage);
-    QVERIFY(f.window->findChild<QWidget*>(QStringLiteral("plannerPanel"))->isVisible());
+    QVERIFY(!mainPage->isAncestorOf(f.window->findChild<QWidget*>(QStringLiteral("plannerFinalsList"))));
     QVERIFY(!mainPage->isAncestorOf(qrCode));
     QVERIFY(qrPage->isAncestorOf(qrCode));
     QVERIFY(!qrCode->isVisible());
@@ -1310,9 +1397,11 @@ void PlannerSyncTest::qrCodeLivesInItsOwnTab()
     QVERIFY(!qrUrl->text().contains(kToken));
     QVERIFY(qrState->text().contains(QStringLiteral("Online")));
 
-    // Removing the configuration removes the tab and leaves the page.
+    // Removing the configuration removes the tab and leaves the page; the
+    // planner plans leave the plan library.
     f.service.setConfig(PlannerConfig(), f.dir.path());
     QTRY_VERIFY(!qrTab->isVisible());
+    QCOMPARE(f.window->findChild<QListWidget*>(QStringLiteral("plannerFinalsList"))->count(), 0);
     QCOMPARE(stack->currentWidget(), mainPage);
     QVERIFY(qrCode->text().isEmpty());
     f.window.reset();

@@ -230,7 +230,7 @@ void VisualizationWidget::paintEvent(QPaintEvent* event)
     if (!hasDimensions) {
         painter.setPen(Qt::gray);
         painter.setFont(QFont("Arial", 14));
-        painter.drawText(rect(), Qt::AlignCenter, tr("No palette loaded"));
+        painter.drawText(rect(), Qt::AlignCenter, tr("Keine Vorschau"));
         return;
     }
 
@@ -577,28 +577,28 @@ void VisualizationWidget::drawLegend(QPainter& painter)
     painter.setFont(QFont("Arial", 9));
 
     // Package dimensions
-    painter.drawText(x, y, tr("Package: %1 × %2 × %3 mm")
+    painter.drawText(x, y, tr("Paket: %1 × %2 × %3 mm")
                      .arg(m_palette.packageLength)
                      .arg(m_palette.packageWidth)
                      .arg(m_palette.packageHeight));
     y += lineHeight;
 
     // Pallet dimensions
-    painter.drawText(x, y, tr("Pallet: %1 × %2 mm")
+    painter.drawText(x, y, tr("Palette: %1 × %2 mm")
                      .arg(static_cast<int>(m_palette.length))
                      .arg(static_cast<int>(m_palette.width)));
     y += lineHeight;
 
     // Counts
-    painter.drawText(x, y, tr("Packages: %1").arg(m_palette.totalPackages));
+    painter.drawText(x, y, tr("Pakete: %1").arg(m_palette.totalPackages));
     y += lineHeight;
 
-    painter.drawText(x, y, tr("Layers: %1").arg(m_palette.totalLayers));
+    painter.drawText(x, y, tr("Lagen: %1").arg(m_palette.totalLayers));
     y += lineHeight;
 
     // Conveyor direction
     QString direction = (m_palette.conveyorDirection == 1) ? tr("Quer") : tr("Längs");
-    painter.drawText(x, y, tr("Direction: %1").arg(direction));
+    painter.drawText(x, y, tr("Richtung: %1").arg(direction));
 }
 
 QColor VisualizationWidget::getFaceColor(int rotation, int face) const

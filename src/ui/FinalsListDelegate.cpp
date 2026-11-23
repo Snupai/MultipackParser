@@ -1,6 +1,6 @@
 /**
  * @file FinalsListDelegate.cpp
- * @brief Draws the planner's Fertigstände as touch-sized cards
+ * @brief Draws the rows of the plan list on "Pläne" as touch-sized cards
  */
 #include "multipack/ui/FinalsListDelegate.h"
 
@@ -21,13 +21,14 @@ constexpr int CARD_GAP = 6;        // vertical space between two cards
 constexpr int CARD_RADIUS = 8;
 constexpr int CARD_PADDING = 14;
 constexpr int MARK_SIZE = 26;      // selection mark
-constexpr int OLDER_INDENT = 30;   // older versions sit under their plan
 constexpr int CHIP_HEIGHT = 28;
 constexpr int CHIP_PADDING = 11;
 constexpr int CHIP_SPACING = 6;
+constexpr int TAG_HEIGHT = 22;
+constexpr int TAG_PADDING = 7;
 constexpr int NAME_PIXEL_SIZE = 20;
-constexpr int DETAIL_PIXEL_SIZE = 16;
 constexpr int CHIP_PIXEL_SIZE = 15;
+constexpr int TAG_PIXEL_SIZE = 13;
 
 struct ChipColors {
     QColor background;
@@ -90,7 +91,6 @@ void FinalsListDelegate::paint(QPainter* painter, const QStyleOptionViewItem& op
                                const QModelIndex& index) const
 {
     const bool selected = option.state.testFlag(QStyle::State_Selected);
-    const bool olderVersion = index.data(FinalsRole::OlderVersion).toBool();
     const bool loadable = index.data(FinalsRole::Downloaded).toBool();
     const QColor primary(QString::fromLatin1(Theme::PRIMARY));
     const QColor border(QString::fromLatin1(Theme::BORDER));
@@ -99,23 +99,15 @@ void FinalsListDelegate::paint(QPainter* painter, const QStyleOptionViewItem& op
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing, true);
 
-    QRectF card = QRectF(option.rect).adjusted(1, 1, -1, -1 - CARD_GAP);
-    if (olderVersion) {
-        // Elbow from the plan above to its older version.
-        const qreal x = card.left() + OLDER_INDENT / 2.0;
-        painter->setPen(QPen(QColor(QStringLiteral("#b9c2ce")), 2));
-        painter->drawLine(QPointF(x, card.top() - CARD_GAP), QPointF(x, card.center().y()));
-        painter->drawLine(QPointF(x, card.center().y()), QPointF(card.left() + OLDER_INDENT - 4, card.center().y()));
-        card.setLeft(card.left() + OLDER_INDENT);
-    }
-
     // Card
+    const QRectF card = QRectF(option.rect).adjusted(1, 1, -1, -1 - CARD_GAP);
     painter->setPen(selected ? QPen(primary, 2) : QPen(border, 1));
     painter->setBrush(selected ? QColor(QStringLiteral("#eef2fa")) : QColor(QString::fromLatin1(Theme::SURFACE)));
     painter->drawRoundedRect(card, CARD_RADIUS, CARD_RADIUS);
+    const qreal centerY = card.center().y();
 
     // Selection mark: ring, filled with a dot when selected
-    const QRectF mark(card.left() + CARD_PADDING, card.center().y() - MARK_SIZE / 2.0, MARK_SIZE, MARK_SIZE);
+    const QRectF mark(card.left() + CARD_PADDING, centerY - MARK_SIZE / 2.0, MARK_SIZE, MARK_SIZE);
     painter->setPen(QPen(selected ? primary : QColor(QStringLiteral("#7c8796")), 2));
     painter->setBrush(QColor(QString::fromLatin1(Theme::SURFACE)));
     painter->drawEllipse(mark);
@@ -127,10 +119,8 @@ void FinalsListDelegate::paint(QPainter* painter, const QStyleOptionViewItem& op
 
     const qreal textLeft = mark.right() + 12;
     qreal textRight = card.right() - CARD_PADDING;
-    const qreal lineOneCenter = card.top() + 25;
-    const qreal lineTwoCenter = card.bottom() - 20;
 
-    // State chips, right-aligned on the first line
+    // State chips, right-aligned
     const QFont chipFont = sized(option.font, CHIP_PIXEL_SIZE, true);
     const QFontMetrics chipMetrics(chipFont);
     const QStringList chips = index.data(FinalsRole::Chips).toStringList();
@@ -139,7 +129,7 @@ void FinalsListDelegate::paint(QPainter* painter, const QStyleOptionViewItem& op
         const QString tone = chips.at(i).section(QLatin1Char('|'), 0, 0);
         const QString label = FinalsChip::text(chips.at(i));
         const qreal width = chipMetrics.horizontalAdvance(label) + 2 * CHIP_PADDING;
-        const QRectF chip(textRight - width, lineOneCenter - CHIP_HEIGHT / 2.0, width, CHIP_HEIGHT);
+        const QRectF chip(textRight - width, centerY - CHIP_HEIGHT / 2.0, width, CHIP_HEIGHT);
         const ChipColors colors = chipColors(tone);
         painter->setPen(Qt::NoPen);
         painter->setBrush(colors.background);
@@ -149,26 +139,30 @@ void FinalsListDelegate::paint(QPainter* painter, const QStyleOptionViewItem& op
         textRight = chip.left() - CHIP_SPACING;
     }
 
-    // Name
+    // Name, followed by the small source hint; the hint keeps its place when the name is cut.
+    const QString tag = index.data(FinalsRole::SourceTag).toString();
+    const QFont tagFont = sized(option.font, TAG_PIXEL_SIZE, false);
+    const qreal tagWidth = tag.isEmpty() ? 0 : QFontMetrics(tagFont).horizontalAdvance(tag) + 2 * TAG_PADDING;
+    const qreal tagGap = tag.isEmpty() ? 0 : 10;
+
     const QFont nameFont = sized(option.font, NAME_PIXEL_SIZE, true);
     const QFontMetrics nameMetrics(nameFont);
-    const qreal nameWidth = qMax<qreal>(0, textRight - 6 - textLeft);
+    const int nameSpace = static_cast<int>(qMax<qreal>(0, textRight - 6 - textLeft - tagWidth - tagGap));
+    const QString name = nameMetrics.elidedText(index.data(FinalsRole::Name).toString(), Qt::ElideRight, nameSpace);
     painter->setFont(nameFont);
     painter->setPen(loadable ? QColor(QString::fromLatin1(Theme::TEXT)) : muted);
-    painter->drawText(QRectF(textLeft, lineOneCenter - 15, nameWidth, 30), Qt::AlignLeft | Qt::AlignVCenter,
-                      nameMetrics.elidedText(index.data(FinalsRole::Name).toString(), Qt::ElideRight,
-                                             static_cast<int>(nameWidth)));
+    painter->drawText(QRectF(textLeft, centerY - 16, nameSpace, 32), Qt::AlignLeft | Qt::AlignVCenter, name);
 
-    // Detail line: date, version, or why it cannot be loaded
-    const QFont detailFont = sized(option.font, DETAIL_PIXEL_SIZE, false);
-    const QFontMetrics detailMetrics(detailFont);
-    const qreal detailWidth = qMax<qreal>(0, card.right() - CARD_PADDING - textLeft);
-    painter->setFont(detailFont);
-    painter->setPen(index.data(FinalsRole::DetailIsError).toBool() ? QColor(QString::fromLatin1(Theme::DANGER))
-                                                                   : muted);
-    painter->drawText(QRectF(textLeft, lineTwoCenter - 12, detailWidth, 24), Qt::AlignLeft | Qt::AlignVCenter,
-                      detailMetrics.elidedText(index.data(FinalsRole::Detail).toString(), Qt::ElideRight,
-                                               static_cast<int>(detailWidth)));
+    if (!tag.isEmpty()) {
+        const QRectF tagRect(textLeft + nameMetrics.horizontalAdvance(name) + tagGap, centerY - TAG_HEIGHT / 2.0 + 1,
+                             tagWidth, TAG_HEIGHT);
+        painter->setPen(QPen(QColor(QStringLiteral("#b9c2ce")), 1));
+        painter->setBrush(Qt::NoBrush);
+        painter->drawRoundedRect(tagRect, 5, 5);
+        painter->setFont(tagFont);
+        painter->setPen(muted);
+        painter->drawText(tagRect, Qt::AlignCenter, tag);
+    }
 
     painter->restore();
 }

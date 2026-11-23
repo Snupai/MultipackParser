@@ -80,18 +80,34 @@ loads a plan via XML-RPC, and every 60 s.
 
 ## Fertigstände on the HMI
 
-The "Betrieb" page lists the Fertigstände as cards: name, date ("Stand"), and
-state chips ("läuft", "Neue Version", "Neu" for one day after it was marked,
-"Fehler", "wird geladen", "nicht mehr fertig"). Fertigstände of one plan
-(same `recordId`) sit together, newest first, the older ones indented and
-labelled "ältere Version". The bar below the list names the selected
-Fertigstand and holds "Plan laden"; it refuses while a robot program runs.
+Operators do not know the word "Fertigstand", so the UI never shows it. A
+Fertigstand is simply a plan in the plan library ("Pläne" tab): same list,
+same rows, same 3D preview, same "Plan laden", same package size filter as
+the local USB plans. The list is sorted newest first (planner: "markedAt",
+local: file date).
+
+What sets a planner plan apart:
+
+- a small "Planer" tag after the name,
+- state chips: "läuft", "Neue Version", "Neu" (for one day after it was
+  marked), "Fehler", "wird geladen", "nicht mehr freigegeben", "ältere
+  Version",
+- a plan (same `recordId`) is shown once, as its newest Fertigstand. An older
+  one is listed as well only while it is the running plan, or while it is the
+  newest one that can be loaded,
+- loading it is refused while a robot program runs (a local plan loads as
+  before).
+
+The "Pläne" tab title carries a count: load errors plus a newer version of
+the running plan. "Betrieb" shows only one tappable line, "Neue Version
+verfügbar – im Tab Pläne", which opens the tab with that version selected.
 
 ## Planvorschlag on the HMI
 
 - The dialog "Neuer Plan vorgeschlagen: {name} – Übernehmen?" with a preview
   opens automatically only while the robot program is stopped. While a
-  program runs, the "Betrieb" page shows "Planvorschlag wartet (Roboter läuft)".
+  program runs, the "Betrieb" page shows "Planvorschlag wartet (Roboter läuft)"
+  in the same notice line.
 - **Übernehmen**: the HMI sends `accepted`; only after the planner answers
   `204`, and only if the robot is still stopped, it loads the plan and reports
   the new status. On `409`/`404` (taken back, superseded, expired) nothing

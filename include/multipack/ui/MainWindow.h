@@ -9,6 +9,7 @@
 #include <QListWidgetItem>
 #include <QDateTime>
 #include <QPointer>
+#include <QSet>
 #include <QStringList>
 #include <memory>
 #include <optional>
@@ -175,11 +176,9 @@ private slots:
     void onScanner3OverwriteChanged(int state);
 
     // Plan library ("Pläne") actions
-    void onRobFileSelected(QListWidgetItem* item);
     void onDeselectRobFile();
     void onFilterChanged();
     void onClearFiltersClicked();
-    void onLoadSelectedRobFile();
     void onDatabasePlanSelectionChanged();
     void onDatabaseSaveClicked();
     void onDatabaseNewClicked();
@@ -240,7 +239,7 @@ private:
 
     // Planner (HMI-Abgleich) - implemented in MainWindowPlanner.cpp
     void setupPlannerPanel();
-    void arrangeOperatingPage(bool plannerConfigured);
+    void updatePlannerAttention(bool newVersion, int failedCount);
     void updatePlannerSelection();
     void setupPlannerSettingsTab();
     void refreshPlannerList();
@@ -323,14 +322,22 @@ private:
     QLabel* m_statusLoadedProgram = nullptr;
     OnScreenKeyboard* m_onScreenKeyboard = nullptr;
 
-    // Planner: Fertigstände panel ("Betrieb"), QR code page and settings tab.
-    // The panel and the QR page live in MainWindow.ui; these point into it.
-    QWidget* m_plannerPanel = nullptr;
+    // Plan list on "Pläne" (planner plans and USB plans), QR code page and
+    // planner settings tab. The widgets live in MainWindow.ui; these point into it.
     QListWidget* m_plannerList = nullptr;
     QPushButton* m_plannerLoadButton = nullptr;
     QPushButton* m_plannerProposalButton = nullptr;
     QLabel* m_plannerStateLabel = nullptr;
     QLabel* m_plannerHintLabel = nullptr;
+    QLabel* m_plannerBadge = nullptr;       ///< Count on the "Pläne" tab
+    bool m_plannerRowsShown = false;        ///< The list currently includes planner plans
+    QString m_selectedPlanKey;              ///< Last previewed selection of the plan list
+    bool m_planFilterActive = false;        ///< Package size filter of the plan list
+    int m_planFilterLength = 0;             ///< 0 = any
+    int m_planFilterWidth = 0;
+    int m_planFilterHeight = 0;
+    QSet<QString> m_planFilterNames;        ///< Local plans matching the filter (names without ".rob")
+    QString m_newVersionFinalId;            ///< Newer Fertigstand of the running plan, if any
     QrCodeWidget* m_plannerQr = nullptr;
     QLabel* m_plannerQrStateLabel = nullptr;
     QLabel* m_plannerQrUrlLabel = nullptr;

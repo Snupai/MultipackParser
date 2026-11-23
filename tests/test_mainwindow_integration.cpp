@@ -13,6 +13,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QLibraryInfo>
+#include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
 #include <QMessageBox>
@@ -42,6 +43,7 @@ private slots:
     void experimentalButtonIsReplacedByPlansTab();
     void navigationSwitchesPagesAndLocksRobotUntilPlanLoaded();
     void qrCodeTabIsHiddenWithoutPlanner();
+    void operatorTextsAvoidPlannerJargon();
     void ur20NoticeBarOffersPaletteRelease();
 };
 
@@ -211,8 +213,9 @@ void MainWindowIntegrationTest::experimentalButtonIsReplacedByPlansTab()
 
     // What the button opened is the "Pläne" tab: list, filters, preview, load.
     auto* plans = f.find<QPushButton>("navPlaene");
-    auto* list = f.find<QListWidget>("robFilesListWidget");
-    QVERIFY(plans && list);
+    auto* list = f.find<QListWidget>("plannerFinalsList");
+    auto* load = f.find<QPushButton>("plannerLoadButton");
+    QVERIFY(plans && list && load);
     QVERIFY(plans->isVisible());
     QVERIFY(!list->isVisible());
     QTest::mouseClick(plans, Qt::LeftButton);
@@ -223,9 +226,18 @@ void MainWindowIntegrationTest::experimentalButtonIsReplacedByPlansTab()
     QVERIFY(f.find<QLineEdit>("lineEditFilterLength")->isVisible());
     QVERIFY(f.find<QWidget>("planPreviewFrame")->isVisible());
 
+    // Nothing selected: nothing to load. Selecting a plan enables the button.
+    QVERIFY(!load->isEnabled());
+    list->setCurrentRow(0);
+    QVERIFY(load->isEnabled());
+    QVERIFY(load->height() >= 48);
+    f.find<QPushButton>("deselectRobFile")->click();
+    QVERIFY(list->selectedItems().isEmpty());
+    QVERIFY(!load->isEnabled());
+
     // Loading the selected plan still returns to the operating page with it loaded.
     list->setCurrentRow(0);
-    QTest::mouseClick(f.find<QPushButton>("LadePallettenplan_2"), Qt::LeftButton);
+    QTest::mouseClick(load, Qt::LeftButton);
     QCOMPARE(f.currentPage(), QStringLiteral("MainMenu"));
     QCOMPARE(GlobalState::instance().currentFileName(), QStringLiteral("sample.rob"));
 }
@@ -281,17 +293,44 @@ void MainWindowIntegrationTest::qrCodeTabIsHiddenWithoutPlanner()
     UiFixture f;
     QVERIFY(f.start());
 
-    // No planner configured: no QR tab, no planner panel, nothing to scan.
+    // No planner configured: no QR tab, nothing to scan, no planner notices.
     auto* qrTab = f.find<QPushButton>("navQrCode");
     auto* qrCode = f.find<QWidget>("plannerQrCode");
     QVERIFY(qrTab && qrCode);
     QVERIFY(!qrTab->isVisible());
     QVERIFY(!qrCode->isVisible());
-    QVERIFY(!f.find<QWidget>("plannerPanel")->isVisible());
+    QVERIFY(!f.find<QPushButton>("plannerNewVersionNotice")->isVisible());
+    QVERIFY(!f.find<QWidget>("navPlaeneBadge")->isVisible());
+
+    // "Betrieb" is the operating form, the scanner image and the two actions.
+    QWidget* mainPage = f.find<QWidget>("MainMenu");
+    QVERIFY(!mainPage->isAncestorOf(f.find<QWidget>("plannerFinalsList")));
+    for (const char* name : {"EingabePallettenplan", "label_7", "ButtonOpenParameterRoboter", "ButtonDatenSenden"}) {
+        QVERIFY2(mainPage->isAncestorOf(f.find<QWidget>(name)), name);
+        QVERIFY2(f.find<QWidget>(name)->isVisible(), name);
+    }
 
     // The QR code is not part of the operating page.
     QVERIFY(!f.find<QWidget>("MainMenu")->isAncestorOf(qrCode));
     QVERIFY(f.find<QWidget>("QrCodePage")->isAncestorOf(qrCode));
+}
+
+void MainWindowIntegrationTest::operatorTextsAvoidPlannerJargon()
+{
+    UiFixture f;
+    QVERIFY(f.start());
+
+    // Operators do not know the planner's word "Fertigstand": planner plans are
+    // plans in "Pläne".
+    QVERIFY(f.find<QPushButton>("plannerNewVersionNotice")->text().contains(QStringLiteral("im Tab Pläne")));
+    for (QLabel* label : f.window->findChildren<QLabel*>()) {
+        QVERIFY2(!label->text().contains(QStringLiteral("Fertigst"), Qt::CaseInsensitive),
+                 qPrintable(label->objectName() + ": " + label->text()));
+    }
+    for (QAbstractButton* button : f.window->findChildren<QAbstractButton*>()) {
+        QVERIFY2(!button->text().contains(QStringLiteral("Fertigst"), Qt::CaseInsensitive),
+                 qPrintable(button->objectName() + ": " + button->text()));
+    }
 }
 
 void MainWindowIntegrationTest::ur20NoticeBarOffersPaletteRelease()

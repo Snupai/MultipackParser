@@ -87,7 +87,7 @@ QLabel[role="value"] {
 }
 
 QLabel#LabelPalletenplanInfo {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: bold;
     color: #18212f;
 }
@@ -185,12 +185,24 @@ QPushButton[scale="medium"] {
     font-size: 21px;
 }
 
+/* One-line notice that leads somewhere (Betrieb: new version of the running plan). */
+QPushButton[role="notice"] {
+    color: #8a4500;
+    background: #ffe9c7;
+    border-color: #e9c27e;
+    font-weight: bold;
+}
+
+QPushButton[role="notice"]:pressed {
+    background: #f6d9a3;
+}
+
 /* Top navigation: full header height, the active page carries the brand bar. */
 QPushButton[role="nav"] {
     min-height: 60px;
-    min-width: 104px;
-    padding: 0 12px;
-    font-size: 20px;
+    min-width: 96px;
+    padding: 0 10px;
+    font-size: 19px;
     font-weight: bold;
     color: #3a4657;
     background: transparent;
@@ -212,6 +224,28 @@ QPushButton[role="nav"]:checked {
 QPushButton[role="nav"]:disabled {
     color: #b0b8c3;
     background: transparent;
+}
+
+/* Room for the attention count at the top right of the tab. */
+QPushButton#navPlaene {
+    padding-right: 30px;
+}
+
+QLabel#navPlaeneBadge {
+    min-width: 12px;
+    min-height: 22px;
+    max-height: 22px;
+    padding: 0 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #18212f;
+    background: #f2b33d;
+    border-radius: 11px;
+}
+
+QLabel#navPlaeneBadge[tone="danger"] {
+    color: #ffffff;
+    background: #b3261e;
 }
 
 QPushButton[role="icon"] {
@@ -298,6 +332,36 @@ QLineEdit[scale="medium"],
 QAbstractSpinBox[scale="medium"] {
     min-height: 50px;
     font-size: 22px;
+}
+
+/* The operating form on "Betrieb". */
+QLineEdit[scale="large"],
+QAbstractSpinBox[scale="large"] {
+    min-height: 66px;
+    padding-left: 14px;
+    font-size: 26px;
+}
+
+QAbstractSpinBox[scale="large"] {
+    padding-right: 132px;
+}
+
+QAbstractSpinBox[scale="large"]::up-button,
+QAbstractSpinBox[scale="large"]::down-button {
+    width: 56px;
+    height: 48px;
+}
+
+QAbstractSpinBox[scale="large"]::up-button {
+    right: 8px;
+}
+
+QAbstractSpinBox[scale="large"]::down-button {
+    right: 70px;
+}
+
+QLabel[scale="large"] {
+    font-size: 23px;
 }
 
 /* Spin boxes: minus and plus side by side, each a full touch target. */
@@ -464,7 +528,7 @@ QTreeView::item:selected {
     background: #1d2f5e;
 }
 
-/* Fertigstände: cards drawn by FinalsListDelegate in a tinted well. */
+/* Plan list on "Pläne": cards drawn by FinalsListDelegate in a tinted well. */
 QListView#plannerFinalsList {
     padding: 6px;
     background: #f3f5f8;
@@ -495,16 +559,16 @@ QLabel#plannerStateLabel {
     font-weight: bold;
 }
 
+QWidget#MainMenu QCheckBox {
+    font-size: 21px;
+}
+
 QLabel#plannerSelectionLabel {
-    font-size: 17px;
+    font-size: 16px;
 }
 
-QLabel#plannerEmptyLabel {
+QLabel#planListEmptyLabel {
     font-size: 18px;
-}
-
-QFrame#plannerSelectionBar {
-    border-top: 1px solid #d3d9e2;
 }
 
 QTableView {

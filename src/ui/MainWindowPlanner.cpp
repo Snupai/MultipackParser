@@ -2,7 +2,9 @@
  * @file MainWindowPlanner.cpp
  * @brief MainWindow: Palettenplaner integration (HMI-Abgleich)
  *
- * - Planner Fertigstände on the "Betrieb" page, separate from USB plans
+ * - The plan list on "Pläne": planner Fertigstände (shown as released plans)
+ *   and USB plans in one list with the 3D preview; a badge on the tab and a
+ *   one-line notice on "Betrieb" point to it
  * - "QR-Code" tab with the planner page of this HMI and an online/offline hint
  * - Planvorschlag confirmation (never switches without the operator, never
  *   while the robot executes a program)
@@ -24,6 +26,7 @@
 #include "multipack/ui/PlanProposalDialog.h"
 #include "multipack/ui/QrCodeWidget.h"
 #include "multipack/ui/Theme.h"
+#include "multipack/ui/VisualizationWidget.h"
 
 #include <QDebug>
 #include <QDir>
@@ -38,9 +41,13 @@
 #include <QPushButton>
 #include <QScroller>
 #include <QSignalBlocker>
+#include <QStyle>
 #include <QTabWidget>
 #include <QTimer>
 #include <QVBoxLayout>
+#include <QVector>
+
+#include <algorithm>
 
 namespace multipack {
 namespace ui {
@@ -131,7 +138,7 @@ void MainWindow::setPlannerSync(planner::PlannerSyncService* sync)
     refreshPlannerList();
 }
 
-// === Main menu panel ===
+// === Plan list ("Pläne") ===
 
 void MainWindow::setupPlannerPanel()
 {
@@ -140,9 +147,7 @@ void MainWindow::setupPlannerPanel()
     m_activePlanDebounce->setInterval(500);
     connect(m_activePlanDebounce, &QTimer::timeout, this, &MainWindow::onActivePlanFileChanged);
 
-    // Panel and QR page are laid out in MainWindow.ui; both stay hidden until
-    // a planner is configured (updatePlannerConnectionState).
-    m_plannerPanel = ui->plannerPanel;
+    // The plan list and the QR page are laid out in MainWindow.ui.
     m_plannerList = ui->plannerFinalsList;
     m_plannerLoadButton = ui->plannerLoadButton;
     m_plannerProposalButton = ui->plannerProposalButton;
@@ -152,7 +157,7 @@ void MainWindow::setupPlannerPanel()
     m_plannerQrStateLabel = ui->plannerQrStateLabel;
     m_plannerQrUrlLabel = ui->plannerQrUrlLabel;
 
-    // One card per Fertigstand (FinalsListDelegate), dragged like a phone list.
+    // One card per plan (FinalsListDelegate), dragged like a phone list.
     m_plannerList->setSelectionMode(QAbstractItemView::SingleSelection);
     m_plannerList->setItemDelegate(new FinalsListDelegate(m_plannerList));
     m_plannerList->setResizeMode(QListView::Adjust);
@@ -161,10 +166,22 @@ void MainWindow::setupPlannerPanel()
     m_plannerList->setFocusPolicy(Qt::NoFocus);
     QScroller::grabGesture(m_plannerList->viewport(), QScroller::LeftMouseButtonGesture);
 
+    m_plannerStateLabel->hide();
     m_plannerHintLabel->hide();
     m_plannerLoadButton->setEnabled(false);
     m_plannerProposalButton->hide();
-    m_plannerPanel->hide();
+    ui->plannerNewVersionNotice->hide();
+
+    // Count of planner plans that need attention, on the tab itself.
+    m_plannerBadge = new QLabel(ui->navPlaene);
+    m_plannerBadge->setObjectName(QStringLiteral("navPlaeneBadge"));
+    m_plannerBadge->setAlignment(Qt::AlignCenter);
+    m_plannerBadge->setAttribute(Qt::WA_TransparentForMouseEvents);
+    auto* badgeLayout = new QHBoxLayout(ui->navPlaene);
+    badgeLayout->setContentsMargins(0, 9, 7, 0);
+    badgeLayout->addStretch();
+    badgeLayout->addWidget(m_plannerBadge, 0, Qt::AlignTop);
+    m_plannerBadge->hide();
 
     connect(m_plannerList, &QListWidget::itemSelectionChanged, this, &MainWindow::updatePlannerSelection);
     connect(m_plannerList, &QListWidget::itemDoubleClicked, this, [this]() { onPlannerLoadClicked(); });
@@ -173,22 +190,34 @@ void MainWindow::setupPlannerPanel()
         m_deferredProposalId.clear();
         openProposalDialog();
     });
+    // The notice on "Betrieb" leads to the new version, ready to be loaded.
+    connect(ui->plannerNewVersionNotice, &QPushButton::clicked, this, [this]() {
+        showPlans();
+        for (int row = 0; row < m_plannerList->count(); ++row) {
+            QListWidgetItem* item = m_plannerList->item(row);
+            if (!item->isHidden() && item->data(ROLE_FINAL_ID).toString() == m_newVersionFinalId) {
+                m_plannerList->setCurrentItem(item);
+                m_plannerList->scrollToItem(item);
+                break;
+            }
+        }
+    });
 
-    arrangeOperatingPage(false);
-    updatePlannerSelection();
+    refreshPlannerList();
 }
 
-void MainWindow::arrangeOperatingPage(bool plannerConfigured)
+void MainWindow::updatePlannerAttention(bool newVersion, int failedCount)
 {
-    // With a planner the Fertigstände fill the right half and the machine
-    // block sits below the plan card; without one it takes the right half.
-    ui->mainMenuLayout->removeWidget(ui->machineBlock);
-    if (plannerConfigured) {
-        ui->mainMenuLayout->addWidget(ui->machineBlock, 1, 0);
-    } else {
-        ui->mainMenuLayout->addWidget(ui->machineBlock, 0, 1, Qt::AlignTop);
-    }
-    m_plannerPanel->setVisible(plannerConfigured);
+    // Betrieb: one tappable line while the running plan has a newer version.
+    ui->plannerNewVersionNotice->setVisible(newVersion);
+
+    // Tab: how many planner plans want a look (new version, load errors).
+    const int count = failedCount + (newVersion ? 1 : 0);
+    m_plannerBadge->setText(QString::number(count));
+    m_plannerBadge->setProperty("tone", failedCount > 0 ? QStringLiteral("danger") : QStringLiteral("warning"));
+    m_plannerBadge->style()->unpolish(m_plannerBadge);
+    m_plannerBadge->style()->polish(m_plannerBadge);
+    m_plannerBadge->setVisible(count > 0);
 }
 
 void MainWindow::updatePlannerSelection()
@@ -198,28 +227,43 @@ void MainWindow::updatePlannerSelection()
     const bool loadable = item && item->data(ROLE_DOWNLOADED).toBool();
     m_plannerLoadButton->setEnabled(loadable);
 
-    // The bar below the list says what "Plan laden" will load, or why it cannot.
+    // The bar below the preview says what "Plan laden" will load, or why it cannot.
     QString text;
     Theme::Tone tone = Theme::Tone::Neutral;
     if (!item) {
-        text = QStringLiteral("Fertigstand antippen, dann \"Plan laden\".");
+        text = QStringLiteral("Plan antippen, dann \"Plan laden\".");
     } else if (loadable) {
-        // Name and date: two versions of a plan share the name.
+        // Name and date: two versions of a planner plan share the name.
         const QString markedAt = item->data(FinalsRole::MarkedAt).toString();
         text = QStringLiteral("Ausgewählt: %1").arg(item->data(FinalsRole::Name).toString());
         if (!markedAt.isEmpty()) {
             text += QStringLiteral(", Stand %1").arg(markedAt);
         }
-    } else if (item->data(FinalsRole::DetailIsError).toBool()) {
-        text = QStringLiteral("%1 kann nicht geladen werden. Bitte im Palettenplaner prüfen.")
-                   .arg(item->data(FinalsRole::Name).toString());
+    } else if (!item->data(FinalsRole::LoadError).toString().isEmpty()) {
+        text = QStringLiteral("Nicht ladbar: %1.").arg(item->data(FinalsRole::LoadError).toString());
         tone = Theme::Tone::Danger;
     } else {
-        text = QStringLiteral("%1 wird noch vom Planer geladen.").arg(item->data(FinalsRole::Name).toString());
+        text = QStringLiteral("Wird noch vom Planer geladen.");
     }
     ui->plannerSelectionLabel->setText(text);
     ui->plannerSelectionLabel->setStyleSheet(
         QStringLiteral("color: %1;").arg(item ? Theme::toneColor(tone) : QString::fromLatin1(Theme::TEXT_MUTED)));
+
+    // 3D preview of a newly selected plan; one that is not stored has none.
+    const QString key = item ? item->data(FinalsRole::FileName).toString() : QString();
+    if (key == m_selectedPlanKey) {
+        return;
+    }
+    m_selectedPlanKey = key;
+    if (!item) {
+        return;
+    }
+    const auto data = loadable && m_database ? m_database->loadPaletteData(key) : std::nullopt;
+    if (data.has_value()) {
+        updateVisualizationFromPaletteData(*data);
+    } else if (m_visualizationWidget) {
+        m_visualizationWidget->setVisualizationData(VisualPalette());
+    }
 }
 
 void MainWindow::refreshPlannerList()
@@ -228,101 +272,189 @@ void MainWindow::refreshPlannerList()
         return;
     }
 
-    const QString selectedId = m_plannerList->currentItem()
-        ? m_plannerList->currentItem()->data(ROLE_FINAL_ID).toString()
-        : QString();
+    // One row per plan, whatever its source; newest first.
+    struct Entry {
+        qint64 timestamp = 0;
+        QString summary;
+        QString fileName;
+        QString name;
+        QString finalId;
+        QString markedAt;
+        QString loadError;
+        QString sourceTag;
+        QString toolTip;
+        QStringList chips;
+        bool downloaded = true;
+    };
+    QVector<Entry> entries;
 
+    const QString activeFile = m_state ? m_state->currentFileName() : m_currentPaletteFile;
+    const bool plannerConfigured = m_plannerSync && m_plannerSync->isConfigured();
+    // Package size filter. The database answers it for the local plans; a
+    // planner plan is compared by its stored size and has none until it is stored.
+    const auto passesFilter = [this](const Entry& entry) {
+        if (!m_planFilterActive) {
+            return true;
+        }
+        if (entry.finalId.isEmpty()) {
+            QString name = entry.fileName;
+            name.replace(QStringLiteral(".rob"), QString());
+            return m_planFilterNames.contains(name);
+        }
+        const auto data = entry.downloaded && m_database ? m_database->loadPaletteData(entry.fileName)
+                                                        : std::nullopt;
+        if (!data.has_value()) {
+            return false;
+        }
+        const auto& size = data->packageDimensions;
+        return (m_planFilterLength == 0 || size.length == m_planFilterLength)
+            && (m_planFilterWidth == 0 || size.width == m_planFilterWidth)
+            && (m_planFilterHeight == 0 || size.height == m_planFilterHeight);
+    };
+
+    // Plans synced from the Palettenplaner (Fertigstände).
+    int failedCount = 0;
+    QString hint;
+    m_newVersionFinalId.clear();
+    if (plannerConfigured) {
+        const planner::PlanListView view = planner::buildPlanList(
+            m_plannerSync->store().finals(), currentActiveFinalId(), QDateTime::currentDateTimeUtc());
+        if (view.newVersion) {
+            m_newVersionFinalId = view.newVersion->id;
+            hint = QStringLiteral("Neue Version verfügbar: %1").arg(view.newVersion->name);
+        }
+
+        QString groupRecord;
+        qint64 groupTimestamp = 0;
+        for (const planner::PlanListRow& row : view.rows) {
+            const bool failed = !row.final.downloaded && !row.final.loadError.isEmpty();
+            failedCount += failed ? 1 : 0;
+
+            Entry entry;
+            entry.fileName = planner::plannerPaletteFileName(row.final.entry.id);
+            entry.finalId = row.final.entry.id;
+            entry.name = row.final.entry.name;
+            entry.markedAt = formatMarkedAt(row.final.entry.markedAt);
+            entry.downloaded = row.final.downloaded;
+            entry.sourceTag = QStringLiteral("Planer");
+            entry.toolTip = row.final.entry.fileName;
+            // Versions of a plan stay next to each other, at the place of the newest.
+            if (row.final.entry.recordId != groupRecord) {
+                groupRecord = row.final.entry.recordId;
+                groupTimestamp = row.final.entry.markedAt.isValid() ? row.final.entry.markedAt.toMSecsSinceEpoch() : 0;
+            }
+            entry.timestamp = groupTimestamp;
+
+            // Plain summary (item text) and the state chips of the card.
+            entry.summary = entry.name;
+            if (!entry.markedAt.isEmpty()) {
+                entry.summary += QStringLiteral("   ") + entry.markedAt;
+            }
+            if (row.isActive) {
+                entry.summary += QStringLiteral("   [läuft]");
+                entry.chips.append(FinalsChip::encode(FinalsChip::Success, QStringLiteral("läuft")));
+            }
+            if (row.versionNumber < row.versionCount && !row.isActive) {
+                entry.chips.append(FinalsChip::encode(FinalsChip::Neutral, QStringLiteral("ältere Version")));
+            }
+            if (row.isWithdrawn) {
+                entry.summary += QStringLiteral("   [nicht mehr freigegeben]");
+                entry.chips.append(FinalsChip::encode(FinalsChip::Neutral, QStringLiteral("nicht mehr freigegeben")));
+            }
+            if (row.isNewVersionOfActive) {
+                entry.summary += QStringLiteral("   [Neue Version]");
+                entry.chips.append(FinalsChip::encode(FinalsChip::Warning, QStringLiteral("Neue Version")));
+            }
+            if (failed) {
+                entry.loadError = loadErrorText(row.final.loadError);
+                entry.summary += QStringLiteral("   [Fehler: %1]").arg(entry.loadError);
+                entry.chips.append(FinalsChip::encode(FinalsChip::Danger, QStringLiteral("Fehler")));
+                entry.toolTip = QStringLiteral("Dieser Plan kann auf dem HMI nicht geladen werden. "
+                                               "Bitte im Palettenplaner prüfen.");
+            } else if (!row.final.downloaded) {
+                entry.summary += QStringLiteral("   (wird geladen ...)");
+                entry.chips.append(FinalsChip::encode(FinalsChip::Neutral, QStringLiteral("wird geladen")));
+            } else if (row.isRecent && !row.isActive && !row.isNewVersionOfActive) {
+                entry.chips.append(FinalsChip::encode(FinalsChip::Info, QStringLiteral("Neu")));
+            }
+            entries.append(entry);
+        }
+    }
+
+    // Local plans (USB).
+    if (m_database) {
+        for (const auto& file : m_database->listAvailableFiles()) {
+            Entry entry;
+            entry.timestamp = file.timestamp;
+            entry.fileName = file.fileName;
+            entry.name = paletteDisplayName(file.fileName);
+            entry.summary = entry.name;
+            if (file.fileName == activeFile) {
+                entry.summary += QStringLiteral("   [läuft]");
+                entry.chips.append(FinalsChip::encode(FinalsChip::Success, QStringLiteral("läuft")));
+            }
+            entries.append(entry);
+        }
+    }
+
+    std::stable_sort(entries.begin(), entries.end(),
+                     [](const Entry& a, const Entry& b) { return a.timestamp > b.timestamp; });
+
+    const QString selectedFile = m_plannerList->currentItem()
+        ? m_plannerList->currentItem()->data(FinalsRole::FileName).toString()
+        : QString();
+    bool anyShown = false;
     {
         // One selection update at the end instead of one per removed item.
         const QSignalBlocker blocker(m_plannerList);
         m_plannerList->clear();
-        m_plannerHintLabel->clear();
-
-        const planner::PlanListView view = m_plannerSync
-            ? planner::buildPlanList(m_plannerSync->store().finals(), currentActiveFinalId(),
-                                     QDateTime::currentDateTimeUtc())
-            : planner::PlanListView();
-
-        for (const planner::PlanListRow& row : view.rows) {
-            const QString markedAt = formatMarkedAt(row.final.entry.markedAt);
-            const bool failed = !row.final.downloaded && !row.final.loadError.isEmpty();
-            const bool olderVersion = row.versionCount > 1 && row.versionNumber < row.versionCount;
-
-            // Plain summary (item text), state chips and the detail line of the card.
-            QString summary = row.final.entry.name;
-            QStringList chips;
-            QStringList detail;
-            if (!markedAt.isEmpty()) {
-                summary += QStringLiteral("   ") + markedAt;
-                detail.append(QStringLiteral("Stand %1").arg(markedAt));
+        for (const Entry& entry : entries) {
+            auto* item = new QListWidgetItem(entry.summary, m_plannerList);
+            item->setData(ROLE_FINAL_ID, entry.finalId);
+            item->setData(ROLE_DOWNLOADED, entry.downloaded);
+            item->setData(FinalsRole::FileName, entry.fileName);
+            item->setData(FinalsRole::Name, entry.name);
+            item->setData(FinalsRole::Chips, entry.chips);
+            item->setData(FinalsRole::SourceTag, entry.sourceTag);
+            item->setData(FinalsRole::MarkedAt, entry.markedAt);
+            item->setData(FinalsRole::LoadError, entry.loadError);
+            item->setToolTip(entry.toolTip);
+            // The package size filter hides rows; a plan that is not stored has no size.
+            if (!passesFilter(entry)) {
+                item->setHidden(true);
+                continue;
             }
-            if (row.versionCount > 1) {
-                detail.append(olderVersion ? QStringLiteral("ältere Version") : QStringLiteral("neueste Version"));
-            }
-            if (row.isActive) {
-                summary += QStringLiteral("   [läuft]");
-                chips.append(FinalsChip::encode(FinalsChip::Success, QStringLiteral("läuft")));
-            }
-            if (row.isWithdrawn) {
-                summary += QStringLiteral("   [nicht mehr fertig]");
-                chips.append(FinalsChip::encode(FinalsChip::Neutral, QStringLiteral("nicht mehr fertig")));
-            }
-            if (row.isNewVersionOfActive) {
-                summary += QStringLiteral("   [Neue Version]");
-                chips.append(FinalsChip::encode(FinalsChip::Warning, QStringLiteral("Neue Version")));
-            }
-            if (failed) {
-                summary += QStringLiteral("   [Fehler: %1]").arg(loadErrorText(row.final.loadError));
-                chips.append(FinalsChip::encode(FinalsChip::Danger, QStringLiteral("Fehler")));
-                // The reason first: it is what must stay readable in a narrow row.
-                detail.prepend(loadErrorText(row.final.loadError));
-            } else if (!row.final.downloaded) {
-                summary += QStringLiteral("   (wird geladen ...)");
-                chips.append(FinalsChip::encode(FinalsChip::Neutral, QStringLiteral("wird geladen")));
-            } else if (row.isRecent && !row.isActive && !row.isNewVersionOfActive) {
-                chips.append(FinalsChip::encode(FinalsChip::Info, QStringLiteral("Neu")));
-            }
-
-            auto* item = new QListWidgetItem(summary, m_plannerList);
-            item->setData(ROLE_FINAL_ID, row.final.entry.id);
-            item->setData(ROLE_DOWNLOADED, row.final.downloaded);
-            item->setData(FinalsRole::Name, row.final.entry.name);
-            item->setData(FinalsRole::Detail, detail.join(QStringLiteral("  ·  ")));
-            item->setData(FinalsRole::DetailIsError, failed);
-            item->setData(FinalsRole::Chips, chips);
-            item->setData(FinalsRole::OlderVersion, olderVersion);
-            item->setData(FinalsRole::MarkedAt, markedAt);
-            item->setToolTip(failed
-                ? QStringLiteral("Dieser Fertigstand kann auf dem HMI nicht geladen werden. "
-                                 "Bitte im Palettenplaner prüfen.")
-                : row.final.entry.fileName);
-            if (row.final.entry.id == selectedId) {
+            anyShown = true;
+            if (entry.fileName == selectedFile) {
                 m_plannerList->setCurrentItem(item);
             }
         }
-
-        if (view.newVersion) {
-            m_plannerHintLabel->setText(QStringLiteral("Neue Version verfügbar: %1").arg(view.newVersion->name));
-        }
     }
+    m_plannerRowsShown = plannerConfigured;
 
-    const bool empty = m_plannerList->count() == 0;
-    m_plannerList->setVisible(!empty);
-    ui->plannerEmptyLabel->setVisible(empty);
-    m_plannerHintLabel->setVisible(!m_plannerHintLabel->text().isEmpty());
+    m_plannerList->setVisible(anyShown);
+    ui->planListEmptyLabel->setVisible(!anyShown);
+    ui->planListEmptyLabel->setText(m_planFilterActive
+        ? QStringLiteral("Kein Palettierplan passt zum Filter.")
+        : QStringLiteral("Keine Palettierpläne vorhanden."));
+    m_plannerHintLabel->setText(hint);
+    m_plannerHintLabel->setVisible(!hint.isEmpty());
+    updatePlannerAttention(!m_newVersionFinalId.isEmpty(), failedCount);
     updatePlannerSelection();
 }
 
 void MainWindow::updatePlannerConnectionState()
 {
     const bool configured = m_plannerSync && m_plannerSync->isConfigured();
-    if (m_plannerPanel && m_plannerPanel->isHidden() == configured) {
-        arrangeOperatingPage(configured);
-    }
     // The QR code has its own tab; without a planner there is nothing to scan.
     ui->navQrCode->setVisible(configured);
     if (!configured && ui->stackedWidget->currentIndex() == PAGE_QR_CODE) {
         showMainMenu();
+    }
+    // Planner plans come and go with the configuration.
+    m_plannerStateLabel->setVisible(configured);
+    if (configured != m_plannerRowsShown) {
+        refreshPlannerList();
     }
     updatePlannerSettingsTab();
     if (!configured) {
@@ -379,25 +511,43 @@ void MainWindow::onPlannerLoadClicked()
     if (!m_plannerList || !m_database) {
         return;
     }
+    // The status line is on "Betrieb": a refusal is also shown next to the
+    // button that was pressed.
+    const auto refuse = [this](const QString& reason) {
+        showMessage(reason);
+        ui->plannerSelectionLabel->setText(reason);
+        ui->plannerSelectionLabel->setStyleSheet(
+            QStringLiteral("color: %1;").arg(Theme::toneColor(Theme::Tone::Danger)));
+    };
     const auto items = m_plannerList->selectedItems();
     if (items.isEmpty()) {
-        showMessage(QStringLiteral("Bitte Fertigstand auswählen"));
-        return;
-    }
-    // Never switch while a program runs. An unknown robot state does not block
-    // a manual load (robot off, operator at the machine), unlike a Planvorschlag.
-    const planner::SwitchPermission permission = currentSwitchPermission();
-    if (permission == planner::SwitchPermission::ProgramRunning) {
-        showMessage(switchPermissionText(permission));
+        refuse(QStringLiteral("Bitte Plan auswählen"));
         return;
     }
     const QString finalId = items.first()->data(ROLE_FINAL_ID).toString();
+    if (finalId.isEmpty()) {
+        // USB plan: loaded by name, as from the plan input on "Betrieb".
+        ui->EingabePallettenplan->setText(items.first()->data(FinalsRole::Name).toString());
+        showMainMenu();
+        onLoadPaletteClicked();
+        return;
+    }
+    // Never switch to a planner plan while a program runs. An unknown robot
+    // state does not block a manual load (robot off, operator at the machine),
+    // unlike a Planvorschlag.
+    const planner::SwitchPermission permission = currentSwitchPermission();
+    if (permission == planner::SwitchPermission::ProgramRunning) {
+        refuse(switchPermissionText(permission));
+        return;
+    }
     const auto data = m_database->loadPaletteData(planner::plannerPaletteFileName(finalId));
     if (!data.has_value()) {
-        showMessage(QStringLiteral("Fertigstand noch nicht geladen"));
+        refuse(QStringLiteral("Plan wird noch vom Planer geladen"));
         return;
     }
     applyLoadedPalette(*data, paletteDisplayName(data->metadata.fileName));
+    // Back to the operating page with the plan loaded.
+    showMainMenu();
 }
 
 // === Active plan / status report ===
@@ -638,7 +788,7 @@ void MainWindow::onProposalAnswered(const QString& proposalId, bool accepted,
         auto* box = new QMessageBox(QMessageBox::Warning, QStringLiteral("Planvorschlag"),
                                     QStringLiteral("Der Vorschlag wurde angenommen, der Plan konnte aber nicht "
                                                    "gewechselt werden.\n%1\nBitte den Plan in der Liste "
-                                                   "\"Fertigstände vom Palettenplaner\" manuell laden.")
+                                                   "im Tab \"Pläne\" manuell laden.")
                                         .arg(switchPermissionText(permission)),
                                     QMessageBox::Ok, this);
         box->setObjectName(QStringLiteral("proposalNotSwitchedNotice"));
@@ -828,7 +978,7 @@ void MainWindow::onPlannerRemoveClicked()
     }
     if (!Theme::confirm(this, QStringLiteral("Planer-Konfiguration"),
                         QStringLiteral("Planer-Konfiguration entfernen? "
-                                       "Bereits geladene Fertigstände bleiben erhalten."))) {
+                                       "Bereits geladene Pläne bleiben erhalten."))) {
         return;
     }
     planner::clearFromSettings(*m_settings);

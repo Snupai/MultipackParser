@@ -77,14 +77,6 @@ QString palettePlanDisplayName(const QString& fileName)
     return displayName;
 }
 
-QString palettePlanItemFileName(QListWidgetItem* item)
-{
-    if (!item) {
-        return QString();
-    }
-    const QString storedName = item->data(Qt::UserRole).toString().trimmed();
-    return storedName.isEmpty() ? item->text().trimmed() : storedName;
-}
 } // namespace
 
 MainWindow::MainWindow(QWidget* parent)
@@ -400,10 +392,8 @@ void MainWindow::setupConnections()
     connect(ui->palette2ClearButton, &QPushButton::clicked, this, [this]() { onPaletteClearClicked(2); });
 
     // Plan library ("Pläne")
-    connect(ui->robFilesListWidget, &QListWidget::itemClicked, this, &MainWindow::onRobFileSelected);
     connect(ui->deselectRobFile, &QPushButton::clicked, this, &MainWindow::onDeselectRobFile);
     connect(ui->pushButtonClearFilters, &QPushButton::clicked, this, &MainWindow::onClearFiltersClicked);
-    connect(ui->LadePallettenplan_2, &QPushButton::clicked, this, &MainWindow::onLoadSelectedRobFile);
     connect(ui->lineEditFilterLength, &QLineEdit::textChanged, this, &MainWindow::onFilterChanged);
     connect(ui->lineEditFilterWidth, &QLineEdit::textChanged, this, &MainWindow::onFilterChanged);
     connect(ui->lineEditFilterHeight, &QLineEdit::textChanged, this, &MainWindow::onFilterChanged);
@@ -1020,25 +1010,18 @@ void MainWindow::incrementUseCycleCount()
 
 void MainWindow::loadRobFileList()
 {
-    if (!m_database) {
-        refreshPalettePlanCompleter();
-        refreshDatabaseManagerPlans();
-        return;
+    const int count = m_database ? static_cast<int>(m_database->listAvailableFiles().size()) : 0;
+    if (m_database) {
+        ui->lineEditNumberPlans->setText(QString::number(count));
     }
 
-    ui->robFilesListWidget->clear();
-
-    auto files = m_database->listAvailableFiles();
-    for (const auto& file : files) {
-        auto* item = new QListWidgetItem(palettePlanDisplayName(file.fileName), ui->robFilesListWidget);
-        item->setData(Qt::UserRole, file.fileName);
-    }
-
-    ui->lineEditNumberPlans->setText(QString::number(files.size()));
+    // The plan list on "Pläne" (MainWindowPlanner.cpp), the completion of the
+    // plan input and the database editor all show the stored plans.
+    refreshPlannerList();
     refreshPalettePlanCompleter();
     refreshDatabaseManagerPlans();
 
-    qDebug() << "MainWindow - loaded" << files.size() << "rob files";
+    qDebug() << "MainWindow - loaded" << count << "rob files";
 }
 
 void MainWindow::updateEnabledStates()
@@ -1936,48 +1919,29 @@ void MainWindow::onConsoleCommandEntered()
 
 // === Plan library ("Pläne") Slots ===
 
-void MainWindow::onRobFileSelected(QListWidgetItem* item)
-{
-    if (!item) return;
-
-    const QString fileName = palettePlanItemFileName(item);
-    qDebug() << "Palette plan selected:" << palettePlanDisplayName(fileName);
-
-    // Immediately load and visualize the selected file
-    if (m_database) {
-        auto data = m_database->loadPaletteData(fileName);
-        if (data.has_value()) {
-            updateVisualizationFromPaletteData(*data);
-            qDebug() << "Visualization updated for:" << palettePlanDisplayName(fileName);
-        }
-    }
-}
-
 void MainWindow::onDeselectRobFile()
 {
-    ui->robFilesListWidget->clearSelection();
+    ui->plannerFinalsList->clearSelection();
+    ui->plannerFinalsList->setCurrentItem(nullptr);
 }
 
 void MainWindow::onFilterChanged()
 {
-    if (!m_database) return;
+    const int length = ui->lineEditFilterLength->text().toInt();
+    const int width = ui->lineEditFilterWidth->text().toInt();
+    const int height = ui->lineEditFilterHeight->text().toInt();
 
-    int length = ui->lineEditFilterLength->text().toInt();
-    int width = ui->lineEditFilterWidth->text().toInt();
-    int height = ui->lineEditFilterHeight->text().toInt();
-
-    if (length == 0 && width == 0 && height == 0) {
-        loadRobFileList();
-        return;
+    // The filter narrows the whole plan list, planner plans included.
+    m_planFilterActive = m_database && (length != 0 || width != 0 || height != 0);
+    m_planFilterLength = length;
+    m_planFilterWidth = width;
+    m_planFilterHeight = height;
+    m_planFilterNames.clear();
+    if (m_planFilterActive) {
+        const QStringList matching = m_database->findByPackageDimensions(length, width, height);
+        m_planFilterNames = QSet<QString>(matching.begin(), matching.end());
     }
-
-    auto matching = m_database->findByPackageDimensions(length, width, height);
-
-    ui->robFilesListWidget->clear();
-    for (const auto& name : matching) {
-        auto* item = new QListWidgetItem(palettePlanDisplayName(name), ui->robFilesListWidget);
-        item->setData(Qt::UserRole, name);
-    }
+    refreshPlannerList();
 }
 
 void MainWindow::onClearFiltersClicked()
@@ -1985,20 +1949,7 @@ void MainWindow::onClearFiltersClicked()
     ui->lineEditFilterLength->clear();
     ui->lineEditFilterWidth->clear();
     ui->lineEditFilterHeight->clear();
-    loadRobFileList();
-}
-
-void MainWindow::onLoadSelectedRobFile()
-{
-    auto items = ui->robFilesListWidget->selectedItems();
-    if (items.isEmpty()) {
-        showMessage("Bitte Datei auswählen");
-        return;
-    }
-
-    ui->EingabePallettenplan->setText(palettePlanDisplayName(palettePlanItemFileName(items.first())));
-    showMainMenu();
-    onLoadPaletteClicked();
+    onFilterChanged();
 }
 
 // === Database Manager Tab ===
