@@ -2655,6 +2655,8 @@ void MainWindow::updateRobotStatus()
     if (connected) {
         ui->lineEditURSerialNo->setText(m_robot->getSerialNumber());
         ui->lineEditURSoftwareVer->setText(m_robot->getSoftwareVersion());
+        // Show the start of a long version string, not its end.
+        ui->lineEditURSoftwareVer->setCursorPosition(0);
     }
 }
 

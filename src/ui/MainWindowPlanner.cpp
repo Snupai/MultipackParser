@@ -150,6 +150,12 @@ void MainWindow::setupPlannerPanel()
     m_plannerQrUrlLabel = ui->plannerQrUrlLabel;
 
     m_plannerList->setSelectionMode(QAbstractItemView::SingleSelection);
+    // Rows with a state or an error text are long: wrap them instead of
+    // scrolling sideways.
+    m_plannerList->setWordWrap(true);
+    m_plannerList->setResizeMode(QListView::Adjust);
+    m_plannerList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_plannerList->setSpacing(2);
     m_plannerHintLabel->setStyleSheet(
         QStringLiteral("color: %1; font-weight: bold;").arg(Theme::toneColor(Theme::Tone::Warning)));
     m_plannerLoadButton->setEnabled(false);

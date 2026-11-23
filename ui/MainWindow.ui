@@ -623,12 +623,18 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="plannerHintLabel">
+               <widget class="multipack::ui::ElidedLabel" name="plannerHintLabel">
                 <property name="text">
                  <string />
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
                </widget>
               </item>
