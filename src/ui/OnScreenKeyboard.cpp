@@ -62,7 +62,9 @@ OnScreenKeyboard::OnScreenKeyboard(QWidget* parent)
         "QFrame#OnScreenKeyboardOverlay { background-color: #202832; "
         "border-top: 1px solid #46515c; }"
         "QWidget#OnScreenKeyboardHeader { background-color: #2c2c33; }"
+        // Own key look; the reset values keep the HMI theme's button rules out.
         "QPushButton { color: white; background-color: #020a10; border: none; "
+        "border-radius: 6px; padding: 0; min-width: 0; font-weight: normal; "
         "font-size: 25px; min-height: 50px; }"
         "QPushButton:pressed { background-color: #1f6feb; }"
         "QPushButton#FunctionKey { background-color: #56626a; font-size: 18px; "

@@ -22,6 +22,7 @@
 #include "multipack/core/Application.h"
 #include "multipack/core/GlobalState.h"
 #include "multipack/config/ConfigDefaults.h"
+#include "multipack/ui/DisplayScale.h"
 
 /**
  * @brief Set environment variables for platform compatibility
@@ -166,6 +167,14 @@ int main(int argc, char* argv[])
         qunsetenv("LC_ALL");
     }
     QLocale::setDefault(QLocale(QLocale::German, QLocale::Germany));
+
+#if defined(Q_OS_LINUX)
+    // The kiosk window fills the panel: the 1280x720 design is scaled to it.
+    // A normal window and a development machine keep the design size.
+    if (multipack::core::Application::kioskMode()) {
+        multipack::ui::DisplayScale::applyForPrimaryScreen(argc, argv);
+    }
+#endif
 
     // Create application
     multipack::core::Application app(argc, argv);

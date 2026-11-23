@@ -2,8 +2,8 @@
 
 The HMI pulls plans marked as finished ("Fertigstände") from the
 Palettenplaner server and shows them next to the USB plans. A phone can
-propose a plan via the QR code on the HMI; the operator confirms it on the
-HMI. Contract: `docs/hmi-api-v1.md` in the `palette_3d_viewer` repository
+propose a plan via the QR code on the HMI ("QR-Code" tab, shown only while a
+planner is configured); the operator confirms it on the HMI. Contract: `docs/hmi-api-v1.md` in the `palette_3d_viewer` repository
 (HMI API v1).
 
 ## Principles
@@ -63,8 +63,8 @@ Every 10 s, in one cycle:
    parser accepts any whitespace between values (tabs from Multipack, spaces
    from the planner) and LF or CRLF. A checksum mismatch is retried in the
    next cycle, a parser rejection after 5 minutes. Either way the list shows
-   the entry in red ("Fehler: Plan ungültig, nicht ladbar" / "Prüfsumme
-   falsch") instead of "wird geladen".
+   the entry with a red "Fehler" chip and the reason ("Plan ungültig, nicht
+   ladbar" / "Prüfsumme falsch") instead of "wird geladen".
 3. `GET /api/hmi/v1/proposal`. A proposed Fertigstand that is not stored yet
    is downloaded and verified first.
 
@@ -78,17 +78,42 @@ random factor in [0.5, 1.5] (never above 5 minutes). `429` waits for
 USB plan) and the app version after every plan change, also when the robot
 loads a plan via XML-RPC, and every 60 s.
 
+## Fertigstände on the HMI
+
+Operators do not know the word "Fertigstand", so the UI never shows it. A
+Fertigstand is simply a plan in the plan library ("Pläne" tab): same list,
+same rows, same 3D preview, same "Plan laden", same package size filter as
+the local USB plans. The list is sorted newest first (planner: "markedAt",
+local: file date).
+
+What sets a planner plan apart:
+
+- a small "Planer" tag after the name,
+- state chips: "läuft", "Neue Version", "Neu" (for one day after it was
+  marked), "Fehler", "wird geladen", "nicht mehr freigegeben", "ältere
+  Version",
+- a plan (same `recordId`) is shown once, as its newest Fertigstand. An older
+  one is listed as well only while it is the running plan, or while it is the
+  newest one that can be loaded,
+- loading it is refused while a robot program runs (a local plan loads as
+  before).
+
+The "Pläne" tab title carries a count: load errors plus a newer version of
+the running plan. "Betrieb" shows only one tappable line, "Neue Version
+verfügbar – im Tab Pläne", which opens the tab with that version selected.
+
 ## Planvorschlag on the HMI
 
 - The dialog "Neuer Plan vorgeschlagen: {name} – Übernehmen?" with a preview
   opens automatically only while the robot program is stopped. While a
-  program runs, the main menu shows "Planvorschlag wartet (Roboter läuft)".
+  program runs, the "Betrieb" page shows "Planvorschlag wartet (Roboter läuft)"
+  in the same notice line.
 - **Übernehmen**: the HMI sends `accepted`; only after the planner answers
   `204`, and only if the robot is still stopped, it loads the plan and reports
   the new status. On `409`/`404` (taken back, superseded, expired) nothing
   changes. On a network error the dialog stays and the operator can retry.
 - **Ablehnen** sends `rejected`. **Später** closes the dialog without an
-  answer; the proposal can be reopened from the main menu.
+  answer; the proposal can be reopened from the "Betrieb" page.
 - The answer request gives up after 8 s, so the operator sees "nicht
   übermittelt" quickly and can retry.
 - **Unloadable plan:** when the proposed Fertigstand cannot be loaded on this

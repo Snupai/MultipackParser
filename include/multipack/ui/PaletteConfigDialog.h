@@ -83,20 +83,17 @@ private:
     void setupUi();
     
     /**
-     * @brief Setup palette 1 group
+     * @brief One column "Palette N": position image, description, empty/occupied choice
      */
-    void setupPalette1Group(QVBoxLayout* layout);
-    
-    /**
-     * @brief Setup palette 2 group
-     */
-    void setupPalette2Group(QVBoxLayout* layout);
-    
+    void setupPaletteGroup(QHBoxLayout* layout, const QString& title, const QString& description,
+                           const QPixmap& pixmap, QLabel*& image,
+                           QRadioButton*& emptyRadio, QRadioButton*& notEmptyRadio);
+
     /**
      * @brief Setup active palette selection group
      */
-    void setupActivePaletteGroup(QVBoxLayout* layout);
-    
+    void setupActivePaletteGroup(QHBoxLayout* layout);
+
     /**
      * @brief Load images for palette previews
      */
@@ -106,21 +103,9 @@ private:
      * @brief Create preview pixmap for "no palette" state
      */
     QPixmap createNoPalettePixmap() const;
-    
-    /**
-     * @brief Style radio buttons consistently
-     */
-    void styleRadioButtons();
-    
-    /**
-     * @brief Style group boxes consistently
-     */
-    void styleGroupBoxes(QGroupBox* group);
-    
-    /**
-     * @brief Style labels consistently
-     */
-    void styleLabel(QLabel* label, const QString& stylesheet = QString());
+    QPixmap previewPixmap(const QPixmap& source) const;
+
+    static constexpr int PREVIEW_IMAGE_SIZE = 120;  ///< Side of a palette image, without the frame
 };
 
 } // namespace ui

@@ -13,6 +13,7 @@
 #include <QPainterPath>
 #include <QPolygonF>
 #include <QResizeEvent>
+#include <QStringList>
 #include <QFontMetrics>
 #include <QDebug>
 #include <cmath>
@@ -230,7 +231,7 @@ void VisualizationWidget::paintEvent(QPaintEvent* event)
     if (!hasDimensions) {
         painter.setPen(Qt::gray);
         painter.setFont(QFont("Arial", 14));
-        painter.drawText(rect(), Qt::AlignCenter, tr("No palette loaded"));
+        painter.drawText(rect(), Qt::AlignCenter, tr("Keine Vorschau"));
         return;
     }
 
@@ -546,59 +547,63 @@ void VisualizationWidget::drawAxes(QPainter& painter)
 
 void VisualizationWidget::drawLegend(QPainter& painter)
 {
-    // Legend box in bottom-right corner
+    // Legend box in the bottom-right corner, as wide and high as its text needs.
     const int margin = 10;
-    const int boxWidth = 180;
-    const int boxHeight = 120;
+    const int padding = 10;
+    QFont textFont = font();
+    textFont.setPixelSize(13);
+    textFont.setBold(false);
+    QFont titleFont = textFont;
+    titleFont.setBold(true);
+    const QFontMetrics textMetrics(textFont, this);
+    const QFontMetrics titleMetrics(titleFont, this);
 
-    QRect legendRect(width() - boxWidth - margin,
-                     height() - boxHeight - margin,
-                     boxWidth, boxHeight);
+    const QString direction = (m_palette.conveyorDirection == 1) ? tr("Quer") : tr("Längs");
+    const QStringList lines{
+        tr("Paket: %1 × %2 × %3 mm")
+            .arg(m_palette.packageLength)
+            .arg(m_palette.packageWidth)
+            .arg(m_palette.packageHeight),
+        tr("Palette: %1 × %2 mm")
+            .arg(static_cast<int>(m_palette.length))
+            .arg(static_cast<int>(m_palette.width)),
+        tr("Pakete: %1").arg(m_palette.totalPackages),
+        tr("Lagen: %1").arg(m_palette.totalLayers),
+        tr("Richtung: %1").arg(direction),
+    };
 
-    // Draw background
+    // A long plan name is cut; the box never takes more than half of the view.
+    const int maxTextWidth = qMax(120, width() / 2 - 2 * padding - margin);
+    int textWidth = 0;
+    for (const QString& line : lines) {
+        textWidth = qMax(textWidth, textMetrics.horizontalAdvance(line));
+    }
+    const QString name = m_palette.name.isEmpty() ? tr("Palette Info") : m_palette.name;
+    const int nameWidth = titleMetrics.horizontalAdvance(name);
+    textWidth = qMin(maxTextWidth, qMax(textWidth, nameWidth)) + 2;
+    const QString title = nameWidth > textWidth ? titleMetrics.elidedText(name, Qt::ElideRight, textWidth) : name;
+
+    const int lineHeight = textMetrics.lineSpacing() + 1;
+    const int titleHeight = titleMetrics.lineSpacing() + 3;
+    const int boxWidth = textWidth + 2 * padding;
+    const int boxHeight = titleHeight + lineHeight * static_cast<int>(lines.size()) + 2 * padding - 2;
+    const QRect legendRect(width() - boxWidth - margin, height() - boxHeight - margin, boxWidth, boxHeight);
+
     painter.setPen(Qt::gray);
     painter.setBrush(QColor(255, 255, 255, 230));
     painter.drawRoundedRect(legendRect, 5, 5);
 
-    // Draw text
     painter.setPen(Qt::black);
-    painter.setFont(QFont("Arial", 9));
-
-    int y = legendRect.top() + 15;
-    int x = legendRect.left() + 10;
-    int lineHeight = 16;
-
-    // Title
-    painter.setFont(QFont("Arial", 9, QFont::Bold));
-    QString title = m_palette.name.isEmpty() ? tr("Palette Info") : m_palette.name;
-    painter.drawText(x, y, title);
-    y += lineHeight + 2;
-
-    painter.setFont(QFont("Arial", 9));
-
-    // Package dimensions
-    painter.drawText(x, y, tr("Package: %1 × %2 × %3 mm")
-                     .arg(m_palette.packageLength)
-                     .arg(m_palette.packageWidth)
-                     .arg(m_palette.packageHeight));
-    y += lineHeight;
-
-    // Pallet dimensions
-    painter.drawText(x, y, tr("Pallet: %1 × %2 mm")
-                     .arg(static_cast<int>(m_palette.length))
-                     .arg(static_cast<int>(m_palette.width)));
-    y += lineHeight;
-
-    // Counts
-    painter.drawText(x, y, tr("Packages: %1").arg(m_palette.totalPackages));
-    y += lineHeight;
-
-    painter.drawText(x, y, tr("Layers: %1").arg(m_palette.totalLayers));
-    y += lineHeight;
-
-    // Conveyor direction
-    QString direction = (m_palette.conveyorDirection == 1) ? tr("Quer") : tr("Längs");
-    painter.drawText(x, y, tr("Direction: %1").arg(direction));
+    const int x = legendRect.left() + padding;
+    int y = legendRect.top() + padding;
+    painter.setFont(titleFont);
+    painter.drawText(QRect(x, y, textWidth, titleHeight), Qt::AlignLeft | Qt::AlignTop, title);
+    y += titleHeight;
+    painter.setFont(textFont);
+    for (const QString& line : lines) {
+        painter.drawText(QRect(x, y, textWidth, lineHeight), Qt::AlignLeft | Qt::AlignTop, line);
+        y += lineHeight;
+    }
 }
 
 QColor VisualizationWidget::getFaceColor(int rotation, int face) const

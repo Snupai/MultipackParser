@@ -33,7 +33,6 @@ class QListWidget;
 class QSpinBox;
 class QTableWidget;
 class QTabWidget;
-class QGroupBox;
 QT_END_NAMESPACE
 
 // Forward declaration of generated UI class
@@ -119,11 +118,12 @@ public slots:
     void setServerRunning(bool running, const QString& error = QString());
 
 private slots:
-    // Navigation
+    // Navigation (top bar)
     void showMainMenu();
+    void showPlans();
     void showRobotParameters();
+    void showQrCode();
     void showSettings();
-    void showExperimental();
     void showPasswordDialog();
 
     // Main menu actions
@@ -132,7 +132,6 @@ private slots:
     void onParameterRobotClicked();
     void onSettingsClicked();
     void onVolumeToggleClicked();
-    void onExperimentalClicked();
     void onEinzelpaketChanged(int state);
     void onLabelInvertChanged(int state);
     void onKartonhoeheChanged();
@@ -175,12 +174,10 @@ private slots:
     void onScanner2OverwriteChanged(int state);
     void onScanner3OverwriteChanged(int state);
 
-    // Experimental actions
-    void onRobFileSelected(QListWidgetItem* item);
+    // Plan library ("Pläne") actions
     void onDeselectRobFile();
     void onFilterChanged();
     void onClearFiltersClicked();
-    void onLoadSelectedRobFile();
     void onDatabasePlanSelectionChanged();
     void onDatabaseSaveClicked();
     void onDatabaseNewClicked();
@@ -197,6 +194,7 @@ private slots:
 
 private:
     void setupConnections();
+    void setupNavigation();
     void applyResourceIcons();
     void loadSettings();
     void loadRobFileList();
@@ -240,6 +238,8 @@ private:
 
     // Planner (HMI-Abgleich) - implemented in MainWindowPlanner.cpp
     void setupPlannerPanel();
+    void updatePlannerAttention(bool newVersion, int failedCount);
+    void updatePlannerSelection();
     void setupPlannerSettingsTab();
     void refreshPlannerList();
     void updatePlannerConnectionState();
@@ -286,8 +286,12 @@ private:
         PAGE_MAIN_MENU = 0,
         PAGE_ROBOT_PARAMS = 1,
         PAGE_SETTINGS = 2,
-        PAGE_EXPERIMENTAL = 3
+        PAGE_PLANS = 3,
+        PAGE_QR_CODE = 4
     };
+
+    void setCurrentPage(PageIndex page);
+    void syncNavigation();
 
     // State
     bool m_serverRunning = false;
@@ -305,8 +309,6 @@ private:
     QTimer* m_zwischenlageTimer = nullptr;
     QTimer* m_paletteClearTimer = nullptr;
     NotificationPopup* m_zwischenlagePopup = nullptr;
-    QPushButton* m_palette1ClearIndicator = nullptr;
-    QPushButton* m_palette2ClearIndicator = nullptr;
     VisualizationWidget* m_visualizationWidget = nullptr;
     QLabel* m_statusRobotIp = nullptr;
     QLabel* m_statusConnection = nullptr;
@@ -319,16 +321,24 @@ private:
     QLabel* m_statusLoadedProgram = nullptr;
     OnScreenKeyboard* m_onScreenKeyboard = nullptr;
 
-    // Planner panel (main menu) and settings tab
-    QGroupBox* m_plannerPanel = nullptr;
+    // Plan list on "Pläne" (planner plans and USB plans), QR code page and
+    // planner settings tab. The widgets live in MainWindow.ui; these point into it.
     QListWidget* m_plannerList = nullptr;
     QPushButton* m_plannerLoadButton = nullptr;
     QPushButton* m_plannerProposalButton = nullptr;
     QLabel* m_plannerStateLabel = nullptr;
     QLabel* m_plannerHintLabel = nullptr;
-    QWidget* m_plannerQrBox = nullptr;
+    QLabel* m_plannerBadge = nullptr;       ///< Count on the "Pläne" tab
+    bool m_plannerRowsShown = false;        ///< The list currently includes planner plans
+    QString m_selectedPlanKey;              ///< Last previewed selection of the plan list (file name and availability)
+    bool m_planFilterActive = false;        ///< Package size filter of the plan list
+    int m_planFilterLength = 0;             ///< 0 = any
+    int m_planFilterWidth = 0;
+    int m_planFilterHeight = 0;
+    QString m_newVersionFinalId;            ///< Newer Fertigstand of the running plan, if any
     QrCodeWidget* m_plannerQr = nullptr;
     QLabel* m_plannerQrStateLabel = nullptr;
+    QLabel* m_plannerQrUrlLabel = nullptr;
     QLabel* m_plannerSettingsServer = nullptr;
     QLabel* m_plannerSettingsHmi = nullptr;
     QLabel* m_plannerSettingsToken = nullptr;

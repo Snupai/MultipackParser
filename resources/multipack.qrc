@@ -8,6 +8,17 @@
         <file alias="icons/volume-on.png">icons/volume-on.png</file>
         <file alias="icons/volume-off.png">icons/volume-off.png</file>
 
+        <!-- HMI theme: stylesheet and control glyphs (see src/ui/Theme.cpp) -->
+        <file alias="styles/hmi.qss">styles/hmi.qss</file>
+        <file alias="icons/ui/plus.png">icons/ui/plus.png</file>
+        <file alias="icons/ui/plus-disabled.png">icons/ui/plus-disabled.png</file>
+        <file alias="icons/ui/minus.png">icons/ui/minus.png</file>
+        <file alias="icons/ui/minus-disabled.png">icons/ui/minus-disabled.png</file>
+        <file alias="icons/ui/check.png">icons/ui/check.png</file>
+        <file alias="icons/ui/chevron-down.png">icons/ui/chevron-down.png</file>
+        <file alias="icons/ui/chevron-down-disabled.png">icons/ui/chevron-down-disabled.png</file>
+        <file alias="icons/ui/gear.png">icons/ui/gear.png</file>
+
         <!-- Scanner Status Icons (UR10) -->
         <file alias="icons/scanner_ok.png">icons/scanner_ok.png</file>
         <file alias="icons/scanner1_error.png">icons/scanner1_error.png</file>

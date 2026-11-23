@@ -32,6 +32,9 @@ public:
     bool initialize();
     int run();
 
+    /// Frameless window that covers the panel (default); MULTIPACK_FULLSCREEN=0 gives a normal window.
+    [[nodiscard]] static bool kioskMode();
+
     // Accessor for main window
     ui::MainWindow* mainWindow() const { return m_mainWindow.get(); }
     AppInitializer* initializer() const { return m_initializer.get(); }
