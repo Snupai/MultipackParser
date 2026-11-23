@@ -1226,10 +1226,12 @@ void MainWindow::applyLoadedPalette(const database::PaletteData& data, const QSt
     ui->EingabeStartlage->setMaximum(data.metadata.anzLagen);
     ui->checkBoxEinzelpaket->setChecked(data.packageDimensions.einzelpaketLaengs);
 
+    // Package count as in the 3D preview and the Planvorschlag dialog; the .rob
+    // header field (anzahlPakete) is only the pick count of the first layer type.
     ui->LabelPalletenplanInfo->setText(QString("Geladen: %1 - %2 Lagen, %3 Pakete")
         .arg(displayName)
         .arg(data.metadata.anzLagen)
-        .arg(data.metadata.anzahlPakete));
+        .arg(visualPaletteFromPaletteData(data, displayName).totalPackages));
 
     updateEnabledStates();
     updateVisualizationFromPaletteData(data);

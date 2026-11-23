@@ -18,7 +18,7 @@ namespace system {
  * way. The metadata file name is the file name part of RobFileData::filePath
  * and the timestamp is RobFileData::fileTimestamp; callers may override both.
  */
-database::PaletteData robFileToPaletteData(const RobFileData& fileData);
+database::PaletteData robFileToPaletteData(const multipack::RobFileData& fileData);
 
 } // namespace system
 } // namespace multipack

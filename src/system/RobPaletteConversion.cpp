@@ -9,7 +9,7 @@
 namespace multipack {
 namespace system {
 
-database::PaletteData robFileToPaletteData(const RobFileData& fileData)
+database::PaletteData robFileToPaletteData(const multipack::RobFileData& fileData)
 {
     database::PaletteData paletteData;
     paletteData.metadata.fileName = QFileInfo(fileData.filePath).fileName();

@@ -10,6 +10,8 @@
 #include "multipack/planner/PlannerStore.h"
 #include "multipack/planner/PlannerSyncService.h"
 #include "multipack/robot/RobotStatusMonitor.h"
+#include "multipack/system/RobFileParser.h"
+#include "multipack/system/RobPaletteConversion.h"
 #include "multipack/ui/MainWindow.h"
 #include "multipack/ui/PlanProposalDialog.h"
 
@@ -20,6 +22,7 @@
 #include <QElapsedTimer>
 #include <QFontMetrics>
 #include <QJsonObject>
+#include <QLineEdit>
 #include <QLabel>
 #include <QListWidget>
 #include <QMessageBox>
@@ -134,6 +137,7 @@ private slots:
     void answerAgainstHangingServerGivesUpQuickly();
     void refusalMessageIsNotClipped();
     void proposalDialogShowsRealPackageCount();
+    void loadedHeaderShowsRealPackageCount();
 
 private:
     QTemporaryDir* m_dir = nullptr;
@@ -1117,6 +1121,41 @@ void PlannerSyncTest::proposalDialogShowsRealPackageCount()
     QVERIFY(count);
     // The planner's golden data for this fixture: 5 packages (the .rob header says 1).
     QCOMPARE(count->text(), QStringLiteral("5"));
+    f.window.reset();
+}
+
+void PlannerSyncTest::loadedHeaderShowsRealPackageCount()
+{
+    qputenv("MULTIPACK_DISABLE_ROBOT_STATUS_MONITOR", "1");
+    int answerStatus = 204;
+    const QByteArray fixture = testhelpers::plannerFixtureRobCrlf();
+    m_server->setHandler(planHandler(fixture, true, false, &answerStatus));
+
+    WindowFixture f;
+    QVERIFY(f.start(m_server->serverPort()));
+    f.robot(multipack::robot::ProgramState::Stopped);
+    auto* header = f.window->findChild<QLabel*>(QStringLiteral("LabelPalletenplanInfo"));
+    QVERIFY(header);
+
+    // Planner plan: the fixture has 5 packages (planner golden data); the .rob
+    // header field it used to show says 1.
+    auto* list = f.window->findChild<QListWidget*>(QStringLiteral("plannerFinalsList"));
+    list->setCurrentRow(0);
+    QTest::mouseClick(f.window->findChild<QPushButton*>(QStringLiteral("plannerLoadButton")), Qt::LeftButton);
+    QVERIFY2(header->text().endsWith(QStringLiteral("3 Lagen, 5 Pakete")), qPrintable(header->text()));
+
+    // USB plan with the same content, loaded by name.
+    multipack::RobFileParser parser;
+    const auto parsed = parser.parseBytes(fixture, QStringLiteral("4711.rob"));
+    QVERIFY(parsed.isValid);
+    auto usbPlan = multipack::system::robFileToPaletteData(parsed);
+    usbPlan.metadata.fileName = QStringLiteral("4711.rob");
+    usbPlan.metadata.fileTimestamp = 1735689600000;
+    QCOMPARE(usbPlan.metadata.anzahlPakete, 1);
+    QCOMPARE(f.database.savePaletteData(usbPlan), multipack::database::SaveResult::Inserted);
+    f.window->findChild<QLineEdit*>(QStringLiteral("EingabePallettenplan"))->setText(QStringLiteral("4711"));
+    QTest::mouseClick(f.window->findChild<QPushButton*>(QStringLiteral("LadePallettenplan")), Qt::LeftButton);
+    QCOMPARE(header->text(), QStringLiteral("Geladen: 4711 - 3 Lagen, 5 Pakete"));
     f.window.reset();
 }
 
