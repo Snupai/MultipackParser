@@ -759,24 +759,24 @@
          </property>
          <layout class="QVBoxLayout" name="plannerPanelLayout" stretch="0,0,0,1,1,0">
           <property name="spacing">
-           <number>10</number>
+           <number>8</number>
           </property>
           <property name="leftMargin">
            <number>14</number>
           </property>
           <property name="topMargin">
-           <number>12</number>
+           <number>10</number>
           </property>
           <property name="rightMargin">
            <number>14</number>
           </property>
           <property name="bottomMargin">
-           <number>14</number>
+           <number>12</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" name="plannerHeaderLayout">
+           <layout class="QVBoxLayout" name="plannerHeaderLayout">
             <property name="spacing">
-             <number>12</number>
+             <number>2</number>
             </property>
             <property name="leftMargin">
              <number>0</number>
@@ -801,25 +801,12 @@
              </widget>
             </item>
             <item>
-             <spacer name="plannerHeaderSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QLabel" name="plannerStateLabel">
               <property name="text">
                <string />
               </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <property name="wordWrap">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -877,7 +864,7 @@
               <number>0</number>
              </property>
              <property name="topMargin">
-              <number>10</number>
+              <number>8</number>
              </property>
              <property name="rightMargin">
               <number>0</number>
