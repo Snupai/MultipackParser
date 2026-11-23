@@ -59,9 +59,12 @@ Every 10 s, in one cycle:
    never deleted).
 2. For every listed Fertigstand not stored yet: `GET …/finals/{id}/rob`,
    check the SHA-256 over the raw bytes, validate with the HMI's own `.rob`
-   parser, then store the bytes unchanged plus the parsed palette rows. A
-   checksum mismatch is retried in the next cycle, a parser rejection after
-   5 minutes.
+   parser, then store the bytes unchanged plus the parsed palette rows. The
+   parser accepts any whitespace between values (tabs from Multipack, spaces
+   from the planner) and LF or CRLF. A checksum mismatch is retried in the
+   next cycle, a parser rejection after 5 minutes. Either way the list shows
+   the entry in red ("Fehler: Plan ungültig, nicht ladbar" / "Prüfsumme
+   falsch") instead of "wird geladen".
 3. `GET /api/hmi/v1/proposal`. A proposed Fertigstand that is not stored yet
    is downloaded and verified first.
 
@@ -86,6 +89,13 @@ loads a plan via XML-RPC, and every 60 s.
   changes. On a network error the dialog stays and the operator can retry.
 - **Ablehnen** sends `rejected`. **Später** closes the dialog without an
   answer; the proposal can be reopened from the main menu.
+- The answer request gives up after 8 s, so the operator sees "nicht
+  übermittelt" quickly and can retry.
+- **Unloadable plan:** when the proposed Fertigstand cannot be loaded on this
+  HMI (the `.rob` parser rejects it, or its checksum mismatches twice in a
+  row), the HMI answers `rejected` by itself (the contract has no other
+  result) so the proposal does not stay pending for 24 h, and shows the
+  operator a notice naming the plan. Nothing is switched.
 
 ## Storage
 

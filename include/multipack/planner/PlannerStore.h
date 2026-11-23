@@ -28,6 +28,11 @@ namespace database { class DatabaseManager; }
 
 namespace planner {
 
+/// StoredFinal::loadError: the downloaded bytes did not match the checksum.
+constexpr const char* LOAD_ERROR_CHECKSUM = "checksum";
+/// StoredFinal::loadError: the HMI's .rob parser rejected the plan.
+constexpr const char* LOAD_ERROR_INVALID_ROB = "invalid_rob";
+
 /// Prefix of palette rows that come from the planner.
 constexpr const char* PLANNER_FILE_PREFIX = "planner:";
 
@@ -45,6 +50,7 @@ struct StoredFinal {
     FinalEntry entry;
     bool inList = false;     ///< Present in the planner's latest list (false = withdrawn)
     bool downloaded = false; ///< .rob validated and stored
+    QString loadError;       ///< Last failed download (LOAD_ERROR_*), empty if none
 };
 
 /**
@@ -105,6 +111,7 @@ public:
 
 private:
     [[nodiscard]] bool createTables();
+    void recordLoadError(const FinalEntry& entry, const QString& code);
 
     std::unique_ptr<database::DatabaseManager> m_database;
 };

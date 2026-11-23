@@ -419,8 +419,10 @@ QVector<int> RobFileParser::lineToIntVector(const QString& line)
 {
     QVector<int> result;
     
-    // Split by tab characters
-    QStringList parts = line.split('\t', Qt::SkipEmptyParts);
+    // Multipack writes tabs; the Palettenplaner accepts any whitespace (its
+    // .rob export and imported plans may use spaces). Accept both.
+    static const QRegularExpression whitespace(QStringLiteral("\\s+"));
+    const QStringList parts = line.split(whitespace, Qt::SkipEmptyParts);
     
     for (const QString& part : parts) {
         bool ok;

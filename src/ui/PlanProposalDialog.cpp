@@ -67,7 +67,10 @@ PlanProposalDialog::PlanProposalDialog(const planner::Proposal& proposal,
                .arg(preview.packageDimensions.width)
                .arg(preview.packageDimensions.height));
     addRow(QStringLiteral("Lagen:"), QString::number(preview.metadata.anzLagen));
-    addRow(QStringLiteral("Pakete:"), QString::number(preview.metadata.anzahlPakete));
+    // Same count as the 3D preview: the .rob header field (anzahlPakete) is
+    // only the pick count of the first layer type.
+    const VisualPalette visual = visualPaletteFromPaletteData(preview, proposal.name);
+    addRow(QStringLiteral("Pakete:"), QString::number(visual.totalPackages));
     addRow(QStringLiteral("Prüfsumme:"), proposal.sha256.left(12) + QStringLiteral("..."));
 
     auto* detailsBox = new QWidget(this);
@@ -77,7 +80,7 @@ PlanProposalDialog::PlanProposalDialog(const planner::Proposal& proposal,
 
     m_preview = new VisualizationWidget(this);
     m_preview->setMinimumSize(560, 380);
-    m_preview->setVisualizationData(visualPaletteFromPaletteData(preview, proposal.name));
+    m_preview->setVisualizationData(visual);
     body->addWidget(m_preview, 1);
     root->addLayout(body, 1);
 

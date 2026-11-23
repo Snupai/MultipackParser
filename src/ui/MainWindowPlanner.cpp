@@ -46,6 +46,17 @@ namespace {
 constexpr int ROLE_FINAL_ID = Qt::UserRole;
 constexpr int ROLE_DOWNLOADED = Qt::UserRole + 1;
 
+QString loadErrorText(const QString& loadError)
+{
+    if (loadError == QLatin1String(planner::LOAD_ERROR_INVALID_ROB)) {
+        return QStringLiteral("Plan ungültig, nicht ladbar");
+    }
+    if (loadError == QLatin1String(planner::LOAD_ERROR_CHECKSUM)) {
+        return QStringLiteral("Prüfsumme falsch, neuer Versuch folgt");
+    }
+    return QStringLiteral("nicht ladbar");
+}
+
 QString formatMarkedAt(const QDateTime& markedAt)
 {
     return markedAt.isValid() ? markedAt.toLocalTime().toString(QStringLiteral("dd.MM.yy HH:mm")) : QString();
@@ -102,9 +113,13 @@ void MainWindow::setPlannerSync(planner::PlannerSyncService* sync)
                 this, &MainWindow::onProposalCleared);
         connect(m_plannerSync, &planner::PlannerSyncService::proposalAnswered,
                 this, &MainWindow::onProposalAnswered);
+        connect(m_plannerSync, &planner::PlannerSyncService::proposalUnloadable,
+                this, &MainWindow::showUnloadableProposalNotices);
         if (const auto proposal = m_plannerSync->currentProposal()) {
             onProposalAvailable(*proposal);
         }
+        // The first cycle can run during start-up, before this window exists.
+        showUnloadableProposalNotices();
     }
 
     updatePlannerSettingsTab();
@@ -241,7 +256,10 @@ void MainWindow::refreshPlannerList()
         if (row.isNewVersionOfActive) {
             text += QStringLiteral("   [Neue Version]");
         }
-        if (!row.final.downloaded) {
+        const bool failed = !row.final.downloaded && !row.final.loadError.isEmpty();
+        if (failed) {
+            text += QStringLiteral("   [Fehler: %1]").arg(loadErrorText(row.final.loadError));
+        } else if (!row.final.downloaded) {
             text += QStringLiteral("   (wird geladen ...)");
         }
 
@@ -257,7 +275,11 @@ void MainWindow::refreshPlannerList()
         if (row.isNewVersionOfActive) {
             item->setBackground(QColor(QStringLiteral("#ffe9c7")));
         }
-        if (!row.final.downloaded) {
+        if (failed) {
+            item->setForeground(QColor(QStringLiteral("#b00020")));
+            item->setToolTip(QStringLiteral("Dieser Fertigstand kann auf dem HMI nicht geladen werden. "
+                                            "Bitte im Palettenplaner prüfen."));
+        } else if (!row.final.downloaded) {
             item->setForeground(QColor(QStringLiteral("#888888")));
         }
         if (row.final.entry.id == selectedId) {
@@ -416,6 +438,33 @@ void MainWindow::onProposalCleared(const QString& proposalId)
         closeProposalDialog();
         showMessage(QStringLiteral("Planvorschlag wurde zurückgenommen oder ist abgelaufen"));
     }
+    updateProposalUi();
+}
+
+void MainWindow::showUnloadableProposalNotices()
+{
+    if (!m_plannerSync) {
+        return;
+    }
+    // The sync service answers "rejected" to the planner. Tell the operator
+    // why nothing happened; non-blocking so the HMI keeps running.
+    for (const auto& notice : m_plannerSync->takeUnloadableNotices()) {
+        const planner::Proposal& proposal = notice.proposal;
+        const QString& loadError = notice.loadError;
+        if (m_pendingProposal && m_pendingProposal->id == proposal.id) {
+            m_pendingProposal.reset();
+        }
+        auto* box = new QMessageBox(
+            QMessageBox::Warning, QStringLiteral("Planvorschlag"),
+            QStringLiteral("Vorgeschlagener Plan \"%1\" kann auf diesem HMI nicht geladen werden (%2).\n"
+                           "Der Vorschlag wurde abgelehnt. Bitte den Plan im Palettenplaner prüfen.")
+                .arg(proposal.name, loadErrorText(loadError)),
+            QMessageBox::Ok, this);
+        box->setObjectName(QStringLiteral("proposalUnloadableNotice"));
+        box->setAttribute(Qt::WA_DeleteOnClose);
+        box->open();
+    }
+    refreshPlannerList();
     updateProposalUi();
 }
 

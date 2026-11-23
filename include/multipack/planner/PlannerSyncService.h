@@ -69,6 +69,8 @@ public:
     static constexpr qint64 MAX_JSON_BYTES = 2 * 1024 * 1024;
     static constexpr qint64 MAX_ROB_BYTES = 1024 * 1024;
     static constexpr int TRANSFER_TIMEOUT_MS = 20'000;
+    /// The operator waits for this one: give up early and let them retry.
+    static constexpr int ANSWER_TIMEOUT_MS = 8'000;
 
     explicit PlannerSyncService(QObject* parent = nullptr);
     ~PlannerSyncService() override;
@@ -112,6 +114,15 @@ public:
     [[nodiscard]] const PlannerConfig& config() const { return m_config; }
     [[nodiscard]] bool isConfigured() const { return m_configured; }
     [[nodiscard]] std::optional<Proposal> currentProposal() const { return m_proposal; }
+
+    /// Planvorschläge answered "rejected" because their Fertigstand cannot be
+    /// loaded, not yet shown to the operator. Taking them clears the list, so
+    /// each is shown once, also when it happened before the UI was connected.
+    struct UnloadableNotice {
+        Proposal proposal;
+        QString loadError;
+    };
+    [[nodiscard]] QVector<UnloadableNotice> takeUnloadableNotices();
     [[nodiscard]] PlannerStore& store() { return m_store; }
     [[nodiscard]] const PlannerStore& store() const { return m_store; }
 
@@ -133,6 +144,13 @@ signals:
     void proposalAvailable(const multipack::planner::Proposal& proposal);
     /// The open Planvorschlag is gone (answered, taken back, superseded, expired).
     void proposalCleared(const QString& proposalId);
+    /**
+     * A Planvorschlag names a Fertigstand that this HMI cannot load (the .rob
+     * parser rejects it, or its checksum never matches). The service answers
+     * it "rejected"; the UI tells the operator. Emitted once per proposal.
+     * @param loadError LOAD_ERROR_* code
+     */
+    void proposalUnloadable(const multipack::planner::Proposal& proposal, const QString& loadError);
     void proposalAnswered(const QString& proposalId, bool accepted,
                           multipack::planner::PlannerSyncService::AnswerOutcome outcome);
     void statusReported(bool ok);
@@ -153,7 +171,8 @@ private:
     using Callback = std::function<void(const Response&)>;
 
     void sendRequest(const QByteArray& verb, const QString& path, const QByteArray& body,
-                     const QByteArray& ifNoneMatch, qint64 maxBytes, Callback callback);
+                     const QByteArray& ifNoneMatch, qint64 maxBytes, Callback callback,
+                     int timeoutMs = TRANSFER_TIMEOUT_MS);
 
     void scheduleNext(qint64 delayMs);
     void startCycle();
@@ -166,6 +185,8 @@ private:
     void sendStatus();
     void setState(ConnectionState state);
     void clearProposal();
+    /// The proposed Fertigstand cannot be loaded here: tell the UI and answer "rejected".
+    void rejectUnloadable(const Proposal& proposal, const QString& loadError);
     void abortAll();
     [[nodiscard]] bool retryAllowed(const QString& finalId) const;
 
@@ -187,6 +208,9 @@ private:
 
     std::optional<Proposal> m_proposal;
     QSet<QString> m_answeredProposals;
+    QSet<QString> m_unloadableNotified;
+    QVector<UnloadableNotice> m_unloadableNotices;
+    QSet<QString> m_autoRejectInFlight;
     QString m_activeFinalId;
     QDateTime m_lastStatusSent;
     bool m_statusDirty = true;

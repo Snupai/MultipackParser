@@ -35,6 +35,7 @@ StoredFinal readRow(const QSqlQuery& query)
     }
     stored.inList = query.value(6).toInt() != 0;
     stored.downloaded = query.value(7).toInt() != 0;
+    stored.loadError = query.value(8).toString();
     return stored;
 }
 
@@ -45,7 +46,7 @@ QVariant markedAtValue(const FinalEntry& entry)
 
 constexpr const char* SELECT_COLUMNS =
     "SELECT final_id, record_id, name, file_name, sha256, marked_at, in_list, "
-    "(rob IS NOT NULL) FROM planner_finals";
+    "(rob IS NOT NULL), load_error FROM planner_finals";
 
 } // namespace
 
@@ -111,12 +112,15 @@ bool PlannerStore::createTables()
             marked_at INTEGER,
             in_list INTEGER NOT NULL DEFAULT 1,
             rob BLOB,
-            stored_at INTEGER
+            stored_at INTEGER,
+            load_error TEXT
         )
     )")) {
         qCritical() << "Failed to create planner_finals:" << query.lastError().text();
         return false;
     }
+    // Tables created before load_error existed: add it (fails harmlessly if present).
+    query.exec("ALTER TABLE planner_finals ADD COLUMN load_error TEXT");
     if (!query.exec(R"(
         CREATE TABLE IF NOT EXISTS planner_state (
             key TEXT PRIMARY KEY,
@@ -159,6 +163,8 @@ bool PlannerStore::applyList(const QVector<FinalEntry>& entries)
                 marked_at = excluded.marked_at,
                 in_list = 1,
                 rob = CASE WHEN planner_finals.sha256 = excluded.sha256 THEN planner_finals.rob ELSE NULL END,
+                load_error = CASE WHEN planner_finals.sha256 = excluded.sha256
+                                  THEN planner_finals.load_error ELSE NULL END,
                 sha256 = excluded.sha256
         )");
         query.addBindValue(entry.id);
@@ -213,6 +219,7 @@ StoreOutcome PlannerStore::storeRob(const FinalEntry& entry, const QByteArray& b
 
     // 1. Checksum over the raw bytes.
     if (!sha256Matches(entry.sha256, bytes)) {
+        recordLoadError(entry, QString::fromLatin1(LOAD_ERROR_CHECKSUM));
         return fail(StoreOutcome::ShaMismatch, QStringLiteral("Prüfsumme stimmt nicht"));
     }
 
@@ -220,6 +227,7 @@ StoreOutcome PlannerStore::storeRob(const FinalEntry& entry, const QByteArray& b
     RobFileParser parser;
     const RobFileData parsed = parser.parseBytes(bytes, entry.fileName.isEmpty() ? entry.id : entry.fileName);
     if (!parsed.isValid) {
+        recordLoadError(entry, QString::fromLatin1(LOAD_ERROR_INVALID_ROB));
         return fail(StoreOutcome::InvalidRob, parsed.errorMessage);
     }
 
@@ -244,7 +252,8 @@ StoreOutcome PlannerStore::storeRob(const FinalEntry& entry, const QByteArray& b
         ON CONFLICT(final_id) DO UPDATE SET
             rob = excluded.rob,
             sha256 = excluded.sha256,
-            stored_at = excluded.stored_at
+            stored_at = excluded.stored_at,
+            load_error = NULL
     )");
     // NOT NULL columns: a proposal-only entry has no recordId until the next list.
     query.addBindValue(entry.id);
@@ -260,6 +269,29 @@ StoreOutcome PlannerStore::storeRob(const FinalEntry& entry, const QByteArray& b
         return fail(StoreOutcome::DatabaseError, QStringLiteral("Speichern fehlgeschlagen"));
     }
     return StoreOutcome::Stored;
+}
+
+void PlannerStore::recordLoadError(const FinalEntry& entry, const QString& code)
+{
+    // Kept with the entry so the list shows the error (also after a restart
+    // while offline) instead of "wird geladen" forever. A new list entry with
+    // a different checksum clears it (applyList), a successful store too.
+    QSqlQuery query(m_database->connection());
+    query.prepare(R"(
+        INSERT INTO planner_finals (final_id, record_id, name, file_name, sha256, marked_at, in_list, load_error)
+        VALUES (?, ?, ?, ?, ?, ?, 0, ?)
+        ON CONFLICT(final_id) DO UPDATE SET load_error = excluded.load_error
+    )");
+    query.addBindValue(entry.id);
+    query.addBindValue(entry.recordId.isNull() ? QStringLiteral("") : entry.recordId);
+    query.addBindValue(entry.name.isNull() ? QStringLiteral("") : entry.name);
+    query.addBindValue(entry.fileName);
+    query.addBindValue(entry.sha256.toLower());
+    query.addBindValue(markedAtValue(entry));
+    query.addBindValue(code);
+    if (!query.exec()) {
+        qWarning() << "Planner store: cannot record load error:" << query.lastError().text();
+    }
 }
 
 QVector<StoredFinal> PlannerStore::finals() const

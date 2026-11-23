@@ -185,7 +185,8 @@ void PlannerSyncService::scheduleNext(qint64 delayMs)
 }
 
 void PlannerSyncService::sendRequest(const QByteArray& verb, const QString& path, const QByteArray& body,
-                                     const QByteArray& ifNoneMatch, qint64 maxBytes, Callback callback)
+                                     const QByteArray& ifNoneMatch, qint64 maxBytes, Callback callback,
+                                     int timeoutMs)
 {
     const QUrl url = m_config.apiUrl(path);
     if (!m_configured || !isSecureTransport(url)) {
@@ -210,7 +211,7 @@ void PlannerSyncService::sendRequest(const QByteArray& verb, const QString& path
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
     request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
     request.setAttribute(QNetworkRequest::CacheSaveControlAttribute, false);
-    request.setTransferTimeout(TRANSFER_TIMEOUT_MS);
+    request.setTransferTimeout(timeoutMs);
     if (url.scheme().compare(QLatin1String("https"), Qt::CaseInsensitive) == 0) {
         request.setSslConfiguration(m_sslConfig);
     }
@@ -237,7 +238,11 @@ void PlannerSyncService::sendRequest(const QByteArray& verb, const QString& path
 
         Response response;
         response.httpStatus = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-        response.body = reply->readAll();
+        // An aborted reply (timeout, size cap) is closed; reading it only logs
+        // "QIODevice::read: device not open".
+        if (reply->isOpen()) {
+            response.body = reply->readAll();
+        }
         response.etag = reply->rawHeader("ETag");
         response.retryAfter = reply->rawHeader("Retry-After");
         if (response.httpStatus == 0 || response.body.size() > maxBytes) {
@@ -351,10 +356,12 @@ void PlannerSyncService::downloadNext()
                         case StoreOutcome::ShaMismatch:
                             qCWarning(plannerLog) << "Planner final checksum mismatch, discarded:" << entry.id;
                             m_retryAfter.insert(entry.id, now.addMSecs(SyncBackoff::POLL_INTERVAL_MS));
+                            emit finalsChanged();  // list shows the error state
                             break;
                         case StoreOutcome::InvalidRob:
                             qCWarning(plannerLog) << "Planner final rejected by .rob parser:" << entry.id << error;
                             m_retryAfter.insert(entry.id, now.addMSecs(INVALID_ROB_RETRY_MS));
+                            emit finalsChanged();
                             break;
                         case StoreOutcome::DatabaseError:
                             qCWarning(plannerLog) << "Planner final could not be stored:" << entry.id << error;
@@ -415,9 +422,17 @@ void PlannerSyncService::onProposalResponse(const Response& response)
     };
 
     const auto stored = m_store.find(proposal->finalId);
-    if (stored && stored->downloaded
-        && stored->entry.sha256.compare(proposal->sha256, Qt::CaseInsensitive) == 0) {
+    const bool sameBytes = stored && stored->entry.sha256.compare(proposal->sha256, Qt::CaseInsensitive) == 0;
+    if (sameBytes && stored->downloaded) {
         publish(*proposal);
+        finishCycle(true);
+        return;
+    }
+
+    // The HMI's parser already rejected exactly these bytes: the plan can never
+    // be taken over here. Answer instead of leaving the proposal pending.
+    if (sameBytes && stored->loadError == QLatin1String(LOAD_ERROR_INVALID_ROB)) {
+        rejectUnloadable(*proposal, stored->loadError);
         finishCycle(true);
         return;
     }
@@ -455,6 +470,7 @@ void PlannerSyncService::onProposalResponse(const Response& response)
                         return;
                     }
                     QString error;
+                    const QString previousError = m_store.find(entry.id).value_or(StoredFinal()).loadError;
                     const StoreOutcome outcome = m_store.storeRob(entry, robResponse.body, &error);
                     if (outcome == StoreOutcome::Stored) {
                         emit finalsChanged();
@@ -463,6 +479,15 @@ void PlannerSyncService::onProposalResponse(const Response& response)
                         qCWarning(plannerLog) << "Proposed final not stored:" << entry.id << error;
                         m_retryAfter.insert(entry.id, QDateTime::currentDateTimeUtc().addMSecs(
                             outcome == StoreOutcome::InvalidRob ? INVALID_ROB_RETRY_MS : SyncBackoff::POLL_INTERVAL_MS));
+                        emit finalsChanged();
+                        // Invalid .rob: final. Checksum: retried once (transfer error),
+                        // a second mismatch in a row means these bytes never match.
+                        if (outcome == StoreOutcome::InvalidRob) {
+                            rejectUnloadable(p, QString::fromLatin1(LOAD_ERROR_INVALID_ROB));
+                        } else if (outcome == StoreOutcome::ShaMismatch
+                                   && previousError == QLatin1String(LOAD_ERROR_CHECKSUM)) {
+                            rejectUnloadable(p, QString::fromLatin1(LOAD_ERROR_CHECKSUM));
+                        }
                     }
                     finishCycle(true);
                 });
@@ -582,11 +607,38 @@ void PlannerSyncService::sendStatus()
                 });
 }
 
+void PlannerSyncService::rejectUnloadable(const Proposal& proposal, const QString& loadError)
+{
+    if (m_autoRejectInFlight.contains(proposal.id)) {
+        return;
+    }
+    qCWarning(plannerLog) << "Planner proposal" << proposal.id << "for unloadable final" << proposal.finalId
+                          << "(" << loadError << ") - answering rejected";
+    if (m_proposal && m_proposal->id == proposal.id) {
+        clearProposal();
+    }
+    if (!m_unloadableNotified.contains(proposal.id)) {
+        m_unloadableNotified.insert(proposal.id);
+        m_unloadableNotices.append({proposal, loadError});
+        emit proposalUnloadable(proposal, loadError);
+    }
+    m_autoRejectInFlight.insert(proposal.id);
+    answerProposal(proposal.id, false);
+}
+
+QVector<PlannerSyncService::UnloadableNotice> PlannerSyncService::takeUnloadableNotices()
+{
+    QVector<UnloadableNotice> notices;
+    notices.swap(m_unloadableNotices);
+    return notices;
+}
+
 void PlannerSyncService::answerProposal(const QString& proposalId, bool accepted)
 {
     const QByteArray body = buildProposalAnswerBody(accepted);
     sendRequest("POST", Api::proposalAnswerPath(proposalId), body, QByteArray(), MAX_JSON_BYTES,
                 [this, proposalId, accepted](const Response& response) {
+                    m_autoRejectInFlight.remove(proposalId);
                     AnswerOutcome outcome = AnswerOutcome::NotDelivered;
                     switch (response.classify()) {
                         case ResponseClass::Ok:
@@ -615,7 +667,7 @@ void PlannerSyncService::answerProposal(const QString& proposalId, bool accepted
                         }
                     }
                     emit proposalAnswered(proposalId, accepted, outcome);
-                });
+                }, ANSWER_TIMEOUT_MS);
 }
 
 } // namespace planner

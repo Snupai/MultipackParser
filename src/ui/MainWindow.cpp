@@ -35,6 +35,7 @@
 #include <QAbstractItemView>
 #include <QDebug>
 #include <QFileInfo>
+#include <QFontMetrics>
 #include <QIcon>
 #include <QPixmap>
 #include <QCloseEvent>
@@ -2737,8 +2738,22 @@ void MainWindow::onStatusChanged(const QString& message, message::StatusType typ
             break;
     }
 
-    ui->label_GewichtInfo->setText(message);
-    ui->label_GewichtInfo->setStyleSheet(QString("color: %1;").arg(color));
+    // Long messages wrap and, if still too long, get a smaller font instead of
+    // being clipped (the label has a fixed size in the .ui layout).
+    QLabel* label = ui->label_GewichtInfo;
+    label->setWordWrap(true);
+    label->setText(message);
+    QFont font = label->font();
+    int pointSize = 16;
+    for (; pointSize > 9; --pointSize) {
+        font.setPointSize(pointSize);
+        const QRect needed = QFontMetrics(font).boundingRect(
+            QRect(0, 0, label->width(), 10'000), Qt::TextWordWrap, message);
+        if (needed.height() <= label->height()) {
+            break;
+        }
+    }
+    label->setStyleSheet(QString("color: %1; font-size: %2pt;").arg(color).arg(pointSize));
 }
 
 void MainWindow::setupPalettePlanCompleter()

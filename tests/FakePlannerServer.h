@@ -53,6 +53,8 @@ public:
             reply.header("Content-Type", "application/json");
             return reply;
         }
+        /// Accept the request and never answer (a hanging planner).
+        static Reply hang() { return empty(0); }
         static Reply empty(int status)
         {
             Reply reply;
@@ -141,6 +143,9 @@ protected:
             requests.append(request);
 
             const Reply reply = m_handler ? m_handler(request) : Reply::empty(404);
+            if (reply.status == 0) {
+                return;  // hang: keep the connection open, never answer
+            }
             QByteArray response = "HTTP/1.1 " + QByteArray::number(reply.status) + " " + reason(reply.status) + "\r\n";
             for (const auto& header : reply.headers) {
                 response += header.first + ": " + header.second + "\r\n";

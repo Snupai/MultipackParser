@@ -17,7 +17,10 @@
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QElapsedTimer>
+#include <QFontMetrics>
 #include <QJsonObject>
+#include <QLabel>
 #include <QListWidget>
 #include <QMessageBox>
 #include <QProcess>
@@ -121,6 +124,15 @@ private slots:
     void proposalClosedDoesNotSwitch();
     void proposalConfirmedWhileRunningDoesNotSwitch();
     void manualLoadBlockedWhileProgramRuns();
+
+    // e2e findings
+    void plannerFixtureWithSpacesIsStored();
+    void unloadableFinalShowsErrorAndProposalIsRejected();
+    void proposalForUnknownUnloadableFinalIsRejected();
+    void unloadableNoticeBeforeWindowIsShown();
+    void answerAgainstHangingServerGivesUpQuickly();
+    void refusalMessageIsNotClipped();
+    void proposalDialogShowsRealPackageCount();
 
 private:
     QTemporaryDir* m_dir = nullptr;
@@ -842,10 +854,238 @@ void PlannerSyncTest::manualLoadBlockedWhileProgramRuns()
     f.window.reset();
 }
 
+namespace {
+
+/// One Fertigstand (kFinalA) served with `bytes`; listed or only proposed.
+FakePlannerServer::Handler planHandler(QByteArray bytes, bool listed, bool propose, int* answerStatus)
+{
+    return [bytes, listed, propose, answerStatus](const FakePlannerServer::Request& r) {
+        if (r.path == "/api/hmi/v1/finals") {
+            return FakePlannerServer::Reply::json(
+                200, finalsBody(listed ? QJsonArray{finalJson(kFinalA, "p", "Alpha", bytes)} : QJsonArray{}));
+        }
+        if (r.path.endsWith("/rob")) {
+            FakePlannerServer::Reply reply;
+            reply.body = bytes;
+            return reply;
+        }
+        if (r.method == "GET" && r.path == "/api/hmi/v1/proposal") {
+            return propose ? FakePlannerServer::Reply::json(200, proposalBody(kFinalA, bytes))
+                           : FakePlannerServer::Reply::empty(204);
+        }
+        if (r.method == "POST" && r.path.startsWith("/api/hmi/v1/proposal/")) {
+            if (*answerStatus == 0) {
+                return FakePlannerServer::Reply::hang();
+            }
+            return FakePlannerServer::Reply::empty(*answerStatus);
+        }
+        return FakePlannerServer::Reply::empty(204);
+    };
+}
+
+QStringList answersSent(const FakePlannerServer& server)
+{
+    QStringList results;
+    for (const auto& request : server.requestsFor("POST", "/api/hmi/v1/proposal/")) {
+        results.append(QJsonDocument::fromJson(request.body).object().value("result").toString());
+    }
+    return results;
+}
+
+QStringList g_messages;
+QtMessageHandler g_previousHandler = nullptr;
+void captureMessages(QtMsgType type, const QMessageLogContext& context, const QString& message)
+{
+    g_messages.append(message);
+    if (g_previousHandler) {
+        g_previousHandler(type, context, message);
+    }
+}
+
+} // namespace
+
+void PlannerSyncTest::plannerFixtureWithSpacesIsStored()
+{
+    int answerStatus = 204;
+    const QByteArray fixture = testhelpers::plannerFixtureRobCrlf();
+    m_server->setHandler(planHandler(fixture, true, false, &answerStatus));
+    startService(configFor(m_server->serverPort()));
+    const auto a = m_service->store().find(kFinalA);
+    QVERIFY(a.has_value());
+    QVERIFY(a->downloaded);
+    QVERIFY(a->loadError.isEmpty());
+    QCOMPARE(m_service->store().robBytes(kFinalA), fixture);
+}
+
+void PlannerSyncTest::unloadableFinalShowsErrorAndProposalIsRejected()
+{
+    qputenv("MULTIPACK_DISABLE_ROBOT_STATUS_MONITOR", "1");
+    int answerStatus = 500;  // first answer gets lost
+    const QByteArray garbage = "<html>not a plan</html>";
+    m_server->setHandler(planHandler(garbage, true, true, &answerStatus));
+
+    WindowFixture f;
+    QSignalSpy unloadable(&f.service, &PlannerSyncService::proposalUnloadable);
+    QVERIFY(f.start(m_server->serverPort()));
+    f.robot(multipack::robot::ProgramState::Stopped);
+
+    // The list shows an error, not "loading" forever.
+    auto* list = f.window->findChild<QListWidget*>(QStringLiteral("plannerFinalsList"));
+    QVERIFY(list);
+    QCOMPARE(list->count(), 1);
+    QVERIFY2(list->item(0)->text().contains(QStringLiteral("Fehler")), qPrintable(list->item(0)->text()));
+    QVERIFY(!list->item(0)->text().contains(QStringLiteral("wird geladen")));
+
+    // The proposal is answered "rejected" and the operator is told; no dialog, no switch.
+    QTRY_COMPARE(answersSent(*m_server), QStringList{QStringLiteral("rejected")});
+    QCOMPARE(unloadable.count(), 1);
+    QCOMPARE(unloadable.first().at(1).toString(), QString::fromLatin1(multipack::planner::LOAD_ERROR_INVALID_ROB));
+    QTRY_VERIFY(f.window->findChild<QMessageBox*>(QStringLiteral("proposalUnloadableNotice")));
+    QVERIFY(!f.dialog());
+    QVERIFY(f.activeFile().isEmpty());
+
+    // The answer was lost (500): the next cycle answers again, without a second notice.
+    answerStatus = 204;
+    QVERIFY(runCycle(f.service));
+    QTRY_COMPARE(answersSent(*m_server).size(), 2);
+    QCOMPARE(answersSent(*m_server).last(), QStringLiteral("rejected"));
+    QCOMPARE(unloadable.count(), 1);
+    QCOMPARE(f.window->findChildren<QMessageBox*>(QStringLiteral("proposalUnloadableNotice")).size(), 1);
+
+    // Answered: no further answers.
+    QVERIFY(runCycle(f.service));
+    QTest::qWait(100);
+    QCOMPARE(answersSent(*m_server).size(), 2);
+    f.window.reset();
+}
+
+void PlannerSyncTest::proposalForUnknownUnloadableFinalIsRejected()
+{
+    int answerStatus = 204;
+    const QByteArray garbage = "1 2 3\nnot a plan";
+    m_server->setHandler(planHandler(garbage, false, true, &answerStatus));
+
+    m_service = std::make_unique<PlannerSyncService>();
+    m_service->setAutoSchedule(false);
+    QVERIFY(m_service->openStore(m_dir->filePath(QStringLiteral("paletten.db"))));
+    QSignalSpy unloadable(m_service.get(), &PlannerSyncService::proposalUnloadable);
+    QSignalSpy available(m_service.get(), &PlannerSyncService::proposalAvailable);
+    QSignalSpy answered(m_service.get(), &PlannerSyncService::proposalAnswered);
+    QSignalSpy cycle(m_service.get(), &PlannerSyncService::cycleFinished);
+    m_service->setConfig(configFor(m_server->serverPort()), m_dir->path());
+    QVERIFY(cycle.wait(10000));
+
+    QVERIFY(answered.count() > 0 || answered.wait(10000));
+    QCOMPARE(answersSent(*m_server), QStringList{QStringLiteral("rejected")});
+    QCOMPARE(unloadable.count(), 1);
+    QCOMPARE(available.count(), 0);
+    QVERIFY(!m_service->currentProposal().has_value());
+    QCOMPARE(m_service->store().find(kFinalA)->loadError,
+             QString::fromLatin1(multipack::planner::LOAD_ERROR_INVALID_ROB));
+}
+
+void PlannerSyncTest::unloadableNoticeBeforeWindowIsShown()
+{
+    // At start-up the first cycle runs while the splash screen processes
+    // events, before MainWindow is connected to the service.
+    qputenv("MULTIPACK_DISABLE_ROBOT_STATUS_MONITOR", "1");
+    int answerStatus = 204;
+    m_server->setHandler(planHandler("<html>not a plan</html>", true, true, &answerStatus));
+    startService(configFor(m_server->serverPort()));
+    QTRY_COMPARE(answersSent(*m_server), QStringList{QStringLiteral("rejected")});
+
+    multipack::config::SettingsManager settings;
+    settings.resetToDefaults();
+    multipack::database::DatabaseManager database;
+    QVERIFY(database.open(m_dir->filePath(QStringLiteral("paletten.db"))));
+    auto window = std::make_unique<multipack::ui::MainWindow>();
+    window->setSettingsManager(&settings);
+    window->setDatabaseManager(&database);
+    window->setPlannerSync(m_service.get());
+    QCOMPARE(window->findChildren<QMessageBox*>(QStringLiteral("proposalUnloadableNotice")).size(), 1);
+    // Shown once: a second window (or reconnect) gets nothing new.
+    window->setPlannerSync(nullptr);
+    window->setPlannerSync(m_service.get());
+    QCOMPARE(window->findChildren<QMessageBox*>(QStringLiteral("proposalUnloadableNotice")).size(), 1);
+}
+
+void PlannerSyncTest::answerAgainstHangingServerGivesUpQuickly()
+{
+    int answerStatus = 0;  // POST answer hangs
+    m_server->setHandler(planHandler(robA(), true, false, &answerStatus));
+    startService(configFor(m_server->serverPort()));
+
+    g_messages.clear();
+    g_previousHandler = qInstallMessageHandler(captureMessages);
+    QSignalSpy answered(m_service.get(), &PlannerSyncService::proposalAnswered);
+    QElapsedTimer timer;
+    timer.start();
+    m_service->answerProposal(kProposal, true);
+    QVERIFY(answered.wait(15000));
+    const qint64 elapsed = timer.elapsed();
+    qInstallMessageHandler(g_previousHandler);
+
+    QCOMPARE(answered.first().at(2).value<PlannerSyncService::AnswerOutcome>(),
+             PlannerSyncService::AnswerOutcome::NotDelivered);
+    QVERIFY2(elapsed < 12000, qPrintable(QString::number(elapsed)));
+    // The aborted reply is not read ("QIODevice::read: device not open").
+    for (const QString& message : g_messages) {
+        QVERIFY2(!message.contains(QStringLiteral("device not open")), qPrintable(message));
+    }
+}
+
+void PlannerSyncTest::refusalMessageIsNotClipped()
+{
+    qputenv("MULTIPACK_DISABLE_ROBOT_STATUS_MONITOR", "1");
+    int answerStatus = 204;
+    m_server->setHandler(planHandler(robA(), true, false, &answerStatus));
+
+    WindowFixture f;
+    QVERIFY(f.start(m_server->serverPort()));
+    auto* list = f.window->findChild<QListWidget*>(QStringLiteral("plannerFinalsList"));
+    list->setCurrentRow(0);
+    f.robot(multipack::robot::ProgramState::Playing);
+    QTest::mouseClick(f.window->findChild<QPushButton*>(QStringLiteral("plannerLoadButton")), Qt::LeftButton);
+
+    auto* label = f.window->findChild<QLabel*>(QStringLiteral("label_GewichtInfo"));
+    QVERIFY(label);
+    QVERIFY(label->text().endsWith(QStringLiteral("möglich.")));
+    const QRect needed = QFontMetrics(label->font()).boundingRect(
+        QRect(0, 0, label->width(), 10'000), Qt::TextWordWrap, label->text());
+    QVERIFY2(needed.height() <= label->height(),
+             qPrintable(QStringLiteral("%1 > %2").arg(needed.height()).arg(label->height())));
+    QVERIFY(label->wordWrap());
+    f.window.reset();
+}
+
+void PlannerSyncTest::proposalDialogShowsRealPackageCount()
+{
+    qputenv("MULTIPACK_DISABLE_ROBOT_STATUS_MONITOR", "1");
+    int answerStatus = 204;
+    m_server->setHandler(planHandler(testhelpers::plannerFixtureRobCrlf(), true, true, &answerStatus));
+
+    WindowFixture f;
+    QVERIFY(f.start(m_server->serverPort()));
+    f.robot(multipack::robot::ProgramState::Stopped);
+    QVERIFY(f.dialog());
+
+    QLabel* count = nullptr;
+    for (QLabel* label : f.dialog()->findChildren<QLabel*>()) {
+        if (label->text() == QStringLiteral("Pakete:")) {
+            count = qobject_cast<QLabel*>(label->buddy());
+        }
+    }
+    QVERIFY(count);
+    // The planner's golden data for this fixture: 5 packages (the .rob header says 1).
+    QCOMPARE(count->text(), QStringLiteral("5"));
+    f.window.reset();
+}
+
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
     qRegisterMetaType<multipack::planner::Proposal>("multipack::planner::Proposal");
+    qRegisterMetaType<multipack::planner::Proposal>("Proposal");
     qRegisterMetaType<PlannerSyncService::AnswerOutcome>("multipack::planner::PlannerSyncService::AnswerOutcome");
     PlannerSyncTest test;
     return QTest::qExec(&test, argc, argv);

@@ -254,6 +254,7 @@ private:
     [[nodiscard]] static QString switchPermissionText(planner::SwitchPermission permission);
     void onProposalAvailable(const planner::Proposal& proposal);
     void onProposalCleared(const QString& proposalId);
+    void showUnloadableProposalNotices();
     void onProposalAnswered(const QString& proposalId, bool accepted,
                             planner::PlannerSyncService::AnswerOutcome outcome);
     void openProposalDialog();

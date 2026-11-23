@@ -76,6 +76,27 @@ inline QString sampleRobFileContents()
         "0\t0\t0\t100\t100\t0\t1\t0\t0\n");
 }
 
+/// palette_3d_viewer src/lib/__fixtures__/anonymized-plan-crlf.rob, byte for
+/// byte: space-separated, CRLF. The planner accepts it; so must the HMI.
+inline QByteArray plannerFixtureRobCrlf()
+{
+    return QByteArrayLiteral(
+        "1200 800 144\r\n"
+        "200 300 150 1\r\n"
+        "2\r\n"
+        "3\r\n"
+        "0 1\r\n"
+        "1 0\r\n"
+        "2 1\r\n"
+        "1 0\r\n"
+        "1\r\n"
+        "100 50 0 400 300 0 1 1 0\r\n"
+        "2\r\n"
+        "100 50 0 500 300 90 2 0 -1\r\n"
+        "120 60 0 700 400 0 1 0 1\r\n"
+    );
+}
+
 inline bool writeSampleRobFile(const QString& directoryPath, const QString& fileName)
 {
     QDir().mkpath(directoryPath);

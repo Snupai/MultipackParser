@@ -13,6 +13,8 @@
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QSqlDatabase>
+#include <QSqlQuery>
 #include <QTemporaryDir>
 #include <QTimeZone>
 #include <QtTest/QtTest>
@@ -95,6 +97,8 @@ private slots:
 
     // Parser + store
     void parserAcceptsBytesWithAnyLineEnding();
+    void parserAcceptsAnyWhitespace();
+    void storeRecordsAndClearsLoadErrors();
     void storeVerifiesShaAndParserBeforeStoring();
     void storeKeepsWithdrawnFinalsAndBytes();
     void plannerRowsInvisibleToUsbLookups();
@@ -420,6 +424,112 @@ void PlannerLogicTest::parserAcceptsBytesWithAnyLineEnding()
     QVERIFY(!parser.parseBytes(QByteArray(), QStringLiteral("empty.rob")).isValid);
     QVERIFY(!parser.parseBytes("1200\t800\n<html>", QStringLiteral("html.rob")).isValid);
     QVERIFY(!parser.parseBytes("1200\t800\t150\n200\t100\t50\t0\n", QStringLiteral("short.rob")).isValid);
+}
+
+void PlannerLogicTest::parserAcceptsAnyWhitespace()
+{
+    multipack::RobFileParser parser;
+
+    // The planner's own fixture: spaces + CRLF (was rejected by the HMI).
+    const auto planner = parser.parseBytes(testhelpers::plannerFixtureRobCrlf(), QStringLiteral("line-7.rob"));
+    QVERIFY2(planner.isValid, qPrintable(planner.errorMessage));
+    QCOMPARE(planner.g_PalettenDim, (QVector<int>{1200, 800, 144}));
+    QCOMPARE(planner.g_PaketDim, (QVector<int>{200, 300, 150, 1}));
+    QCOMPARE(planner.g_LageArten, 2);
+    QCOMPARE(planner.g_AnzLagen, 3);
+    QCOMPARE(planner.g_LageZuordnung, (QVector<int>{1, 2, 1}));
+    QCOMPARE(planner.g_PaketeZuordnung, (QVector<int>{1, 2}));
+    QCOMPARE(planner.g_PaketPos.size(), 3);
+    QCOMPARE(planner.g_PaketPos[1], (QVector<int>{100, 50, 0, 500, 300, 90, 2, 0, -1}));
+
+    // Same plan with tabs (Multipack/USB) and with mixed separators: same data.
+    QByteArray tabs = testhelpers::plannerFixtureRobCrlf();
+    tabs.replace(' ', '\t');
+    const auto fromTabs = parser.parseBytes(tabs, QStringLiteral("tabs.rob"));
+    QVERIFY(fromTabs.isValid);
+    QCOMPARE(fromTabs.g_Daten, planner.g_Daten);
+    QByteArray mixed = testhelpers::plannerFixtureRobCrlf();
+    mixed.replace("100 50 0 400", "100\t 50 \t0   400");
+    mixed.replace("\r\n", "\n");
+    const auto fromMixed = parser.parseBytes(mixed, QStringLiteral("mixed.rob"));
+    QVERIFY(fromMixed.isValid);
+    QCOMPARE(fromMixed.g_Daten, planner.g_Daten);
+
+    // Files on a USB stick go through the same tokenizer.
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+    QVERIFY(writeFile(dir.filePath(QStringLiteral("spaces.rob")), testhelpers::plannerFixtureRobCrlf()));
+    multipack::RobFileParser usbParser(dir.path());
+    QVERIFY(usbParser.parseFile(QStringLiteral("spaces.rob")).isValid);
+
+    // Still rejected: non-numbers.
+    QVERIFY(!parser.parseBytes("1200 800 abc\n200 300 150 1\n1\n1\n0\n1 0\n1\n0 0 0 1 1 0 1 0 0\n",
+                               QStringLiteral("bad.rob")).isValid);
+}
+
+void PlannerLogicTest::storeRecordsAndClearsLoadErrors()
+{
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+    PlannerStore store;
+    QVERIFY(store.open(dir.filePath(QStringLiteral("paletten.db"))));
+
+    const QByteArray garbage = "<html>not a plan</html>";
+    FinalEntry a = entryFor(kFinalA, QStringLiteral("project-42"), QStringLiteral("Alpha"), garbage);
+    QVERIFY(store.applyList({a}));
+    QVERIFY(store.find(kFinalA)->loadError.isEmpty());
+
+    QCOMPARE(store.storeRob(a, garbage), StoreOutcome::InvalidRob);
+    QCOMPARE(store.find(kFinalA)->loadError, QString::fromLatin1(LOAD_ERROR_INVALID_ROB));
+    QVERIFY(!store.find(kFinalA)->downloaded);
+    QCOMPARE(store.finals().first().loadError, QString::fromLatin1(LOAD_ERROR_INVALID_ROB));
+
+    // Same list again: the error stays (same bytes, still not loadable).
+    QVERIFY(store.applyList({a}));
+    QCOMPARE(store.find(kFinalA)->loadError, QString::fromLatin1(LOAD_ERROR_INVALID_ROB));
+
+    // Wrong checksum is recorded as such.
+    QCOMPARE(store.storeRob(a, "other bytes"), StoreOutcome::ShaMismatch);
+    QCOMPARE(store.find(kFinalA)->loadError, QString::fromLatin1(LOAD_ERROR_CHECKSUM));
+
+    // New checksum in the list: error cleared, download retried.
+    const QByteArray rob = sampleRobCrlf();
+    a.sha256 = sha256Hex(rob);
+    QVERIFY(store.applyList({a}));
+    QVERIFY(store.find(kFinalA)->loadError.isEmpty());
+
+    // Error, then a good download: cleared.
+    QCOMPARE(store.storeRob(a, rob + "x"), StoreOutcome::ShaMismatch);
+    QVERIFY(!store.find(kFinalA)->loadError.isEmpty());
+    QCOMPARE(store.storeRob(a, rob), StoreOutcome::Stored);
+    QVERIFY(store.find(kFinalA)->loadError.isEmpty());
+
+    // A proposal-only Fertigstand that fails is remembered (not listed).
+    const QString idC = QStringLiteral("0c2c8a2a-6d74-4b0a-83b6-7dbf8f2f4e33");
+    FinalEntry c = entryFor(idC, QString(), QStringLiteral("gamma"), garbage);
+    QCOMPARE(store.storeRob(c, garbage), StoreOutcome::InvalidRob);
+    QVERIFY(store.find(idC).has_value());
+    QVERIFY(!store.find(idC)->inList);
+    QCOMPARE(store.find(idC)->loadError, QString::fromLatin1(LOAD_ERROR_INVALID_ROB));
+
+    // A database from before load_error existed is upgraded on open.
+    store.close();
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), QStringLiteral("legacy"));
+        db.setDatabaseName(dir.filePath(QStringLiteral("legacy.db")));
+        QVERIFY(db.open());
+        QSqlQuery q(db);
+        QVERIFY(q.exec("CREATE TABLE planner_finals (final_id TEXT PRIMARY KEY, record_id TEXT NOT NULL, "
+                       "name TEXT NOT NULL, file_name TEXT, sha256 TEXT NOT NULL, marked_at INTEGER, "
+                       "in_list INTEGER NOT NULL DEFAULT 1, rob BLOB, stored_at INTEGER)"));
+        db.close();
+    }
+    QSqlDatabase::removeDatabase(QStringLiteral("legacy"));
+    PlannerStore legacy;
+    QVERIFY(legacy.open(dir.filePath(QStringLiteral("legacy.db"))));
+    QVERIFY(legacy.applyList({a}));
+    QCOMPARE(legacy.storeRob(c, garbage), StoreOutcome::InvalidRob);
+    QCOMPARE(legacy.find(idC)->loadError, QString::fromLatin1(LOAD_ERROR_INVALID_ROB));
 }
 
 void PlannerLogicTest::storeVerifiesShaAndParserBeforeStoring()
